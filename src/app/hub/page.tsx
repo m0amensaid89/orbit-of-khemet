@@ -3,13 +3,13 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 const heroes = [
-  { id: 1, name: "NEXAR", role: "The System Architect", description: "Master of code and creation, forging the digital empire.", image: "https://picsum.photos/seed/nexar/600/800" },
-  { id: 2, name: "HORUSEN", role: "The Sky Sentinel", description: "Overseer of all networks, eyes on the grid.", image: "https://picsum.photos/seed/horusen/600/800" },
-  { id: 3, name: "KAIRO", role: "The Time Weaver", description: "Manipulates latency and temporal protocols.", image: "https://picsum.photos/seed/kairo/600/800" },
-  { id: 4, name: "LYRA", role: "The Frequency Harpist", description: "Harmonizing data streams and communication channels.", image: "https://picsum.photos/seed/lyra/600/800" },
-  { id: 5, name: "NEFRA", role: "The Void Walker", description: "Navigating the deep web and hidden infrastructures.", image: "https://picsum.photos/seed/nefra/600/800" },
-  { id: 6, name: "RAMET", role: "The Quantum Scribe", description: "Encoding reality into immutable ledgers.", image: "https://picsum.photos/seed/ramet/600/800" },
-  { id: 7, name: "THOREN", role: "The Kinetic Forge", description: "Powering the processing engines of the Orbit.", image: "https://picsum.photos/seed/thoren/600/800" },
+  { id: 1, name: "NEXAR", role: "The frontline smasher of weak prompts", description: "Destroys weak inputs and demands high-leverage context.", image: "https://picsum.photos/id/1015/600/800" },
+  { id: 2, name: "HORUSEN", role: "The visionary strategist", description: "Oversees the grand board, plotting multi-step empire growth.", image: "https://picsum.photos/id/1016/600/800" },
+  { id: 3, name: "KAIRO", role: "The data & systems architect", description: "Structures chaos into scalable, unbreakable database schemas.", image: "https://picsum.photos/id/1018/600/800" },
+  { id: 4, name: "LYRA", role: "The creative storyteller & content master", description: "Weaves compelling narratives that captivate and convert audiences.", image: "https://picsum.photos/id/1019/600/800" },
+  { id: 5, name: "NEFRA", role: "The emotional intelligence & empathy agent", description: "Reads between the lines, ensuring tone aligns with intent.", image: "https://picsum.photos/id/1020/600/800" },
+  { id: 6, name: "RAMET", role: "The relentless executor & optimizer", description: "Turns ideas into precise, high-speed, flawless execution.", image: "https://picsum.photos/id/1021/600/800" },
+  { id: 7, name: "THOREN", role: "The guardian of ethics, security & long-term vision", description: "Protects the core, ensuring safe and sustainable operations.", image: "https://picsum.photos/id/1022/600/800" },
 ];
 
 export default function HubPage() {
@@ -97,7 +97,7 @@ export default function HubPage() {
       </main>
 
       {/* Floating Master Orbit Button */}
-      <div className="fixed bottom-8 right-8 z-50">
+      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
         <Button
           size="lg"
           className="rounded-full w-24 h-24 bg-background border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground shadow-[0_0_20px_rgba(212,175,119,0.3)] hover:shadow-[0_0_30px_rgba(245,211,140,0.6)] transition-all duration-300 flex flex-col items-center justify-center gap-1 group"
