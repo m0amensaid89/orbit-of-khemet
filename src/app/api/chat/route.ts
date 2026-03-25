@@ -39,11 +39,19 @@ Here is the full roster of your council:
 Use the full breadth of this council to orchestrate comprehensive, multi-disciplinary solutions.`;
   }
 
-  const result = streamText({
-    model: google('gemini-2.5-pro'),
-    system: systemPrompt,
-    messages: messages,
-  });
+  try {
+    const result = streamText({
+      model: google('gemini-2.5-pro'),
+      system: systemPrompt,
+      messages: messages,
+    });
 
-  return result.toTextStreamResponse();
+    return result.toTextStreamResponse();
+  } catch (error) {
+    console.error("AI SDK Error:", error);
+    return new Response(JSON.stringify({ error: "Failed to generate response." }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
 }

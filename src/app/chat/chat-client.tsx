@@ -20,11 +20,14 @@ export default function ChatPage() {
     setHeroName(heroParam);
   }, [heroParam]);
 
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
+  const { messages, input, handleInputChange, handleSubmit, isLoading, error } = useChat({
     api: "/api/chat",
     body: {
       hero: heroName,
     },
+    onError: (e) => {
+      console.error("Chat error:", e);
+    }
   });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -121,6 +124,14 @@ export default function ChatPage() {
                <div className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]" />
                <div className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:-0.15s]" />
                <div className="w-2 h-2 bg-primary rounded-full animate-bounce" />
+            </div>
+          </div>
+        )}
+        {error && (
+          <div className="flex justify-start">
+            <div className="max-w-[80%] p-4 rounded-xl border bg-destructive/20 border-destructive/50 text-destructive rounded-tl-none shadow-[0_0_15px_rgba(255,0,0,0.2)]">
+               <div className="text-xs font-mono tracking-widest uppercase mb-2 opacity-70">SYSTEM ERROR</div>
+               <div className="text-sm">An error occurred while connecting to the Empire Engine. Please check your connection or API key and try again.</div>
             </div>
           </div>
         )}
