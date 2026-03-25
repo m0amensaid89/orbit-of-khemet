@@ -64,7 +64,7 @@ export default function HubPage() {
           {heroes.map((hero) => (
             <Link
               key={hero.id}
-              href="#"
+              href={`/chat?hero=${hero.name}`}
               className="group relative rounded-xl overflow-hidden border border-border bg-card hover:border-primary/80 transition-all duration-500 hover:shadow-[0_0_25px_rgba(212,175,119,0.2)] aspect-[3/4] flex flex-col cursor-pointer block"
             >
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent z-10" />
@@ -98,15 +98,17 @@ export default function HubPage() {
 
       {/* Floating Master Orbit Button */}
       <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
-        <Button
-          size="lg"
-          className="rounded-full w-24 h-24 bg-background border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground shadow-[0_0_20px_rgba(212,175,119,0.3)] hover:shadow-[0_0_30px_rgba(245,211,140,0.6)] transition-all duration-300 flex flex-col items-center justify-center gap-1 group"
-        >
-          <div className="w-8 h-8 rounded-full border-2 border-current flex items-center justify-center mb-1">
-             <div className="w-3 h-3 bg-current rounded-full group-hover:animate-pulse" />
-          </div>
-          <span className="text-[10px] font-mono tracking-widest font-bold uppercase text-center leading-tight">MASTER<br/>ORBIT</span>
-        </Button>
+        <Link href="/chat?hero=MASTER">
+          <Button
+            size="lg"
+            className="rounded-full w-24 h-24 bg-background border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground shadow-[0_0_20px_rgba(212,175,119,0.3)] hover:shadow-[0_0_30px_rgba(245,211,140,0.6)] transition-all duration-300 flex flex-col items-center justify-center gap-1 group"
+          >
+            <div className="w-8 h-8 rounded-full border-2 border-current flex items-center justify-center mb-1">
+               <div className="w-3 h-3 bg-current rounded-full group-hover:animate-pulse" />
+            </div>
+            <span className="text-[10px] font-mono tracking-widest font-bold uppercase text-center leading-tight">MASTER<br/>ORBIT</span>
+          </Button>
+        </Link>
       </div>
     </div>
   );
