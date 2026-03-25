@@ -47,8 +47,9 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 
-  --color-khemet-navy: #0a1128;
-  --color-khemet-gold: #f4c430;
+  --color-khemet-black: #0A0A0A;
+  --color-khemet-gold: #D4AF77;
+  --color-khemet-neon: #F5D38C;
   --color-khemet-blue: #00e5ff;
 }
 
@@ -88,47 +89,47 @@
 }
 
 .dark {
-  --background: oklch(0.18 0.04 260); /* Deep navy base */
+  --background: #0A0A0A; /* Deep black base */
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.22 0.04 260);
+  --card: #0A0A0A;
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.22 0.04 260);
+  --popover: #0A0A0A;
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.85 0.15 90); /* Neon gold */
-  --primary-foreground: oklch(0.15 0.04 260);
-  --secondary: oklch(0.85 0.15 210); /* Glowing Nile blue */
-  --secondary-foreground: oklch(0.15 0.04 260);
-  --muted: oklch(0.3 0.04 260);
+  --primary: #D4AF77; /* Metallic gold */
+  --primary-foreground: #0A0A0A;
+  --secondary: #F5D38C; /* Neon glow */
+  --secondary-foreground: #0A0A0A;
+  --muted: #1A1A1A;
   --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.3 0.04 260);
+  --accent: #1A1A1A;
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.85 0.15 90); /* Neon gold ring */
-  --chart-1: oklch(0.85 0.15 90);
-  --chart-2: oklch(0.85 0.15 210);
+  --border: #D4AF7733;
+  --input: #D4AF7733;
+  --ring: #F5D38C; /* Neon gold ring */
+  --chart-1: #D4AF77;
+  --chart-2: #F5D38C;
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.18 0.04 260);
+  --sidebar: #0A0A0A;
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.85 0.15 90);
-  --sidebar-primary-foreground: oklch(0.15 0.04 260);
-  --sidebar-accent: oklch(0.3 0.04 260);
+  --sidebar-primary: #D4AF77;
+  --sidebar-primary-foreground: #0A0A0A;
+  --sidebar-accent: #1A1A1A;
   --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.85 0.15 90);
+  --sidebar-border: #D4AF7733;
+  --sidebar-ring: #F5D38C;
 }
 
 .khemet-pattern {
-  background-color: var(--color-khemet-navy);
-  background-image: linear-gradient(30deg, var(--color-khemet-navy) 12%, transparent 12.5%, transparent 87%, var(--color-khemet-navy) 87.5%, var(--color-khemet-navy)),
-  linear-gradient(150deg, var(--color-khemet-navy) 12%, transparent 12.5%, transparent 87%, var(--color-khemet-navy) 87.5%, var(--color-khemet-navy)),
-  linear-gradient(30deg, var(--color-khemet-navy) 12%, transparent 12.5%, transparent 87%, var(--color-khemet-navy) 87.5%, var(--color-khemet-navy)),
-  linear-gradient(150deg, var(--color-khemet-navy) 12%, transparent 12.5%, transparent 87%, var(--color-khemet-navy) 87.5%, var(--color-khemet-navy)),
-  linear-gradient(60deg, rgba(244, 196, 48, 0.05) 25%, transparent 25.5%, transparent 75%, rgba(244, 196, 48, 0.05) 75%, rgba(244, 196, 48, 0.05)),
-  linear-gradient(60deg, rgba(244, 196, 48, 0.05) 25%, transparent 25.5%, transparent 75%, rgba(244, 196, 48, 0.05) 75%, rgba(244, 196, 48, 0.05));
+  background-color: var(--color-khemet-black);
+  background-image: linear-gradient(30deg, var(--color-khemet-black) 12%, transparent 12.5%, transparent 87%, var(--color-khemet-black) 87.5%, var(--color-khemet-black)),
+  linear-gradient(150deg, var(--color-khemet-black) 12%, transparent 12.5%, transparent 87%, var(--color-khemet-black) 87.5%, var(--color-khemet-black)),
+  linear-gradient(30deg, var(--color-khemet-black) 12%, transparent 12.5%, transparent 87%, var(--color-khemet-black) 87.5%, var(--color-khemet-black)),
+  linear-gradient(150deg, var(--color-khemet-black) 12%, transparent 12.5%, transparent 87%, var(--color-khemet-black) 87.5%, var(--color-khemet-black)),
+  linear-gradient(60deg, rgba(212, 175, 119, 0.05) 25%, transparent 25.5%, transparent 75%, rgba(212, 175, 119, 0.05) 75%, rgba(212, 175, 119, 0.05)),
+  linear-gradient(60deg, rgba(212, 175, 119, 0.05) 25%, transparent 25.5%, transparent 75%, rgba(212, 175, 119, 0.05) 75%, rgba(212, 175, 119, 0.05));
   background-size: 80px 140px;
   background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
 }
