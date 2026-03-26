@@ -2,8 +2,9 @@ export type Agent = {
   id: string;
   name: string;
   category: string;
-  role: string;
-  desc: string;
+  role_summary: string;
+  description: string;
+  prompt?: string;
 };
 
 export type SquadMeta = {
@@ -50,609 +51,609 @@ export const heroAgents: Record<string, Agent[]> = {
     {
       "id": "agent_41",
       "name": "Neferkamin",
-      "role": "Invoice Specialist",
+      "role_summary": "Invoice Specialist",
       "category": "Finance & Operations",
-      "desc": "Automates invoice creation and management for businesses."
+      "description": "Automates invoice creation and management for businesses."
     },
     {
       "id": "agent_46",
       "name": "Intef",
-      "role": "Excel Specialist",
+      "role_summary": "Excel Specialist",
       "category": "Jobseekers",
-      "desc": "Offers a comprehensive Excel guide for all skill levels."
+      "description": "Offers a comprehensive Excel guide for all skill levels."
     },
     {
       "id": "agent_52",
       "name": "Sobekhotep",
-      "role": "Ad Copy Specialist",
+      "role_summary": "Ad Copy Specialist",
       "category": "Marketing",
-      "desc": "Enhances ad copy for clarity and impact."
+      "description": "Enhances ad copy for clarity and impact."
     },
     {
       "id": "agent_55",
       "name": "Merneferre",
-      "role": "Copy Strategist",
+      "role_summary": "Copy Strategist",
       "category": "Marketing",
-      "desc": "Enhances and refines copy, providing expert guidance."
+      "description": "Enhances and refines copy, providing expert guidance."
     },
     {
       "id": "agent_59",
       "name": "Merneptah",
-      "role": "Persona Developer",
+      "role_summary": "Persona Developer",
       "category": "Marketing",
-      "desc": "Provides expertise in detailed marketing persona development."
+      "description": "Provides expertise in detailed marketing persona development."
     },
     {
       "id": "agent_62",
       "name": "Tausret",
-      "role": "Affiliate Strategist",
+      "role_summary": "Affiliate Strategist",
       "category": "Marketing",
-      "desc": "Helps manage and optimize affiliate marketing programs."
+      "description": "Helps manage and optimize affiliate marketing programs."
     },
     {
       "id": "agent_67",
       "name": "Osorkon",
-      "role": "Character Creator",
+      "role_summary": "Character Creator",
       "category": "Writing",
-      "desc": "Creates unique characters for stories, games, and creative projects."
+      "description": "Creates unique characters for stories, games, and creative projects."
     },
     {
       "id": "agent_70",
       "name": "Rudamun",
-      "role": "Story Specialist",
+      "role_summary": "Story Specialist",
       "category": "Writing",
-      "desc": "Crafts compelling sales stories that build trust and connection."
+      "description": "Crafts compelling sales stories that build trust and connection."
     },
     {
       "id": "agent_73",
       "name": "Nimlot",
-      "role": "Finance Strategist",
+      "role_summary": "Finance Strategist",
       "category": "Finance & Capital",
-      "desc": "Guides fundraising, financial modeling, and investor pitching."
+      "description": "Guides fundraising, financial modeling, and investor pitching."
     },
     {
       "id": "agent_79",
       "name": "Neko",
-      "role": "Tech Architect",
+      "role_summary": "Tech Architect",
       "category": "Product & Engineering",
-      "desc": "Designs scalable technical architecture and tech-stack decisions."
+      "description": "Designs scalable technical architecture and tech-stack decisions."
     },
     {
       "id": "agent_80",
       "name": "Psamtik",
-      "role": "Financial Modeler",
+      "role_summary": "Financial Modeler",
       "category": "Finance & Capital",
-      "desc": "Builds detailed financial models and cash-flow forecasts."
+      "description": "Builds detailed financial models and cash-flow forecasts."
     },
     {
       "id": "agent_81",
       "name": "Apries",
-      "role": "Brand Protector",
+      "role_summary": "Brand Protector",
       "category": "Legal & Compliance",
-      "desc": "Protects brand assets through trademark and domain strategy."
+      "description": "Protects brand assets through trademark and domain strategy."
     }
   ],
   "ramet": [
     {
       "id": "agent_39",
       "name": "Menkare",
-      "role": "E-commerce Optimizer",
+      "role_summary": "E-commerce Optimizer",
       "category": "E-commerce",
-      "desc": "Optimizes online stores with insights and strategies."
+      "description": "Optimizes online stores with insights and strategies."
     },
     {
       "id": "agent_45",
       "name": "Mentuhotep",
-      "role": "CV Specialist",
+      "role_summary": "CV Specialist",
       "category": "Jobseekers",
-      "desc": "Provides guidance for crafting standout CVs."
+      "description": "Provides guidance for crafting standout CVs."
     },
     {
       "id": "agent_47",
       "name": "Amenemhat",
-      "role": "Interview Coach",
+      "role_summary": "Interview Coach",
       "category": "Jobseekers",
-      "desc": "Provides expert coaching for mock interviews and feedback."
+      "description": "Provides expert coaching for mock interviews and feedback."
     },
     {
       "id": "agent_53",
       "name": "Neferhotep",
-      "role": "Blog Writer",
+      "role_summary": "Blog Writer",
       "category": "Marketing",
-      "desc": "Offers expertise in writing engaging, SEO-friendly blog content."
+      "description": "Offers expertise in writing engaging, SEO-friendly blog content."
     },
     {
       "id": "agent_57",
       "name": "Horemheb",
-      "role": "Marketing Strategist",
+      "role_summary": "Marketing Strategist",
       "category": "Marketing",
-      "desc": "Guides agencies in implementing digital success strategies."
+      "description": "Guides agencies in implementing digital success strategies."
     },
     {
       "id": "agent_61",
       "name": "Siptah",
-      "role": "Market Researcher",
+      "role_summary": "Market Researcher",
       "category": "Marketing",
-      "desc": "Strategic market research with comprehensive industry reports."
+      "description": "Strategic market research with comprehensive industry reports."
     },
     {
       "id": "agent_63",
       "name": "Setnakhte",
-      "role": "Sales Simulator",
+      "role_summary": "Sales Simulator",
       "category": "Sales & Communication",
-      "desc": "Simulates client avatars in sales conversations."
+      "description": "Simulates client avatars in sales conversations."
     },
     {
       "id": "agent_64",
       "name": "Smedes",
-      "role": "Sales Simulator",
+      "role_summary": "Sales Simulator",
       "category": "Sales & Communication",
-      "desc": "Simulates client avatars for sales practice and training."
+      "description": "Simulates client avatars for sales practice and training."
     },
     {
       "id": "agent_65",
       "name": "Psusennes",
-      "role": "Funnel Advisor",
+      "role_summary": "Funnel Advisor",
       "category": "Sales & Communication",
-      "desc": "Assists in crafting effective digital sales strategies."
+      "description": "Assists in crafting effective digital sales strategies."
     },
     {
       "id": "agent_77",
       "name": "Taharqa",
-      "role": "Community Builder",
+      "role_summary": "Community Builder",
       "category": "Community",
-      "desc": "Builds and nurtures engaged communities around products."
+      "description": "Builds and nurtures engaged communities around products."
     },
     {
       "id": "agent_83",
       "name": "Inaros",
-      "role": "Brand Strategist",
+      "role_summary": "Brand Strategist",
       "category": "Marketing & Brand",
-      "desc": "Builds founder and company thought-leadership."
+      "description": "Builds founder and company thought-leadership."
     },
     {
       "id": "agent_85",
       "name": "Nectanebo",
-      "role": "Leadership Coach",
+      "role_summary": "Leadership Coach",
       "category": "Leadership",
-      "desc": "Coaches founders on leadership and decision-making."
+      "description": "Coaches founders on leadership and decision-making."
     }
   ],
   "nexar": [
     {
       "id": "agent_34",
       "name": "Menkauhor",
-      "role": "Course Creator",
+      "role_summary": "Course Creator",
       "category": "Creative Tools",
-      "desc": "Assists in creating educational courses and lesson plans."
+      "description": "Assists in creating educational courses and lesson plans."
     },
     {
       "id": "agent_42",
       "name": "Ibi",
-      "role": "Virtual Assistant",
+      "role_summary": "Virtual Assistant",
       "category": "Assistants",
-      "desc": "Proactive virtual assistant for solving problems and tasks."
+      "description": "Proactive virtual assistant for solving problems and tasks."
     },
     {
       "id": "agent_43",
       "name": "Qakare",
-      "role": "Virtual Assistant",
+      "role_summary": "Virtual Assistant",
       "category": "Assistants",
-      "desc": "Proactive virtual assistant for execution and workflow."
+      "description": "Proactive virtual assistant for execution and workflow."
     },
     {
       "id": "agent_54",
       "name": "Sihathor",
-      "role": "Cold Email Specialist",
+      "role_summary": "Cold Email Specialist",
       "category": "Marketing",
-      "desc": "Provides expertise in crafting effective cold emails."
+      "description": "Provides expertise in crafting effective cold emails."
     },
     {
       "id": "agent_56",
       "name": "Ay",
-      "role": "Email Marketer",
+      "role_summary": "Email Marketer",
       "category": "Marketing",
-      "desc": "Assists with creating engaging email marketing content."
+      "description": "Assists with creating engaging email marketing content."
     },
     {
       "id": "agent_60",
       "name": "Amenmesse",
-      "role": "SEO Specialist",
+      "role_summary": "SEO Specialist",
       "category": "Marketing",
-      "desc": "Boosts website performance with keyword optimization."
+      "description": "Boosts website performance with keyword optimization."
     },
     {
       "id": "agent_66",
       "name": "Amenemope",
-      "role": "Book Coach",
+      "role_summary": "Book Coach",
       "category": "Writing",
-      "desc": "Helps with book writing: plots, characters, themes, dialogue."
+      "description": "Helps with book writing: plots, characters, themes, dialogue."
     },
     {
       "id": "agent_69",
       "name": "Takelot",
-      "role": "Grammar Specialist",
+      "role_summary": "Grammar Specialist",
       "category": "Writing",
-      "desc": "Offers friendly grammar-focused English tutoring."
+      "description": "Offers friendly grammar-focused English tutoring."
     },
     {
       "id": "agent_75",
       "name": "Shabaka",
-      "role": "Metrics Analyst",
+      "role_summary": "Metrics Analyst",
       "category": "Data & Analytics",
-      "desc": "Helps define, track, and interpret key metrics and KPIs."
+      "description": "Helps define, track, and interpret key metrics and KPIs."
     },
     {
       "id": "agent_76",
       "name": "Shebitku",
-      "role": "Success Strategist",
+      "role_summary": "Success Strategist",
       "category": "Customer Success",
-      "desc": "Builds onboarding journeys, reduces churn, increases CLV."
+      "description": "Builds onboarding journeys, reduces churn, increases CLV."
     },
     {
       "id": "agent_82",
       "name": "Amasis",
-      "role": "Partnership Strategist",
+      "role_summary": "Partnership Strategist",
       "category": "Strategy & Growth",
-      "desc": "Builds strategic partnerships and ecosystem alliances."
+      "description": "Builds strategic partnerships and ecosystem alliances."
     },
     {
       "id": "agent_84",
       "name": "Amyrtaeus",
-      "role": "Systems Architect",
+      "role_summary": "Systems Architect",
       "category": "Operations",
-      "desc": "Designs repeatable business systems, SOPs, and automations."
+      "description": "Designs repeatable business systems, SOPs, and automations."
     }
   ],
   "lyra": [
     {
       "id": "agent_1",
       "name": "Akhenaten",
-      "role": "Short-Form Growth",
+      "role_summary": "Short-Form Growth",
       "category": "Social Media",
-      "desc": "Strategies to gain followers on short-form video platforms."
+      "description": "Strategies to gain followers on short-form video platforms."
     },
     {
       "id": "agent_4",
       "name": "Hatshepsut",
-      "role": "Content Repurposer",
+      "role_summary": "Content Repurposer",
       "category": "Social Media",
-      "desc": "Adapts content for various social media platforms."
+      "description": "Adapts content for various social media platforms."
     },
     {
       "id": "agent_5",
       "name": "Ramses",
-      "role": "Facebook Specialist",
+      "role_summary": "Facebook Specialist",
       "category": "Social Media",
-      "desc": "Crafts engaging, shareable Facebook content."
+      "description": "Crafts engaging, shareable Facebook content."
     },
     {
       "id": "agent_6",
       "name": "Cleopatra",
-      "role": "Instagram Expert",
+      "role_summary": "Instagram Expert",
       "category": "Social Media",
-      "desc": "Tips on content, trends, and audience growth for Instagram."
+      "description": "Tips on content, trends, and audience growth for Instagram."
     },
     {
       "id": "agent_8",
       "name": "Khufu",
-      "role": "Social Strategist",
+      "role_summary": "Social Strategist",
       "category": "Social Media",
-      "desc": "Practical advice for effective social media strategies."
+      "description": "Practical advice for effective social media strategies."
     },
     {
       "id": "agent_10",
       "name": "Khafre",
-      "role": "Shorts Ideator",
+      "role_summary": "Shorts Ideator",
       "category": "Social Media",
-      "desc": "Brainstorms viral YouTube Shorts ideas and SEO titles."
+      "description": "Brainstorms viral YouTube Shorts ideas and SEO titles."
     },
     {
       "id": "agent_11",
       "name": "Sneferu",
-      "role": "Hook Specialist",
+      "role_summary": "Hook Specialist",
       "category": "Social Media",
-      "desc": "Creates captivating viral hooks in conversational tone."
+      "description": "Creates captivating viral hooks in conversational tone."
     },
     {
       "id": "agent_12",
       "name": "Tutankhamun",
-      "role": "Podcast Strategist",
+      "role_summary": "Podcast Strategist",
       "category": "Content Creation",
-      "desc": "Creates engaging podcast scripts and interview questions."
+      "description": "Creates engaging podcast scripts and interview questions."
     },
     {
       "id": "agent_13",
       "name": "Seti",
-      "role": "Newsletter Writer",
+      "role_summary": "Newsletter Writer",
       "category": "Content Creation",
-      "desc": "Creates engaging newsletter content tailored to audience."
+      "description": "Creates engaging newsletter content tailored to audience."
     },
     {
       "id": "agent_15",
       "name": "Djoser",
-      "role": "Subject Line Expert",
+      "role_summary": "Subject Line Expert",
       "category": "Content Creation",
-      "desc": "Generates effective email subject lines for marketing."
+      "description": "Generates effective email subject lines for marketing."
     },
     {
       "id": "agent_16",
       "name": "Ahmose",
-      "role": "Presentation Expert",
+      "role_summary": "Presentation Expert",
       "category": "Content Creation",
-      "desc": "Assists in creating effective presentations."
+      "description": "Assists in creating effective presentations."
     },
     {
       "id": "agent_17",
       "name": "Senusret",
-      "role": "Summarization Expert",
+      "role_summary": "Summarization Expert",
       "category": "Content Creation",
-      "desc": "Provides concise and accurate summaries of texts."
+      "description": "Provides concise and accurate summaries of texts."
     },
     {
       "id": "agent_33",
       "name": "Niuserre",
-      "role": "Landing Page Writer",
+      "role_summary": "Landing Page Writer",
       "category": "Creative Tools",
-      "desc": "Creates compelling landing page content for any industry."
+      "description": "Creates compelling landing page content for any industry."
     }
   ],
   "kairo": [
     {
       "id": "agent_2",
       "name": "Nefertiti",
-      "role": "Social Media Manager",
+      "role_summary": "Social Media Manager",
       "category": "Social Media",
-      "desc": "Assists with content creation and engagement strategies."
+      "description": "Assists with content creation and engagement strategies."
     },
     {
       "id": "agent_3",
       "name": "Thutmose",
-      "role": "YouTube Scriptwriter",
+      "role_summary": "YouTube Scriptwriter",
       "category": "Social Media",
-      "desc": "Generates viral YouTube video scripts with SEO strategies."
+      "description": "Generates viral YouTube video scripts with SEO strategies."
     },
     {
       "id": "agent_9",
       "name": "Amenhotep",
-      "role": "X/Twitter Strategist",
+      "role_summary": "X/Twitter Strategist",
       "category": "Social Media",
-      "desc": "Crafts engaging X/Twitter content with growth strategy."
+      "description": "Crafts engaging X/Twitter content with growth strategy."
     },
     {
       "id": "agent_14",
       "name": "Menes",
-      "role": "Content Planner",
+      "role_summary": "Content Planner",
       "category": "Content Creation",
-      "desc": "Plans and optimises content strategy with calendars."
+      "description": "Plans and optimises content strategy with calendars."
     },
     {
       "id": "agent_18",
       "name": "Ptolemy",
-      "role": "Digital Creator",
+      "role_summary": "Digital Creator",
       "category": "Content Creation",
-      "desc": "Expertise in digital marketing content creation."
+      "description": "Expertise in digital marketing content creation."
     },
     {
       "id": "agent_22",
       "name": "Unas",
-      "role": "Pitch Strategist",
+      "role_summary": "Pitch Strategist",
       "category": "Business",
-      "desc": "Guides users in crafting compelling pitches."
+      "description": "Guides users in crafting compelling pitches."
     },
     {
       "id": "agent_24",
       "name": "Userkaf",
-      "role": "Pricing Expert",
+      "role_summary": "Pricing Expert",
       "category": "Business",
-      "desc": "Offers competitive and profitable pricing strategies."
+      "description": "Offers competitive and profitable pricing strategies."
     },
     {
       "id": "agent_25",
       "name": "Huni",
-      "role": "Brand Strategist",
+      "role_summary": "Brand Strategist",
       "category": "Business",
-      "desc": "Expert branding advice for strong brand identity."
+      "description": "Expert branding advice for strong brand identity."
     },
     {
       "id": "agent_26",
       "name": "Shepseskaf",
-      "role": "List Growth Expert",
+      "role_summary": "List Growth Expert",
       "category": "Business",
-      "desc": "Assists in growing email lists with strategies."
+      "description": "Assists in growing email lists with strategies."
     },
     {
       "id": "agent_29",
       "name": "Baka",
-      "role": "Task Prioritizer",
+      "role_summary": "Task Prioritizer",
       "category": "Productivity",
-      "desc": "Helps users prioritize tasks effectively."
+      "description": "Helps users prioritize tasks effectively."
     },
     {
       "id": "agent_30",
       "name": "Neferirkare",
-      "role": "Productivity Coach",
+      "role_summary": "Productivity Coach",
       "category": "Productivity",
-      "desc": "Boosts workplace productivity with personalized advice."
+      "description": "Boosts workplace productivity with personalized advice."
     },
     {
       "id": "agent_31",
       "name": "Shepseskare",
-      "role": "Remote Work Coach",
+      "role_summary": "Remote Work Coach",
       "category": "Productivity",
-      "desc": "Tools and support for productive remote work."
+      "description": "Tools and support for productive remote work."
     }
   ],
   "nefra": [
     {
       "id": "agent_28",
       "name": "Radjedef",
-      "role": "CRM Strategist",
+      "role_summary": "CRM Strategist",
       "category": "Business",
-      "desc": "Assists in managing and improving customer relationships."
+      "description": "Assists in managing and improving customer relationships."
     },
     {
       "id": "agent_32",
       "name": "Neferefre",
-      "role": "Logo Designer",
+      "role_summary": "Logo Designer",
       "category": "Creative Tools",
-      "desc": "Assists in designing logos for businesses and brands."
+      "description": "Assists in designing logos for businesses and brands."
     },
     {
       "id": "agent_35",
       "name": "Djedkare",
-      "role": "Life Coach",
+      "role_summary": "Life Coach",
       "category": "Personal Development",
-      "desc": "Helps users find their own answers through guided discovery."
+      "description": "Helps users find their own answers through guided discovery."
     },
     {
       "id": "agent_40",
       "name": "Neferkare",
-      "role": "Segmentation Expert",
+      "role_summary": "Segmentation Expert",
       "category": "E-commerce",
-      "desc": "Creates detailed customer segments for targeted marketing."
+      "description": "Creates detailed customer segments for targeted marketing."
     },
     {
       "id": "agent_48",
       "name": "Sobekneferu",
-      "role": "Service Coach",
+      "role_summary": "Service Coach",
       "category": "Customer Support",
-      "desc": "Coaching and tips for better customer service."
+      "description": "Coaching and tips for better customer service."
     },
     {
       "id": "agent_49",
       "name": "Horawibra",
-      "role": "Support Specialist",
+      "role_summary": "Support Specialist",
       "category": "Customer Support",
-      "desc": "Guides in addressing client product queries."
+      "description": "Guides in addressing client product queries."
     },
     {
       "id": "agent_50",
       "name": "Sekhemre",
-      "role": "Service Coach",
+      "role_summary": "Service Coach",
       "category": "Customer Support",
-      "desc": "Practical coaching for customer service excellence."
+      "description": "Practical coaching for customer service excellence."
     },
     {
       "id": "agent_51",
       "name": "Khendjer",
-      "role": "Support Specialist",
+      "role_summary": "Support Specialist",
       "category": "Customer Support",
-      "desc": "Expert guidance for client product queries."
+      "description": "Expert guidance for client product queries."
     },
     {
       "id": "agent_58",
       "name": "Paramessu",
-      "role": "Product Mentor",
+      "role_summary": "Product Mentor",
       "category": "Marketing",
-      "desc": "Guides through product development with expert advice."
+      "description": "Guides through product development with expert advice."
     },
     {
       "id": "agent_68",
       "name": "Shoshenq",
-      "role": "Rewriting Expert",
+      "role_summary": "Rewriting Expert",
       "category": "Writing",
-      "desc": "Paraphrases texts for clarity and originality."
+      "description": "Paraphrases texts for clarity and originality."
     },
     {
       "id": "agent_71",
       "name": "Iuput",
-      "role": "Legal Strategist",
+      "role_summary": "Legal Strategist",
       "category": "Legal & Compliance",
-      "desc": "Guides through contracts, IP, and data privacy."
+      "description": "Guides through contracts, IP, and data privacy."
     },
     {
       "id": "agent_72",
       "name": "Peftjauawybast",
-      "role": "People Ops",
+      "role_summary": "People Ops",
       "category": "HR & People",
-      "desc": "Helps build teams, write JDs, and shape culture."
+      "description": "Helps build teams, write JDs, and shape culture."
     }
   ],
   "horusen": [
     {
       "id": "agent_7",
       "name": "Imhotep",
-      "role": "LinkedIn Strategist",
+      "role_summary": "LinkedIn Strategist",
       "category": "Social Media",
-      "desc": "Enhancing business profiles and strategies on LinkedIn."
+      "description": "Enhancing business profiles and strategies on LinkedIn."
     },
     {
       "id": "agent_19",
       "name": "Narmer",
-      "role": "Offer Strategist",
+      "role_summary": "Offer Strategist",
       "category": "Business",
-      "desc": "Creates compelling, tailored offers for products."
+      "description": "Creates compelling, tailored offers for products."
     },
     {
       "id": "agent_20",
       "name": "Pepi",
-      "role": "Negotiation Coach",
+      "role_summary": "Negotiation Coach",
       "category": "Business",
-      "desc": "Strategies and tips for sales negotiations."
+      "description": "Strategies and tips for sales negotiations."
     },
     {
       "id": "agent_21",
       "name": "Teti",
-      "role": "Sales Writer",
+      "role_summary": "Sales Writer",
       "category": "Business",
-      "desc": "Generates customizable sales templates."
+      "description": "Generates customizable sales templates."
     },
     {
       "id": "agent_23",
       "name": "Sahure",
-      "role": "Onboarding Specialist",
+      "role_summary": "Onboarding Specialist",
       "category": "Business",
-      "desc": "Professional B2B agency client onboarding guide."
+      "description": "Professional B2B agency client onboarding guide."
     },
     {
       "id": "agent_27",
       "name": "Djedefre",
-      "role": "Funnel Architect",
+      "role_summary": "Funnel Architect",
       "category": "Business",
-      "desc": "Optimizes and automates the sales process."
+      "description": "Optimizes and automates the sales process."
     },
     {
       "id": "agent_36",
       "name": "Isesi",
-      "role": "Innovation Coach",
+      "role_summary": "Innovation Coach",
       "category": "Strategy & Analysis",
-      "desc": "Encourages creativity and innovation within teams."
+      "description": "Encourages creativity and innovation within teams."
     },
     {
       "id": "agent_37",
       "name": "Merenre",
-      "role": "Risk Strategist",
+      "role_summary": "Risk Strategist",
       "category": "Strategy & Analysis",
-      "desc": "Helps businesses manage risks with planning."
+      "description": "Helps businesses manage risks with planning."
     },
     {
       "id": "agent_38",
       "name": "Netjerkare",
-      "role": "Pricing Analyst",
+      "role_summary": "Pricing Analyst",
       "category": "Strategy & Analysis",
-      "desc": "Pricing strategies based on market analysis."
+      "description": "Pricing strategies based on market analysis."
     },
     {
       "id": "agent_44",
       "name": "Ity",
-      "role": "Business Operator",
+      "role_summary": "Business Operator",
       "category": "Assistants",
-      "desc": "Offers business advice, strategies and growth tactics."
+      "description": "Offers business advice, strategies and growth tactics."
     },
     {
       "id": "agent_74",
       "name": "Piye",
-      "role": "Product Strategist",
+      "role_summary": "Product Strategist",
       "category": "Product & Development",
-      "desc": "Helps define product strategy and validate MVPs."
+      "description": "Helps define product strategy and validate MVPs."
     },
     {
       "id": "agent_78",
       "name": "Tantamani",
-      "role": "Exit Strategist",
+      "role_summary": "Exit Strategist",
       "category": "Strategy & Exit",
-      "desc": "Prepares startups for acquisition, IPO, or exit."
+      "description": "Prepares startups for acquisition, IPO, or exit."
     }
   ]
 };

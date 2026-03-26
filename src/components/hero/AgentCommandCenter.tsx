@@ -101,14 +101,14 @@ export default function AgentCommandCenter({ slug }: Props) {
                         {agent.name}
                       </span>
                       <span className="text-[9px] font-[Orbitron] uppercase tracking-wider mt-1 opacity-80" style={{ color: 'var(--hero-accent)' }}>
-                        {agent.role.substring(0, 30)}{agent.role.length > 30 ? '...' : ''}
+                        {agent.role_summary.substring(0, 30)}{agent.role_summary.length > 30 ? '...' : ''}
                       </span>
                     </div>
                   </div>
                 </div>
 
                 <p className="text-[13px] font-['Exo_2'] leading-relaxed flex-grow opacity-80" style={{ color: 'var(--hero-text-dim)' }}>
-                  {agent.desc?.substring(0, 80)}...
+                  {agent.description?.substring(0, 80)}...
                 </p>
 
                 <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/5">
@@ -188,7 +188,7 @@ function AgentDetailOverlay({
             </div>
             <div>
               <h3 className="text-3xl font-[Rajdhani] font-bold uppercase leading-none" style={{ color: 'var(--hero-primary)' }}>{agent.name}</h3>
-              <p className="text-sm font-[Orbitron] mt-2 uppercase tracking-widest" style={{ color: 'var(--hero-accent)' }}>{agent.role}</p>
+              <p className="text-sm font-[Orbitron] mt-2 uppercase tracking-widest" style={{ color: 'var(--hero-accent)' }}>{agent.role_summary}</p>
             </div>
           </div>
 
@@ -199,7 +199,7 @@ function AgentDetailOverlay({
           <div className="space-y-4">
             <h4 className="text-[10px] font-[Orbitron] tracking-[4px] uppercase" style={{ color: 'var(--hero-primary)' }}>DIRECTIVE</h4>
             <p className="text-[14px] font-['Exo_2'] leading-relaxed" style={{ color: 'var(--hero-text-dim)' }}>
-              {agent.desc}
+              {agent.description}
             </p>
           </div>
 

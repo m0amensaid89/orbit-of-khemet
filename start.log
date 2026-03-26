@@ -1,10 +1,10 @@
 
 > temp-app@0.1.0 start
-> next start -p 3005
+> next start
 
    ▲ Next.js 15.5.14
-   - Local:        http://localhost:3005
-   - Network:      http://192.168.0.2:3005
+   - Local:        http://localhost:3008
+   - Network:      http://192.168.0.2:3008
 
  ✓ Starting...
- ✓ Ready in 866ms
+ ✓ Ready in 948ms

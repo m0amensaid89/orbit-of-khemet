@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
         const bioExcerpt = meta.bio.split('. ').slice(0, 2).join('. ') + '.';
 
         const agentList = agents
-          .map(a => `- ${a.name} (${a.category}): ${a.role}`)
+          .map(a => `- ${a.name} (${a.category}): ${a.role_summary}`)
           .join('\n');
 
         systemPrompt += `\n\n--- CURRENT ORBIT: ${meta.name} — ${meta.class_title} ---
