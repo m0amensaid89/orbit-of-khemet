@@ -732,7 +732,7 @@ function renderHero(heroId) {
   currentFilter = 'ALL';
   const meta = HERO_META[heroId];
   const agents = AGENTS[heroId.toUpperCase()];
-  
+
   document.body.setAttribute('data-hero', heroId);
   document.querySelectorAll('.h-btn').forEach(b => b.classList.toggle('active', b.dataset.target === heroId));
 
@@ -750,7 +750,7 @@ function renderHero(heroId) {
   const catCounts = {};
   agents.forEach(a => { catCounts[a.category] = (catCounts[a.category]||0)+1; });
   filterBar.innerHTML = `<button class="filter-btn active" data-cat="ALL">All<span class="count">${agents.length}</span></button>` +
-    Object.entries(catCounts).map(([cat,count]) => 
+    Object.entries(catCounts).map(([cat,count]) =>
       `<button class="filter-btn" data-cat="${cat}">${cat}<span class="count">${count}</span></button>`
     ).join('');
   filterBar.querySelectorAll('.filter-btn').forEach(btn => {
@@ -803,7 +803,7 @@ function renderHero(heroId) {
 function renderAgentGrid() {
   const agents = AGENTS[currentHero.toUpperCase()];
   const filtered = currentFilter === 'ALL' ? agents : agents.filter(a => a.category === currentFilter);
-  
+
   document.getElementById('agentGrid').innerHTML = filtered.map(a => `
     <div class="agent-card" data-id="${a.id}">
       <div class="agent-card-top">

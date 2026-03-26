@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Send } from "lucide-react";
 import Image from "next/image";
-import { agentsData } from "@/lib/agents";
+import { heroAgents } from "@/lib/agents";
 
 export default function ChatPage() {
   const searchParams = useSearchParams();
@@ -75,7 +75,7 @@ export default function ChatPage() {
   // Determine the display title and description
   let displayTitle = "MASTER ORBIT";
   let displayDescription = "Commanding the full council of 85 specialized AI agents.";
-  if (!isMaster && heroName in agentsData) {
+  if (!isMaster && heroName.toLowerCase() in heroAgents) {
     displayTitle = `${heroName} ORBIT`;
     displayDescription = `Leading the specialized agents assigned to the ${heroName} group.`;
   }

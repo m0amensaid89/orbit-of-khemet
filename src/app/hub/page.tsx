@@ -2,14 +2,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
+import HeroImage from "@/components/hero/HeroImage";
+
 const heroes = [
-  { id: 1, name: "NEXAR", role: "The frontline smasher of weak prompts", description: "Destroys weak inputs and demands high-leverage context.", image: "https://picsum.photos/id/1015/600/800" },
-  { id: 2, name: "HORUSEN", role: "The visionary strategist", description: "Oversees the grand board, plotting multi-step empire growth.", image: "https://picsum.photos/id/1016/600/800" },
-  { id: 3, name: "KAIRO", role: "The data & systems architect", description: "Structures chaos into scalable, unbreakable database schemas.", image: "https://picsum.photos/id/1018/600/800" },
-  { id: 4, name: "LYRA", role: "The creative storyteller & content master", description: "Weaves compelling narratives that captivate and convert audiences.", image: "https://picsum.photos/id/1019/600/800" },
-  { id: 5, name: "NEFRA", role: "The emotional intelligence & empathy agent", description: "Reads between the lines, ensuring tone aligns with intent.", image: "https://picsum.photos/id/1020/600/800" },
-  { id: 6, name: "RAMET", role: "The relentless executor & optimizer", description: "Turns ideas into precise, high-speed, flawless execution.", image: "https://picsum.photos/id/1021/600/800" },
-  { id: 7, name: "THOREN", role: "The guardian of ethics, security & long-term vision", description: "Protects the core, ensuring safe and sustainable operations.", image: "https://picsum.photos/id/1022/600/800" },
+  { id: 1, name: "NEXAR", slug: "nexar", role: "The frontline smasher of weak prompts", description: "Destroys weak inputs and demands high-leverage context.", image: "https://picsum.photos/id/1015/600/800" },
+  { id: 2, name: "HORUSEN", slug: "horusen", role: "The visionary strategist", description: "Oversees the grand board, plotting multi-step empire growth.", image: "https://picsum.photos/id/1016/600/800" },
+  { id: 3, name: "KAIRO", slug: "kairo", role: "The data & systems architect", description: "Structures chaos into scalable, unbreakable database schemas.", image: "https://picsum.photos/id/1018/600/800" },
+  { id: 4, name: "LYRA", slug: "lyra", role: "The creative storyteller & content master", description: "Weaves compelling narratives that captivate and convert audiences.", image: "https://picsum.photos/id/1019/600/800" },
+  { id: 5, name: "NEFRA", slug: "nefra", role: "The emotional intelligence & empathy agent", description: "Reads between the lines, ensuring tone aligns with intent.", image: "https://picsum.photos/id/1020/600/800" },
+  { id: 6, name: "RAMET", slug: "ramet", role: "The relentless executor & optimizer", description: "Turns ideas into precise, high-speed, flawless execution.", image: "https://picsum.photos/id/1021/600/800" },
+  { id: 7, name: "THOREN", slug: "thoren", role: "The guardian of ethics, security & long-term vision", description: "Protects the core, ensuring safe and sustainable operations.", image: "https://picsum.photos/id/1022/600/800" },
 ];
 
 export default function HubPage() {
@@ -64,18 +66,16 @@ export default function HubPage() {
           {heroes.map((hero) => (
             <Link
               key={hero.id}
-              href={`/chat?hero=${hero.name}`}
+              href={`/heroes/${hero.slug}`}
               className="group relative rounded-xl overflow-hidden border border-border bg-card hover:border-primary/80 transition-all duration-500 hover:shadow-[0_0_25px_rgba(212,175,119,0.2)] aspect-[3/4] flex flex-col cursor-pointer block"
             >
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent z-10" />
 
               <div className="relative flex-1 w-full bg-muted/30 flex items-center justify-center">
-                <Image
-                  src={hero.image}
-                  alt={hero.name}
-                  fill
-                  className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
-                  unoptimized
+                <HeroImage
+                  slug={hero.slug}
+                  type="splash"
+                  className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
                 />
               </div>
 
