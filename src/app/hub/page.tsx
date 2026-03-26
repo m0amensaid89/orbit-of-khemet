@@ -1,8 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-
-import HeroImage from "@/components/hero/HeroImage";
 
 const heroes = [
   { id: 1, name: "NEXAR", slug: "nexar", role: "The frontline smasher of weak prompts", description: "Destroys weak inputs and demands high-leverage context.", image: "https://picsum.photos/id/1015/600/800" },
@@ -72,10 +72,13 @@ export default function HubPage() {
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent z-10" />
 
               <div className="relative flex-1 w-full bg-muted/30 flex items-center justify-center">
-                <HeroImage
-                  slug={hero.slug}
-                  type="splash"
-                  className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
+                <Image
+                  src={`/${hero.slug}.png`}
+                  alt={hero.name}
+                  fill
+                  className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
+                  unoptimized
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                 />
               </div>
 

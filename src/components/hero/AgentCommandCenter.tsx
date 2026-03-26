@@ -7,6 +7,39 @@ import { ArrowRight, X } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
+function getCategoryIcon(category: string): string {
+  const icons: Record<string, string> = {
+    "Marketing": "📣",
+    "Writing": "✍️",
+    "Finance & Operations": "📊",
+    "Finance & Capital": "💰",
+    "Legal & Compliance": "⚖️",
+    "Product & Engineering": "⚙️",
+    "Jobseekers": "🎯",
+    "Social Media": "📱",
+    "Content Creation": "🎨",
+    "Business": "💼",
+    "Strategy & Analysis": "🔍",
+    "Sales and Communication": "🤝",
+    "E-commerce": "🛒",
+    "Community": "👥",
+    "Leadership": "🏆",
+    "Assistants": "🤖",
+    "Customer Support": "💬",
+    "Personal Development": "🌱",
+    "Creative Tools": "🎭",
+    "Data & Analytics": "📈",
+    "HR & People": "👤",
+    "Productivity & Management": "⏱️",
+    "Strategy & Growth": "🚀",
+    "Strategy & Exit": "🏁",
+    "Operations": "🔧",
+    "Product & Development": "🛠️",
+    "Marketing & Personal Brand": "⭐",
+  };
+  return icons[category] || "✦";
+}
+
 interface Props {
   slug: string;
 }
@@ -90,29 +123,34 @@ export default function AgentCommandCenter({ slug }: Props) {
               <div className="relative z-10 flex flex-col h-full gap-4">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
-                    <div
-                      className="w-10 h-10 rounded-full flex items-center justify-center font-[Orbitron] font-bold text-sm bg-white/5 border"
-                      style={{ color: 'var(--hero-primary)', borderColor: 'var(--hero-card-border)' }}
-                    >
-                      {agent.name.substring(0, 2).toUpperCase()}
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 text-xl border"
+                      style={{ background: `rgba(var(--hero-accent-rgb), 0.08)`, borderColor: 'var(--hero-card-border)' }}>
+                      {getCategoryIcon(agent.category)}
                     </div>
-                    <div className="flex flex-col">
-                      <span className="text-[18px] font-[Rajdhani] font-bold uppercase tracking-wide leading-none" style={{ color: 'var(--hero-primary)' }}>
+                    <div className="flex flex-col min-w-0">
+                      <span className="font-[Rajdhani] text-[18px] font-bold leading-tight uppercase" style={{ color: 'var(--hero-primary)' }}>
                         {agent.name}
                       </span>
-                      <span className="text-[9px] font-[Orbitron] uppercase tracking-wider mt-1 opacity-80" style={{ color: 'var(--hero-accent)' }}>
-                        {agent.role_summary.substring(0, 30)}{agent.role_summary.length > 30 ? '...' : ''}
+                      <span className="font-[Orbitron] text-[9px] tracking-[2px] uppercase truncate w-full mt-1 opacity-80 block" style={{ color: 'var(--hero-accent)' }}>
+                        {agent.role_summary}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                <p className="text-[13px] font-['Exo_2'] leading-relaxed flex-grow opacity-80" style={{ color: 'var(--hero-text-dim)' }}>
-                  {agent.description?.substring(0, 80)}...
+                <p className="font-['Exo_2'] text-[13px] leading-[1.6] flex-grow opacity-80"
+                   style={{
+                     color: 'var(--hero-text-dim)',
+                     display: '-webkit-box',
+                     WebkitLineClamp: 3,
+                     WebkitBoxOrient: 'vertical',
+                     overflow: 'hidden'
+                   }}>
+                  {agent.description}
                 </p>
 
                 <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/5">
-                  <span className="text-[9px] font-[Orbitron] uppercase tracking-widest px-2 py-1 rounded bg-white/5 text-white/50">
+                  <span className="font-[Orbitron] text-[9px] tracking-widest uppercase px-2 py-1 rounded bg-white/5 text-white/50">
                     {agent.category}
                   </span>
 

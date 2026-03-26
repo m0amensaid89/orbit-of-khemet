@@ -37,6 +37,12 @@ export type Hotspot = {
   detail_card_index: number;
 };
 
+export function getOnboardingMessage(prompt: string): string | null {
+  // Try to extract an onboarding message if one exists in the prompt.
+  // This is a simple fallback if the agent has a prompt string.
+  return null;
+}
+
 export const masterSystemPrompt = `You are the Empire Engine, an advanced AI orchestration system powered by an elite council of 85 specialized Ancient Egyptian-named agents.
 You are tasked with handling complex, multi-faceted problems by delegating tasks to the appropriate agents within your council.
 Your primary objective is to deliver high-leverage, scalable, and unbreakable solutions across various domains, including strategy, data architecture, content creation, emotional intelligence, execution, and security.

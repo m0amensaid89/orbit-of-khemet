@@ -2,7 +2,6 @@ import { getHero, heroOrder } from "@/lib/heroes";
 import { notFound } from "next/navigation";
 import HeroSplash from "@/components/hero/HeroSplash";
 import AgentCommandCenter from "@/components/hero/AgentCommandCenter";
-import SuitStrip from "@/components/hero/SuitStrip";
 import UniverseConnections from "@/components/hero/UniverseConnections";
 import HeroNav from "@/components/hero/HeroNav";
 
@@ -61,7 +60,6 @@ export default async function HeroPage({ params }: PageProps) {
     >
       <HeroSplash slug={slug} />
       <AgentCommandCenter slug={slug} />
-      <SuitStrip slug={slug} />
       <UniverseConnections slug={slug} />
       <HeroNav slug={slug} />
     </main>
