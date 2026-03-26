@@ -10,13 +10,21 @@ const google = createGoogleGenerativeAI({
 });
 
 export async function POST(req: Request) {
-  const { messages, hero } = await req.json();
+  try {
+    console.log("🔑 GEMINI_API_KEY exists:", !!process.env.GEMINI_API_KEY);
+    console.log("🔑 GEMINI_API_KEY length:", process.env.GEMINI_API_KEY?.length || 0);
 
-  let systemPrompt = masterSystemPrompt;
+    if (!process.env.GEMINI_API_KEY) {
+      throw new Error("GEMINI_API_KEY is missing in environment variables");
+    }
 
-  type Agent = { name: string; role: string; description: string };
+    const { messages, hero } = await req.json();
 
-  if (hero !== 'MASTER' && hero in agentsData) {
+    let systemPrompt = masterSystemPrompt;
+
+    type Agent = { name: string; role: string; description: string };
+
+    if (hero !== 'MASTER' && hero in agentsData) {
     const heroAgents = agentsData[hero as keyof typeof agentsData];
     const agentsListText = heroAgents.map((a: Agent) => `- **${a.name}** (${a.role}): ${a.description}`).join('\n');
 
@@ -39,7 +47,6 @@ Here is the full roster of your council:
 Use the full breadth of this council to orchestrate comprehensive, multi-disciplinary solutions.`;
   }
 
-  try {
     const result = streamText({
       model: google('gemini-2.5-pro'),
       system: systemPrompt,
@@ -47,11 +54,10 @@ Use the full breadth of this council to orchestrate comprehensive, multi-discipl
     });
 
     return result.toTextStreamResponse();
-  } catch (error) {
-    console.error("AI SDK Error:", error);
-    return new Response(JSON.stringify({ error: "Failed to generate response." }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+    console.error("🚨 CHAT API ERROR:", errorMessage);
+    console.error("Full error:", error);
+    return Response.json({ error: errorMessage }, { status: 500 });
   }
 }
