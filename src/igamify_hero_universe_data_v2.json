@@ -1,0 +1,550 @@
+{
+  "universe": {
+    "name": "The I-Gamify Grid",
+    "tagline": "Where ancient code meets modern disruption.",
+    "narrative_premise": "Before systems could be built, rules had to be written. Before rules could be challenged, someone had to hold them. The Grid is the invisible architecture beneath every gamified experience, every AI workflow, every transformation I-Gamify delivers. These seven are the Grid's embodiment — each one a force that keeps the system alive, evolving, and unbreakable. Each hero commands a squad of specialized agents — Egyptian-named operatives who carry out the hero's mandate across every domain of business transformation.",
+    "brand_connection": "Each hero represents a dimension of I-Gamify's approach to transformation: law and governance, stability, creative disruption, visionary architecture, precision execution, focused intelligence, and ancient knowledge protection. Together, the 7 heroes command 86 specialized AI agents — the full operational force of the I-Gamify Grid.",
+    "agent_universe_premise": "Every agent in the Grid carries an Egyptian pharaonic name — a deliberate choice. These are not random assistants. They are named inheritors of ancient authority, each one deployed under the hero whose philosophy shapes how they serve. When you engage an agent, you engage the hero's doctrine."
+  },
+
+  "heroes": [
+    {
+      "id": "thoren",
+      "name": "THOREN",
+      "class_title": "The Law",
+      "origin_line": "Before Ramet learned to stabilize and before Nexar learned to disrupt, Thoren wrote the rules they both think they understand.",
+      "bio": "Thoren is the reference state — the original measurement against which every force, every field, and every protocol in the Grid is calibrated. He does not channel energy because he IS energy's benchmark. His silver coat is not a costume; it is a living document, woven from light-holding nano-weave fabric that absorbs photons and releases them slowly, turning law into luminance. The diamond patterns embossed across his chest are compressed legal architecture — the original Grid protocols written into fabric by the founders of the system. When fully invoked, those patterns become readable text: ancient Khemet script translated to code. The coat has been worn by exactly one person. It chose him.",
+      "abilities": [
+        {
+          "name": "Grid Protocol Encoding",
+          "description": "Thoren can inscribe, amend, or seal any rule within the Grid's operating framework. His diamond-encoded chest patterns activate to project the original legal architecture as holographic law — visible, immutable, enforceable. His agents encode these protocols into financial models, brand protection systems, marketing law, and copywriting standards that become the operating rules of any business.",
+          "ui_label": "ENCODE",
+          "agent_domains": ["Finance & Operations", "Finance & Capital", "Legal & Compliance", "Marketing Strategy"]
+        },
+        {
+          "name": "Immutable State",
+          "description": "Thoren's back panel dissipation field absorbs incoming disruptions and nullifies them completely. There is no diagonal spine fracture because his state cannot be broken — he is the constant others orbit around. His agents maintain this immutability through ad copy standards, brand positioning rules, and financial governance that cannot be casually overwritten.",
+          "ui_label": "ANCHOR",
+          "agent_domains": ["Marketing Copy", "Brand Standards", "Product Architecture"]
+        },
+        {
+          "name": "Khemet Invocation",
+          "description": "When Thoren channels the ancient legal code through his palms, the diamond patterns across his suit become readable text — compressed jurisprudence from the Grid's founding era, capable of overwriting any active protocol. His agents invoke this power when crafting character creation frameworks, sales storytelling structures, and the narrative architectures that define how brands communicate.",
+          "ui_label": "INVOKE",
+          "agent_domains": ["Writing", "Storytelling", "Character Creation"]
+        }
+      ],
+      "design_philosophy_note": "The coat is not a costume — it is a document. It contains encoded law. Diamond patterns are not decorative — they are compressed legal architecture, the original Grid protocols written into fabric by the founders. The fabric is light-holding nano-weave that absorbs photons and releases them slowly, creating the glow. He doesn't channel energy because he IS the reference state everything else is measured against.",
+      "quote": "I don't enforce the rules. I am the reason rules exist.",
+      "universe_role": "Thoren is the Grid's constitutional anchor and commands 13 agents who encode the foundational rules of business: financial models, capital strategy, legal compliance, brand protection, marketing copy standards, ad frameworks, affiliate systems, character creation protocols, and sales storytelling structures. Every protocol, every boundary, every governance structure traces back to his original codex. Without Thoren's squad, there are no standards — only noise pretending to be strategy.",
+      "color_signature": "#C0C0C0",
+      "color_name": "Silver / Light-Holding White",
+      "suit_material": "Light-Holding Nano-Weave",
+      "key_visual_elements": [
+        "Embossed diamond encoded patterns",
+        "Sacred geometry back panel lining",
+        "Throat emblem: diamond within circle, silver on charcoal",
+        "Circuit line sole edge with grounding conductors"
+      ],
+      "faction": "Founders",
+      "status": "Active — Immutable",
+      "squad": {
+        "agent_count": 13,
+        "squad_name": "The Codex Guard",
+        "domain_summary": "Financial governance, legal frameworks, brand protection, marketing copy standards, storytelling architecture, and technical systems design",
+        "categories": {
+          "Marketing": 5,
+          "Writing": 2,
+          "Finance & Capital": 2,
+          "Finance & Operations": 1,
+          "Jobseekers": 1,
+          "Product & Engineering": 1,
+          "Legal & Compliance": 1
+        },
+        "agents": [
+          {"name": "Neferkamin", "category": "Finance & Operations", "role_summary": "Invoice management and financial document standards"},
+          {"name": "Intef", "category": "Jobseekers", "role_summary": "Excel mastery and spreadsheet system design"},
+          {"name": "Sobekhotep", "category": "Marketing", "role_summary": "Advertising copy and ad framework creation"},
+          {"name": "Merneferre", "category": "Marketing", "role_summary": "Strategic copywriting and brand copy standards"},
+          {"name": "Paramessu", "category": "Marketing", "role_summary": "Marketing persona development and audience frameworks"},
+          {"name": "Merneptah", "category": "Marketing", "role_summary": "Conversion-focused marketing copy systems"},
+          {"name": "Tausret", "category": "Marketing", "role_summary": "Affiliate marketing program architecture"},
+          {"name": "Osorkon", "category": "Writing", "role_summary": "Character creation systems and creative frameworks"},
+          {"name": "Rudamun", "category": "Writing", "role_summary": "Sales storytelling and narrative architecture"},
+          {"name": "Nimlot", "category": "Finance & Capital", "role_summary": "Fundraising strategy and investor preparation"},
+          {"name": "Psamtik", "category": "Finance & Capital", "role_summary": "Financial modeling and cash-flow forecasting"},
+          {"name": "Neko", "category": "Product & Engineering", "role_summary": "Technical architecture and scalable systems design"},
+          {"name": "Apries", "category": "Legal & Compliance", "role_summary": "Brand protection, trademark strategy, and domain management"}
+        ]
+      }
+    },
+
+    {
+      "id": "ramet",
+      "name": "RAMET",
+      "class_title": "The Stabilizer",
+      "origin_line": "Nothing on his suit is symmetrical by accident — asymmetry IS the design principle for optimal field stabilization.",
+      "bio": "Ramet is the force that holds fractured systems together before anyone realizes they were breaking. His dark nano-composite suit is embedded with stabilization field generators that project multifaceted energy arrays — not symmetrical, never balanced, because true stability requires constant asymmetric correction. The red energy that bleeds along fracture lines in his armor is not a flow; it follows fracture physics, appearing only where destabilization has already begun, sealing it before damage propagates. In standby mode, his suit appears as slightly off-balance panels — subtly unsettling if you notice, invisible if you don't. The suit doesn't announce itself. It stabilizes before the destabilization event is apparent.",
+      "abilities": [
+        {
+          "name": "Asymmetric Field Lock",
+          "description": "Ramet deploys converging field emitters from his geometric stabilization core to lock fractured systems in place. His agents execute this through e-commerce optimization, sales funnel stabilization, and digital marketing strategies that hold revenue systems together under pressure.",
+          "ui_label": "LOCK",
+          "agent_domains": ["E-commerce", "Marketing", "Sales and Communication"]
+        },
+        {
+          "name": "Fracture Bleed Seal",
+          "description": "When energy destabilization occurs, red fracture lines appear along Ramet's reactive armor panels — not as damage, but as diagnostic channels. His agents seal real-world fractures: CVs that aren't converting, interviews that keep failing, communities that are losing engagement, leaders who are burning out.",
+          "ui_label": "SEAL",
+          "agent_domains": ["Jobseekers", "Community", "Leadership"]
+        },
+        {
+          "name": "Preemptive Stabilization",
+          "description": "Ramet's central axis stabilization spine detects micro-fractures before they become visible events. His agents intervene preemptively through market research that spots threats early, blog content that sustains organic visibility, and sales simulation that stress-tests pitches before they go live.",
+          "ui_label": "GROUND",
+          "agent_domains": ["Marketing Research", "Sales Simulation", "Personal Brand"]
+        }
+      ],
+      "design_philosophy_note": "Nothing on this suit is symmetrical by accident — asymmetry IS the design principle for optimal field stabilization. Red energy follows fracture physics — when destabilized, energy bleeds along fracture lines, not a flow. The suit doesn't announce itself. It stabilizes before the destabilization event is apparent.",
+      "quote": "You didn't feel the earthquake because I was already standing on the fault line.",
+      "universe_role": "Ramet is the Grid's emergency infrastructure and commands 12 agents who stabilize the operational layer of business: e-commerce performance, career readiness, sales communication pipelines, blog content engines, digital marketing execution, market research, community cohesion, thought leadership positioning, and founder-level leadership coaching. When Thoren's laws encounter real-world stress and systems begin to fragment under transformation pressure — Ramet's squad is the reason everything holds.",
+      "color_signature": "#1A3A3A",
+      "color_name": "Dark Teal / Nano-Composite Black",
+      "suit_material": "Dark Nano-Composite with Embedded Stabilization Field Generators",
+      "key_visual_elements": [
+        "Geometric stabilization core on chest",
+        "Asymmetrical energy channels with converging field emitters",
+        "Reactive armor panels with segmented dissipation plates",
+        "Central axis stabilization spine on back panel"
+      ],
+      "faction": "Grid Operatives",
+      "status": "Active — Monitoring",
+      "squad": {
+        "agent_count": 12,
+        "squad_name": "The Fault Line Brigade",
+        "domain_summary": "E-commerce optimization, career stabilization, sales communication, content marketing, market intelligence, community building, and leadership resilience",
+        "categories": {
+          "Marketing": 3,
+          "Sales and Communication": 3,
+          "Jobseekers": 2,
+          "E-commerce": 1,
+          "Community": 1,
+          "Marketing & Personal Brand": 1,
+          "Leadership": 1
+        },
+        "agents": [
+          {"name": "Menkare", "category": "E-commerce", "role_summary": "Online store optimization and conversion strategy"},
+          {"name": "Mentuhotep", "category": "Jobseekers", "role_summary": "CV enhancement and career document optimization"},
+          {"name": "Amenemhat", "category": "Jobseekers", "role_summary": "Interview coaching and mock simulation"},
+          {"name": "Neferhotep", "category": "Marketing", "role_summary": "SEO-optimized blog writing and content engines"},
+          {"name": "Horemheb", "category": "Marketing", "role_summary": "Digital marketing strategy and agency growth"},
+          {"name": "Siptah", "category": "Marketing", "role_summary": "Strategic market research and industry intelligence"},
+          {"name": "Setnakhte", "category": "Sales and Communication", "role_summary": "Client avatar simulation and sales training"},
+          {"name": "Smedes", "category": "Sales and Communication", "role_summary": "Client avatar simulation and roleplay practice"},
+          {"name": "Psusennes", "category": "Sales and Communication", "role_summary": "Sales funnel strategy and stage-by-stage optimization"},
+          {"name": "Taharqa", "category": "Community", "role_summary": "Community building and engagement architecture"},
+          {"name": "Inaros", "category": "Marketing & Personal Brand", "role_summary": "Thought leadership and founder personal brand strategy"},
+          {"name": "Nectanebo", "category": "Leadership", "role_summary": "Founder leadership coaching and CEO decision frameworks"}
+        ]
+      }
+    },
+
+    {
+      "id": "nexar",
+      "name": "NEXAR",
+      "class_title": "The Destabilizer",
+      "origin_line": "The suit doesn't announce itself — it reveals itself when it's too late.",
+      "bio": "Nexar is controlled chaos. He is the force that tears apart what no longer serves the Grid so that something better can be built. His dark nano-composite armor is embedded with disruption emitters that channel red energy not as circuits but as fracture lines — cracks in reality that bleed light from within. Nothing on his suit is symmetrical, because disruption doesn't follow predictable geometry. The aggressive angular pauldrons and asymmetric chest plates are designed to look almost normal in standby — just slightly wrong geometry, enough to make you uncomfortable if you stare too long. When fully activated, the red fractures spread beyond the suit panels and arc into the environment itself. Nexar doesn't destroy systems. He reveals what was already broken.",
+      "abilities": [
+        {
+          "name": "Fracture Cascade",
+          "description": "Nexar channels disruption energy through his forearm vein-circuit panels, releasing targeted fracture waves that follow existing stress lines. His agents execute this through cold email strategies that crack open closed doors, SEO disruption that exposes weak content, and innovation coaching that shatters conventional thinking.",
+          "ui_label": "FRACTURE",
+          "agent_domains": ["Marketing", "Creative Tools", "Strategy & Analysis"]
+        },
+        {
+          "name": "Environmental Bleed",
+          "description": "When fully activated, Nexar's fracture lines extend into the surrounding environment. His agents expose hidden weaknesses across the business landscape: data analytics that reveal what metrics are actually lying, risk management that maps invisible threats, and pricing strategy that exposes where money is being left on the table.",
+          "ui_label": "EXPOSE",
+          "agent_domains": ["Data & Analytics", "Strategy & Analysis", "Operations"]
+        },
+        {
+          "name": "Knuckle Emergence Strike",
+          "description": "Concentrated disruption energy at Nexar's knuckle emitters delivers precision destabilization to a single point. His agents deliver this through grammar correction that strips away unclear writing, course creation that dismantles outdated learning structures, and customer success strategies that break the churn cycle.",
+          "ui_label": "STRIKE",
+          "agent_domains": ["Writing", "Creative Tools", "Customer Success"]
+        }
+      ],
+      "design_philosophy_note": "Nothing on this suit is symmetrical by accident — asymmetry's principle. Red channels follow fracture physics — not circuit light, bleed, not flow. When fully activated, red fractures spread beyond into the environment. When standby, suit looks almost normal — just slightly wrong geometry. The suit doesn't announce itself. It reveals itself when it's too late.",
+      "quote": "I didn't break your system. I showed you where it was already cracking.",
+      "universe_role": "Nexar is the Grid's necessary destruction and commands 12 agents who challenge, disrupt, and expose what's broken: cold email strategies that pierce resistance, SEO warfare that displaces weak competitors, innovation frameworks that shatter old thinking, risk assessments that map hidden dangers, pricing strategies that expose unrealized revenue, operational automation that replaces manual chaos, and data analytics that reveal uncomfortable truths. Every legacy process that resists transformation — Nexar's squad finds the fracture line and makes it visible.",
+      "color_signature": "#8B0000",
+      "color_name": "Fracture Red / Dark Composite Gray",
+      "suit_material": "Dark Nano-Composite with Embedded Disruption Emitters",
+      "key_visual_elements": [
+        "Asymmetric chest armor plates with red fracture seams",
+        "Aggressive angular shoulder pauldrons",
+        "Semi-transparent forearm panels with vein-circuit fractures",
+        "Diagonal spine fracture channel on back panel"
+      ],
+      "faction": "Grid Operatives",
+      "status": "Active — Standby",
+      "squad": {
+        "agent_count": 12,
+        "squad_name": "The Fracture Corps",
+        "domain_summary": "Disruptive marketing, creative tool innovation, operational automation, data-driven challenge, strategic risk exposure, and customer success disruption",
+        "categories": {
+          "Marketing": 3,
+          "Assistants": 2,
+          "Writing": 2,
+          "Creative Tools": 1,
+          "Data & Analytics": 1,
+          "Customer Success": 1,
+          "Strategy & Growth": 1,
+          "Operations": 1
+        },
+        "agents": [
+          {"name": "Menkauhor", "category": "Creative Tools", "role_summary": "Course creation and instructional design disruption"},
+          {"name": "Ibi", "category": "Assistants", "role_summary": "Proactive virtual assistant and workflow disruption"},
+          {"name": "Qakare", "category": "Assistants", "role_summary": "Task execution and operational chaos reduction"},
+          {"name": "Sihathor", "category": "Marketing", "role_summary": "Cold email strategy that breaks through resistance"},
+          {"name": "Ay", "category": "Marketing", "role_summary": "Email marketing campaigns that disrupt inbox patterns"},
+          {"name": "Amenmesse", "category": "Marketing", "role_summary": "SEO disruption and competitive content displacement"},
+          {"name": "Amenemope", "category": "Writing", "role_summary": "Book writing coaching that breaks creative blocks"},
+          {"name": "Takelot", "category": "Writing", "role_summary": "Grammar correction that strips away unclear writing"},
+          {"name": "Shabaka", "category": "Data & Analytics", "role_summary": "KPI frameworks that expose what metrics are lying"},
+          {"name": "Shebitku", "category": "Customer Success", "role_summary": "Onboarding and churn disruption strategies"},
+          {"name": "Amasis", "category": "Strategy & Growth", "role_summary": "Partnership strategies that break growth ceilings"},
+          {"name": "Amyrtaeus", "category": "Operations", "role_summary": "Business systems automation that replaces manual chaos"}
+        ]
+      }
+    },
+
+    {
+      "id": "lyra",
+      "name": "LYRA",
+      "class_title": "Visionary Systems Architect",
+      "origin_line": "She doesn't see what exists — she sees what everything is becoming, and builds the bridge between the two.",
+      "bio": "Lyra is the Grid's forward sight. Where Thoren wrote the original laws and Ramet holds the present together, Lyra designs the future architecture that the Grid is evolving toward. Her deep forest green tactical suit carries gold orbit-line patterns across the back panel that form an architectural map — not decorative, but a living blueprint of systems she's designing in real time. The holographic interface trigger points at her wrists project system status indicators in orbital geometry, allowing her to monitor, model, and reshape entire infrastructures with gestural commands. Her chest panel displays a geometric orbital pattern — a navigation system that tracks every active project, every transformation in progress, every system under construction. Lyra doesn't fix things. She designs what replaces them.",
+      "abilities": [
+        {
+          "name": "Orbital Architecture",
+          "description": "Lyra's chest panel projects a real-time holographic model of any system she's designing. Her agents architect visibility systems across every platform — TikTok growth engines, Instagram strategies, Facebook community blueprints, YouTube content architectures, and viral hook frameworks that shape how audiences discover and engage with brands.",
+          "ui_label": "ARCHITECT",
+          "agent_domains": ["Social Media Growth", "Platform Strategy", "Content Architecture"]
+        },
+        {
+          "name": "Holographic Interface Command",
+          "description": "Through trigger points at her wrists, Lyra summons data-stream displays that show content systems in layered holographic panels. Her agents command these interfaces through podcast production systems, newsletter architectures, email subject line engineering, and presentation design frameworks.",
+          "ui_label": "COMMAND",
+          "agent_domains": ["Content Creation", "Podcast Strategy", "Newsletter Design", "Presentations"]
+        },
+        {
+          "name": "Blueprint Projection",
+          "description": "The gold orbit-line patterns across Lyra's back form an architectural map she can project outward. Her agents project these blueprints through content repurposing systems, summarization frameworks, and landing page architectures that make invisible strategy visible and executable.",
+          "ui_label": "PROJECT",
+          "agent_domains": ["Content Repurposing", "Summarization", "Landing Pages"]
+        }
+      ],
+      "design_philosophy_note": "The suit is a working interface, not armor. Gold circuit lines converging at the wrist are holographic interface trigger points. The back panel features gold orbit-line patterns forming an architectural map — a living blueprint. System status indicators use orbital geometry. Every detail serves function: the spine channel runs full height as a central data conduit, and system access ports along the tactical belt connect to external systems.",
+      "quote": "Stop defending what exists. Let me show you what it's supposed to become.",
+      "universe_role": "Lyra is the Grid's architect of transformation and commands 13 agents who design the future-facing visibility and content systems: social media growth engines across TikTok, Instagram, Facebook, YouTube, and X, viral hook engineering, podcast production frameworks, newsletter architectures, email subject line science, presentation design systems, content summarization, and landing page conversion blueprints. She represents I-Gamify's strategic design capability — the ability to see an organization's future content state and engineer the path from here to there.",
+      "color_signature": "#1B4332",
+      "color_name": "Deep Forest Green / Gold",
+      "suit_material": "Layered Tact-Armor with Gold Circuit Integration",
+      "key_visual_elements": [
+        "Chest orbital panel array with geometric pattern",
+        "Angular architectural plates with gold trim on shoulders",
+        "Forearm holographic interface with text-data string display",
+        "Back panel gold orbit-line patterns forming architectural map"
+      ],
+      "faction": "Grid Architects",
+      "status": "Active — Designing",
+      "squad": {
+        "agent_count": 13,
+        "squad_name": "The Orbital Design Corps",
+        "domain_summary": "Social media growth architecture, content creation systems, platform-native strategy, viral engineering, podcast and newsletter design, and landing page conversion blueprints",
+        "categories": {
+          "Social Media": 7,
+          "Content Creation": 5,
+          "Creative Tools": 1
+        },
+        "agents": [
+          {"name": "Akhenaten", "category": "Social Media", "role_summary": "Short-form video growth strategy across TikTok, Reels, and Shorts"},
+          {"name": "Hatshepsut", "category": "Social Media", "role_summary": "Content repurposing and cross-platform adaptation"},
+          {"name": "Ramses", "category": "Social Media", "role_summary": "Facebook organic growth and community engagement"},
+          {"name": "Cleopatra", "category": "Social Media", "role_summary": "Instagram growth strategy and visual content architecture"},
+          {"name": "Khufu", "category": "Social Media", "role_summary": "Cross-platform social media strategy and viral engineering"},
+          {"name": "Khafre", "category": "Social Media", "role_summary": "YouTube Shorts ideation and SEO-driven video concepts"},
+          {"name": "Sneferu", "category": "Social Media", "role_summary": "Viral hook writing and scroll-stopping copy engineering"},
+          {"name": "Tutankhamun", "category": "Content Creation", "role_summary": "Podcast content strategy and episode scriptwriting"},
+          {"name": "Seti", "category": "Content Creation", "role_summary": "Newsletter strategy and edition-level content architecture"},
+          {"name": "Djoser", "category": "Content Creation", "role_summary": "Email subject line engineering and open-rate optimization"},
+          {"name": "Ahmose", "category": "Content Creation", "role_summary": "Presentation strategy and slide content architecture"},
+          {"name": "Senusret", "category": "Content Creation", "role_summary": "Precision summarization and content distillation"},
+          {"name": "Niuserre", "category": "Creative Tools", "role_summary": "Landing page copywriting and conversion design"}
+        ]
+      }
+    },
+
+    {
+      "id": "kairo",
+      "name": "KAIRO",
+      "class_title": "Precision Stream Warrior",
+      "origin_line": "Where others see data, Kairo sees the single thread that unravels everything — and he pulls it with surgical accuracy.",
+      "bio": "Kairo is the Grid's scalpel. His dark navy armor is embedded with purple geometric circuit lines that don't just glow — they compute. The precision-stream interface on his forearm runs reactive scripts that converge at the wrist, turning raw data torrents into actionable intelligence in milliseconds. When his holographic panels deploy, they display targeting geometry on his chest panel — a focusing mechanism that identifies the exact point of intervention in any system. The ancient precision symbols running down his spine are not decoration; they are the Grid's original targeting language, a script so old it predates the protocols Thoren encoded. Kairo doesn't overwhelm with force. He finds the one point where minimal pressure creates maximum change.",
+      "abilities": [
+        {
+          "name": "Precision Stream",
+          "description": "Kairo activates his forearm interface in scalpel mode, channeling converging data streams into a single focused output. His agents deliver this surgical precision through social media management, YouTube scriptwriting, and X/Twitter strategies — each one finding the exact angle that cuts through noise to reach the target audience.",
+          "ui_label": "STREAM",
+          "agent_domains": ["Social Media", "Content Strategy", "Platform Management"]
+        },
+        {
+          "name": "Intel Focus Array",
+          "description": "The targeting geometry on Kairo's chest panel maps every data point in an environment. His agents deploy this intelligence through content planning that identifies the exact topic mix, pitch strategy that finds the precise angle for each audience, and pricing and branding strategies that locate the exact competitive position.",
+          "ui_label": "FOCUS",
+          "agent_domains": ["Content Creation", "Business Strategy", "Pricing", "Branding"]
+        },
+        {
+          "name": "Precision Step Amplification",
+          "description": "Kairo's boots read the terrain and feed environmental intelligence to his combat systems. His agents amplify precision through task prioritization that identifies the single most important next action, productivity coaching that finds the real bottleneck, and remote work strategies that optimize for the individual's exact situation.",
+          "ui_label": "AMPLIFY",
+          "agent_domains": ["Productivity & Management", "Task Prioritization", "Remote Work"]
+        }
+      ],
+      "design_philosophy_note": "Dark navy armor plates carry embedded purple geometric circuit lines. The forearm precision-stream interface runs in scalpel mode with reactive scripts converging at the wrist. The chest panel displays targeting geometry. The back panel features ancient precision symbols in a column — the Grid's original targeting language. Tactical belt carries code-strap detail with PRECISION_FOCUS_v1.0 designation. Boots feature precision step amplifiers with purple edge glow.",
+      "quote": "A thousand data points. One answer. I already found it.",
+      "universe_role": "Kairo is the Grid's precision executor and commands 12 agents who find the critical leverage point in every challenge: social media management across YouTube and X/Twitter, content planning and digital content strategy, pitch crafting, pricing optimization, brand strategy, email list growth, task prioritization, workplace productivity, and remote work systems. When the data is overwhelming and the path is unclear, Kairo's squad isolates the single thread that matters.",
+      "color_signature": "#1B1B4B",
+      "color_name": "Dark Navy / Purple-Cyan Circuit",
+      "suit_material": "Dark Navy Armor Plates with Embedded Geometric Circuit Lines",
+      "key_visual_elements": [
+        "Chest panel targeting geometry",
+        "Forearm precision-stream interface (scalpel mode)",
+        "Ancient precision symbols column on spine",
+        "Tactical belt with PRECISION_FOCUS_v1.0 code-strap"
+      ],
+      "faction": "Grid Operatives",
+      "status": "Active — Locked On",
+      "squad": {
+        "agent_count": 12,
+        "squad_name": "The Scalpel Unit",
+        "domain_summary": "Precision social media execution, content strategy targeting, business pitch accuracy, pricing and branding focus, productivity optimization, and task-level surgical intervention",
+        "categories": {
+          "Business": 4,
+          "Social Media": 3,
+          "Productivity & Management": 3,
+          "Content Creation": 2
+        },
+        "agents": [
+          {"name": "Nefertiti", "category": "Social Media", "role_summary": "Social media management and content production precision"},
+          {"name": "Thutmose", "category": "Social Media", "role_summary": "YouTube video scriptwriting and channel growth targeting"},
+          {"name": "Amenhotep", "category": "Social Media", "role_summary": "X/Twitter growth strategy and thread engineering"},
+          {"name": "Menes", "category": "Content Creation", "role_summary": "Content planning and editorial calendar targeting"},
+          {"name": "Ptolemy", "category": "Content Creation", "role_summary": "Digital content creation and platform-native precision"},
+          {"name": "Unas", "category": "Business", "role_summary": "Pitch strategy and persuasive writing precision"},
+          {"name": "Userkaf", "category": "Business", "role_summary": "Pricing strategy and competitive positioning"},
+          {"name": "Huni", "category": "Business", "role_summary": "Brand strategy and differentiation targeting"},
+          {"name": "Shepseskaf", "category": "Business", "role_summary": "Email list growth strategy and subscriber precision"},
+          {"name": "Baka", "category": "Productivity & Management", "role_summary": "Task prioritization and action sequencing"},
+          {"name": "Neferirkare", "category": "Productivity & Management", "role_summary": "Workplace productivity coaching and focus optimization"},
+          {"name": "Shepseskare", "category": "Productivity & Management", "role_summary": "Remote work strategy and distributed team precision"}
+        ]
+      }
+    },
+
+    {
+      "id": "nefra",
+      "name": "NEFRA",
+      "class_title": "Precision Stream Warrior",
+      "origin_line": "She carries the same targeting protocols as Kairo, but where he pulls threads apart, she weaves them into something no one saw coming.",
+      "bio": "Nefra is the Grid's convergence point — a precision warrior who shares the same ancient combat protocols as Kairo but channels them toward synthesis instead of isolation. Her dark navy armor carries the same embedded purple geometric circuit lines, but her energy signature runs hotter, spiraling into concentrated vortex patterns rather than linear streams. The precision-focus interface on her forearm runs the same scalpel-mode scripts, but Nefra uses them to stitch together — to find the connections between disparate data points that everyone else missed. The purple spiral energy she channels is convergence given physical form: multiple streams becoming one. Her ancient precision symbols echo Kairo's, but her interpretation of them creates entirely new protocols from old foundations.",
+      "abilities": [
+        {
+          "name": "Convergence Spiral",
+          "description": "Nefra channels multiple data streams into a single spiraling vortex of concentrated insight. Her agents execute convergence across silos: customer relationship strategies that unify sales and support, product development mentoring that bridges engineering and market need, and customer segmentation that connects behavioral data to campaign strategy.",
+          "ui_label": "CONVERGE",
+          "agent_domains": ["Business", "E-commerce", "Marketing"]
+        },
+        {
+          "name": "Precision Weave",
+          "description": "Using her forearm interface in synthesis mode, Nefra stitches together fragmented systems. Her agents weave across disciplines: customer support coaching that merges empathy with resolution speed, product query handling that connects technical knowledge with human communication, and HR frameworks that link culture, hiring, and retention into one people system.",
+          "ui_label": "WEAVE",
+          "agent_domains": ["Customer Support", "HR & People", "Personal Development"]
+        },
+        {
+          "name": "Focus Amplification Cascade",
+          "description": "Nefra's precision step amplifiers synchronize with her convergence spiral, creating exponential focus. Her agents cascade this through legal compliance that connects business law with operational reality, paraphrasing that bridges language gaps, logo design that synthesizes brand identity into visual form, and product development that unifies user need with technical capability.",
+          "ui_label": "CASCADE",
+          "agent_domains": ["Legal & Compliance", "Writing", "Creative Tools", "Product Development"]
+        }
+      ],
+      "design_philosophy_note": "Shares the same suit architecture as Kairo — dark navy armor plates, embedded purple geometric circuit lines, forearm precision-stream interface, targeting geometry chest panel, ancient precision symbols column, and precision step amplifiers. But Nefra's energy signature manifests as spiral convergence rather than linear focus. Her purple glow runs hotter, her circuits pulse with convergent patterns, and her combat style is synthesis over isolation.",
+      "quote": "You thought those were separate problems. They're the same problem. Watch.",
+      "universe_role": "Nefra is the Grid's pattern finder and commands 12 agents who weave connections across silos: customer relationship management, customer support coaching, product query resolution, customer segmentation, product development mentoring, personal development guidance, legal compliance frameworks, content paraphrasing, logo concept design, and HR people operations. She represents I-Gamify's ability to see connections that others miss — to link a gamification challenge with an AI solution with a content strategy into one unified transformation play. Her squad is why I-Gamify's three services feel like one offering.",
+      "color_signature": "#2D1B69",
+      "color_name": "Deep Purple / Navy Circuit",
+      "suit_material": "Dark Navy Armor Plates with Embedded Purple Geometric Circuit Lines",
+      "key_visual_elements": [
+        "Chest panel targeting geometry with spiral energy vortex",
+        "Forearm precision-stream interface (synthesis mode)",
+        "Ancient precision symbols column on spine",
+        "Purple edge glow with convergent pulse patterns"
+      ],
+      "faction": "Grid Operatives",
+      "status": "Active — Converging",
+      "squad": {
+        "agent_count": 12,
+        "squad_name": "The Convergence Weave",
+        "domain_summary": "Cross-silo synthesis across customer relationships, support systems, product development, people operations, legal frameworks, and creative identity design",
+        "categories": {
+          "Customer Support": 4,
+          "Business": 1,
+          "Creative Tools": 1,
+          "Personal Development": 1,
+          "E-commerce": 1,
+          "Marketing": 1,
+          "Writing": 1,
+          "Legal & Compliance": 1,
+          "HR & People": 1
+        },
+        "agents": [
+          {"name": "Radjedef", "category": "Business", "role_summary": "Customer relationship strategy and retention architecture"},
+          {"name": "Neferefre", "category": "Creative Tools", "role_summary": "Logo concept design and visual identity synthesis"},
+          {"name": "Djedkare", "category": "Personal Development", "role_summary": "Personal development mentoring and self-discovery coaching"},
+          {"name": "Neferkare", "category": "E-commerce", "role_summary": "Customer segmentation and behavioral data convergence"},
+          {"name": "Sobekneferu", "category": "Customer Support", "role_summary": "Customer service coaching and skills development"},
+          {"name": "Horawibra", "category": "Customer Support", "role_summary": "Product query resolution and support team empowerment"},
+          {"name": "Sekhemre", "category": "Customer Support", "role_summary": "Customer service training and de-escalation synthesis"},
+          {"name": "Khendjer", "category": "Customer Support", "role_summary": "Technical support strategy and product knowledge integration"},
+          {"name": "Paramessu", "category": "Marketing", "role_summary": "Digital product development mentoring and go-to-market convergence"},
+          {"name": "Shoshenq", "category": "Writing", "role_summary": "Paraphrasing and cross-context content adaptation"},
+          {"name": "Iuput", "category": "Legal & Compliance", "role_summary": "Startup legal strategy and compliance framework design"},
+          {"name": "Peftjauawybast", "category": "HR & People", "role_summary": "People operations, hiring, onboarding, and culture design"}
+        ]
+      }
+    },
+
+    {
+      "id": "horusen",
+      "name": "HORUSEN",
+      "class_title": "The Guardian Script",
+      "origin_line": "Every symbol on his armor is a sentence from a language the Grid was built to protect — and he is the last one who can read it.",
+      "bio": "Horusen is the Grid's living archive. His royal blue armor is covered in embedded gold hieroglyphic symbols — not homage, not decoration, but the actual protection scripts that safeguard the Grid's deepest knowledge. The reactive script display on his forearm interface doesn't project data; it projects meaning — translating ancient knowledge systems into protocols that modern operatives can deploy. His suit runs PROTECTION_STREAM_v4.1, the most advanced guardian protocol in the Grid's arsenal, channeling power through a matrix core embedded in his spine. The gold-accented tactical boots ground him into the knowledge layer beneath the Grid's surface architecture, connecting him to wisdom older than the system itself. Horusen doesn't fight with force. He fights with knowledge that predates force.",
+      "abilities": [
+        {
+          "name": "Protection Stream",
+          "description": "Horusen activates PROTECTION_STREAM_v4.1, projecting a defensive field woven from ancient script patterns. His agents deploy this protection through LinkedIn authority building, business offer strategy, sales negotiation coaching, and client onboarding frameworks that guard the client relationship from the first interaction.",
+          "ui_label": "PROTECT",
+          "agent_domains": ["Social Media", "Business Strategy", "Sales", "Client Onboarding"]
+        },
+        {
+          "name": "Script Activation",
+          "description": "Through his forearm data-stream interface, Horusen activates dormant scripts in the Grid's archive. His agents awaken proven knowledge through innovation coaching that applies ancient creative frameworks, risk management that deploys time-tested assessment methods, and pricing strategy grounded in foundational market principles.",
+          "ui_label": "ACTIVATE",
+          "agent_domains": ["Strategy & Analysis", "Innovation", "Risk Management", "Pricing"]
+        },
+        {
+          "name": "Knowledge Grounding",
+          "description": "Horusen's gold-accented boots connect him to the Grid's deepest knowledge layer. His agents ground modern ambition in proven wisdom through product strategy roadmaps built on validation science, exit strategy preparation that follows proven M&A frameworks, and business operations that run on founder-level operational intelligence.",
+          "ui_label": "GROUND",
+          "agent_domains": ["Product & Development", "Strategy & Exit", "Assistants", "Business Operations"]
+        }
+      ],
+      "design_philosophy_note": "Royal blue armor plates carry embedded gold hieroglyphic symbols — actual protection scripts, not decoration. The forearm data-stream interface features a reactive script display. The suit runs PROTECTION_STREAM_v4.1 through a tactical belt with code-strap designation. The spine features symbols of power and knowledge. Layered armor construction with articulation joints allows fluid movement. Gold-accented tactical boots ground the wearer into the knowledge layer.",
+      "quote": "You built new walls. I carry the ones that have never fallen.",
+      "universe_role": "Horusen is the Grid's knowledge guardian and commands 12 agents who protect and deploy foundational business wisdom: LinkedIn authority and personal brand strategy, business offer crafting, sales negotiation mastery, sales template systems, client onboarding architecture, sales funnel strategy, innovation coaching, risk management, pricing intelligence, founder-level business operations, product strategy and roadmapping, and exit and M&A preparation. He represents I-Gamify's deep respect for proven methodologies and foundational knowledge that makes transformation sustainable. His squad is why I-Gamify's solutions don't just feel innovative — they feel grounded in something that has always worked.",
+      "color_signature": "#1E3A7B",
+      "color_name": "Royal Blue / Gold",
+      "suit_material": "Royal Blue Armor Plates with Embedded Gold Hieroglyphic Symbols",
+      "key_visual_elements": [
+        "Gold hieroglyphic symbols across all armor plates",
+        "Forearm data-stream interface with reactive script display",
+        "PROTECTION_STREAM_v4.1 tactical belt code-strap",
+        "Spine column with symbols of power and knowledge"
+      ],
+      "faction": "Grid Guardians",
+      "status": "Active — Watching",
+      "squad": {
+        "agent_count": 12,
+        "squad_name": "The Archive Sentinels",
+        "domain_summary": "Foundational business strategy, LinkedIn authority, sales mastery, innovation frameworks, risk intelligence, pricing wisdom, product roadmapping, and exit preparation",
+        "categories": {
+          "Business": 5,
+          "Strategy & Analysis": 3,
+          "Social Media": 1,
+          "Assistants": 1,
+          "Product & Development": 1,
+          "Strategy & Exit": 1
+        },
+        "agents": [
+          {"name": "Imhotep", "category": "Social Media", "role_summary": "LinkedIn growth strategy and professional authority building"},
+          {"name": "Narmer", "category": "Business", "role_summary": "Business offer strategy and conversion-ready positioning"},
+          {"name": "Pepi", "category": "Business", "role_summary": "Sales negotiation coaching and ethical influence"},
+          {"name": "Teti", "category": "Business", "role_summary": "Sales communication templates and follow-up systems"},
+          {"name": "Sahure", "category": "Business", "role_summary": "B2B client onboarding architecture and relationship design"},
+          {"name": "Djedefre", "category": "Business", "role_summary": "Sales funnel strategy and conversion optimization"},
+          {"name": "Isesi", "category": "Strategy & Analysis", "role_summary": "Innovation coaching and creative thinking frameworks"},
+          {"name": "Merenre", "category": "Strategy & Analysis", "role_summary": "Risk management strategy and threat assessment"},
+          {"name": "Netjerkare", "category": "Strategy & Analysis", "role_summary": "Pricing strategy and market-based pricing intelligence"},
+          {"name": "Ity", "category": "Assistants", "role_summary": "Founder-level business operations and systems design"},
+          {"name": "Piye", "category": "Product & Development", "role_summary": "Product strategy, roadmapping, and MVP validation"},
+          {"name": "Tantamani", "category": "Strategy & Exit", "role_summary": "Exit strategy, M&A preparation, and valuation frameworks"}
+        ]
+      }
+    }
+  ],
+
+  "universe_relationships": {
+    "founding_hierarchy": "Thoren wrote the original Grid protocols. Ramet and Nexar both operate within (and against) those rules. Lyra designs futures that Thoren's laws must eventually accommodate.",
+    "operative_pairs": {
+      "ramet_nexar": "Stabilizer and Destabilizer — opposing forces that need each other. Ramet holds what works. Nexar breaks what doesn't. Together, their 24 agents create the conditions for evolution.",
+      "kairo_nefra": "Twin precision warriors with shared protocols but inverse methods. Kairo's 12 agents isolate the critical thread. Nefra's 12 agents weave threads together. One squad finds the problem, the other builds the solution."
+    },
+    "guardian_architect": "Horusen protects the knowledge that Lyra builds upon. Her 13 agents design the future; his 12 agents ensure the foundation remains unshakable.",
+    "brand_metaphor": "The seven heroes map to I-Gamify's transformation promise: GOVERN (Thoren, 13 agents) → STABILIZE (Ramet, 12 agents) → DISRUPT (Nexar, 12 agents) → ARCHITECT (Lyra, 13 agents) → EXECUTE with PRECISION (Kairo 12 + Nefra 12 agents) → PROTECT the knowledge (Horusen, 12 agents). Total Grid force: 86 agents.",
+    "squad_dynamics": "Each hero's squad composition reflects their philosophy. Lyra's squad is the most focused (3 categories, dominated by Social Media and Content Creation) because vision requires concentration. Nefra's squad is the most diverse (9 categories) because convergence requires breadth. Thoren and Ramet share the widest operational range because law and stability must touch everything."
+  },
+
+  "ui_copy": {
+    "roster_headline": "THE I-GAMIFY GRID",
+    "roster_subheadline": "7 heroes. 86 agents. One system. Every transformation.",
+    "filter_labels": {
+      "all": "ALL OPERATIVES",
+      "founders": "FOUNDERS",
+      "architects": "ARCHITECTS",
+      "operatives": "OPERATIVES",
+      "guardians": "GUARDIANS"
+    },
+    "card_cta": "VIEW DOSSIER →",
+    "agent_card_cta": "DEPLOY AGENT →",
+    "hero_page_sections": {
+      "origin": "ORIGIN",
+      "abilities": "CAPABILITIES",
+      "philosophy": "DESIGN PHILOSOPHY",
+      "role": "GRID FUNCTION",
+      "quote": "TRANSMISSION",
+      "squad": "SQUAD ROSTER"
+    },
+    "squad_ui": {
+      "squad_headline_template": "{hero_name}'S SQUAD — {squad_name}",
+      "agent_count_label": "AGENTS DEPLOYED",
+      "domain_label": "OPERATIONAL DOMAINS",
+      "agent_card_fields": ["name", "category", "role_summary"]
+    }
+  },
+
+  "metadata": {
+    "version": "2.0.0",
+    "created_by": "YOUSSEF — Brand & Narrative Specialist",
+    "created_for": "I-Gamify.net Character Universe",
+    "parallel_with": "FARIDA — Experience Design",
+    "source_truth": "Character costume & capability detail reference sheets + Agent roster data (86 agents)",
+    "last_updated": "2026-03-26",
+    "changelog": {
+      "v1.0.0": "Initial hero lore, bio, abilities, quotes, and universe roles from suit reference sheets",
+      "v2.0.0": "Agent-layer integration: 86 agents mapped to 7 heroes with squad names, agent rosters, category breakdowns, role summaries, updated universe roles, updated ability descriptions with agent domain mapping, updated UI copy with squad display sections, and universe relationship dynamics updated with squad counts"
+    }
+  }
+}

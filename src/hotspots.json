@@ -1,0 +1,369 @@
+{
+  "meta": {
+    "version": "1.0",
+    "coordinate_system": "percentage_from_top_left",
+    "x_direction": "rightward",
+    "y_direction": "downward",
+    "target": "character_body_on_suit_reference_image",
+    "implementation": "CSS position:absolute with top% and left%",
+    "hotspot_size": "20px diameter circle",
+    "pulse_animation": "2s infinite, ring expands 1x to 1.5x scale, opacity 1 to 0"
+  },
+  "thoren": {
+    "hero": "THOREN",
+    "class": "THE LAW",
+    "hotspots": [
+      {
+        "id": "hs1",
+        "zone": "CHEST",
+        "name": "Diamond Encoded Patterns",
+        "x": 48,
+        "y": 28,
+        "description": "Embossed grid protocols containing the original Grid architecture. Ancient Khemet legal code translated to visual pattern.",
+        "detail_card_index": 0
+      },
+      {
+        "id": "hs2",
+        "zone": "COAT_LAPEL",
+        "name": "Micro-Thin Etched Silver Edge",
+        "x": 38,
+        "y": 35,
+        "description": "Integrated end-cap detail with sacred geometry lining visible only at specific angles.",
+        "detail_card_index": 1
+      },
+      {
+        "id": "hs3",
+        "zone": "THROAT",
+        "name": "Primary Legal Key Emblem",
+        "x": 50,
+        "y": 20,
+        "description": "Diamond within circle. Silver on charcoal. The primary access key to all Grid protocols.",
+        "detail_card_index": 2
+      },
+      {
+        "id": "hs4",
+        "zone": "HAND_PALM",
+        "name": "Readable Legal Text",
+        "x": 35,
+        "y": 58,
+        "description": "Invoked diamond patterns. Ancient Khemet legal code translated to code.",
+        "detail_card_index": 3
+      },
+      {
+        "id": "hs5",
+        "zone": "BOOTS",
+        "name": "Circuit Line Sole Edge",
+        "x": 42,
+        "y": 88,
+        "description": "Grounding conductors with kinetic absorption sole. Every step connects to the Grid.",
+        "detail_card_index": 4
+      }
+    ]
+  },
+  "ramet": {
+    "hero": "RAMET",
+    "class": "THE STABILIZER",
+    "hotspots": [
+      {
+        "id": "hs1",
+        "zone": "CHEST",
+        "name": "Geometric Stabilization Core",
+        "x": 48,
+        "y": 25,
+        "description": "Multifaceted stabilizer array with asymmetrical energy channels and converging field emitters.",
+        "detail_card_index": 0
+      },
+      {
+        "id": "hs2",
+        "zone": "LEFT_ARM",
+        "name": "Reactive Armor Panels",
+        "x": 30,
+        "y": 42,
+        "description": "Segmented dissipation plates with semi-transparent energy fissures between segments.",
+        "detail_card_index": 1
+      },
+      {
+        "id": "hs3",
+        "zone": "RIGHT_HAND",
+        "name": "Tactical Grip Surface",
+        "x": 62,
+        "y": 52,
+        "description": "Knuckle disruption emitters allow physical stabilization of destabilized matter and energy.",
+        "detail_card_index": 2
+      },
+      {
+        "id": "hs4",
+        "zone": "BACK",
+        "name": "Central Axis Stabilization Spine",
+        "x": 68,
+        "y": 30,
+        "description": "Energy bleed port with dissipation vents. Stabilization field radiates from this central point.",
+        "detail_card_index": 3
+      },
+      {
+        "id": "hs5",
+        "zone": "BOOTS",
+        "name": "Grounding Conductors",
+        "x": 38,
+        "y": 85,
+        "description": "Kinetic absorption sole. The suit stabilizes before the destabilization event is apparent.",
+        "detail_card_index": 4
+      }
+    ]
+  },
+  "nexar": {
+    "hero": "NEXAR",
+    "class": "THE DESTABILIZER",
+    "hotspots": [
+      {
+        "id": "hs1",
+        "zone": "CHEST",
+        "name": "Asymmetric Armor Plate",
+        "x": 48,
+        "y": 28,
+        "description": "Red fracture channels trace across aggressive angular geometry. Not circuit light — bleed, not flow.",
+        "detail_card_index": 0
+      },
+      {
+        "id": "hs2",
+        "zone": "RIGHT_SHOULDER",
+        "name": "Pauldron Fracture Points",
+        "x": 62,
+        "y": 18,
+        "description": "Aggressive angular geometry with fracture channel emergence points.",
+        "detail_card_index": 1
+      },
+      {
+        "id": "hs3",
+        "zone": "LEFT_FOREARM",
+        "name": "Vein Circuit Fracture Panel",
+        "x": 30,
+        "y": 45,
+        "description": "Semi-transparent forearm panel revealing red energy fracture network beneath the surface.",
+        "detail_card_index": 2
+      },
+      {
+        "id": "hs4",
+        "zone": "BACK",
+        "name": "Diagonal Spine Fracture Channel",
+        "x": 70,
+        "y": 35,
+        "description": "Primary disruption conduit running diagonally — the direct inverse of Ramet's stabilization spine.",
+        "detail_card_index": 3
+      },
+      {
+        "id": "hs5",
+        "zone": "HANDS",
+        "name": "Knuckle Energy Emergence",
+        "x": 58,
+        "y": 55,
+        "description": "Tactical grip surface with visible energy emergence at each knuckle point.",
+        "detail_card_index": 4
+      }
+    ]
+  },
+  "lyra": {
+    "hero": "LYRA",
+    "class": "VISIONARY SYSTEMS ARCHITECT",
+    "hotspots": [
+      {
+        "id": "hs1",
+        "zone": "CHEST",
+        "name": "Orbital Panel Array",
+        "x": 45,
+        "y": 25,
+        "description": "Geometric orbital pattern with system status indicators. Cyan circuit lines converge at holographic trigger points.",
+        "detail_card_index": 0
+      },
+      {
+        "id": "hs2",
+        "zone": "LEFT_FOREARM",
+        "name": "Text-Data String Display",
+        "x": 28,
+        "y": 42,
+        "description": "Holographic interface trigger points with gold circuit lines converging at wrist for system projection.",
+        "detail_card_index": 1
+      },
+      {
+        "id": "hs3",
+        "zone": "RIGHT_SHOULDER",
+        "name": "Angular Architectural Plates",
+        "x": 62,
+        "y": 18,
+        "description": "Gold trim with layered tact-armor design. Angular construction mirrors architectural blueprints.",
+        "detail_card_index": 2
+      },
+      {
+        "id": "hs4",
+        "zone": "BELT",
+        "name": "Tactical Belt System",
+        "x": 50,
+        "y": 55,
+        "description": "Deep forest green with gold edge line. System access ports along the band for direct grid connection.",
+        "detail_card_index": 3
+      },
+      {
+        "id": "hs5",
+        "zone": "BACK",
+        "name": "Architectural Map Network",
+        "x": 70,
+        "y": 38,
+        "description": "Gold orbit-line patterns forming complete architectural blueprints. Spine channel runs full height.",
+        "detail_card_index": 4
+      }
+    ]
+  },
+  "kairo": {
+    "hero": "KAIRO",
+    "class": "PRECISION STREAM WARRIOR",
+    "hotspots": [
+      {
+        "id": "hs1",
+        "zone": "CHEST",
+        "name": "Targeting Geometry Panel",
+        "x": 48,
+        "y": 26,
+        "description": "Dark panel with embedded geometric targeting array. Purple circuit lines trace precision pathways.",
+        "detail_card_index": 0
+      },
+      {
+        "id": "hs2",
+        "zone": "LEFT_FOREARM",
+        "name": "Precision-Stream Interface",
+        "x": 28,
+        "y": 40,
+        "description": "Scalpel mode active — reactive scripts converging to wrist for targeted data operations.",
+        "detail_card_index": 1
+      },
+      {
+        "id": "hs3",
+        "zone": "RIGHT_SHOULDER",
+        "name": "Angular Plates & Purple Trim",
+        "x": 64,
+        "y": 18,
+        "description": "Layered armor construction with embedded purple geometric circuit lines.",
+        "detail_card_index": 2
+      },
+      {
+        "id": "hs4",
+        "zone": "BELT",
+        "name": "Tactical Code-Strap Belt",
+        "x": 50,
+        "y": 55,
+        "description": "PRECISION_FOCUS_v1.0 designation. Intel focus channels with ancient precision symbols.",
+        "detail_card_index": 3
+      },
+      {
+        "id": "hs5",
+        "zone": "BACK",
+        "name": "Precision Matrix Core",
+        "x": 68,
+        "y": 35,
+        "description": "Ancient precision symbols column running spine-length. Intel focus channels embedded in matrix.",
+        "detail_card_index": 4
+      }
+    ]
+  },
+  "nefra": {
+    "hero": "NEFRA",
+    "class": "PRECISION STREAM WARRIOR (RESONANCE)",
+    "hotspots": [
+      {
+        "id": "hs1",
+        "zone": "CHEST",
+        "name": "Resonance Core Panel",
+        "x": 48,
+        "y": 26,
+        "description": "Purple-dominant energy spiral manifestation. Resonance core replaces Kairo's holographic projection.",
+        "detail_card_index": 0
+      },
+      {
+        "id": "hs2",
+        "zone": "LEFT_FOREARM",
+        "name": "Resonance-Stream Interface",
+        "x": 28,
+        "y": 40,
+        "description": "Scalpel mode with resonance frequency — dissolves rather than cuts.",
+        "detail_card_index": 1
+      },
+      {
+        "id": "hs3",
+        "zone": "RIGHT_SHOULDER",
+        "name": "Angular Plates & Deep Purple Trim",
+        "x": 64,
+        "y": 18,
+        "description": "Same layered construction as Kairo but with deeper purple energy saturation.",
+        "detail_card_index": 2
+      },
+      {
+        "id": "hs4",
+        "zone": "BELT",
+        "name": "Frequency Calibration Belt",
+        "x": 50,
+        "y": 55,
+        "description": "PRECISION_FOCUS_v1.0 — same designation, different frequency calibration.",
+        "detail_card_index": 3
+      },
+      {
+        "id": "hs5",
+        "zone": "BACK",
+        "name": "Resonance Matrix Core",
+        "x": 68,
+        "y": 35,
+        "description": "Ancient precision symbols with purple resonance glow. Same column, different energy signature.",
+        "detail_card_index": 4
+      }
+    ]
+  },
+  "horusen": {
+    "hero": "HORUSEN",
+    "class": "ANCIENT SCRIPT GUARDIAN",
+    "hotspots": [
+      {
+        "id": "hs1",
+        "zone": "CHEST",
+        "name": "Royal Blue Armor Plates",
+        "x": 48,
+        "y": 25,
+        "description": "Embedded gold hieroglyphic symbols. Each symbol is a compressed data protocol from the ancient Grid.",
+        "detail_card_index": 0
+      },
+      {
+        "id": "hs2",
+        "zone": "LEFT_FOREARM",
+        "name": "Data-Stream Interface",
+        "x": 28,
+        "y": 42,
+        "description": "Reactive script display with gold hieroglyphic data streams. Ancient knowledge translated to tactical readout.",
+        "detail_card_index": 1
+      },
+      {
+        "id": "hs3",
+        "zone": "RIGHT_SHOULDER",
+        "name": "Layered Armor Construction",
+        "x": 62,
+        "y": 18,
+        "description": "Articulation joints allowing full range of motion while maintaining hieroglyphic integrity.",
+        "detail_card_index": 2
+      },
+      {
+        "id": "hs4",
+        "zone": "BELT",
+        "name": "PROTECTION_STREAM_v4.1",
+        "x": 50,
+        "y": 55,
+        "description": "Tactical belt with code-strap. Protection stream designation marks active guardian protocol.",
+        "detail_card_index": 3
+      },
+      {
+        "id": "hs5",
+        "zone": "BACK",
+        "name": "Power Matrix Core",
+        "x": 68,
+        "y": 35,
+        "description": "Symbols of power and knowledge running spine-length. The oldest active code in the Grid.",
+        "detail_card_index": 4
+      }
+    ]
+  }
+}
