@@ -145,3 +145,29 @@
     @apply font-sans;
   }
 }
+
+/* Light mode overrides */
+html.light {
+  --background: oklch(0.98 0 0);
+  --foreground: oklch(0.12 0 0);
+  --card: oklch(0.96 0 0);
+  --card-foreground: oklch(0.12 0 0);
+  --primary: #8B6914;
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.92 0 0);
+  --secondary-foreground: oklch(0.2 0 0);
+  --muted: oklch(0.93 0 0);
+  --muted-foreground: oklch(0.45 0 0);
+  --border: oklch(0.85 0 0);
+  --input: oklch(0.88 0 0);
+  --color-khemet-gold: #8B6914;
+  --color-khemet-neon: #7A5C10;
+}
+
+html.light .khemet-pattern {
+  background-color: #f5f0e8;
+}
+
+html.light .bg-background\/80 {
+  background-color: rgba(245, 240, 232, 0.9) !important;
+}

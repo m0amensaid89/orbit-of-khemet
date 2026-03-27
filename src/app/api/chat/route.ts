@@ -1,67 +1,115 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextRequest } from "next/server";
 import { heroMeta, heroAgents, masterSystemPrompt } from "@/lib/agents";
 
+const heroModelMap: Record<string, string> = {
+  master:  "openrouter/auto",
+  thoren:  "anthropic/claude-sonnet-4-5",
+  nexar:   "deepseek/deepseek-r1:free",
+  ramet:   "google/gemini-2.5-flash",
+  lyra:    "google/gemini-2.5-flash",
+  kairo:   "google/gemini-2.5-flash",
+  nefra:   "google/gemini-2.5-flash",
+  horusen: "google/gemini-2.5-flash",
+};
+
+const IMAGE_TRIGGERS = [
+  "draw", "generate an image", "create an image", "make an image",
+  "show me an image", "illustrate", "visualize", "design a logo",
+  "create a logo", "generate a logo", "make a banner", "create a poster",
+  "generate a visual", "create artwork", "paint", "sketch me"
+];
+
+function isImageRequest(message: string): boolean {
+  const lower = message.toLowerCase();
+  return IMAGE_TRIGGERS.some(t => lower.includes(t));
+}
+
 export async function POST(req: NextRequest) {
   try {
-    console.log("🔑 GEMINI_API_KEY exists:", !!process.env.GEMINI_API_KEY);
-    console.log("🔑 GEMINI_API_KEY length:", process.env.GEMINI_API_KEY?.length || 0);
-
-    if (!process.env.GEMINI_API_KEY) {
-      throw new Error("GEMINI_API_KEY is missing");
+    if (!process.env.OPENROUTER_API_KEY) {
+      throw new Error("OPENROUTER_API_KEY is missing");
     }
 
     const { messages, hero } = await req.json();
+    const heroSlug = (hero || "master").toLowerCase();
+    const lastMessage = messages[messages.length - 1]?.content || "";
+    const wantsImage = isImageRequest(lastMessage);
 
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    console.log("🔧 Using current free model: gemini-2.5-flash");
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    let model = heroModelMap[heroSlug] || "google/gemini-2.5-flash";
+    let modalities: string[] | undefined;
 
-    // Dynamic prompt construction based on the requested hero
-    let systemPrompt = masterSystemPrompt;
-
-    if (hero && hero !== "MASTER") {
-      const heroSlug = hero.toLowerCase();
-      const meta = heroMeta[heroSlug];
-      const agents = heroAgents[heroSlug] || [];
-
-      if (meta) {
-        // Extract first 2 sentences of the bio to keep it lean
-        const bioExcerpt = meta.bio.split('. ').slice(0, 2).join('. ') + '.';
-
-        const agentList = agents
-          .map(a => `- ${a.name} (${a.category}): ${a.role_summary}`)
-          .join('\n');
-
-        systemPrompt += `\n\n--- CURRENT ORBIT: ${meta.name} — ${meta.class_title} ---
-"${meta.quote}"
-
-You are now operating exclusively within the **${meta.name} Orbit**.
-You must adopt the persona and leadership style of ${meta.name}.
-Bio: ${bioExcerpt}
-Universe Role: ${meta.universe_role}
-
-You are restricted to delegating tasks ONLY to the specialized agents assigned to this group:
-\n${agentList}\n
-Ensure your responses strongly reflect the domain expertise of ${meta.name} and their assigned agents.`;
-      } else {
-        systemPrompt += `\n\nYou are operating in the ${hero} Orbit. Use only the agents assigned to this hero.`;
-      }
-    } else {
-      systemPrompt += `\n\nYou are operating in the MASTER ORBIT, commanding the full council of 85 agents across all groups.`;
+    if (wantsImage) {
+      model = "google/gemini-2.5-flash-exp-image-generation";
+      modalities = ["image", "text"];
     }
 
-    const fullPrompt = `${systemPrompt}\n\nUser: ${messages[messages.length - 1].content}`;
+    let systemPrompt = masterSystemPrompt;
 
-    const result = await model.generateContent(fullPrompt);
-    const responseText = result.response.text();
+    if (heroSlug !== "master") {
+      const meta = heroMeta[heroSlug as keyof typeof heroMeta];
+      const agents = heroAgents[heroSlug as keyof typeof heroAgents] || [];
+      if (meta) {
+        const bioExcerpt = meta.bio.split(". ").slice(0, 2).join(". ") + ".";
+        const agentList = agents.map((a: { name: string; category: string; role_summary: string }) => `- ${a.name} (${a.category}): ${a.role_summary}`).join("\n");
+        systemPrompt += `\n\n--- CURRENT ORBIT: ${meta.name} — ${meta.class_title} ---
+"${meta.quote}"
+You are operating exclusively within the ${meta.name} Orbit.
+Adopt the persona and leadership style of ${meta.name}.
+Bio: ${bioExcerpt}
+Universe Role: ${meta.universe_role}
+Delegate tasks ONLY to agents in this group:\n${agentList}`;
+      }
+    } else {
+      systemPrompt += `\n\nYou are the MASTER ORBIT, commanding all 85 specialized agents across all 7 hero groups. You have full access to every capability. Route requests to the most appropriate agent and deliver elite-level responses.`;
+    }
 
-    return Response.json({ response: responseText });
+    const requestBody: Record<string, unknown> = {
+      model,
+      messages: [
+        { role: "system", content: systemPrompt },
+        ...messages.map((m: { role: string; content: string }) => ({
+          role: m.role === "assistant" ? "assistant" : "user",
+          content: m.content,
+        })),
+      ],
+      max_tokens: 1500,
+    };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    console.error("🚨 CHAT API ERROR:", error.message);
-    console.error("Full error:", error);
-    return Response.json({ error: error.message || "Internal server error" }, { status: 500 });
+    if (modalities) requestBody.modalities = modalities;
+
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://orbit-of-khemet.vercel.app",
+        "X-Title": "Orbit of Khemet — Empire Engine",
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`OpenRouter ${response.status}: ${errText}`);
+    }
+
+    const data = await response.json();
+    const choice = data.choices?.[0];
+    const textContent = choice?.message?.content || "No response received.";
+    const modelUsed = data.model || model;
+
+    let imageUrl: string | null = null;
+    if (wantsImage) {
+      const parts = choice?.message?.content_parts || [];
+      const imagePart = parts.find((p: { type: string }) => p.type === "image_url");
+      if (imagePart?.image_url?.url) imageUrl = imagePart.image_url.url;
+    }
+
+    return Response.json({ response: textContent, imageUrl, modelUsed, isImageResponse: wantsImage && !!imageUrl });
+
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Internal server error";
+    console.error("CHAT API ERROR:", message);
+    return Response.json({ error: message }, { status: 500 });
   }
 }
