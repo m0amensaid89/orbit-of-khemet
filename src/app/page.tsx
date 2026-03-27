@@ -4,6 +4,7 @@ import Image from "next/image";
 export default function Home() {
   return (
     <main className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-black">
+      {/* Full-bleed background group image */}
       <div className="absolute inset-0 z-0">
         <Image
           src="/group-banner.png"
@@ -13,10 +14,17 @@ export default function Home() {
           priority
           unoptimized
         />
+        {/* Dark gradient overlay — bottom to top so text reads */}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/20" />
       </div>
 
+      {/* Content overlay */}
       <div className="relative z-10 flex flex-col items-center text-center px-6 pb-24 pt-32 max-w-4xl mx-auto">
+        {/* Logo */}
+        <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-[#D4AF37]/60 shadow-[0_0_24px_rgba(212,175,55,0.4)] mb-8">
+          <Image src="/logo.png" alt="Orbit of Khemet" fill className="object-cover" />
+        </div>
+
         <p className="font-[Orbitron] text-[10px] tracking-[6px] uppercase text-[#D4AF37]/70 mb-4">
           The I-Gamify Grid
         </p>
@@ -35,11 +43,7 @@ export default function Home() {
           </button>
         </Link>
 
-        <Link href="/pricing" className="font-[Orbitron] text-[9px] tracking-[3px] uppercase text-[#D4AF37]/30 hover:text-[#D4AF37]/60 transition-colors mt-4 block">
-          View pricing →
-        </Link>
-
-        <p className="font-mono text-xs text-white/30 tracking-widest uppercase mt-10">
+        <p className="font-mono text-xs text-white/30 tracking-widest uppercase mt-12">
           The Rise of the Grid · Leverage is the new gravity.
         </p>
       </div>
