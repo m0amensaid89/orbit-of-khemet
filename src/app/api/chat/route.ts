@@ -30,7 +30,8 @@ export async function POST(req: NextRequest) {
       throw new Error("OPENROUTER_API_KEY is missing");
     }
 
-    const { messages, hero } = await req.json();
+    const body = await req.json();
+    const { messages, hero, agent, customSystemPrompt } = body;
     const heroSlug = (hero || "master").toLowerCase();
     const lastMessage = messages[messages.length - 1]?.content || "";
     const wantsImage = isImageRequest(lastMessage);
@@ -45,12 +46,14 @@ export async function POST(req: NextRequest) {
 
     let systemPrompt = masterSystemPrompt;
 
-    if (heroSlug !== "master") {
+    if (agent?.startsWith("custom_") && customSystemPrompt) {
+      systemPrompt = `${masterSystemPrompt}\n\n--- CUSTOM AGENT SYSTEM PROMPT ---\n${customSystemPrompt}`;
+    } else if (heroSlug !== "master") {
       const meta = heroMeta[heroSlug as keyof typeof heroMeta];
-      const agents = heroAgents[heroSlug as keyof typeof heroAgents] || [];
+      const builtInAgents = heroAgents[heroSlug as keyof typeof heroAgents] || [];
       if (meta) {
         const bioExcerpt = meta.bio.split(". ").slice(0, 2).join(". ") + ".";
-        const agentList = agents.map(a => `- ${a.name} (${a.category}): ${a.role_summary}`).join("\n");
+        const agentList = builtInAgents.map(a => `- ${a.name} (${a.category}): ${a.role_summary}`).join("\n");
         systemPrompt += `\n\n--- CURRENT ORBIT: ${meta.name} — ${meta.class_title} ---
 "${meta.quote}"
 You are operating exclusively within the ${meta.name} Orbit.

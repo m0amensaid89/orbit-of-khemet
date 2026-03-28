@@ -6,6 +6,7 @@ import { ArrowLeft, Send, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { heroAgents, getOnboardingMessage } from "@/lib/agents";
 import { getHero } from "@/lib/heroes";
+import { getCustomAgentById } from "@/lib/custom-agents";
 
 export default function ChatPage() {
   const searchParams = useSearchParams();
@@ -15,7 +16,8 @@ export default function ChatPage() {
   const isMaster = heroParam === "master";
 
   const agents = heroAgents[heroParam] || [];
-  const agent = agentParam ? agents.find(a => a.id === agentParam) || null : null;
+  const customAgent = agentParam.startsWith("custom_") ? getCustomAgentById(agentParam) : null;
+  const agent = customAgent || (agentParam ? agents.find(a => a.id === agentParam) || null : null);
   const hero = getHero(heroParam);
 
   const accentColor = hero?.palette?.accent || "#D4AF37";
@@ -37,8 +39,8 @@ export default function ChatPage() {
 
   // Agent speaks first — onboarding message
   useEffect(() => {
-    if (agent?.prompt) {
-      const onboarding = getOnboardingMessage(agent.prompt);
+    if (agent && "prompt" in agent && agent.prompt) {
+      const onboarding = getOnboardingMessage((agent as {prompt: string}).prompt);
       if (onboarding) {
         setMessages([{ id: "onboarding", role: "assistant", content: onboarding }]);
       } else {
@@ -64,7 +66,12 @@ export default function ChatPage() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: [...messages, userMessage], hero: heroParam, agent: agentParam }),
+        body: JSON.stringify({
+          messages: [...messages, userMessage],
+          hero: heroParam,
+          agent: agentParam,
+          customSystemPrompt: agentParam.startsWith("custom_") ? getCustomAgentById(agentParam)?.systemPrompt : undefined
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed");
@@ -100,9 +107,17 @@ export default function ChatPage() {
           </div>
 
           <div className="flex-1 min-w-0">
-            <p className="font-[Orbitron] text-xs font-bold tracking-wider truncate" style={{ color: primaryColor }}>
-              {agentName}
-            </p>
+            <div className="flex items-center gap-2">
+              <p className="font-[Orbitron] text-xs font-bold tracking-wider truncate" style={{ color: primaryColor }}>
+                {agentName}
+              </p>
+              {agentParam.startsWith("custom_") && (
+                <span className="font-[Orbitron] text-[8px] tracking-[2px] uppercase px-1.5 py-0.5 rounded-sm shrink-0"
+                  style={{ background: "rgba(212,175,55,0.15)", color: "#D4AF37", border: "1px solid rgba(212,175,55,0.3)" }}>
+                  ✦ CUSTOM
+                </span>
+              )}
+            </div>
             <p className="text-[10px] font-mono tracking-widest uppercase truncate" style={{ color: accentColor, opacity: 0.7 }}>
               {agentRole}
             </p>

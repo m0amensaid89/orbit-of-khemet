@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Sun, Moon, Menu, X } from "lucide-react";
+import { Sun, Moon, Menu, X, Zap } from "lucide-react";
 
 const heroSlugs = [
   { slug: "thoren", name: "THOREN" },
@@ -72,6 +72,8 @@ export function GlobalNav() {
           <Link href="/hub" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">
             Hub
           </Link>
+          <Link href="/profile" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">Profile</Link>
+          <Link href="/forge" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-[#D4AF37] hover:text-[#E8C84A] transition-colors flex items-center gap-1"><Zap className="w-3 h-3" /> Forge</Link>
           <Link href="/pricing" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">
             Pricing
           </Link>
@@ -114,6 +116,8 @@ export function GlobalNav() {
           ))}
           <div className="h-px bg-border/30 my-2" />
           <Link href="/hub" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">Hub</Link>
+          <Link href="/profile" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">Profile</Link>
+          <Link href="/forge" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-[#D4AF37] hover:text-[#E8C84A] transition-colors flex items-center gap-1"><Zap className="w-3 h-3" /> Forge</Link>
           <Link href="/pricing" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">Pricing</Link>
         </div>
       )}
