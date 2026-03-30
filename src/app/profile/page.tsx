@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getEnergyStats } from "@/lib/energy";
+import { getStats, getEnergyRemaining, getMaxEnergy } from "@/lib/energy";
 import { PLANS } from "@/lib/plans";
 import { getCustomAgents, deleteCustomAgent, type CustomAgent } from "@/lib/custom-agents";
 
@@ -12,7 +12,13 @@ export default function ProfilePage() {
   const [customAgents, setCustomAgents] = useState<CustomAgent[]>([]);
 
   useEffect(() => {
-    setStats(getEnergyStats());
+    const liveStats = getStats();
+    setStats({
+      totalEnergyUsed: liveStats.messages * 2,
+      level: liveStats.level,
+      currentXp: liveStats.xp,
+      nextLevelXp: liveStats.nextLevelXP,
+    });
     const savedPlan = localStorage.getItem("orbit_plan") || "commander"; // Defaulting to commander for demo
     setUserPlan(savedPlan);
     setCustomAgents(getCustomAgents());
@@ -40,6 +46,29 @@ export default function ProfilePage() {
                   Lvl {stats.level} — Initiate
                 </span>
               </div>
+
+              {/* Energy meter */}
+              {userPlan !== "commander" && (
+                <div className="mt-4 w-full">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-[Orbitron] text-[8px] tracking-[3px] uppercase text-primary/60">GRID ENERGY TODAY</span>
+                    <span className="font-mono text-[10px] text-primary">
+                      {getEnergyRemaining()} / {getMaxEnergy()}
+                    </span>
+                  </div>
+                  <div className="h-2 w-full rounded-full bg-white/10 overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-700"
+                      style={{
+                        width: `${Math.round((getEnergyRemaining() / getMaxEnergy()) * 100)}%`,
+                        backgroundColor: getEnergyRemaining() / getMaxEnergy() <= 0.2 ? "#FF4444" :
+                                         getEnergyRemaining() / getMaxEnergy() <= 0.5 ? "#F59E0B" : "#4ECDC4",
+                      }}
+                    />
+                  </div>
+                  <p className="font-mono text-[8px] text-muted-foreground/40 mt-1">Resets daily at midnight UTC</p>
+                </div>
+              )}
             </div>
           </div>
         </div>

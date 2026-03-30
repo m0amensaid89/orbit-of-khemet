@@ -7,6 +7,7 @@ import Image from "next/image";
 import { heroAgents, getOnboardingMessage } from "@/lib/agents";
 import { getHero } from "@/lib/heroes";
 import { getCustomAgentById } from "@/lib/custom-agents";
+import { consumeEnergy, trackMessage, getEnergyCost } from "@/lib/energy";
 
 export default function ChatPage() {
   const searchParams = useSearchParams();
@@ -37,6 +38,19 @@ export default function ChatPage() {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const heroModelMap: Record<string, string> = {
+    master:  "openrouter/auto",
+    thoren:  "anthropic/claude-sonnet-4-5",
+    nexar:   "deepseek/deepseek-r1:free",
+    ramet:   "google/gemini-2.5-flash",
+    lyra:    "google/gemini-2.5-flash",
+    kairo:   "google/gemini-2.5-flash",
+    nefra:   "google/gemini-2.5-flash",
+    horusen: "google/gemini-2.5-flash",
+  };
+  const currentModel = heroModelMap[heroParam] || "google/gemini-2.5-flash";
+  const energyCost = getEnergyCost(currentModel);
+
   // Agent speaks first — onboarding message
   useEffect(() => {
     if (agent && "prompt" in agent && agent.prompt) {
@@ -58,6 +72,19 @@ export default function ChatPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
+
+    // Energy gate
+    const energyResult = consumeEnergy(currentModel);
+    if (!energyResult.success) {
+      setMessages(prev => [...prev, {
+        id: "energy-" + Date.now(),
+        role: "assistant",
+        content: `⚡ GRID ENERGY DEPLETED — You've used all your daily energy. It resets at midnight UTC.\n\nUpgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
+      }]);
+      setIsLoading(false);
+      return;
+    }
+
     const userMessage = { id: Date.now().toString(), role: "user", content: input };
     setMessages(prev => [...prev, userMessage]);
     setInput("");
@@ -76,6 +103,7 @@ export default function ChatPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed");
       setMessages(prev => [...prev, { id: (Date.now()+1).toString(), role: "assistant", content: data.response }]);
+      trackMessage();
     } catch (err) {
       setMessages(prev => [...prev, { id: "err-"+Date.now(), role: "assistant", content: "Connection interrupted. Please try again." }]);
     } finally {
@@ -195,6 +223,11 @@ export default function ChatPage() {
 
         {/* Input bar */}
         <div className="shrink-0 px-4 py-3 border-t" style={{ borderColor: cardBorder, background: bgMid }}>
+          <div className="flex items-center justify-between px-2 mb-1">
+            <span className="font-mono text-[9px] text-muted-foreground/40">
+              ⚡ {energyCost} energy per message
+            </span>
+          </div>
           <form onSubmit={handleSubmit} className="flex items-center gap-2">
             <input
               className="flex-1 px-4 py-2.5 rounded-full text-sm outline-none transition-all"

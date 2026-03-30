@@ -171,3 +171,82 @@ html.light .khemet-pattern {
 html.light .bg-background\/80 {
   background-color: rgba(245, 240, 232, 0.9) !important;
 }
+/* ── Sprint 4: Full light mode fix ─────────────────────────── */
+
+html.light,
+html.light body {
+  background-color: #f5f0e8 !important;
+  color: #1a1a1a !important;
+}
+
+html.light .dark {
+  --background: #f5f0e8 !important;
+  --foreground: #1a1a1a !important;
+  --card: #ede8df !important;
+  --card-foreground: #1a1a1a !important;
+  --popover: #ede8df !important;
+  --popover-foreground: #1a1a1a !important;
+  --primary: #8B6914 !important;
+  --primary-foreground: #ffffff !important;
+  --secondary: #d4c4a0 !important;
+  --secondary-foreground: #1a1a1a !important;
+  --muted: #e8e0d0 !important;
+  --muted-foreground: #5a5040 !important;
+  --accent: #c9a227 !important;
+  --accent-foreground: #1a1a1a !important;
+  --border: rgba(139,105,20,0.25) !important;
+  --input: rgba(139,105,20,0.18) !important;
+}
+
+html.light .khemet-pattern {
+  background-color: #f5f0e8 !important;
+  background-image:
+    linear-gradient(30deg, #ede8df 12%, transparent 12.5%, transparent 87%, #ede8df 87.5%, #ede8df),
+    linear-gradient(150deg, #ede8df 12%, transparent 12.5%, transparent 87%, #ede8df 87.5%, #ede8df),
+    linear-gradient(30deg, #ede8df 12%, transparent 12.5%, transparent 87%, #ede8df 87.5%, #ede8df),
+    linear-gradient(150deg, #ede8df 12%, transparent 12.5%, transparent 87%, #ede8df 87.5%, #ede8df),
+    linear-gradient(60deg, rgba(139,105,20,0.07) 25%, transparent 25.5%, transparent 75%, rgba(139,105,20,0.07) 75%, rgba(139,105,20,0.07)),
+    linear-gradient(60deg, rgba(139,105,20,0.07) 25%, transparent 25.5%, transparent 75%, rgba(139,105,20,0.07) 75%, rgba(139,105,20,0.07));
+  background-size: 80px 140px;
+  background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+}
+
+/* Override hardcoded black backgrounds */
+html.light [style*="background-color: rgb(10, 10, 10)"],
+html.light [style*="background-color:#0A0A0A"],
+html.light [style*="background-color: #0A0A0A"],
+html.light .bg-black,
+html.light .bg-\[\#0a0c10\] {
+  background-color: #f0ebe0 !important;
+}
+
+/* Text overrides */
+html.light .text-white { color: #1a1a1a !important; }
+html.light .text-white\/70 { color: rgba(26,26,26,0.7) !important; }
+html.light .text-white\/60 { color: rgba(26,26,26,0.6) !important; }
+html.light .text-white\/50 { color: rgba(26,26,26,0.5) !important; }
+html.light .text-white\/40 { color: rgba(26,26,26,0.4) !important; }
+html.light .text-white\/30 { color: rgba(26,26,26,0.3) !important; }
+
+/* Border overrides */
+html.light .border-white\/5  { border-color: rgba(139,105,20,0.10) !important; }
+html.light .border-white\/10 { border-color: rgba(139,105,20,0.15) !important; }
+
+/* Nav and card backgrounds */
+html.light .bg-background\/80,
+html.light .bg-background\/90,
+html.light .bg-background\/95 {
+  background-color: rgba(245, 240, 232, 0.92) !important;
+}
+
+/* Sticky nav fix */
+html.light header.sticky {
+  background-color: rgba(245,240,232,0.92) !important;
+  border-bottom-color: rgba(139,105,20,0.15) !important;
+}
+
+/* Min-height screen pages */
+html.light main.min-h-screen {
+  background-color: #f5f0e8 !important;
+}
+/* ────────────────────────────────────────────────────────────── */

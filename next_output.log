@@ -1,10 +1,26 @@
 
 > temp-app@0.1.0 start
-> next start -p 3010
+> next start
 
    ▲ Next.js 15.5.14
-   - Local:        http://localhost:3010
-   - Network:      http://192.168.0.2:3010
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.0.2:3000
 
  ✓ Starting...
- ✓ Ready in 2.1s
+ ✓ Ready in 2.6s
+CHAT API ERROR: OPENROUTER_API_KEY is missing
+CHAT API ERROR: OPENROUTER_API_KEY is missing
+CHAT API ERROR: OPENROUTER_API_KEY is missing
+CHAT API ERROR: OPENROUTER_API_KEY is missing
+CHAT API ERROR: OPENROUTER_API_KEY is missing
+CHAT API ERROR: OPENROUTER_API_KEY is missing
+CHAT API ERROR: OPENROUTER_API_KEY is missing
+CHAT API ERROR: OPENROUTER_API_KEY is missing
+CHAT API ERROR: OPENROUTER_API_KEY is missing
+CHAT API ERROR: OPENROUTER_API_KEY is missing
+CHAT API ERROR: OPENROUTER_API_KEY is missing
+CHAT API ERROR: OPENROUTER_API_KEY is missing
+CHAT API ERROR: OPENROUTER_API_KEY is missing
+CHAT API ERROR: OPENROUTER_API_KEY is missing
+CHAT API ERROR: OPENROUTER_API_KEY is missing
+CHAT API ERROR: OPENROUTER_API_KEY is missing
