@@ -1,0 +1,4 @@
+# Protect hero images from being stripped or replaced by git operations
+public/*.png binary
+public/*.jpg binary
+public/*.webp binary
