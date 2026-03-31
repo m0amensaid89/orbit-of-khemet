@@ -8,6 +8,10 @@ export const ENERGY_COSTS: Record<string, number> = {
   "google/gemini-2.5-flash": 2,
   "google/gemini-2.5-flash-exp-image-generation": 4,
   "anthropic/claude-sonnet-4-5": 5,
+  "openai/gpt-4o:online": 4,
+  "anthropic/claude-sonnet-4-5:online": 6,
+  "openai/o3-mini:online": 7,
+  "google/gemini-2.5-flash:online": 3,
   "default": 2,
 };
 

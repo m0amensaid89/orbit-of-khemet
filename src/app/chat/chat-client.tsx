@@ -38,14 +38,14 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const heroModelMap: Record<string, string> = {
-    master:  "openrouter/auto",
-    thoren:  "anthropic/claude-sonnet-4-5",
-    nexar:   "deepseek/deepseek-r1:free",
-    ramet:   "google/gemini-2.5-flash",
-    lyra:    "google/gemini-2.5-flash",
-    kairo:   "google/gemini-2.5-flash",
-    nefra:   "google/gemini-2.5-flash",
-    horusen: "google/gemini-2.5-flash",
+    master:  "anthropic/claude-sonnet-4-5:online",
+    thoren:  "anthropic/claude-sonnet-4-5:online",
+    nexar:   "openai/o3-mini:online",
+    ramet:   "google/gemini-2.5-flash:online",
+    lyra:    "anthropic/claude-sonnet-4-5:online",
+    kairo:   "google/gemini-2.5-flash:online",
+    nefra:   "google/gemini-2.5-flash:online",
+    horusen: "openai/gpt-4o:online",
   };
   const currentModel = heroModelMap[heroParam] || "google/gemini-2.5-flash";
   const energyCost = getEnergyCost(currentModel);
@@ -101,7 +101,8 @@ export default function ChatPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed");
-      setMessages(prev => [...prev, { id: (Date.now()+1).toString(), role: "assistant", content: data.response }]);
+      const modelBadge = data.modelUsed ? `\n\n---\n*Model: ${data.modelUsed}*` : '';
+      setMessages(prev => [...prev, { id: (Date.now()+1).toString(), role: 'assistant', content: (data.response || '') + modelBadge }]);
       trackMessage();
     } catch {
       setMessages(prev => [...prev, { id: "err-"+Date.now(), role: "assistant", content: "Connection interrupted. Please try again." }]);
