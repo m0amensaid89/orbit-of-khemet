@@ -3,18 +3,71 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Zap, Hexagon, Fingerprint, ShieldAlert, Cpu } from "lucide-react";
-import { getEnergyRemaining } from "@/lib/energy";
+import { Zap, Hexagon, Fingerprint, ShieldAlert, Cpu, LogIn, LogOut, User } from "lucide-react";
+import { getEnergyRemainingAsync } from "@/lib/energy";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { createClient } from "@/lib/supabase/client";
 
 export function Sidebar() {
   const pathname = usePathname();
   const [energy, setEnergy] = useState<number>(100000);
+  const [user, setUser] = useState<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
+  const [profile, setProfile] = useState<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
+  const supabase = createClient();
 
   useEffect(() => {
-    setEnergy(getEnergyRemaining());
-  }, []);
+    async function fetchSessionAndEnergy() {
+      // Get user session
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user || null);
+
+      if (session?.user) {
+        // Fetch profile
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+        setProfile(profileData);
+      }
+
+      // Fetch energy (async handles both logged in and guest)
+      const currentEnergy = await getEnergyRemainingAsync();
+      setEnergy(currentEnergy);
+    }
+
+    fetchSessionAndEnergy();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        setUser(session?.user || null);
+        if (session?.user) {
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+          setProfile(profileData);
+        } else {
+          setProfile(null);
+        }
+        // Refresh energy on auth change
+        const currentEnergy = await getEnergyRemainingAsync();
+        setEnergy(currentEnergy);
+      }
+    );
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    window.location.href = "/";
+  };
 
   return (
     <aside className="w-64 h-screen border-r border-[#D4AF37]/20 bg-background/80 backdrop-blur-xl hidden md:flex flex-col sticky top-0 shrink-0">
@@ -106,7 +159,41 @@ export function Sidebar() {
         </Link>
       </nav>
 
-      <div className="p-4 border-t border-[#D4AF37]/20 bg-background/50">
+      <div className="p-4 border-t border-[#D4AF37]/20 bg-background/50 flex flex-col gap-4">
+
+        {/* User Auth Section */}
+        {user ? (
+          <div className="flex items-center justify-between p-2 rounded-lg bg-black/40 border border-white/5">
+            <div className="flex items-center gap-3 truncate">
+              <div className="w-8 h-8 rounded-full bg-[#D4AF37]/20 flex items-center justify-center shrink-0 border border-[#D4AF37]/40">
+                <User className="w-4 h-4 text-[#D4AF37]" />
+              </div>
+              <div className="truncate">
+                <div className="font-[Rajdhani] text-sm text-white font-medium truncate">
+                  {profile?.display_name || user.email?.split('@')[0]}
+                </div>
+                <div className="font-[Orbitron] text-[8px] text-[#D4AF37] tracking-widest uppercase truncate">
+                  Commander
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={handleSignOut}
+              className="p-2 text-white/40 hover:text-[#D4AF37] hover:bg-white/5 rounded transition-colors"
+              title="Sign Out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
+        ) : (
+          <Link href="/auth" className="block">
+            <button className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-lg bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] hover:bg-[#D4AF37]/20 hover:border-[#D4AF37]/50 transition-all group">
+              <LogIn className="w-4 h-4 group-hover:scale-110 transition-transform" />
+              <span className="font-[Orbitron] text-[10px] tracking-widest uppercase font-bold">Sign In</span>
+            </button>
+          </Link>
+        )}
+
         <div className="bg-[#1A1A1A] rounded-xl p-4 border border-[#D4AF37]/20 shadow-[0_0_15px_rgba(212,175,55,0.05)] relative overflow-hidden group">
           <div className="absolute inset-0 bg-gradient-to-tr from-[#D4AF37]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           <div className="flex items-center justify-between mb-3 relative z-10">

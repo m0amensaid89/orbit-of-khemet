@@ -1,5 +1,6 @@
 // Grid Energy — Daily credit system for Orbit of Khemet
 // Resets at midnight UTC every day. Fixed cost per model = predictable usage.
+import { createClient } from "@/lib/supabase/client";
 
 export const ENERGY_COSTS: Record<string, number> = {
   "deepseek/deepseek-r1:free": 1,
@@ -49,6 +50,10 @@ function getPlan(): string {
   return localStorage.getItem("orbit_plan") || "commander"; // default commander for demo
 }
 
+/**
+ * Sync energy fetch
+ * Fallback for guest users or initial render before async completes.
+ */
 export function getEnergyRemaining(): number {
   if (typeof window === "undefined") return 50;
   const plan = getPlan();
@@ -68,11 +73,85 @@ export function getEnergyRemaining(): number {
   return parseInt(localStorage.getItem(ENERGY_KEY) || "50", 10);
 }
 
+/**
+ * Async energy fetch checking Supabase first, then falling back to localStorage
+ */
+export async function getEnergyRemainingAsync(): Promise<number> {
+  if (typeof window === "undefined") return 50;
+
+  const supabase = createClient();
+  const { data: { session } } = await supabase.auth.getSession();
+
+  if (session?.user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('energy_balance')
+      .eq('id', session.user.id)
+      .single();
+
+    if (profile) {
+      return profile.energy_balance;
+    }
+  }
+
+  return getEnergyRemaining(); // Guest fallback
+}
+
 export function getMaxEnergy(): number {
   const plan = getPlan();
   return PLAN_DAILY_ENERGY[plan] || 50;
 }
 
+/**
+ * Async energy consumption that deducts from Supabase for logged in users
+ * and falls back to localStorage for guests.
+ */
+export async function consumeEnergyAsync(model: string): Promise<{ success: boolean; remaining: number; cost: number }> {
+  const cost = ENERGY_COSTS[model] || ENERGY_COSTS["default"];
+
+  const supabase = createClient();
+  const { data: { session } } = await supabase.auth.getSession();
+
+  if (session?.user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('energy_balance')
+      .eq('id', session.user.id)
+      .single();
+
+    const currentBalance = profile?.energy_balance ?? 0;
+
+    if (currentBalance < cost) {
+      return { success: false, remaining: currentBalance, cost };
+    }
+
+    const newBalance = Math.max(0, currentBalance - cost);
+
+    await supabase
+      .from('profiles')
+      .update({ energy_balance: newBalance })
+      .eq('id', session.user.id);
+
+    return { success: true, remaining: newBalance, cost };
+  }
+
+  // Guest fallback
+  const plan = getPlan();
+  if (plan === "commander") return { success: true, remaining: 9999, cost: 0 };
+  const current = getEnergyRemaining();
+
+  if (current < cost) {
+    return { success: false, remaining: current, cost };
+  }
+
+  const next = Math.max(0, current - cost);
+  localStorage.setItem(ENERGY_KEY, String(next));
+  return { success: true, remaining: next, cost };
+}
+
+/**
+ * Legacy sync method maintained for existing synchronous calls where refactoring to async isn't viable right now.
+ */
 export function consumeEnergy(model: string): { success: boolean; remaining: number; cost: number } {
   const plan = getPlan();
   if (plan === "commander") return { success: true, remaining: 9999, cost: 0 };

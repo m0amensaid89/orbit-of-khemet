@@ -14,6 +14,8 @@
     "@fontsource/exo-2": "^5.2.8",
     "@fontsource/orbitron": "^5.2.8",
     "@fontsource/rajdhani": "^5.2.7",
+    "@supabase/ssr": "^0.10.0",
+    "@supabase/supabase-js": "^2.101.1",
     "ai": "^4.1.0",
     "canvas": "^3.2.2",
     "class-variance-authority": "^0.7.1",
