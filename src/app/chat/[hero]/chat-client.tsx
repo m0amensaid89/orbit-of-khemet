@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ArrowLeft, Send, Loader2, Zap } from "lucide-react";
 import Image from "next/image";
 import { heroAgents, getOnboardingMessage } from "@/lib/agents";
 import { getHero } from "@/lib/heroes";
 import { getCustomAgentById } from "@/lib/custom-agents";
-import { consumeEnergyAsync, trackMessage, getEnergyCost } from "@/lib/energy";
+import { trackMessage, getEnergyCost } from "@/lib/energy";
+import { useChat } from "@ai-sdk/react";
 
 export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
   const searchParams = useSearchParams();
@@ -32,9 +33,24 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
   const agentInitials = agentName.substring(0, 2).toUpperCase();
   const heroName = hero?.name || heroParam.toUpperCase();
 
-  const [messages, setMessages] = useState<{ id: string; role: string; content: string; modelUsed?: string }[]>([]);
-  const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const { messages, input, handleInputChange, handleSubmit, setMessages, isLoading } = useChat({
+    api: "/api/chat",
+    body: { hero: heroParam, agent: agentParam },
+    onFinish: () => trackMessage(),
+    onError: (err) => {
+      if (err.message.includes("ENERGY DEPLETED")) {
+        setMessages(prev => [...prev, {
+          id: "energy-" + Date.now(),
+          role: "assistant",
+          content: `⚡ GRID ENERGY DEPLETED — You've used all your daily energy. It resets at midnight UTC.
+
+Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
+        }]);
+      } else {
+        setMessages(prev => [...prev, { id: "err-"+Date.now(), role: "assistant", content: "Connection interrupted. Please try again." }]);
+      }
+    }
+  });
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const heroModelMap: Record<string, string> = {
@@ -52,73 +68,42 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
 
   // Agent speaks first — onboarding message
   useEffect(() => {
-    if (agent && "prompt" in agent && agent.prompt) {
-      const onboarding = getOnboardingMessage();
-      if (onboarding) {
-        setMessages([{ id: "onboarding", role: "assistant", content: onboarding }]);
-      } else {
-        setMessages([{ id: "onboarding", role: "assistant", content: `I am ${agentName}. ${agent.description || ""} How can I assist you today?` }]);
+    if (messages.length === 0) {
+      if (hero && hero.welcomeMessage) {
+        setMessages([{ id: "onboarding", role: "assistant", content: hero.welcomeMessage }]);
+      } else if (agent && "prompt" in agent && agent.prompt) {
+        const onboarding = getOnboardingMessage();
+        if (onboarding) {
+          setMessages([{ id: "onboarding", role: "assistant", content: onboarding }]);
+        } else {
+          setMessages([{ id: "onboarding", role: "assistant", content: `I am ${agentName}. ${agent.description || ""} How can I assist you today?` }]);
+        }
+      } else if (isMaster) {
+        setMessages([{ id: "onboarding", role: "assistant", content: `The Empire Engine is online. All 85 agents are standing by. What directive shall I execute?` }]);
       }
-    } else if (isMaster) {
-      setMessages([{ id: "onboarding", role: "assistant", content: `The Empire Engine is online. All 85 agents are standing by. What directive shall I execute?` }]);
     }
-  }, [agentParam, heroParam, agent, agentName, isMaster]);
+  }, [agentParam, heroParam, agent, agentName, isMaster, hero, messages.length, setMessages]);
+
+  useEffect(() => {
+    if (messages.length === 0) {
+      if (hero && hero.welcomeMessage) {
+        setMessages([{ id: "onboarding", role: "assistant", content: hero.welcomeMessage }]);
+      } else if (agent && "prompt" in agent && agent.prompt) {
+        const onboarding = getOnboardingMessage();
+        if (onboarding) {
+          setMessages([{ id: "onboarding", role: "assistant", content: onboarding }]);
+        } else {
+          setMessages([{ id: "onboarding", role: "assistant", content: `I am ${agentName}. ${agent.description || ""} How can I assist you today?` }]);
+        }
+      } else if (isMaster) {
+        setMessages([{ id: "onboarding", role: "assistant", content: `The Empire Engine is online. All 85 agents are standing by. What directive shall I execute?` }]);
+      }
+    }
+  }, [agentParam, heroParam, agent, agentName, isMaster, hero, messages.length, setMessages]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
-
-    // Energy gate
-    const energyResult = await consumeEnergyAsync(currentModel);
-    if (!energyResult.success) {
-      setMessages(prev => [...prev, {
-        id: "energy-" + Date.now(),
-        role: "assistant",
-        content: `⚡ GRID ENERGY DEPLETED — You've used all your daily energy. It resets at midnight UTC.\n\nUpgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
-      }]);
-      setIsLoading(false);
-      return;
-    }
-
-    const userMessage = { id: Date.now().toString(), role: "user", content: input };
-    setMessages(prev => [...prev, userMessage]);
-    setInput("");
-    setIsLoading(true);
-    try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: [...messages, userMessage],
-          hero: heroParam,
-          agent: agentParam,
-          customSystemPrompt: agentParam.startsWith("custom_") ? getCustomAgentById(agentParam)?.systemPrompt : undefined
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed");
-      let finalContent = data.response || '';
-      if (data.modelUsed && data.modelUsed !== 'xiaomi/mimo-7b') {
-        finalContent += `\n\n---\n*Model: ${data.modelUsed}*`;
-      }
-
-      setMessages(prev => [...prev, {
-        id: (Date.now()+1).toString(),
-        role: 'assistant',
-        content: finalContent,
-        modelUsed: data.modelUsed
-      }]);
-      trackMessage();
-    } catch {
-      setMessages(prev => [...prev, { id: "err-"+Date.now(), role: "assistant", content: "Connection interrupted. Please try again." }]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4"
@@ -219,7 +204,7 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
                         : { background: bgMid, border: `1px solid ${cardBorder}`, color: "rgba(255,255,255,0.9)", fontFamily: "var(--font-sans)", borderLeftColor: accentColor, borderLeftWidth: "3px" }}>
                       <div className="whitespace-pre-wrap break-words">{cleanContent}</div>
                     </div>
-                    {m.modelUsed === "xiaomi/mimo-7b" && (
+                    {(((m as { modelUsed?: string }).modelUsed) === "xiaomi/mimo-7b" || modelUsed === "xiaomi/mimo-7b") && (
                       <div className="self-start px-2 py-0.5 mt-1 rounded text-[10px] font-bold tracking-wider"
                         style={{ background: "rgba(245, 158, 11, 0.15)", color: "#F59E0B", border: "1px solid rgba(245, 158, 11, 0.3)" }}>
                         MiMo
@@ -270,7 +255,7 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
                   style={{ background: "#0A0A0A", border: `1px solid ${cardBorder}`, color: "white" }}
                   value={input}
                   placeholder={`Message ${agentName}...`}
-                  onChange={e => setInput(e.target.value)}
+                  onChange={handleInputChange}
                   disabled={isLoading}
                   onFocus={e => { e.target.style.borderColor = accentColor; e.target.style.boxShadow = `0 0 15px rgba(${hero?.palette?.["accent-rgb"] || "212,175,55"}, 0.15)`; }}
                   onBlur={e => { e.target.style.borderColor = cardBorder; e.target.style.boxShadow = "none"; }}
