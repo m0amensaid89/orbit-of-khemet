@@ -7,7 +7,7 @@ import Image from "next/image";
 import { heroAgents, getOnboardingMessage } from "@/lib/agents";
 import { getHero } from "@/lib/heroes";
 import { getCustomAgentById } from "@/lib/custom-agents";
-import { consumeEnergy, trackMessage, getEnergyCost } from "@/lib/energy";
+import { consumeEnergyAsync, trackMessage, getEnergyCost } from "@/lib/energy";
 
 export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
   const searchParams = useSearchParams();
@@ -73,7 +73,7 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
     if (!input.trim() || isLoading) return;
 
     // Energy gate
-    const energyResult = consumeEnergy(currentModel);
+    const energyResult = await consumeEnergyAsync(currentModel);
     if (!energyResult.success) {
       setMessages(prev => [...prev, {
         id: "energy-" + Date.now(),
