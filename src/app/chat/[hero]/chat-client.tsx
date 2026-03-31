@@ -2,17 +2,17 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { ArrowLeft, Send, Loader2 } from "lucide-react";
+import { ArrowLeft, Send, Loader2, Zap } from "lucide-react";
 import Image from "next/image";
 import { heroAgents, getOnboardingMessage } from "@/lib/agents";
 import { getHero } from "@/lib/heroes";
 import { getCustomAgentById } from "@/lib/custom-agents";
 import { consumeEnergy, trackMessage, getEnergyCost } from "@/lib/energy";
 
-export default function ChatPage() {
+export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const heroParam = (searchParams.get("hero") || "MASTER").toLowerCase();
+  const heroParam = (heroSlug || searchParams.get("hero") || "MASTER").toLowerCase();
   const agentParam = searchParams.get("agent") || "";
   const isMaster = heroParam === "master";
 
@@ -173,80 +173,109 @@ export default function ChatPage() {
           <span style={{ opacity: 1, color: primaryColor }}>{agentName}</span>
         </div>
 
-        {/* Messages area */}
-        <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3"
-          style={{ background: bgDeep }}>
-          {messages.map((m) => (
-            <div key={m.id} className={`flex gap-2 ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
+          {/* Messages area */}
+          <div className="flex-1 overflow-y-auto px-4 py-6 flex flex-col gap-6"
+            style={{ background: bgDeep }}>
+            {messages.map((m) => {
+              // Extract model badge if present
+              const contentParts = m.content.split("\n\n---\n*Model:");
+              const cleanContent = contentParts[0];
+              const modelUsed = contentParts.length > 1 ? contentParts[1].replace("*", "").trim() : null;
 
-              {/* Avatar */}
-              {m.role === "assistant" && (
-                <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 self-end font-[Orbitron] text-xs border mt-auto"
-                  style={{ background: `rgba(${hero?.palette?.["primary-rgb"] || "192,192,192"},0.1)`, borderColor: cardBorder, color: accentColor }}>
+              return (
+                <div key={m.id} className={`flex gap-3 w-full ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
+
+                  {/* Avatar */}
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-[Orbitron] text-xs border shadow-lg ${m.role === "user" ? "mt-auto" : "mt-1"}`}
+                    style={m.role === "user"
+                      ? { background: "#1A1A1A", borderColor: "#D4AF37", color: "#D4AF37" }
+                      : { background: `rgba(${hero?.palette?.["primary-rgb"] || "192,192,192"},0.1)`, borderColor: accentColor, color: accentColor }}>
+                    {m.role === "user" ? "YOU" : agentInitials}
+                  </div>
+
+                  {/* Bubble Container */}
+                  <div className={`flex flex-col max-w-[80%] ${m.role === "user" ? "items-end" : "items-start"}`}>
+
+                    {/* Header (Agent Name) */}
+                    {m.role === "assistant" && (
+                      <span className="font-[Orbitron] text-[10px] tracking-widest uppercase mb-1.5 ml-1" style={{ color: primaryColor }}>
+                        {agentName}
+                      </span>
+                    )}
+
+                    {/* Bubble */}
+                    <div className={`px-5 py-3.5 text-sm leading-relaxed shadow-md ${m.role === "user" ? "rounded-2xl rounded-br-sm" : "rounded-2xl rounded-tl-sm"}`}
+                      style={m.role === "user"
+                        ? { background: "linear-gradient(135deg, #1A1A1A, #0A0A0A)", border: "1px solid #D4AF37", color: "#F5D38C", fontFamily: "var(--font-sans)" }
+                        : { background: bgMid, border: `1px solid ${cardBorder}`, color: "rgba(255,255,255,0.9)", fontFamily: "var(--font-sans)", borderLeftColor: accentColor, borderLeftWidth: "3px" }}>
+                      <div className="whitespace-pre-wrap break-words">{cleanContent}</div>
+                    </div>
+
+                    {/* Model Badge */}
+                    {modelUsed && m.role === "assistant" && (
+                      <div className="mt-2 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-widest px-2 py-0.5 rounded-full border"
+                        style={{ background: "rgba(255,255,255,0.03)", borderColor: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.4)" }}>
+                        <Zap className="w-2.5 h-2.5" style={{ color: primaryColor }} /> {modelUsed}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Typing Indicator */}
+            {isLoading && (
+              <div className="flex gap-3 w-full flex-row">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-[Orbitron] text-xs border mt-1 shadow-lg"
+                  style={{ background: `rgba(${hero?.palette?.["primary-rgb"] || "192,192,192"},0.1)`, borderColor: accentColor, color: accentColor }}>
                   {agentInitials}
                 </div>
-              )}
-
-              {/* Bubble */}
-              <div className={`max-w-[75%] px-4 py-3 text-sm leading-relaxed ${m.role === "user" ? "rounded-2xl rounded-br-sm" : "rounded-2xl rounded-bl-sm"}`}
-                style={m.role === "user"
-                  ? { background: accentColor, color: "#000", fontFamily: "var(--font-body)" }
-                  : { background: bgMid, border: `0.5px solid ${cardBorder}`, color: "rgba(255,255,255,0.87)", fontFamily: "var(--font-body)" }}>
-                <div className="whitespace-pre-wrap break-words">{m.content}</div>
-              </div>
-
-              {/* User avatar */}
-              {m.role === "user" && (
-                <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 self-end bg-white/10 border border-white/20 text-xs font-mono text-white/60 mt-auto">
-                  YOU
+                <div className="flex flex-col items-start max-w-[80%]">
+                  <span className="font-[Orbitron] text-[10px] tracking-widest uppercase mb-1.5 ml-1" style={{ color: primaryColor }}>
+                    {agentName} <span className="text-white/30 lowercase tracking-normal">is typing...</span>
+                  </span>
+                  <div className="px-5 py-4 rounded-2xl rounded-tl-sm flex items-center gap-2 shadow-md"
+                    style={{ background: bgMid, border: `1px solid ${cardBorder}`, borderLeftColor: accentColor, borderLeftWidth: "3px" }}>
+                    <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: accentColor, animationDelay: '0ms' }} />
+                    <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: accentColor, animationDelay: '150ms' }} />
+                    <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: accentColor, animationDelay: '300ms' }} />
+                  </div>
+                </div>
                 </div>
               )}
+            <div ref={messagesEndRef} />
             </div>
-          ))}
 
-          {isLoading && (
-            <div className="flex gap-2">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 font-[Orbitron] text-xs border"
-                style={{ background: `rgba(${hero?.palette?.["primary-rgb"] || "192,192,192"},0.1)`, borderColor: cardBorder, color: accentColor }}>
-                {agentInitials}
+          {/* Input bar */}
+          <div className="shrink-0 p-4 border-t" style={{ borderColor: cardBorder, background: bgMid }}>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+              <div className="relative flex items-center w-full">
+                <input
+                  className="w-full pl-5 pr-16 py-4 rounded-xl text-base outline-none transition-all shadow-inner placeholder:text-white/20 font-[Rajdhani]"
+                  style={{ background: "#0A0A0A", border: `1px solid ${cardBorder}`, color: "white" }}
+                  value={input}
+                  placeholder={`Message ${agentName}...`}
+                  onChange={e => setInput(e.target.value)}
+                  disabled={isLoading}
+                  onFocus={e => { e.target.style.borderColor = accentColor; e.target.style.boxShadow = `0 0 15px rgba(${hero?.palette?.["accent-rgb"] || "212,175,55"}, 0.15)`; }}
+                  onBlur={e => { e.target.style.borderColor = cardBorder; e.target.style.boxShadow = "none"; }}
+                />
+                <button type="submit" disabled={isLoading || !input.trim()}
+                  className="absolute right-2 w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-all disabled:opacity-30 disabled:hover:scale-100 hover:scale-105"
+                  style={{ background: accentColor, color: "#000", boxShadow: `0 0 10px rgba(${hero?.palette?.["accent-rgb"] || "212,175,55"}, 0.5)` }}>
+                  {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-4 h-4 ml-0.5" />}
+                </button>
               </div>
-              <div className="px-4 py-3 rounded-2xl rounded-bl-sm flex items-center gap-2"
-                style={{ background: bgMid, border: `0.5px solid ${cardBorder}` }}>
-                <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: accentColor, animationDelay: '0ms' }} />
-                <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: accentColor, animationDelay: '150ms' }} />
-                <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: accentColor, animationDelay: '300ms' }} />
+              <div className="flex items-center justify-between px-2">
+                <span className="font-[Orbitron] text-[9px] tracking-widest uppercase text-white/30 flex items-center gap-1">
+                  <Zap className="w-3 h-3 text-[#D4AF37]" /> {energyCost} energy per message
+                </span>
+                <span className="font-[Orbitron] text-[8px] tracking-[2px] uppercase text-white/20">
+                  Powered by Empire Engine
+                </span>
               </div>
+            </form>
             </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-
-        {/* Input bar */}
-        <div className="shrink-0 px-4 py-3 border-t" style={{ borderColor: cardBorder, background: bgMid }}>
-          <div className="flex items-center justify-between px-2 mb-1">
-            <span className="font-mono text-[9px] text-muted-foreground/40">
-              ⚡ {energyCost} energy per message
-            </span>
-          </div>
-          <form onSubmit={handleSubmit} className="flex items-center gap-2">
-            <input
-              className="flex-1 px-4 py-2.5 rounded-full text-sm outline-none transition-all"
-              style={{ background: bgDeep, border: `1.5px solid ${cardBorder}`, color: "rgba(255,255,255,0.87)",
-                fontFamily: "var(--font-body)" }}
-              value={input}
-              placeholder={`Message ${agentName}...`}
-              onChange={e => setInput(e.target.value)}
-              disabled={isLoading}
-              onFocus={e => { e.target.style.borderColor = accentColor; }}
-              onBlur={e => { e.target.style.borderColor = cardBorder; }}
-            />
-            <button type="submit" disabled={isLoading || !input.trim()}
-              className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all disabled:opacity-40"
-              style={{ background: accentColor, color: "#000" }}>
-              {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-            </button>
-          </form>
-        </div>
       </div>
     </div>
   );
