@@ -37,7 +37,7 @@ export type Hotspot = {
   detail_card_index: number;
 };
 
-export function getOnboardingMessage(prompt: string): string | null {
+export function getOnboardingMessage(): string | null {
   // Try to extract an onboarding message if one exists in the prompt.
   // This is a simple fallback if the agent has a prompt string.
   return null;

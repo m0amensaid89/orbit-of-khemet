@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ArrowLeft, Send, Loader2 } from "lucide-react";
 import Image from "next/image";
@@ -31,7 +31,6 @@ export default function ChatPage() {
   const agentRole = agent?.role_summary || (isMaster ? "Full Council of 85 Agents" : hero?.class_title || "");
   const agentInitials = agentName.substring(0, 2).toUpperCase();
   const heroName = hero?.name || heroParam.toUpperCase();
-  const heroClass = hero?.class_title || "";
 
   const [messages, setMessages] = useState<{ id: string; role: string; content: string }[]>([]);
   const [input, setInput] = useState("");
@@ -54,7 +53,7 @@ export default function ChatPage() {
   // Agent speaks first — onboarding message
   useEffect(() => {
     if (agent && "prompt" in agent && agent.prompt) {
-      const onboarding = getOnboardingMessage((agent as {prompt: string}).prompt);
+      const onboarding = getOnboardingMessage();
       if (onboarding) {
         setMessages([{ id: "onboarding", role: "assistant", content: onboarding }]);
       } else {
@@ -63,7 +62,7 @@ export default function ChatPage() {
     } else if (isMaster) {
       setMessages([{ id: "onboarding", role: "assistant", content: `The Empire Engine is online. All 85 agents are standing by. What directive shall I execute?` }]);
     }
-  }, [agentParam, heroParam]);
+  }, [agentParam, heroParam, agent, agentName, isMaster]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -104,7 +103,7 @@ export default function ChatPage() {
       if (!res.ok) throw new Error(data.error || "Failed");
       setMessages(prev => [...prev, { id: (Date.now()+1).toString(), role: "assistant", content: data.response }]);
       trackMessage();
-    } catch (err) {
+    } catch {
       setMessages(prev => [...prev, { id: "err-"+Date.now(), role: "assistant", content: "Connection interrupted. Please try again." }]);
     } finally {
       setIsLoading(false);

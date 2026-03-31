@@ -12,7 +12,6 @@ type AgentCommandCenterProps = {
 };
 
 export function AgentCommandCenter({ slug, accentColor }: AgentCommandCenterProps) {
-  const builtInAgents = heroAgents[slug as keyof typeof heroAgents] || [];
   const [customAgents, setCustomAgents] = useState<CustomAgent[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [isCommander, setIsCommander] = useState(false);
@@ -31,8 +30,8 @@ export function AgentCommandCenter({ slug, accentColor }: AgentCommandCenterProp
   }, [slug]);
 
   const allAgents = useMemo(() => {
-    return [...customAgents, ...builtInAgents];
-  }, [customAgents, builtInAgents]);
+    return [...customAgents, ...(heroAgents[slug as keyof typeof heroAgents] || [])];
+  }, [customAgents, slug]);
 
   const categories = useMemo(() => {
     const cats = Array.from(new Set(allAgents.map(a => a.category)));
