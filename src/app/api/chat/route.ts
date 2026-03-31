@@ -99,7 +99,7 @@ Delegate tasks ONLY to agents in this group:\n${agentList}`;
         "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
         "Content-Type": "application/json",
         "HTTP-Referer": "https://orbit-of-khemet.vercel.app",
-        "X-Title": "Orbit of Khemet — Empire Engine",
+        "X-Title": "Orbit of Khemet -- Empire Engine",
       },
       body: JSON.stringify(requestBody, (_key, value) => {
         if (typeof value === "string") {
