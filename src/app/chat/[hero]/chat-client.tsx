@@ -32,7 +32,7 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
   const agentInitials = agentName.substring(0, 2).toUpperCase();
   const heroName = hero?.name || heroParam.toUpperCase();
 
-  const [messages, setMessages] = useState<{ id: string; role: string; content: string }[]>([]);
+  const [messages, setMessages] = useState<{ id: string; role: string; content: string; modelUsed?: string }[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -43,8 +43,8 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
     nexar:   "openai/o3-mini:online",
     ramet:   "google/gemini-2.5-flash:online",
     lyra:    "anthropic/claude-sonnet-4-5:online",
-    kairo:   "google/gemini-2.5-flash:online",
-    nefra:   "google/gemini-2.5-flash:online",
+    kairo:   "xiaomi/mimo-7b",
+    nefra:   "xiaomi/mimo-7b",
     horusen: "openai/gpt-4o:online",
   };
   const currentModel = heroModelMap[heroParam] || "google/gemini-2.5-flash";
@@ -101,8 +101,17 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed");
-      const modelBadge = data.modelUsed ? `\n\n---\n*Model: ${data.modelUsed}*` : '';
-      setMessages(prev => [...prev, { id: (Date.now()+1).toString(), role: 'assistant', content: (data.response || '') + modelBadge }]);
+      let finalContent = data.response || '';
+      if (data.modelUsed && data.modelUsed !== 'xiaomi/mimo-7b') {
+        finalContent += `\n\n---\n*Model: ${data.modelUsed}*`;
+      }
+
+      setMessages(prev => [...prev, {
+        id: (Date.now()+1).toString(),
+        role: 'assistant',
+        content: finalContent,
+        modelUsed: data.modelUsed
+      }]);
       trackMessage();
     } catch {
       setMessages(prev => [...prev, { id: "err-"+Date.now(), role: "assistant", content: "Connection interrupted. Please try again." }]);
@@ -210,6 +219,12 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
                         : { background: bgMid, border: `1px solid ${cardBorder}`, color: "rgba(255,255,255,0.9)", fontFamily: "var(--font-sans)", borderLeftColor: accentColor, borderLeftWidth: "3px" }}>
                       <div className="whitespace-pre-wrap break-words">{cleanContent}</div>
                     </div>
+                    {m.modelUsed === "xiaomi/mimo-7b" && (
+                      <div className="self-start px-2 py-0.5 mt-1 rounded text-[10px] font-bold tracking-wider"
+                        style={{ background: "rgba(245, 158, 11, 0.15)", color: "#F59E0B", border: "1px solid rgba(245, 158, 11, 0.3)" }}>
+                        MiMo
+                      </div>
+                    )}
 
                     {/* Model Badge */}
                     {modelUsed && m.role === "assistant" && (
