@@ -81,17 +81,27 @@ export default function ForgePage() {
           <h1 className="font-[Orbitron] text-4xl md:text-5xl font-black tracking-tighter text-foreground mb-3 leading-none">
             AGENT FORGE
           </h1>
+          <div className="flex items-center gap-4 mb-3 flex-wrap">
+            <span className="font-mono text-[9px] tracking-widest"
+              style={{ color: "rgba(212,175,55,0.4)" }}>
+              SATELLITE LINK 29°58&apos;34&quot;N 31°07&apos;58&quot;E
+            </span>
+            <span className="font-mono text-[9px] tracking-widest"
+              style={{ color: "rgba(212,175,55,0.25)" }}>
+              CORE STATUS: READY
+            </span>
+          </div>
           <p className="font-[Rajdhani] text-lg text-muted-foreground">
             Create a custom agent. Define its intelligence. Assign it to a hero orbit. It will appear in the roster and respond using your exact system prompt.
           </p>
         </div>
 
         {/* Form */}
-        <div className="flex flex-col gap-6 p-8 rounded-2xl border bg-card" style={{ borderColor: "var(--border)" }}>
+        <div className="flex flex-col gap-6 p-8 rounded-sm" style={{ background: "#131313", outline: "1px solid rgba(212,175,55,0.08)" }}>
           {/* Row 1: Name + Role */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>Agent Name *</label>
+              <label className={labelClass}>AGENT IDENTIFIER *</label>
               <input
                 className={inputClass}
                 style={{ borderColor: "var(--border)" }}
@@ -103,7 +113,7 @@ export default function ForgePage() {
               <p className="font-mono text-[9px] text-muted-foreground/40 mt-1">Egyptian naming encouraged</p>
             </div>
             <div>
-              <label className={labelClass}>Role / Title *</label>
+              <label className={labelClass}>FUNCTIONAL ROLE *</label>
               <input
                 className={inputClass}
                 style={{ borderColor: "var(--border)" }}
@@ -117,7 +127,7 @@ export default function ForgePage() {
 
           {/* Description */}
           <div>
-            <label className={labelClass}>Description</label>
+            <label className={labelClass}>MANIFESTATION LORE</label>
             <input
               className={inputClass}
               style={{ borderColor: "var(--border)" }}
@@ -130,7 +140,7 @@ export default function ForgePage() {
 
           {/* System Prompt — the critical field */}
           <div>
-            <label className={labelClass}>System Prompt * — the intelligence of your agent</label>
+            <label className={labelClass}>NEURAL DIRECTIVES * — the intelligence of your agent</label>
             <textarea
               className={`${inputClass} min-h-[160px] resize-y leading-relaxed`}
               style={{ borderColor: "var(--border)" }}
@@ -164,7 +174,7 @@ export default function ForgePage() {
               </div>
             </div>
             <div>
-              <label className={labelClass}>Assign to Hero Orbit *</label>
+              <label className={labelClass}>PATRON DEITY *</label>
               <div className="relative">
                 <select
                   className={`${inputClass} appearance-none cursor-pointer bg-background`}
@@ -181,6 +191,11 @@ export default function ForgePage() {
                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
               </div>
             </div>
+          </div>
+
+          <div className="px-4 py-3 text-xs font-[Rajdhani] leading-relaxed"
+            style={{ background: "rgba(212,175,55,0.04)", border: "1px solid rgba(212,175,55,0.1)", color: "rgba(212,175,55,0.6)" }}>
+            THE FORGE RITUAL REQUIRES PRECISE ATMOSPHERIC CALIBRATION. ENSURE ALL PARAMETERS ALIGN WITH THE KHEMETIC SEQUENCE TO PREVENT PSYCHIC DISSONANCE DURING MANIFESTATION.
           </div>
 
           {/* Error */}
@@ -202,11 +217,26 @@ export default function ForgePage() {
               onClick={handleForge}
               disabled={saving}
               className="flex-1 font-[Orbitron] text-[9px] tracking-[2px] uppercase py-3 font-bold transition-all disabled:opacity-50 flex items-center justify-center gap-2 rounded-sm hover:opacity-90"
-              style={{ background: "#D4AF37", color: "#000" }}
+              style={{ background: "linear-gradient(135deg, #f2ca50, #D4AF37)", color: "#0a0a0a" }}
             >
               <Zap className="w-3.5 h-3.5" />
               {saving ? "FORGING..." : "FORGE AGENT ✦"}
             </button>
+          </div>
+
+          <div className="flex items-center justify-center gap-8 pt-2">
+            {[
+              { label: "STABILITY",  value: "99.8%" },
+              { label: "LATENCY",    value: "4MS"   },
+              { label: "ENCRYPTION", value: "ACTIVE"},
+            ].map((s) => (
+              <div key={s.label} className="flex flex-col items-center gap-0.5">
+                <span className="font-mono text-[7px] tracking-widest"
+                  style={{ color: "rgba(212,175,55,0.3)" }}>{s.label}</span>
+                <span className="font-[Orbitron] text-[9px] tracking-widest font-bold"
+                  style={{ color: "rgba(212,175,55,0.6)" }}>{s.value}</span>
+              </div>
+            ))}
           </div>
 
           <p className="font-mono text-[9px] text-muted-foreground/30 text-center">

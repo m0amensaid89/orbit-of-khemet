@@ -11,6 +11,7 @@ import "@fontsource/exo-2/400-italic.css";
 import "./globals.css";
 import { Footer } from "@/components/Footer";
 import { GlobalNav } from "@/components/GlobalNav";
+import { Sidebar } from "@/components/Sidebar";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -23,12 +24,21 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col khemet-pattern text-foreground`}>
-        <GlobalNav />
-        <div className="flex-1 flex flex-col">
-          {children}
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased khemet-pattern text-foreground`}>
+        {/* Mobile only: top nav */}
+        <div className="md:hidden">
+          <GlobalNav />
         </div>
-        <Footer />
+        {/* Full layout: sidebar + content */}
+        <div className="flex min-h-screen">
+          <Sidebar />
+          <div className="flex-1 flex flex-col min-w-0">
+            <main className="flex-1 flex flex-col">
+              {children}
+            </main>
+            <Footer />
+          </div>
+        </div>
       </body>
     </html>
   );

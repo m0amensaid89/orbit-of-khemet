@@ -13,7 +13,8 @@ export default function PricingPage() {
         <p className="font-[Orbitron] text-[10px] tracking-[6px] uppercase text-[#D4AF37]/70 mb-4">
           The I-Gamify Grid
         </p>
-        <h1 className="font-[Orbitron] text-4xl md:text-5xl font-black text-foreground tracking-tighter mb-4 drop-shadow-[0_0_15px_rgba(212,175,55,0.2)]">
+        <h1 className="font-[Orbitron] text-4xl md:text-5xl font-black tracking-tighter mb-4"
+          style={{ color: "#D4AF37", textShadow: "0 0 30px rgba(212,175,55,0.25)" }}>
           CHOOSE YOUR ORBIT
         </h1>
         <p className="font-[Rajdhani] text-lg text-muted-foreground max-w-xl mx-auto">
@@ -25,12 +26,8 @@ export default function PricingPage() {
         {PLANS.map((plan) => (
           <div
             key={plan.id}
-            className="relative rounded-2xl p-8 flex flex-col gap-8 transition-all duration-300 border bg-card"
-            style={{
-              backgroundColor: plan.popular ? "var(--background)" : "var(--card)",
-              borderColor: plan.popular ? "#D4AF37" : "rgba(128,128,128,0.15)",
-              boxShadow: plan.popular ? "0 0 60px rgba(212,175,55,0.08)" : "none",
-            }}
+            className="relative rounded-sm p-8 flex flex-col gap-8 transition-all duration-300"
+            style={plan.popular ? { background: "#131313", outline: "1.5px solid #D4AF37", boxShadow: "0 0 48px rgba(212,175,55,0.1)" } : { background: "#131313", outline: "1px solid rgba(255,255,255,0.06)" }}
           >
             {plan.popular && (
               <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
@@ -44,7 +41,7 @@ export default function PricingPage() {
               <p className="font-[Orbitron] text-[9px] tracking-[5px] uppercase mb-3 text-primary/60">{plan.name}</p>
               <div className="flex items-baseline gap-2">
                 <span className="font-[Orbitron] text-5xl font-black text-foreground leading-none">{plan.priceLabel}</span>
-                {plan.price > 0 && <span className="font-[Rajdhani] text-muted-foreground text-base">/month</span>}
+                {plan.price > 0 && <span className="font-[Rajdhani] text-muted-foreground text-base">/EPOCH</span>}
               </div>
               {plan.price === 0 && <p className="font-[Rajdhani] text-muted-foreground text-sm mt-1">Free forever</p>}
             </div>
@@ -76,14 +73,34 @@ export default function PricingPage() {
               <button
                 className="w-full font-[Orbitron] text-[10px] tracking-[3px] uppercase py-4 transition-all duration-300 hover:opacity-80 rounded-sm"
                 style={plan.popular
-                  ? { background: "#D4AF37", color: "#000" }
+                  ? { background: "linear-gradient(135deg, #f2ca50, #D4AF37)", color: "#0a0a0a" }
                   : { background: "transparent", color: "#D4AF37", border: "1px solid rgba(212,175,55,0.3)" }}
               >
-                {plan.cta}
+                {plan.id === "free" ? "DEPLOY AS SCOUT" : plan.id === "explorer" ? "CHOOSE EXPLORER" : "ASCEND TO COMMANDER"}
               </button>
             </Link>
           </div>
         ))}
+      </div>
+
+      <div className="w-full max-w-5xl mx-auto mt-12 px-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-0"
+          style={{ borderTop: "1px solid rgba(212,175,55,0.08)" }}>
+          {[
+            { label: "ACTIVE NODES", value: "4,291" },
+            { label: "UPTIME",       value: "99.9%" },
+            { label: "LATENCY",      value: "12MS"  },
+            { label: "SECURITY",     value: "AES-G" },
+          ].map((stat, i) => (
+            <div key={stat.label} className="flex flex-col items-center py-8 gap-2"
+              style={{ borderRight: i < 3 ? "1px solid rgba(212,175,55,0.06)" : "none" }}>
+              <span className="font-[Orbitron] text-[8px] tracking-[4px] uppercase"
+                style={{ color: "rgba(212,175,55,0.4)" }}>{stat.label}</span>
+              <span className="font-[Orbitron] text-2xl md:text-3xl font-black"
+                style={{ color: "#D4AF37" }}>{stat.value}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="text-center pb-20 px-6 space-y-3">

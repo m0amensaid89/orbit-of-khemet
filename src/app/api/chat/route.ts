@@ -1,6 +1,19 @@
 import { NextRequest } from "next/server";
 import { heroMeta, heroAgents, masterSystemPrompt } from "@/lib/agents";
 
+function sanitizeForFetch(text: string): string {
+  return text
+    .replace(/\u2014/g, "--")        // em dash → double hyphen
+    .replace(/\u2013/g, "-")         // en dash → hyphen
+    .replace(/\u2018/g, "'")         // left single quote
+    .replace(/\u2019/g, "'")         // right single quote
+    .replace(/\u201C/g, '"')         // left double quote
+    .replace(/\u201D/g, '"')         // right double quote
+    .replace(/\u2022/g, "*")         // bullet
+    .replace(/\u00A0/g, " ")         // non-breaking space
+    .replace(/[^\x00-\x7F]/g, (c) => `\\u${c.charCodeAt(0).toString(16).padStart(4, "0")}`); // escape remaining non-ASCII
+}
+
 const heroModelMap: Record<string, string> = {
   master: "openrouter/auto",
   thoren: "anthropic/claude-sonnet-4-5",
@@ -69,10 +82,10 @@ Delegate tasks ONLY to agents in this group:\n${agentList}`;
     const requestBody: Record<string, unknown> = {
       model,
       messages: [
-        { role: "system", content: systemPrompt },
+        { role: "system", content: sanitizeForFetch(systemPrompt) },
         ...messages.map((m: { role: string; content: string }) => ({
           role: m.role === "assistant" ? "assistant" : "user",
-          content: m.content,
+          content: sanitizeForFetch(m.content),
         })),
       ],
       max_tokens: 1500,
@@ -88,7 +101,14 @@ Delegate tasks ONLY to agents in this group:\n${agentList}`;
         "HTTP-Referer": "https://orbit-of-khemet.vercel.app",
         "X-Title": "Orbit of Khemet — Empire Engine",
       },
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify(requestBody, (_key, value) => {
+        if (typeof value === "string") {
+          return value.replace(/[^\x00-\x7F]/g, (c) =>
+            `\\u${c.charCodeAt(0).toString(16).padStart(4, "0")}`
+          );
+        }
+        return value;
+      }),
     });
 
     if (!response.ok) {

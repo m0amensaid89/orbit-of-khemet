@@ -4,13 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 
 const heroes = [
-  { id: 1, name: "NEXAR", slug: "nexar", role: "The Destabilizer", description: "Destroys weak inputs and demands high-leverage context.", accentColor: "#FF4444", glowColor: "rgba(255,68,68,0.35)", },
-  { id: 2, name: "HORUSEN", slug: "horusen", role: "Ancient Script Guardian", description: "Oversees the grand board, plotting multi-step empire growth.", accentColor: "#D4AF37", glowColor: "rgba(212,175,55,0.35)", },
-  { id: 3, name: "KAIRO", slug: "kairo", role: "Precision Stream Warrior", description: "Structures chaos into scalable, unbreakable precision.", accentColor: "#00E5FF", glowColor: "rgba(0,229,255,0.35)", },
-  { id: 4, name: "LYRA", slug: "lyra", role: "Visionary Systems Architect", description: "Weaves compelling narratives that captivate and convert.", accentColor: "#D4AF37", glowColor: "rgba(212,175,55,0.35)", },
-  { id: 5, name: "NEFRA", slug: "nefra", role: "Precision Stream Warrior", description: "Reads between the lines, ensuring tone aligns with intent.", accentColor: "#E040FB", glowColor: "rgba(224,64,251,0.35)", },
-  { id: 6, name: "RAMET", slug: "ramet", role: "The Stabilizer", description: "Turns ideas into precise, high-speed, flawless execution.", accentColor: "#4ECDC4", glowColor: "rgba(78,205,196,0.35)", },
-  { id: 7, name: "THOREN", slug: "thoren", role: "The Law", description: "Protects the core, ensuring safe and sustainable operations.", accentColor: "#D4AF37", glowColor: "rgba(212,175,55,0.35)", },
+  { id: 1, name: "NEXAR", slug: "nexar", role: "The Destabilizer", description: "Destroys weak inputs and demands high-leverage context.", accentColor: "#FF4444", glowColor: "rgba(255,68,68,0.35)", primaryColor: "#FF4444" },
+  { id: 2, name: "HORUSEN", slug: "horusen", role: "Ancient Script Guardian", description: "Oversees the grand board, plotting multi-step empire growth.", accentColor: "#D4AF37", glowColor: "rgba(212,175,55,0.35)", primaryColor: "#3A6DD4" },
+  { id: 3, name: "KAIRO", slug: "kairo", role: "Precision Stream Warrior", description: "Structures chaos into scalable, unbreakable precision.", accentColor: "#00E5FF", glowColor: "rgba(0,229,255,0.35)", primaryColor: "#6C63FF" },
+  { id: 4, name: "LYRA", slug: "lyra", role: "Visionary Systems Architect", description: "Weaves compelling narratives that captivate and convert.", accentColor: "#D4AF37", glowColor: "rgba(212,175,55,0.35)", primaryColor: "#2D6A4F" },
+  { id: 5, name: "NEFRA", slug: "nefra", role: "Precision Stream Warrior", description: "Reads between the lines, ensuring tone aligns with intent.", accentColor: "#E040FB", glowColor: "rgba(224,64,251,0.35)", primaryColor: "#9B59B6" },
+  { id: 6, name: "RAMET", slug: "ramet", role: "The Stabilizer", description: "Turns ideas into precise, high-speed, flawless execution.", accentColor: "#4ECDC4", glowColor: "rgba(78,205,196,0.35)", primaryColor: "#4ECDC4" },
+  { id: 7, name: "THOREN", slug: "thoren", role: "The Law", description: "Protects the core, ensuring safe and sustainable operations.", accentColor: "#D4AF37", glowColor: "rgba(212,175,55,0.35)", primaryColor: "#C0C0C0" },
 ];
 
 export default function HubPage() {
@@ -19,10 +19,15 @@ export default function HubPage() {
       {/* Hero Grid Section */}
       <main className="flex-1 container mx-auto px-4 py-12 flex flex-col items-center">
         <div className="text-center mb-16 max-w-2xl">
-          <h1 className="font-[Orbitron] text-4xl md:text-5xl font-black mb-4 text-primary tracking-tighter drop-shadow-[0_0_10px_rgba(212,175,119,0.4)]">
+          <p className="font-[Orbitron] text-[8px] tracking-[5px] uppercase mb-3"
+            style={{ color: "rgba(212,175,55,0.5)" }}>
+            EMPIRE ENGINE — PHASE IV ACTIVE
+          </p>
+          <h1 className="font-[Orbitron] text-5xl md:text-6xl font-black tracking-tighter leading-none mb-4"
+            style={{ color: "#D4AF37", textShadow: "0 0 40px rgba(212,175,55,0.3)" }}>
             OUR SUPER HEROES
           </h1>
-          <p className="text-muted-foreground text-lg font-[Rajdhani]">
+          <p className="font-[Rajdhani] text-lg" style={{ color: "#d0c5af" }}>
             Choose your hero. Enter their orbit. Unleash their agents.
           </p>
         </div>
@@ -32,16 +37,16 @@ export default function HubPage() {
             <Link
               key={hero.id}
               href={`/heroes/${hero.slug}`}
-              className="group relative rounded-xl overflow-hidden border aspect-[3/4] flex flex-col cursor-pointer block transition-all duration-500"
+              className="group relative rounded-sm overflow-hidden aspect-[3/4] flex flex-col cursor-pointer block transition-all duration-500"
               style={{
-                borderColor: "rgba(255,255,255,0.08)",
+                background: "#131313", outline: "1px solid rgba(255,255,255,0.04)"
               }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = hero.accentColor;
-                (e.currentTarget as HTMLElement).style.boxShadow = `0 0 30px ${hero.glowColor}`;
+                (e.currentTarget as HTMLElement).style.outline = `1px solid ${hero.primaryColor}`;
+                (e.currentTarget as HTMLElement).style.boxShadow = `0 0 40px ${hero.glowColor}`;
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.08)";
+                (e.currentTarget as HTMLElement).style.outline = "1px solid rgba(255,255,255,0.04)";
                 (e.currentTarget as HTMLElement).style.boxShadow = "none";
               }}
             >
@@ -61,12 +66,12 @@ export default function HubPage() {
               <div className="absolute bottom-0 left-0 right-0 p-6 z-20 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                 <div
                   className="h-1 w-12 mb-3 rounded-full opacity-50 group-hover:opacity-100 group-hover:w-20 transition-all duration-500"
-                  style={{ backgroundColor: hero.accentColor }}
+                  style={{ backgroundColor: hero.primaryColor }}
                 />
                 <h3
                   className="text-2xl font-bold font-[Orbitron] mb-1 transition-colors text-foreground"
                   style={{ color: undefined }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = hero.accentColor; }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = hero.primaryColor; }}
                   onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = ""; }}
                 >
                   {hero.name}
@@ -75,7 +80,8 @@ export default function HubPage() {
                   style={{ color: `${hero.accentColor}99` }}>
                   {hero.role}
                 </p>
-                <p className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
+                <p className="text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100"
+                  style={{ color: "#d0c5af" }}>
                   {hero.description}
                 </p>
               </div>

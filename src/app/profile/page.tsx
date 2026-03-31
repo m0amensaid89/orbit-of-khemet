@@ -31,9 +31,10 @@ export default function ProfilePage() {
       <div className="w-full max-w-4xl flex flex-col gap-8">
 
         {/* Profile Header */}
-        <div className="flex items-center justify-between p-8 rounded-2xl border bg-card">
+        <div className="flex items-center justify-between p-8 rounded-sm" style={{ background: "#131313", outline: "1px solid rgba(212,175,55,0.08)" }}>
           <div className="flex items-center gap-6">
-            <div className="w-20 h-20 rounded-full border-2 border-primary flex items-center justify-center font-[Orbitron] text-2xl font-black text-primary">
+            <div className="w-20 h-20 border-2 flex items-center justify-center font-[Orbitron] text-2xl font-black rounded-full"
+              style={{ background: "rgba(212,175,55,0.08)", borderColor: "#D4AF37", color: "#D4AF37", boxShadow: "0 0 20px rgba(212,175,55,0.15)" }}>
               GO
             </div>
             <div>
@@ -74,8 +75,8 @@ export default function ProfilePage() {
         </div>
 
         {/* Energy Stats */}
-        <div className="p-8 rounded-2xl border bg-card flex flex-col gap-6">
-          <h2 className="font-[Orbitron] text-xs tracking-[4px] uppercase text-muted-foreground">Grid XP</h2>
+        <div className="p-8 rounded-sm flex flex-col gap-6" style={{ background: "#131313", outline: "1px solid rgba(212,175,55,0.08)" }}>
+          <h2 className="font-[Orbitron] text-xs tracking-[4px] uppercase" style={{ color: "rgba(212,175,55,0.5)" }}>GRID XP</h2>
           <div>
             <div className="flex justify-between items-end mb-2">
               <span className="text-4xl font-[Orbitron] font-black">{stats.currentXp}</span>
@@ -87,17 +88,17 @@ export default function ProfilePage() {
             </div>
             <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
               <div
-                className="h-full bg-primary transition-all duration-1000"
-                style={{ width: `${(stats.currentXp / stats.nextLevelXp) * 100}%` }}
+                className="h-full transition-all duration-1000"
+                style={{ width: `${(stats.currentXp / stats.nextLevelXp) * 100}%`, background: "linear-gradient(90deg, #D4AF37, #f2ca50)" }}
               />
             </div>
           </div>
         </div>
 
         {/* MY FORGE Section */}
-        <div className="p-8 rounded-2xl border bg-card flex flex-col gap-6">
+        <div className="p-8 rounded-sm flex flex-col gap-6" style={{ background: "#131313", outline: "1px solid rgba(212,175,55,0.08)" }}>
           <div className="flex items-center justify-between">
-            <h2 className="font-[Orbitron] text-xs tracking-[4px] uppercase text-muted-foreground">MY FORGE</h2>
+            <h2 className="font-[Orbitron] text-xs tracking-[4px] uppercase" style={{ color: "rgba(212,175,55,0.5)" }}>MY FORGE</h2>
             {customAgents.length < 3 && (
               <Link href="/forge">
                 <button className="font-[Orbitron] text-[9px] tracking-widest uppercase px-3 py-1.5 border hover:opacity-80 transition-all rounded-sm"
@@ -116,7 +117,7 @@ export default function ProfilePage() {
               </p>
               <Link href="/forge">
                 <button className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-6 py-3 font-bold rounded-sm hover:opacity-90"
-                  style={{ background: "#D4AF37", color: "#000" }}>
+                  style={{ background: "linear-gradient(135deg, #f2ca50, #D4AF37)", color: "#0a0a0a" }}>
                   FORGE YOUR FIRST AGENT ✦
                 </button>
               </Link>
@@ -124,8 +125,8 @@ export default function ProfilePage() {
           ) : (
             <div className="flex flex-col gap-4">
               {customAgents.map(agent => (
-                <div key={agent.id} className="flex items-start gap-4 p-4 rounded-xl border transition-all"
-                  style={{ borderColor: "rgba(212,175,55,0.15)", background: "rgba(212,175,55,0.02)" }}>
+                <div key={agent.id} className="flex items-start gap-4 p-4 rounded-xl transition-all"
+                  style={{ background: "#1a1a1a", outline: "1px solid rgba(212,175,55,0.1)" }}>
 
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center font-[Orbitron] text-sm font-bold shrink-0 border"
                     style={{ background: "rgba(212,175,55,0.1)", borderColor: "rgba(212,175,55,0.3)", color: "#D4AF37" }}>
