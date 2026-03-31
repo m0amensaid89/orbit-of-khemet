@@ -15,11 +15,11 @@ function isImageRequest(msg: string): boolean { return IMAGE_TRIGGERS.some(t => 
 
 type Tier = 1|2|3|4|5;
 const TIER_MODELS: Record<Tier,string> = {
-  1: 'google/gemini-2.5-flash',
-  2: 'google/gemini-2.5-flash:online',
-  3: 'openai/gpt-4o:online',
+  1: 'openai/o3-mini',
+  2: 'anthropic/claude-3-5-haiku',
+  3: 'xiaomi/mimo-7b',
   4: 'anthropic/claude-sonnet-4-5:online',
-  5: 'openai/o3-mini:online',
+  5: 'openai/gpt-4o',
 };
 const TIER_MAX_TOKENS: Record<Tier,number> = {1:1000,2:2000,3:3000,4:6000,5:8000};
 
@@ -31,20 +31,23 @@ function classifyMessage(msg: string, hero: string, convLen: number): {tier: Tie
   if ((words <= 4 || simpleSignals.some(s => lower === s || lower.startsWith(s+' '))) && !needsLive) {
     return {tier:1, model:TIER_MODELS[1], maxTokens:TIER_MAX_TOKENS[1]};
   }
-  let g=0,e=0,a=0,s=0;
-  ['prove','derive','architect','design a system','algorithm','optimize','benchmark','refactor entire','debug complex','mathematical','scientific','multi-step plan','enterprise architecture','machine learning','neural network','advanced statistics','financial model','legal analysis','audit','due diligence','full business plan'].forEach(k=>{if(lower.includes(k))g+=3;});
-  ['strategy','analyze','in-depth','comprehensive','detailed report','compare','pros and cons','review my','critique','improve my','rewrite','business plan','proposal','contract','policy','sop','framework','roadmap','full guide','step by step','explain how','how does','why does','code this','build me','create a','write a full','long form','research','case study','what should i do','help me decide'].forEach(k=>{if(lower.includes(k))e+=2;});
+  let g=0,e=0,m=0,a=0,s=0;
+  ['prove','derive','architect','design a system','optimize','benchmark','refactor entire','debug complex','scientific','multi-step plan','enterprise architecture','machine learning','neural network','advanced statistics','financial model','audit','due diligence'].forEach(k=>{if(lower.includes(k))g+=3;});
+  ['strategy','analyze','in-depth','comprehensive','detailed report','compare','pros and cons','review my','critique','improve my','rewrite','business plan','proposal','contract','policy','sop','framework','roadmap','full guide','explain how','how does','why does','build me','create a','write a full','long form','research','case study','what should i do','help me decide'].forEach(k=>{if(lower.includes(k))e+=2;});
+  ['math','calculate','equation','logic','puzzle','proof','formula','algorithm','coding','step by step','how many','solve'].forEach(k=>{if(lower.includes(k))m+=2;});
   ['write','draft','email','content','post','article','blog','caption','script','describe','explain','list','summarize','find','search for','latest','recent','current','today','news','who is','what happened','how to','steps to','ways to','ideas for','suggest'].forEach(k=>{if(lower.includes(k))a+=1;});
-  ['translate','fix','correct','grammar','spell','format','convert','calculate','quick','simple','brief','short','overview','definition','what is','meaning of','example of'].forEach(k=>{if(lower.includes(k))s+=1;});
+  ['translate','fix','correct','grammar','spell','format','convert','quick','simple','brief','short','overview','definition','what is','meaning of','example of'].forEach(k=>{if(lower.includes(k))s+=1;});
   if(words>100)g+=3; else if(words>50)e+=2; else if(words>20)a+=1;
   if(convLen>20)g+=1; else if(convLen>10)e+=1;
   if(hero==='thoren'||hero==='horusen')e+=2;
   if(hero==='nexar')g+=1;
   if(hero==='lyra')e+=1;
-  const mx=Math.max(g,e,a,s);
+  if(hero==='kairo')m+=1;
+  const mx=Math.max(g,e,m,a,s);
   if(g>=3&&mx===g) return {tier:5,model:TIER_MODELS[5],maxTokens:TIER_MAX_TOKENS[5]};
   if(e>=2&&mx===e) return {tier:4,model:TIER_MODELS[4],maxTokens:TIER_MAX_TOKENS[4]};
-  if(a>=1&&mx===a) return {tier:3,model:TIER_MODELS[3],maxTokens:TIER_MAX_TOKENS[3]};
+  if(m>=2&&mx===m) return {tier:3,model:TIER_MODELS[3],maxTokens:TIER_MAX_TOKENS[3]};
+  if(a>=1&&mx===a) return {tier:2,model:TIER_MODELS[2],maxTokens:TIER_MAX_TOKENS[2]};
   if(s>=1) return {tier:2,model:TIER_MODELS[2],maxTokens:TIER_MAX_TOKENS[2]};
   return {tier:2,model:TIER_MODELS[2],maxTokens:TIER_MAX_TOKENS[2]};
 }

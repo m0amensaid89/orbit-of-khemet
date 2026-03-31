@@ -12,6 +12,7 @@ export const ENERGY_COSTS: Record<string, number> = {
   "anthropic/claude-sonnet-4-5:online": 6,
   "openai/o3-mini:online": 7,
   "google/gemini-2.5-flash:online": 3,
+  "xiaomi/mimo-7b": 0.0002,
   "default": 2,
 };
 
