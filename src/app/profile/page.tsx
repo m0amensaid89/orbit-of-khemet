@@ -7,6 +7,7 @@ import { getStats, getEnergyRemaining, getMaxEnergy } from "@/lib/energy";
 import { PLANS } from "@/lib/plans";
 import { getCustomAgents, deleteCustomAgent, type CustomAgent } from "@/lib/custom-agents";
 import { motion } from "framer-motion";
+import { createClient } from "@/lib/supabase/client";
 import { Star, Shield, Zap, History, TrendingUp } from "lucide-react";
 
 const FAVORITE_HEROES = [
@@ -26,6 +27,8 @@ export default function ProfilePage() {
   const [stats, setStats] = useState({ totalEnergyUsed: 0, level: 1, currentXp: 0, nextLevelXp: 100 });
   const [userPlan, setUserPlan] = useState("explorer");
   const [customAgents, setCustomAgents] = useState<CustomAgent[]>([]);
+  const [userData, setUserData] = useState<{ email?: string; name?: string; initials: string; energyBalance: number; messagesSent: number }>({ initials: "GO", energyBalance: 50, messagesSent: 0 });
+
 
   useEffect(() => {
     const liveStats = getStats();
@@ -35,10 +38,32 @@ export default function ProfilePage() {
       currentXp: liveStats.xp,
       nextLevelXp: liveStats.nextLevelXP,
     });
-    const savedPlan = localStorage.getItem("orbit_plan") || "commander"; // Defaulting to commander for demo
+    const savedPlan = localStorage.getItem("orbit_plan") || "scout"; // Defaulting to scout
     setUserPlan(savedPlan);
     setCustomAgents(getCustomAgents());
+
+    const fetchUserData = async () => {
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        const { data: profile } = await supabase.from('profiles').select('energy_balance, display_name').eq('id', session.user.id).single();
+        const email = session.user.email;
+        const name = profile?.display_name || email?.split('@')[0] || "Grid Operative";
+        const initials = name.substring(0, 2).toUpperCase();
+        setUserData({
+          email,
+          name,
+          initials,
+          energyBalance: profile?.energy_balance ?? getEnergyRemaining(),
+          messagesSent: liveStats.messages
+        });
+      } else {
+        setUserData(prev => ({ ...prev, energyBalance: getEnergyRemaining(), messagesSent: liveStats.messages }));
+      }
+    };
+    fetchUserData();
   }, []);
+
 
   const planInfo = PLANS.find((p) => p.id === userPlan) || PLANS[0];
 
@@ -58,7 +83,7 @@ export default function ProfilePage() {
           <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-8">
             <div className="relative">
               <div className="w-32 h-32 rounded-full border-4 border-[#1A1A1A] flex items-center justify-center font-[Orbitron] text-4xl font-black bg-[#131313] text-[#D4AF37] relative z-10 shadow-[0_0_20px_rgba(0,0,0,0.8)]">
-                GO
+                {userData.initials}
               </div>
               <motion.div
                 className="absolute -inset-2 rounded-full border-2 border-[#D4AF37] opacity-50 border-dashed"
@@ -73,15 +98,18 @@ export default function ProfilePage() {
             </div>
 
             <div className="flex-1 flex flex-col items-center md:items-start text-center md:text-left">
-              <h1 className="text-4xl md:text-5xl font-[Orbitron] font-black tracking-wider mb-3 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">
-                Grid Operative
+              <h1 className="text-4xl md:text-5xl font-[Orbitron] font-black tracking-wider mb-3 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.2)] truncate max-w-md">
+                {userData.name}
               </h1>
+              {userData.email && (
+                <p className="font-[Rajdhani] text-sm text-white/50 mb-3 -mt-2 truncate max-w-md">{userData.email}</p>
+              )}
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-6">
                 <span className="font-[Orbitron] text-[10px] tracking-[3px] uppercase border border-[#D4AF37]/50 text-[#D4AF37] px-4 py-1.5 rounded bg-[#D4AF37]/10 shadow-[0_0_10px_rgba(212,175,55,0.2)] flex items-center gap-1.5">
                   <Shield className="w-3 h-3" /> {planInfo.name} Tier
                 </span>
                 <span className="font-[Orbitron] text-[10px] tracking-[3px] uppercase border border-white/20 text-white/60 px-4 py-1.5 rounded bg-white/5 flex items-center gap-1.5">
-                  <TrendingUp className="w-3 h-3" /> Level {stats.level} — Initiate
+                  <TrendingUp className="w-3 h-3" /> Level {stats.level} — {stats.level === 1 ? "Initiate" : stats.level === 2 ? "Scout" : stats.level === 3 ? "Agent" : stats.level === 4 ? "Operative" : stats.level === 5 ? "Commander" : stats.level === 6 ? "Architect" : "Grid Master"}
                 </span>
               </div>
 
@@ -92,24 +120,30 @@ export default function ProfilePage() {
                     <Zap className="w-3 h-3 text-[#D4AF37]" /> GRID ENERGY
                   </span>
                   <span className="font-[Orbitron] font-bold text-xs text-[#D4AF37]">
-                    {getEnergyRemaining().toLocaleString()} <span className="text-white/30">/ {getMaxEnergy().toLocaleString()}</span>
+                    {userData.energyBalance.toLocaleString()} <span className="text-white/30">/ {getMaxEnergy().toLocaleString()}</span>
                   </span>
                 </div>
                 <div className="h-2.5 w-full rounded-full bg-black border border-white/5 overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
-                    animate={{ width: `${Math.round((getEnergyRemaining() / getMaxEnergy()) * 100)}%` }}
+                    animate={{ width: `${Math.round((userData.energyBalance / getMaxEnergy()) * 100)}%` }}
                     transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
                     className="h-full rounded-full"
                     style={{
-                      background: getEnergyRemaining() / getMaxEnergy() <= 0.2 ? "linear-gradient(90deg, #991b1b, #ef4444)" :
-                                  getEnergyRemaining() / getMaxEnergy() <= 0.5 ? "linear-gradient(90deg, #92400e, #f59e0b)" :
+                      background: userData.energyBalance / getMaxEnergy() <= 0.2 ? "linear-gradient(90deg, #991b1b, #ef4444)" :
+                                  userData.energyBalance / getMaxEnergy() <= 0.5 ? "linear-gradient(90deg, #92400e, #f59e0b)" :
                                   "linear-gradient(90deg, #D4AF37, #FFD700)",
-                      boxShadow: getEnergyRemaining() / getMaxEnergy() > 0.5 ? "0 0 10px rgba(212,175,55,0.8)" : "none"
+                      boxShadow: userData.energyBalance / getMaxEnergy() > 0.5 ? "0 0 10px rgba(212,175,55,0.8)" : "none"
                     }}
                   />
                 </div>
                 <p className="font-[Rajdhani] text-[10px] text-white/40 mt-2 text-right">Resets daily at midnight UTC</p>
+                <Link href="/pricing" className="block w-full mt-4">
+                  <button className="w-full font-[Orbitron] text-[10px] tracking-[3px] uppercase px-4 py-3 font-bold rounded-lg hover:scale-[1.02] transition-transform flex items-center justify-center gap-2"
+                    style={{ background: "linear-gradient(135deg, #f2ca50, #D4AF37)", color: "#0a0a0a", boxShadow: "0 0 15px rgba(212,175,55,0.3)" }}>
+                    TOP UP ENERGY →
+                  </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -137,7 +171,7 @@ export default function ProfilePage() {
                     <span className="font-[Rajdhani] text-sm text-white/50 uppercase tracking-widest mt-1">Total XP</span>
                   </div>
                   <div className="text-right flex flex-col items-end">
-                    <span className="font-[Orbitron] text-[10px] tracking-[3px] uppercase text-white/40 mb-1">Next Rank: <span className="text-white">Scout</span></span>
+                    <span className="font-[Orbitron] text-[10px] tracking-[3px] uppercase text-white/40 mb-1">Next Rank: <span className="text-white">{stats.level === 1 ? "Scout" : stats.level === 2 ? "Agent" : stats.level === 3 ? "Operative" : stats.level === 4 ? "Commander" : stats.level === 5 ? "Architect" : "Grid Master"}</span></span>
                     <span className="font-[Orbitron] text-lg font-bold text-white">{stats.nextLevelXp}</span>
                   </div>
                 </div>
@@ -156,7 +190,7 @@ export default function ProfilePage() {
                 </div>
                 <div className="flex justify-between items-center mt-3">
                   <p className="font-[Rajdhani] text-xs text-white/40">{Math.round(xpPercentage)}% complete</p>
-                  <p className="font-[Rajdhani] text-xs text-[#D4AF37]">{stats.nextLevelXp - stats.currentXp} XP to go</p>
+                  <p className="font-[Rajdhani] text-xs text-[#D4AF37]">Total Messages: {userData.messagesSent} | {stats.nextLevelXp - stats.currentXp} XP to go</p>
                 </div>
               </div>
             </motion.div>
