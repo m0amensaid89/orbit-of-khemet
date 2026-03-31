@@ -3,21 +3,19 @@ import { heroMeta, heroAgents, masterSystemPrompt } from "@/lib/agents";
 
 function sanitizeForFetch(text: string): string {
   return text
-    .replace(/\u2014/g, "--")        // em dash → double hyphen
-    .replace(/\u2013/g, "-")         // en dash → hyphen
-    .replace(/\u2018/g, "'")         // left single quote
-    .replace(/\u2019/g, "'")         // right single quote
-    .replace(/\u201C/g, '"')         // left double quote
-    .replace(/\u201D/g, '"')         // right double quote
-    .replace(/\u2022/g, "*")         // bullet
-    .replace(/\u00A0/g, " ")         // non-breaking space
-    .replace(/[^\x00-\x7F]/g, (c) => `\\u${c.charCodeAt(0).toString(16).padStart(4, "0")}`); // escape remaining non-ASCII
+    .replace(/\u2014/g, "--")   // em dash
+    .replace(/\u2013/g, "-")    // en dash
+    .replace(/\u2018/g, "'")    // left single quote
+    .replace(/\u2019/g, "'")    // right single quote
+    .replace(/\u201C/g, '"')    // left double quote
+    .replace(/\u201D/g, '"')    // right double quote
+    .replace(/\u00A0/g, " ");   // non-breaking space
 }
 
 const heroModelMap: Record<string, string> = {
   master: "openrouter/auto",
   thoren: "anthropic/claude-sonnet-4-5",
-  nexar: "deepseek/deepseek-r1:free",
+  nexar: "meta-llama/llama-3.3-70b-instruct:free",
   ramet: "google/gemini-2.5-flash",
   lyra: "google/gemini-2.5-flash",
   kairo: "google/gemini-2.5-flash",
@@ -101,14 +99,7 @@ Delegate tasks ONLY to agents in this group:\n${agentList}`;
         "HTTP-Referer": "https://orbit-of-khemet.vercel.app",
         "X-Title": "Orbit of Khemet -- Empire Engine",
       },
-      body: JSON.stringify(requestBody, (_key, value) => {
-        if (typeof value === "string") {
-          return value.replace(/[^\x00-\x7F]/g, (c) =>
-            `\\u${c.charCodeAt(0).toString(16).padStart(4, "0")}`
-          );
-        }
-        return value;
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {
