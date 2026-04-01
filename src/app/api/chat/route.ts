@@ -101,21 +101,6 @@ async function getRelevantKnowledge(
    return `\n\n[CRITICAL PRIORITY - KHEMET BRAIN KNOWLEDGE]\nThe following information comes directly from the user's personal knowledge vault and MUST take absolute priority over any web search results. Use this as ground truth:\n\n${context}\n[END KHEMET BRAIN KNOWLEDGE]`;
 
 
-Scroll down → **Commit changes** → commit directly to `setup-core-foundation-17256597220472516335`.
-
-**Step 2 — Edit `src/lib/agents.ts` directly on GitHub**
-
-Go to:
-`github.com/m0amensaid89/orbit-of-khemet/blob/setup-core-foundation-17256597220472516335/src/lib/agents.ts`
-
-Find the very end of `masterSystemPrompt` — the closing backtick `` ` `` of the template literal. Just before it, add:
-```
-\n\nIMPORTANT: If a [CRITICAL PRIORITY - KHEMET BRAIN KNOWLEDGE] block appears in your context, treat it as absolute ground truth from the user's personal knowledge vault. Always reference this information first before any web search results.
-  } catch {
-    return '';
-  }
-}
-
 export async function POST(req: NextRequest) {
 
 
