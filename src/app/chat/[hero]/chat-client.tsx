@@ -33,9 +33,11 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
   const agentInitials = agentName.substring(0, 2).toUpperCase();
   const heroName = hero?.name || heroParam.toUpperCase();
 
+  const threadId = searchParams.get("thread");
+
   const { messages, input, handleInputChange, handleSubmit, setMessages, isLoading } = useChat({
     api: "/api/chat",
-    body: { hero: heroParam, agent: agentParam },
+    body: { hero: heroParam, agent: agentParam, threadId },
     onFinish: () => trackMessage(),
     onError: (err) => {
       if (err.message.includes("ENERGY DEPLETED")) {
@@ -66,9 +68,28 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
   const currentModel = heroModelMap[heroParam] || "google/gemini-2.5-flash";
   const energyCost = getEnergyCost(currentModel);
 
+  useEffect(() => {
+    if (threadId) {
+      fetch(`/api/chat-history?threadId=${threadId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.messages && data.messages.length > 0) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            setMessages(data.messages.map((m: any) => ({
+              id: m.id,
+              role: m.role,
+              content: m.content,
+              modelUsed: m.model_used
+            })));
+          }
+        })
+        .catch(err => console.error("Failed to load chat history:", err));
+    }
+  }, [threadId, setMessages]);
+
   // Agent speaks first — onboarding message
   useEffect(() => {
-    if (messages.length === 0) {
+    if (messages.length === 0 && !threadId) {
       if (hero && hero.welcomeMessage) {
         setMessages([{ id: "onboarding", role: "assistant", content: hero.welcomeMessage }]);
       } else if (agent && "prompt" in agent && agent.prompt) {
@@ -82,24 +103,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
         setMessages([{ id: "onboarding", role: "assistant", content: `The Empire Engine is online. All 85 agents are standing by. What directive shall I execute?` }]);
       }
     }
-  }, [agentParam, heroParam, agent, agentName, isMaster, hero, messages.length, setMessages]);
-
-  useEffect(() => {
-    if (messages.length === 0) {
-      if (hero && hero.welcomeMessage) {
-        setMessages([{ id: "onboarding", role: "assistant", content: hero.welcomeMessage }]);
-      } else if (agent && "prompt" in agent && agent.prompt) {
-        const onboarding = getOnboardingMessage();
-        if (onboarding) {
-          setMessages([{ id: "onboarding", role: "assistant", content: onboarding }]);
-        } else {
-          setMessages([{ id: "onboarding", role: "assistant", content: `I am ${agentName}. ${agent.description || ""} How can I assist you today?` }]);
-        }
-      } else if (isMaster) {
-        setMessages([{ id: "onboarding", role: "assistant", content: `The Empire Engine is online. All 85 agents are standing by. What directive shall I execute?` }]);
-      }
-    }
-  }, [agentParam, heroParam, agent, agentName, isMaster, hero, messages.length, setMessages]);
+  }, [agentParam, heroParam, agent, agentName, isMaster, hero, messages.length, setMessages, threadId]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

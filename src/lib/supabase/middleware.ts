@@ -37,10 +37,13 @@ export async function updateSession(request: NextRequest) {
     !user &&
     (pathname.startsWith('/chat') || pathname.startsWith('/forge') || pathname.startsWith('/profile') || pathname.startsWith('/master-orbit'))
   ) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/auth'
-    url.searchParams.set('redirect', request.nextUrl.pathname + request.nextUrl.search)
-    return NextResponse.redirect(url)
+    // Middleware must NOT redirect API routes — /api/chat must always be accessible
+    if (!pathname.startsWith('/api')) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/auth'
+      url.searchParams.set('redirect', request.nextUrl.pathname + request.nextUrl.search)
+      return NextResponse.redirect(url)
+    }
   }
 
   return supabaseResponse

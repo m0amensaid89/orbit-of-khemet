@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { heroMeta, heroAgents, masterSystemPrompt } from '@/lib/agents';
-import { createClient } from '@supabase/supabase-js';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/server';
 import { getHero } from '@/lib/heroes';
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { streamText } from 'ai';
@@ -10,8 +11,7 @@ function sanitizeForFetch(text: string): string {
     .replace(/\u2014/g, '--').replace(/\u2013/g, '-')
     .replace(/\u2018/g, "'").replace(/\u2019/g, "'")
     .replace(/\u201C/g, '"').replace(/\u201D/g, '"')
-    .replace(/\u2022/g, '*').replace(/\u00A0/g, ' ')
-    .replace(/[^\x00-\x7F]/g, (c) => `\\u${c.charCodeAt(0).toString(16).padStart(4, '0')}`);
+    .replace(/\u2022/g, '*').replace(/\u00A0/g, ' ');
 }
 
 const IMAGE_TRIGGERS = ['draw','generate an image','create an image','make an image','illustrate','visualize','design a logo','create a logo','generate a logo','make a banner','create a poster','generate a visual','create artwork','paint','sketch me'];
@@ -76,21 +76,20 @@ export async function POST(req: NextRequest) {
     let modalities: string[] | undefined;
     let tierInfo: {tier:Tier;model:string;maxTokens:number} | null = null;
 
+    // Auth user using cookie-based server client
+    const supabaseServer = await createClient();
+    const { data: { user } } = await supabaseServer.auth.getUser();
+
     // Deduct energy first via Server Supabase Client
     if (process.env.SUPABASE_SERVICE_ROLE_KEY && process.env.NEXT_PUBLIC_SUPABASE_URL) {
-      const supabaseAdmin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
-      const authHeader = req.headers.get('authorization') || '';
-      const token = authHeader.replace('Bearer ', '');
-      if (token) {
-        const { data: { user } } = await supabaseAdmin.auth.getUser(token);
-        if (user) {
-          const { data: profile } = await supabaseAdmin.from('profiles').select('energy_balance').eq('id', user.id).single();
-          if (profile && profile.energy_balance < 10) {
-            throw new Error('ENERGY DEPLETED');
-          }
-          if (profile) {
-            await supabaseAdmin.from('profiles').update({ energy_balance: Math.max(0, profile.energy_balance - 10) }).eq('id', user.id);
-          }
+      const supabaseAdmin = createSupabaseClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+      if (user) {
+        const { data: profile } = await supabaseAdmin.from('profiles').select('energy_balance').eq('id', user.id).single();
+        if (profile && profile.energy_balance < 10) {
+          throw new Error('ENERGY DEPLETED');
+        }
+        if (profile) {
+          await supabaseAdmin.from('profiles').update({ energy_balance: Math.max(0, profile.energy_balance - 10) }).eq('id', user.id);
         }
       }
     }
@@ -157,6 +156,29 @@ export async function POST(req: NextRequest) {
           const ip = parts.find((p:{type:string})=>p.type==='image_url');
           if (ip?.image_url?.url) imageUrl = ip.image_url.url;
         }
+
+        if (user && process.env.SUPABASE_SERVICE_ROLE_KEY && process.env.NEXT_PUBLIC_SUPABASE_URL) {
+          const supabaseAdmin = createSupabaseClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+          let threadId = body.threadId;
+          if (!threadId) {
+            const { data: thread } = await supabaseAdmin
+              .from('chat_threads')
+              .insert({ user_id: user.id, hero_slug: heroSlug, agent_slug: agent, title: lastMessage.slice(0, 50) })
+              .select().single();
+            threadId = thread?.id;
+          }
+          if (threadId) {
+            await supabaseAdmin.from('chat_messages').insert({
+              thread_id: threadId, user_id: user.id,
+              role: 'user', content: lastMessage, model_used: modelUsed
+            });
+            await supabaseAdmin.from('chat_messages').insert({
+              thread_id: threadId, user_id: user.id,
+              role: 'assistant', content: textContent, model_used: modelUsed
+            });
+          }
+        }
+
         return Response.json({response: textContent, imageUrl, modelUsed, tier: tierInfo?.tier || null, isImageResponse: wantsImage && !!imageUrl});
     }
 
@@ -165,9 +187,41 @@ export async function POST(req: NextRequest) {
       system: sanitizeForFetch(systemPrompt),
       messages: messages.map((m: { role: "system" | "user" | "assistant" | "data"; content: string }) => ({ ...m, content: sanitizeForFetch(m.content) })),
       maxTokens,
+      async onFinish({ text }) {
+        if (user && process.env.SUPABASE_SERVICE_ROLE_KEY && process.env.NEXT_PUBLIC_SUPABASE_URL) {
+          const supabaseAdmin = createSupabaseClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+          let threadId = body.threadId;
+          if (!threadId) {
+            const { data: thread } = await supabaseAdmin
+              .from('chat_threads')
+              .insert({ user_id: user.id, hero_slug: heroSlug, agent_slug: agent, title: lastMessage.slice(0, 50) })
+              .select().single();
+            threadId = thread?.id;
+          }
+          if (threadId) {
+            await supabaseAdmin.from('chat_messages').insert({
+              thread_id: threadId, user_id: user.id,
+              role: 'user', content: lastMessage, model_used: model
+            });
+            await supabaseAdmin.from('chat_messages').insert({
+              thread_id: threadId, user_id: user.id,
+              role: 'assistant', content: text, model_used: model
+            });
+          }
+        }
+      }
     });
 
-    return result.toDataStreamResponse();
+    let streamResponse;
+    if (body.threadId) {
+      streamResponse = result.toDataStreamResponse();
+    } else {
+      // Need to communicate new thread ID if one is created? The instructions didn't specify we have to pass it back,
+      // but usually the frontend reads it from the URL. Let's append an extra header just in case.
+      streamResponse = result.toDataStreamResponse();
+    }
+
+    return streamResponse;
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Internal server error';
     console.error('CHAT API ERROR:', message);

@@ -14,6 +14,7 @@ export function Sidebar() {
   const [energy, setEnergy] = useState<number>(100000);
   const [user, setUser] = useState<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
   const [profile, setProfile] = useState<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
+  const [recentThreads, setRecentThreads] = useState<any[]>([]); // eslint-disable-line @typescript-eslint/no-explicit-any
   const supabase = createClient();
 
   useEffect(() => {
@@ -30,6 +31,18 @@ export function Sidebar() {
           .eq('id', session.user.id)
           .single();
         setProfile(profileData);
+
+        // Fetch recent threads
+        const { data: threads } = await supabase
+          .from('chat_threads')
+          .select('id, title, hero_slug, updated_at')
+          .eq('user_id', session.user.id)
+          .order('updated_at', { ascending: false })
+          .limit(10);
+
+        if (threads) {
+          setRecentThreads(threads);
+        }
       }
 
       // Fetch energy (async handles both logged in and guest)
@@ -50,8 +63,19 @@ export function Sidebar() {
             .eq('id', session.user.id)
             .single();
           setProfile(profileData);
+
+          const { data: threads } = await supabase
+            .from('chat_threads')
+            .select('id, title, hero_slug, updated_at')
+            .eq('user_id', session.user.id)
+            .order('updated_at', { ascending: false })
+            .limit(10);
+          if (threads) {
+            setRecentThreads(threads);
+          }
         } else {
           setProfile(null);
+          setRecentThreads([]);
         }
         // Refresh energy on auth change
         const currentEnergy = await getEnergyRemainingAsync();
@@ -157,6 +181,27 @@ export function Sidebar() {
              <div className="absolute inset-0 bg-gradient-to-r from-[#D4AF37]/20 to-transparent opacity-50 z-0" />
           )}
         </Link>
+
+        {user && recentThreads.length > 0 && (
+          <div className="pt-6 pb-2">
+            <h3 className="px-3 text-[10px] font-orbitron tracking-widest text-[#D4AF37]/70 uppercase mb-2">
+              Recent Chats
+            </h3>
+            <div className="space-y-1">
+              {recentThreads.map((thread) => (
+                <Link
+                  key={thread.id}
+                  href={`/chat/${thread.hero_slug}?thread=${thread.id}`}
+                  className="block px-3 py-2 rounded-md hover:bg-[#D4AF37]/10 transition-colors"
+                >
+                  <p className="font-mono text-[9px] text-[#d0c5af]/60 truncate group-hover:text-[#D4AF37]">
+                    → {thread.title || 'New Chat'}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </nav>
 
       <div className="p-4 border-t border-[#D4AF37]/20 bg-background/50 flex flex-col gap-4">
