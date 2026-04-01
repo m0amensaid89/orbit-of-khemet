@@ -5,16 +5,21 @@ import Link from "next/link";
 import { useState } from "react";
 import { Search, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { heroData, heroOrder } from "@/lib/heroes";
 
-const heroes = [
-  { id: 1, name: "NEXAR", slug: "nexar", role: "The Destabilizer", description: "Destroys weak inputs and demands high-leverage context.", accentColor: "#FF4444", glowColor: "rgba(255,68,68,0.35)", primaryColor: "#FF4444" },
-  { id: 2, name: "HORUSEN", slug: "horusen", role: "Ancient Script Guardian", description: "Oversees the grand board, plotting multi-step empire growth.", accentColor: "#D4AF37", glowColor: "rgba(212,175,55,0.35)", primaryColor: "#3A6DD4" },
-  { id: 3, name: "KAIRO", slug: "kairo", role: "Precision Stream Warrior", description: "Structures chaos into scalable, unbreakable precision.", accentColor: "#00E5FF", glowColor: "rgba(0,229,255,0.35)", primaryColor: "#6C63FF" },
-  { id: 4, name: "LYRA", slug: "lyra", role: "Visionary Systems Architect", description: "Weaves compelling narratives that captivate and convert.", accentColor: "#D4AF37", glowColor: "rgba(212,175,55,0.35)", primaryColor: "#2D6A4F" },
-  { id: 5, name: "NEFRA", slug: "nefra", role: "Precision Stream Warrior", description: "Reads between the lines, ensuring tone aligns with intent.", accentColor: "#E040FB", glowColor: "rgba(224,64,251,0.35)", primaryColor: "#9B59B6" },
-  { id: 6, name: "RAMET", slug: "ramet", role: "The Stabilizer", description: "Turns ideas into precise, high-speed, flawless execution.", accentColor: "#4ECDC4", glowColor: "rgba(78,205,196,0.35)", primaryColor: "#4ECDC4" },
-  { id: 7, name: "THOREN", slug: "thoren", role: "The Law", description: "Protects the core, ensuring safe and sustainable operations.", accentColor: "#D4AF37", glowColor: "rgba(212,175,55,0.35)", primaryColor: "#C0C0C0" },
-];
+const heroes = heroOrder.map((slug, index) => {
+  const data = heroData[slug];
+  return {
+    id: index + 1,
+    name: data.name,
+    slug: data.slug,
+    role: data.role,
+    description: data.quote || data.bio.split('.')[0] + '.',
+    accentColor: data.accentColor,
+    glowColor: data.palette.glow,
+    primaryColor: data.palette.primary,
+  };
+});
 
 export default function HubPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -64,7 +69,7 @@ export default function HubPage() {
               initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: i * 0.1 }}
             >
               <Link
-                href={`/heroes/${hero.slug}`}
+                href={`/chat/${hero.slug}`}
                 className="group relative rounded-xl overflow-hidden aspect-[3/4] flex flex-col cursor-pointer block transition-all duration-500 bg-[#131313] border border-white/5 hover:-translate-y-2"
                 style={{
                   boxShadow: "0 10px 30px -10px rgba(0,0,0,0.8)"
@@ -104,12 +109,12 @@ export default function HubPage() {
                       {hero.name}
                     </h3>
 
-                    <p className="text-sm font-[Rajdhani] text-white/60 mb-6 line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-                      {hero.description}
+                    <p className="text-sm font-[Rajdhani] text-white/60 mb-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100 italic">
+                      &quot;{hero.description}&quot;
                     </p>
 
                     <div className="opacity-0 group-hover:opacity-100 transition-all duration-500 delay-200 translate-y-4 group-hover:translate-y-0">
-                      <button className="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 backdrop-blur-md rounded-md font-[Orbitron] text-[10px] tracking-[3px] uppercase text-white flex items-center justify-center gap-2 transition-colors">
+                      <button className="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 backdrop-blur-md rounded-md font-[Orbitron] text-[10px] tracking-[3px] uppercase text-white flex items-center justify-center gap-2 transition-colors pointer-events-none">
                         Enter Orbit <ChevronRight className="w-3 h-3" />
                       </button>
                     </div>
@@ -126,7 +131,7 @@ export default function HubPage() {
         initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5, duration: 0.6 }}
         className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50"
       >
-        <Link href="/chat/master">
+        <Link href="/master-orbit">
           <div className="group flex items-center gap-4 px-8 py-4 rounded-full border border-[#D4AF37]/50 bg-[#0A0A0A]/90 backdrop-blur-xl hover:bg-[#D4AF37] transition-all duration-500 shadow-[0_0_30px_rgba(212,175,55,0.2)] hover:shadow-[0_0_50px_rgba(212,175,55,0.6)] hover:scale-105">
             <div className="relative w-10 h-10 rounded-full border-2 border-[#D4AF37] group-hover:border-black flex items-center justify-center shrink-0">
               <div className="w-3 h-3 rounded-full bg-[#FFD700] group-hover:bg-black animate-pulse" />

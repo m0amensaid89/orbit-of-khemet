@@ -102,16 +102,16 @@ export function Sidebar() {
           )}
         </Link>
         <Link
-          href="/chat"
+          href="/master-orbit"
           className={`group flex items-center gap-3 px-3 py-3 rounded-md transition-all relative overflow-hidden ${
-            pathname === "/chat" || pathname.startsWith("/chat/")
+            pathname === "/master-orbit"
               ? "bg-[#D4AF37]/10 text-[#D4AF37] border-l-2 border-[#D4AF37]"
               : "text-muted-foreground hover:text-[#D4AF37] hover:bg-[#D4AF37]/5 border-l-2 border-transparent hover:border-[#D4AF37]/50"
           }`}
         >
           <Cpu className="w-5 h-5 z-10" />
           <span className="font-rajdhani font-medium text-lg z-10">Master Orbit</span>
-          {(pathname === "/chat" || pathname.startsWith("/chat/")) && (
+          {pathname === "/master-orbit" && (
              <div className="absolute inset-0 bg-gradient-to-r from-[#D4AF37]/20 to-transparent opacity-50 z-0" />
           )}
         </Link>

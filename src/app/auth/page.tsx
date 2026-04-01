@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { Suspense } from "react";
 
-export default function AuthPage() {
+function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,6 +16,7 @@ export default function AuthPage() {
   const [message, setMessage] = useState<string | null>(null);
 
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createClient();
 
   const handleAuth = async (e: React.FormEvent) => {
@@ -30,14 +32,17 @@ export default function AuthPage() {
           password,
         });
         if (error) throw error;
-        router.push("/hub");
+        const redirectUrl = searchParams.get("redirect") || "/hub";
+        router.push(redirectUrl);
         router.refresh();
       } else {
         const { error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
+            emailRedirectTo: `${window.location.origin}/auth/callback${
+              searchParams.get("redirect") ? `?redirect=${encodeURIComponent(searchParams.get("redirect")!)}` : ""
+            }`,
           },
         });
         if (error) throw error;
@@ -146,5 +151,13 @@ export default function AuthPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AuthPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[#0A0A0A]"><Loader2 className="w-8 h-8 text-[#D4AF37] animate-spin" /></div>}>
+      <AuthForm />
+    </Suspense>
   );
 }
