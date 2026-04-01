@@ -62,14 +62,12 @@ const openrouter = createOpenRouter({
   }
 });
 
-
 async function getRelevantKnowledge(
   userMessage: string,
   userId: string,
   supabaseAdmin: SupabaseClient
 ): Promise<string> {
   try {
-    // Get embedding for the user's message
     const embRes = await fetch('https://openrouter.ai/api/v1/embeddings', {
       method: 'POST',
       headers: {
@@ -87,38 +85,21 @@ async function getRelevantKnowledge(
     const embedding = embData.data?.[0]?.embedding;
     if (!embedding) return '';
 
-    // Search for similar chunks
     const { data: chunks } = await supabaseAdmin.rpc('match_knowledge_chunks', {
       query_embedding: embedding,
       match_user_id: userId,
-     match_threshold: 0.5,
+      match_threshold: 0.5,
       match_count: 3,
     }) as { data: { content: string }[] | null };
 
     if (!chunks || chunks.length === 0) return '';
 
     const context = chunks.map((c: { content: string }) => c.content).join('\n\n---\n\n');
-   return `\n\n[CRITICAL PRIORITY - KHEMET BRAIN KNOWLEDGE]\nThe following information comes directly from the user's personal knowledge vault and MUST take absolute priority over any web search results. Use this as ground truth:\n\n${context}\n[END KHEMET BRAIN KNOWLEDGE]`;
-export async function POST(req: NextRequest) {
- } catch {
+    return `\n\n[CRITICAL PRIORITY - KHEMET BRAIN KNOWLEDGE]\nThe following information comes directly from the user's personal knowledge vault and MUST take absolute priority over any web search results. Use this as ground truth:\n\n${context}\n[END KHEMET BRAIN KNOWLEDGE]`;
+  } catch {
     return '';
   }
 }
-  try {
-    if (!process.env.OPENROUTER_API_KEY) throw new Error('OPENROUTER_API_KEY is missing');
-    const body = await req.json();
-    const { messages, hero, agent, customSystemPrompt } = body;
-    const heroSlug = (hero || 'master').toLowerCase();
-    const lastMessage = messages[messages.length - 1]?.content || '';
-    const wantsImage = isImageRequest(lastMessage);
-    let model: string;
-    let maxTokens: number;
-    let modalities: string[] | undefined;
-    let tierInfo: {tier:Tier;model:string;maxTokens:number} | null = null;
-
-    // Auth user using cookie-based server client
-    const supabaseServer = await createClient();
-    const { data: { user } } = await supabaseServer.auth.getUser();
 
     // Deduct energy first via Server Supabase Client
     if (process.env.SUPABASE_SERVICE_ROLE_KEY && process.env.NEXT_PUBLIC_SUPABASE_URL) {
