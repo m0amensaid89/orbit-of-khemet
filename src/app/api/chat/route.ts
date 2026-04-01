@@ -20,10 +20,10 @@ function isImageRequest(msg: string): boolean { return IMAGE_TRIGGERS.some(t => 
 type Tier = 1|2|3|4|5;
 const TIER_MODELS: Record<Tier,string> = {
   1: 'google/gemini-2.5-flash',
-  2: 'google/gemini-2.5-flash:online',
-  3: 'openai/gpt-4o:online',
-  4: 'anthropic/claude-sonnet-4-5:online',
-  5: 'openai/o3-mini:online',
+  2: 'google/gemini-2.5-flash',
+  3: 'openai/gpt-4o',
+  4: 'anthropic/claude-sonnet-4-5',
+  5: 'openai/o3-mini',
 };
 const TIER_MAX_TOKENS: Record<Tier,number> = {1:1000,2:2000,3:3000,4:6000,5:8000};
 
