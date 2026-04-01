@@ -91,7 +91,7 @@ async function getRelevantKnowledge(
     const { data: chunks } = await supabaseAdmin.rpc('match_knowledge_chunks', {
       query_embedding: embedding,
       match_user_id: userId,
-      match_threshold: 0.7,
+      match_threshold: 0.5,
       match_count: 3,
     }) as { data: { content: string }[] | null };
 
@@ -160,6 +160,7 @@ export async function POST(req: NextRequest) {
         process.env.SUPABASE_SERVICE_ROLE_KEY
       );
       knowledgeContext = await getRelevantKnowledge(lastMessage, user.id, supabaseAdmin);
+      console.log(`[KHEMET BRAIN] user: ${user?.id || 'none'}, knowledge_context_length: ${knowledgeContext.length}`);
     }
 
     const heroData = getHero(heroSlug);
