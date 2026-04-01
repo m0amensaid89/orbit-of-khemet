@@ -101,7 +101,23 @@ async function getRelevantKnowledge(
   }
 }
 
-    // Deduct energy first via Server Supabase Client
+ export async function POST(req: NextRequest) {
+  try {
+    if (!process.env.OPENROUTER_API_KEY) throw new Error('OPENROUTER_API_KEY is missing');
+    const body = await req.json();
+    const { messages, hero, agent, customSystemPrompt } = body;
+    const heroSlug = (hero || 'master').toLowerCase();
+    const lastMessage = messages[messages.length - 1]?.content || '';
+    const wantsImage = isImageRequest(lastMessage);
+    let model: string;
+    let maxTokens: number;
+    let modalities: string[] | undefined;
+    let tierInfo: {tier:Tier;model:string;maxTokens:number} | null = null;
+
+    const supabaseServer = await createClient();
+    const { data: { user } } = await supabaseServer.auth.getUser(); 
+
+// Deduct energy first via Server Supabase Client
     if (process.env.SUPABASE_SERVICE_ROLE_KEY && process.env.NEXT_PUBLIC_SUPABASE_URL) {
       const supabaseAdmin = createSupabaseClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
       if (user) {
