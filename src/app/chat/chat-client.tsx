@@ -32,20 +32,20 @@ export default function ChatPage() {
   const agentInitials = agentName.substring(0, 2).toUpperCase();
   const heroName = hero?.name || heroParam.toUpperCase();
 
-  const [messages, setMessages] = useState<{ id: string; role: string; content: string }[]>([]);
+  const [messages, setMessages] = useState<{ id: string; role: string; content: string; modelBadge?: string }[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const heroModelMap: Record<string, string> = {
     master:  "anthropic/claude-sonnet-4-5:online",
-    thoren:  "anthropic/claude-sonnet-4-5:online",
+    thoren:  "xiaomi/mimo-7b",
     nexar:   "openai/o3-mini:online",
     ramet:   "google/gemini-2.5-flash:online",
     lyra:    "anthropic/claude-sonnet-4-5:online",
-    kairo:   "google/gemini-2.5-flash:online",
+    kairo:   "xiaomi/mimo-7b",
     nefra:   "google/gemini-2.5-flash:online",
-    horusen: "openai/gpt-4o:online",
+    horusen: "xiaomi/mimo-7b",
   };
   const currentModel = heroModelMap[heroParam] || "google/gemini-2.5-flash";
   const energyCost = getEnergyCost(currentModel);
@@ -101,8 +101,20 @@ export default function ChatPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed");
-      const modelBadge = data.modelUsed ? `\n\n---\n*Model: ${data.modelUsed}*` : '';
-      setMessages(prev => [...prev, { id: (Date.now()+1).toString(), role: 'assistant', content: (data.response || '') + modelBadge }]);
+
+      const badgeInfo = data.modelUsed;
+      let finalContent = data.response || '';
+
+      if (badgeInfo !== "xiaomi/mimo-7b" && badgeInfo) {
+        finalContent += `\n\n---\n*Model: ${badgeInfo}*`;
+      }
+
+      setMessages(prev => [...prev, {
+        id: (Date.now()+1).toString(),
+        role: 'assistant',
+        content: finalContent,
+        modelBadge: badgeInfo === "xiaomi/mimo-7b" ? "MiMo" : undefined
+      }]);
       trackMessage();
     } catch {
       setMessages(prev => [...prev, { id: "err-"+Date.now(), role: "assistant", content: "Connection interrupted. Please try again." }]);
@@ -188,11 +200,20 @@ export default function ChatPage() {
               )}
 
               {/* Bubble */}
-              <div className={`max-w-[75%] px-4 py-3 text-sm leading-relaxed ${m.role === "user" ? "rounded-2xl rounded-br-sm" : "rounded-2xl rounded-bl-sm"}`}
-                style={m.role === "user"
-                  ? { background: accentColor, color: "#000", fontFamily: "var(--font-body)" }
-                  : { background: bgMid, border: `0.5px solid ${cardBorder}`, color: "rgba(255,255,255,0.87)", fontFamily: "var(--font-body)" }}>
-                <div className="whitespace-pre-wrap break-words">{m.content}</div>
+              <div className="flex flex-col gap-1 max-w-[75%]">
+                <div className={`px-4 py-3 text-sm leading-relaxed ${m.role === "user" ? "rounded-2xl rounded-br-sm" : "rounded-2xl rounded-bl-sm"}`}
+                  style={m.role === "user"
+                    ? { background: accentColor, color: "#000", fontFamily: "var(--font-body)" }
+                    : { background: bgMid, border: `0.5px solid ${cardBorder}`, color: "rgba(255,255,255,0.87)", fontFamily: "var(--font-body)" }}>
+                  <div className="whitespace-pre-wrap break-words">{m.content}</div>
+                </div>
+                {m.modelBadge && (
+                  <div className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+                    <span className="font-[Orbitron] text-[10px] font-bold tracking-[1px] uppercase px-2 py-0.5 rounded-sm bg-orange-500/10 text-orange-500 border border-orange-500/30">
+                      {m.modelBadge}
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* User avatar */}
