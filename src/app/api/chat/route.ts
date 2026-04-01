@@ -98,7 +98,7 @@ async function getRelevantKnowledge(
     if (!chunks || chunks.length === 0) return '';
 
     const context = chunks.map((c: { content: string }) => c.content).join('\n\n---\n\n');
-    return `\n\n--- KHEMET BRAIN: USER KNOWLEDGE CONTEXT ---\n${context}\n--- END KNOWLEDGE CONTEXT ---`;
+    return `\n\n[CRITICAL PRIORITY - KHEMET BRAIN KNOWLEDGE]\nThe following information comes directly from the user's personal knowledge vault and MUST take absolute priority over any web search results or external sources. Use this as ground truth:\n\n${context}\n[END KHEMET BRAIN KNOWLEDGE]`;
   } catch {
     return '';
   }
