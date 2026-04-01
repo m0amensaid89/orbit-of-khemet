@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { heroMeta, heroAgents, masterSystemPrompt } from '@/lib/agents';
-import { createClient as createSupabaseClient } from '@supabase/supabase-js';
+import { createClient as createSupabaseClient, SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/server';
 import { getHero } from '@/lib/heroes';
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
@@ -62,7 +62,50 @@ const openrouter = createOpenRouter({
   }
 });
 
+
+async function getRelevantKnowledge(
+  userMessage: string,
+  userId: string,
+  supabaseAdmin: SupabaseClient
+): Promise<string> {
+  try {
+    // Get embedding for the user's message
+    const embRes = await fetch('https://openrouter.ai/api/v1/embeddings', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'openai/text-embedding-3-small',
+        input: userMessage,
+      }),
+    });
+
+    if (!embRes.ok) return '';
+    const embData = await embRes.json();
+    const embedding = embData.data?.[0]?.embedding;
+    if (!embedding) return '';
+
+    // Search for similar chunks
+    const { data: chunks } = await supabaseAdmin.rpc('match_knowledge_chunks', {
+      query_embedding: embedding,
+      match_user_id: userId,
+      match_threshold: 0.7,
+      match_count: 3,
+    }) as { data: { content: string }[] | null };
+
+    if (!chunks || chunks.length === 0) return '';
+
+    const context = chunks.map((c: { content: string }) => c.content).join('\n\n---\n\n');
+    return `\n\n--- KHEMET BRAIN: USER KNOWLEDGE CONTEXT ---\n${context}\n--- END KNOWLEDGE CONTEXT ---`;
+  } catch {
+    return '';
+  }
+}
+
 export async function POST(req: NextRequest) {
+
 
   try {
     if (!process.env.OPENROUTER_API_KEY) throw new Error('OPENROUTER_API_KEY is missing');
@@ -105,8 +148,20 @@ export async function POST(req: NextRequest) {
       maxTokens = tierInfo.maxTokens;
     }
 
+
     // Attempt to get system prompt from hero data
     let systemPrompt = masterSystemPrompt;
+
+    // Inject knowledge context if user is authenticated
+    let knowledgeContext = '';
+    if (user && process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      const supabaseAdmin = createSupabaseClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL,
+        process.env.SUPABASE_SERVICE_ROLE_KEY
+      );
+      knowledgeContext = await getRelevantKnowledge(lastMessage, user.id, supabaseAdmin);
+    }
+
     const heroData = getHero(heroSlug);
 
     if (heroData?.systemPrompt) {
@@ -124,6 +179,12 @@ export async function POST(req: NextRequest) {
     } else {
       systemPrompt += '\n\nYou are the MASTER ORBIT, commanding all 85 specialized agents across all 7 hero groups. Deliver elite-level responses.';
     }
+
+    // Append to system prompt
+    if (knowledgeContext) {
+      systemPrompt += knowledgeContext;
+    }
+
 
     if (wantsImage) {
         const requestBody: Record<string,unknown> = {
