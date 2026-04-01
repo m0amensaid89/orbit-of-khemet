@@ -100,8 +100,10 @@ async function getRelevantKnowledge(
     const context = chunks.map((c: { content: string }) => c.content).join('\n\n---\n\n');
    return `\n\n[CRITICAL PRIORITY - KHEMET BRAIN KNOWLEDGE]\nThe following information comes directly from the user's personal knowledge vault and MUST take absolute priority over any web search results. Use this as ground truth:\n\n${context}\n[END KHEMET BRAIN KNOWLEDGE]`;
 export async function POST(req: NextRequest) {
-
-
+ } catch {
+    return '';
+  }
+}
   try {
     if (!process.env.OPENROUTER_API_KEY) throw new Error('OPENROUTER_API_KEY is missing');
     const body = await req.json();
