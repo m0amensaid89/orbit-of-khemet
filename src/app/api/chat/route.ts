@@ -54,6 +54,16 @@ function classifyMessage(msg: string, hero: string, convLen: number): {tier: Tie
 }
 
 
+const ARTIFACT_SYSTEM_SUFFIX = `
+
+When a user asks you to build, create, generate, or make something that can be represented as a file or interactive element, ALWAYS respond with a complete, working code block using the appropriate language tag:
+- For web apps, dashboards, calculators, interactive tools: use \`\`\`html with complete standalone HTML including CSS and JS
+- For data tables, reports with numbers: use \`\`\`csv with proper comma-separated values
+- For structured data: use \`\`\`json
+- For documents, reports, guides: use \`\`\`markdown
+
+Make the code complete and immediately runnable. Include all styles inline. Do not truncate.`;
+
 const openrouter = createOpenRouter({
   apiKey: process.env.OPENROUTER_API_KEY,
   headers: {
@@ -179,6 +189,7 @@ async function getRelevantKnowledge(
       systemPrompt += knowledgeContext;
     }
 
+    systemPrompt += ARTIFACT_SYSTEM_SUFFIX;
 
     if (wantsImage) {
         const requestBody: Record<string,unknown> = {

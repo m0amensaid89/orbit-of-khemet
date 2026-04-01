@@ -9,6 +9,8 @@ import { getHero } from "@/lib/heroes";
 import { getCustomAgentById } from "@/lib/custom-agents";
 import { trackMessage, getEnergyCost } from "@/lib/energy";
 import { useChat } from "@ai-sdk/react";
+import { detectArtifact, extractTitle } from '@/lib/artifacts';
+import { ArtifactRenderer } from '@/components/ArtifactRenderer';
 
 export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
   const searchParams = useSearchParams();
@@ -177,8 +179,20 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
             {messages.map((m) => {
               // Extract model badge if present
               const contentParts = m.content.split("\n\n---\n*Model:");
-              const cleanContent = contentParts[0];
+              let cleanContent = contentParts[0];
               const modelUsed = contentParts.length > 1 ? contentParts[1].replace("*", "").trim() : null;
+
+              let artifact = null;
+              let artifactTitle = "";
+              if (m.role === 'assistant') {
+                artifact = detectArtifact(cleanContent);
+                if (artifact) {
+                  artifactTitle = extractTitle(cleanContent, artifact);
+                  // Strip the raw code block from the message text
+                  const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
+                  cleanContent = cleanContent.replace(codeBlockRegex, '').trim();
+                }
+              }
 
               return (
                 <div key={m.id} className={`flex gap-3 w-full ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
@@ -206,7 +220,8 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                       style={m.role === "user"
                         ? { background: "linear-gradient(135deg, #1A1A1A, #0A0A0A)", border: "1px solid #D4AF37", color: "#F5D38C", fontFamily: "var(--font-sans)" }
                         : { background: bgMid, border: `1px solid ${cardBorder}`, color: "rgba(255,255,255,0.9)", fontFamily: "var(--font-sans)", borderLeftColor: accentColor, borderLeftWidth: "3px" }}>
-                      <div className="whitespace-pre-wrap break-words">{cleanContent}</div>
+                      {cleanContent && <div className="whitespace-pre-wrap break-words">{cleanContent}</div>}
+                      {artifact && <ArtifactRenderer artifact={artifact} title={artifactTitle} />}
                     </div>
                     {(((m as { modelUsed?: string }).modelUsed) === "xiaomi/mimo-7b" || modelUsed === "xiaomi/mimo-7b") && (
                       <div className="self-start px-2 py-0.5 mt-1 rounded text-[10px] font-bold tracking-wider"
