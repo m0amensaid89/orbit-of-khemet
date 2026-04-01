@@ -40,6 +40,6 @@
     "eslint-config-next": "15.5.14",
     "tailwindcss": "^4",
     "tailwindcss-animate": "^1.0.7",
-    "typescript": "^5"
+    "typescript": "^5.9.3"
   }
 }

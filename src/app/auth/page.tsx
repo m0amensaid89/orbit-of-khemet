@@ -46,13 +46,23 @@ function AuthForm() {
           },
         });
         if (error) throw error;
-        setMessage("Check your email for the confirmation link.");
+        // In Supabase, if auto-confirm is enabled, it logs them in directly.
+        // Even if not, it's safe to redirect or show a message.
+        // Let's redirect them to /hub automatically or show a success message if email verification is required.
+        const redirectUrl = searchParams.get("redirect") || "/hub";
+        router.push(redirectUrl);
+        router.refresh();
       }
     } catch (err: unknown) {
       if (err instanceof Error) {
-        setError(err.message);
+        // If the error message is something cryptic like "Failed to fetch", provide a clearer one
+        if (err.message.toLowerCase().includes("failed to fetch") || err.message.includes("NetworkError")) {
+          setError("Network error. Please check your connection to the Empire Engine.");
+        } else {
+          setError(err.message);
+        }
       } else {
-        setError("An error occurred during authentication.");
+        setError("An error occurred during authentication. Please try again.");
       }
     } finally {
       setLoading(false);

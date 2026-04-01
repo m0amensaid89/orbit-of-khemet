@@ -27,38 +27,58 @@ export default function ProfilePage() {
   const [stats, setStats] = useState({ totalEnergyUsed: 0, level: 1, currentXp: 0, nextLevelXp: 100 });
   const [userPlan, setUserPlan] = useState("explorer");
   const [customAgents, setCustomAgents] = useState<CustomAgent[]>([]);
-  const [userData, setUserData] = useState<{ email?: string; name?: string; initials: string; energyBalance: number; messagesSent: number }>({ initials: "GO", energyBalance: 50, messagesSent: 0 });
+  const [userData, setUserData] = useState<{ email?: string; name?: string; initials: string; energyBalance: number; messagesSent: number; threadsCount: number }>({ initials: "GO", energyBalance: 50, messagesSent: 0, threadsCount: 0 });
 
 
   useEffect(() => {
     const liveStats = getStats();
-    setStats({
-      totalEnergyUsed: liveStats.messages * 2,
-      level: liveStats.level,
-      currentXp: liveStats.xp,
-      nextLevelXp: liveStats.nextLevelXP,
-    });
-    const savedPlan = localStorage.getItem("orbit_plan") || "scout"; // Defaulting to scout
-    setUserPlan(savedPlan);
     setCustomAgents(getCustomAgents());
 
     const fetchUserData = async () => {
       const supabase = createClient();
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
-        const { data: profile } = await supabase.from('profiles').select('energy_balance, display_name').eq('id', session.user.id).single();
+        const { data: profile } = await supabase.from('profiles').select('energy_balance, display_name, full_name, plan, xp, level').eq('id', session.user.id).single();
+
+        // Fetch message count and thread count from database
+        const { count: messageCount } = await supabase.from('chat_messages').select('*', { count: 'exact', head: true }).eq('user_id', session.user.id);
+        const { count: threadCount } = await supabase.from('chat_threads').select('*', { count: 'exact', head: true }).eq('user_id', session.user.id);
+
         const email = session.user.email;
-        const name = profile?.display_name || email?.split('@')[0] || "Grid Operative";
+        const name = profile?.full_name || profile?.display_name || email?.split('@')[0] || "Grid Operative";
         const initials = name.substring(0, 2).toUpperCase();
+
         setUserData({
           email,
           name,
           initials,
           energyBalance: profile?.energy_balance ?? getEnergyRemaining(),
-          messagesSent: liveStats.messages
+          messagesSent: messageCount || 0,
+          threadsCount: threadCount || 0
         });
+
+        setUserPlan(profile?.plan || "scout");
+
+        const level = profile?.level || 1;
+        const currentXp = profile?.xp || 0;
+        const nextLevelXp = level * 100;
+
+        setStats({
+          totalEnergyUsed: (messageCount || 0) * 2, // approximation
+          level,
+          currentXp,
+          nextLevelXp,
+        });
+
       } else {
-        setUserData(prev => ({ ...prev, energyBalance: getEnergyRemaining(), messagesSent: liveStats.messages }));
+        setUserData(prev => ({ ...prev, energyBalance: getEnergyRemaining(), messagesSent: liveStats.messages, threadsCount: 0 }));
+        setStats({
+          totalEnergyUsed: liveStats.messages * 2,
+          level: liveStats.level,
+          currentXp: liveStats.xp,
+          nextLevelXp: liveStats.nextLevelXP,
+        });
+        setUserPlan(localStorage.getItem("orbit_plan") || "scout");
       }
     };
     fetchUserData();
@@ -190,7 +210,7 @@ export default function ProfilePage() {
                 </div>
                 <div className="flex justify-between items-center mt-3">
                   <p className="font-[Rajdhani] text-xs text-white/40">{Math.round(xpPercentage)}% complete</p>
-                  <p className="font-[Rajdhani] text-xs text-[#D4AF37]">Total Messages: {userData.messagesSent} | {stats.nextLevelXp - stats.currentXp} XP to go</p>
+                  <p className="font-[Rajdhani] text-xs text-[#D4AF37]">Total Threads: {userData.threadsCount} | Total Messages: {userData.messagesSent} | {stats.nextLevelXp - stats.currentXp} XP to go</p>
                 </div>
               </div>
             </motion.div>
