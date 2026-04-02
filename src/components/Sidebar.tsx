@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Zap, Hexagon, Shield, Cpu, LogIn, LogOut, User, Wand2, Compass, Search, BookOpen, Hammer, Gem } from "lucide-react";
+import { Zap, Hexagon, Shield, Cpu, LogIn, LogOut, User, Wand2, Compass, Search, BookOpen, Hammer, Gem, Globe } from "lucide-react";
 import { getEnergyRemainingAsync } from "@/lib/energy";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -190,6 +190,10 @@ export function Sidebar() {
             <Link href="/sentinel" className={navItemClass("/sentinel")}>
               <Shield className="w-4 h-4 z-10" />
               <span className="font-medium text-[16px] z-10">Code Sentinel</span>
+            </Link>
+            <Link href="/browser" className={navItemClass("/browser")}>
+              <Globe className="w-4 h-4 z-10" />
+              <span className="font-medium text-[16px] z-10">Browser Control</span>
             </Link>
             <Link href="/artifacts" className={navItemClass("/artifacts")}>
               <Gem className="w-4 h-4 z-10" />
