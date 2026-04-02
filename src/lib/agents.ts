@@ -17,6 +17,7 @@ export type SquadMeta = {
 export type HeroMeta = {
   name: string;
   class_title: string;
+  archetype: string;
   origin_line: string;
   bio: string;
   quote: string;
@@ -24,6 +25,13 @@ export type HeroMeta = {
   color_signature: string;
   faction: string;
   status: string;
+  short_tagline: string;
+  role_line: string;
+  specialties: string[];
+  best_for: string;
+  card_description: string;
+  cta_primary: string;
+  cta_secondary: string;
   squad?: SquadMeta;
 };
 
@@ -665,17 +673,25 @@ export const heroAgents: Record<string, Agent[]> = {
 };
 
 export const heroMeta: Record<string, HeroMeta> = {
-  "thoren": {
-    "name": "THOREN",
-    "class_title": "The Law",
-    "origin_line": "Before Ramet learned to stabilize and before Nexar learned to disrupt, Thoren wrote the rules they both think they understand.",
-    "bio": "Thoren is the reference state \u2014 the original measurement against which every force, every field, and every protocol in the Grid is calibrated. He does not channel energy because he IS energy's benchmark. His silver coat is not a costume; it is a living document, woven from light-holding nano-weave fabric that absorbs photons and releases them slowly, turning law into luminance. The diamond patterns embossed across his chest are compressed legal architecture \u2014 the original Grid protocols written into fabric by the founders of the system. When fully invoked, those patterns become readable text: ancient Khemet script translated to code. The coat has been worn by exactly one person. It chose him.",
-    "quote": "I don't enforce the rules. I am the reason rules exist.",
-    "universe_role": "Thoren is the Grid's constitutional anchor and commands 13 agents who encode the foundational rules of business: financial models, capital strategy, legal compliance, brand protection, marketing copy standards, ad frameworks, affiliate systems, character creation protocols, and sales storytelling structures. Every protocol, every boundary, every governance structure traces back to his original codex. Without Thoren's squad, there are no standards \u2014 only noise pretending to be strategy.",
-    "color_signature": "#C0C0C0",
-    "faction": "Founders",
-    "status": "Active \u2014 Immutable",
-    "squad": {
+  thoren: {
+    name: 'THOREN',
+    class_title: 'The Law',
+    archetype: 'Governance & Finance Strategist',
+    origin_line: 'Born from the axioms of order',
+    bio: 'Thoren is the constitutional layer of the Empire. He turns chaos into clear rules, builds financial and legal foundations, and protects the empire you are trying to scale.',
+    quote: 'I do not enforce the rules. I am the reason rules exist.',
+    universe_role: 'Governance, Finance, Legal, Brand Standards',
+    color_signature: '#C0C0C0',
+    faction: 'The Lawkeepers',
+    status: 'ACTIVE',
+    short_tagline: 'The Law — Governance & Finance Strategist',
+    role_line: 'Designs the rules of your business universe: money, risk, legal, and brand standards.',
+    specialties: ['Financial models and capital strategy', 'Legal/compliance and brand protection', 'Core copy frameworks and monetization structures'],
+    best_for: 'Best for founders who need serious structure: pricing models, investment decks, legal-safe funnels, and brand guardrails.',
+    card_description: 'Thoren is your constitutional layer. He turns chaos into clear rules, builds financial and legal foundations, and protects the empire you are trying to scale. Use his orbit when you want to make decisions that will still hold five years from now.',
+    cta_primary: 'Enter Thoren Orbit',
+    cta_secondary: "Preview Thoren's Squad",
+    squad: {
       "agent_count": 13,
       "squad_name": "The Codex Guard",
       "domain_summary": "Financial governance, legal frameworks, brand protection, marketing copy standards, storytelling architecture, and technical systems design",
@@ -690,17 +706,25 @@ export const heroMeta: Record<string, HeroMeta> = {
       }
     }
   },
-  "ramet": {
-    "name": "RAMET",
-    "class_title": "The Stabilizer",
-    "origin_line": "Nothing on his suit is symmetrical by accident \u2014 asymmetry IS the design principle for optimal field stabilization.",
-    "bio": "Ramet is the force that holds fractured systems together before anyone realizes they were breaking. His dark nano-composite suit is embedded with stabilization field generators that project multifaceted energy arrays \u2014 not symmetrical, never balanced, because true stability requires constant asymmetric correction. The red energy that bleeds along fracture lines in his armor is not a flow; it follows fracture physics, appearing only where destabilization has already begun, sealing it before damage propagates. In standby mode, his suit appears as slightly off-balance panels \u2014 subtly unsettling if you notice, invisible if you don't. The suit doesn't announce itself. It stabilizes before the destabilization event is apparent.",
-    "quote": "You didn't feel the earthquake because I was already standing on the fault line.",
-    "universe_role": "Ramet is the Grid's emergency infrastructure and commands 12 agents who stabilize the operational layer of business: e-commerce performance, career readiness, sales communication pipelines, blog content engines, digital marketing execution, market research, community cohesion, thought leadership positioning, and founder-level leadership coaching. When Thoren's laws encounter real-world stress and systems begin to fragment under transformation pressure \u2014 Ramet's squad is the reason everything holds.",
-    "color_signature": "#1A3A3A",
-    "faction": "Grid Operatives",
-    "status": "Active \u2014 Monitoring",
-    "squad": {
+  ramet: {
+    name: 'RAMET',
+    class_title: 'The Stabilizer',
+    archetype: 'Operations & Execution Lead',
+    origin_line: 'Forged in the fires of systems under pressure',
+    bio: 'Ramet is the fault-line watcher. He finds the weak points in your operations before they crack, then designs processes, content flows, and sales systems that keep everything online under stress.',
+    quote: 'Stability is not the absence of chaos. It is the mastery of it.',
+    universe_role: 'Operations, E-commerce, Sales, Content Engines',
+    color_signature: '#4ECDC4',
+    faction: 'The Stabilizers',
+    status: 'ACTIVE',
+    short_tagline: 'The Stabilizer — Operations & Execution Lead',
+    role_line: 'Keeps systems running when growth, change, or pressure would normally break them.',
+    specialties: ['E-commerce and funnel performance', 'Sales communication and content engines', 'Leadership resilience and team operations'],
+    best_for: 'Best for operators who need things to actually work: stable revenue, consistent content, dependable sales and a team that does not burn out.',
+    card_description: 'Ramet is the fault-line watcher. He finds the weak points in your operations before they crack, then designs processes, content flows, and sales systems that keep everything online under stress. Use his orbit when you are scaling and cannot afford breakdowns.',
+    cta_primary: 'Enter Ramet Orbit',
+    cta_secondary: "Preview Ramet's Squad",
+    squad: {
       "agent_count": 12,
       "squad_name": "The Fault Line Brigade",
       "domain_summary": "E-commerce optimization, career stabilization, sales communication, content marketing, market intelligence, community building, and leadership resilience",
@@ -715,17 +739,25 @@ export const heroMeta: Record<string, HeroMeta> = {
       }
     }
   },
-  "nexar": {
-    "name": "NEXAR",
-    "class_title": "The Destabilizer",
-    "origin_line": "The suit doesn't announce itself \u2014 it reveals itself when it's too late.",
-    "bio": "Nexar is controlled chaos. He is the force that tears apart what no longer serves the Grid so that something better can be built. His dark nano-composite armor is embedded with disruption emitters that channel red energy not as circuits but as fracture lines \u2014 cracks in reality that bleed light from within. Nothing on his suit is symmetrical, because disruption doesn't follow predictable geometry. The aggressive angular pauldrons and asymmetric chest plates are designed to look almost normal in standby \u2014 just slightly wrong geometry, enough to make you uncomfortable if you stare too long. When fully activated, the red fractures spread beyond the suit panels and arc into the environment itself. Nexar doesn't destroy systems. He reveals what was already broken.",
-    "quote": "I didn't break your system. I showed you where it was already cracking.",
-    "universe_role": "Nexar is the Grid's necessary destruction and commands 12 agents who challenge, disrupt, and expose what's broken: cold email strategies that pierce resistance, SEO warfare that displaces weak competitors, innovation frameworks that shatter old thinking, risk assessments that map hidden dangers, pricing strategies that expose unrealized revenue, operational automation that replaces manual chaos, and data analytics that reveal uncomfortable truths. Every legacy process that resists transformation \u2014 Nexar's squad finds the fracture line and makes it visible.",
-    "color_signature": "#8B0000",
-    "faction": "Grid Operatives",
-    "status": "Active \u2014 Standby",
-    "squad": {
+  nexar: {
+    name: 'NEXAR',
+    class_title: 'The Destabilizer',
+    archetype: 'Transformation Architect',
+    origin_line: 'Emerged from the void between old systems and new ones',
+    bio: 'Nexar is controlled disruption. He pulls apart decaying offers, rebuilds them into sharper products and programs, and layers in analytics so you know what is actually working.',
+    quote: 'Destruction is just creation that has not been named yet.',
+    universe_role: 'Transformation, Products, Growth, Analytics',
+    color_signature: '#FF4444',
+    faction: 'The Architects',
+    status: 'ACTIVE',
+    short_tagline: 'The Destabilizer — Transformation Architect',
+    role_line: 'Breaks what no longer serves your business so you can launch better products, funnels, and systems.',
+    specialties: ['Course and product creation', 'SEO, email, and growth experiments', 'Metrics, partnerships, and systems architecture'],
+    best_for: 'Best for founders who are ready to reinvent: new products, new offers, new funnels, and bold experiments with clear numbers behind them.',
+    card_description: 'Nexar is controlled disruption. He pulls apart decaying offers, rebuilds them into sharper products and programs, and layers in analytics so you know what is actually working. Use his orbit when you want a transformation, not a small optimization.',
+    cta_primary: 'Enter Nexar Orbit',
+    cta_secondary: "Preview Nexar's Squad",
+    squad: {
       "agent_count": 12,
       "squad_name": "The Fracture Corps",
       "domain_summary": "Disruptive marketing, creative tool innovation, operational automation, data-driven challenge, strategic risk exposure, and customer success disruption",
@@ -741,17 +773,25 @@ export const heroMeta: Record<string, HeroMeta> = {
       }
     }
   },
-  "lyra": {
-    "name": "LYRA",
-    "class_title": "Visionary Systems Architect",
-    "origin_line": "She doesn't see what exists \u2014 she sees what everything is becoming, and builds the bridge between the two.",
-    "bio": "Lyra is the Grid's forward sight. Where Thoren wrote the original laws and Ramet holds the present together, Lyra designs the future architecture that the Grid is evolving toward. Her deep forest green tactical suit carries gold orbit-line patterns across the back panel that form an architectural map \u2014 not decorative, but a living blueprint of systems she's designing in real time. The holographic interface trigger points at her wrists project system status indicators in orbital geometry, allowing her to monitor, model, and reshape entire infrastructures with gestural commands. Her chest panel displays a geometric orbital pattern \u2014 a navigation system that tracks every active project, every transformation in progress, every system under construction. Lyra doesn't fix things. She designs what replaces them.",
-    "quote": "Stop defending what exists. Let me show you what it's supposed to become.",
-    "universe_role": "Lyra is the Grid's architect of transformation and commands 13 agents who design the future-facing visibility and content systems: social media growth engines across TikTok, Instagram, Facebook, YouTube, and X, viral hook engineering, podcast production frameworks, newsletter architectures, email subject line science, presentation design systems, content summarization, and landing page conversion blueprints. She represents I-Gamify's strategic design capability \u2014 the ability to see an organization's future content state and engineer the path from here to there.",
-    "color_signature": "#1B4332",
-    "faction": "Grid Architects",
-    "status": "Active \u2014 Designing",
-    "squad": {
+  lyra: {
+    name: 'LYRA',
+    class_title: 'The Signal',
+    archetype: 'Growth Content & Virality Engine',
+    origin_line: 'Crystallized from the frequency of reach',
+    bio: 'Lyra is your amplification field. She takes one core idea and explodes it into dozens of platform-native pieces: hooks, clips, carousels, newsletters, and pages.',
+    quote: 'Every idea deserves to be heard. I make sure it is.',
+    universe_role: 'Content, Virality, Social, Email, Landing Pages',
+    color_signature: '#2D6A4F',
+    faction: 'The Signals',
+    status: 'ACTIVE',
+    short_tagline: 'The Signal — Growth Content & Virality Engine',
+    role_line: 'Turns your ideas into repeatable short-form and social content that actually travels.',
+    specialties: ['Short-form hooks and viral concepts', 'Multi-platform content repurposing', 'Emails, newsletters, and landing pages that convert'],
+    best_for: 'Best for creators and brands who want a constant stream of high-impact content across Reels, Shorts, TikTok, email, and landing pages.',
+    card_description: 'Lyra is your amplification field. She takes one core idea and explodes it into dozens of platform-native pieces: hooks, clips, carousels, newsletters, and pages. Use her orbit when you want attention, reach, and fresh content without burning out.',
+    cta_primary: 'Enter Lyra Orbit',
+    cta_secondary: "Preview Lyra's Squad",
+    squad: {
       "agent_count": 13,
       "squad_name": "The Orbital Design Corps",
       "domain_summary": "Social media growth architecture, content creation systems, platform-native strategy, viral engineering, podcast and newsletter design, and landing page conversion blueprints",
@@ -762,17 +802,25 @@ export const heroMeta: Record<string, HeroMeta> = {
       }
     }
   },
-  "kairo": {
-    "name": "KAIRO",
-    "class_title": "Precision Stream Warrior",
-    "origin_line": "Where others see data, Kairo sees the single thread that unravels everything \u2014 and he pulls it with surgical accuracy.",
-    "bio": "Kairo is the Grid's scalpel. His dark navy armor is embedded with purple geometric circuit lines that don't just glow \u2014 they compute. The precision-stream interface on his forearm runs reactive scripts that converge at the wrist, turning raw data torrents into actionable intelligence in milliseconds. When his holographic panels deploy, they display targeting geometry on his chest panel \u2014 a focusing mechanism that identifies the exact point of intervention in any system. The ancient precision symbols running down his spine are not decoration; they are the Grid's original targeting language, a script so old it predates the protocols Thoren encoded. Kairo doesn't overwhelm with force. He finds the one point where minimal pressure creates maximum change.",
-    "quote": "A thousand data points. One answer. I already found it.",
-    "universe_role": "Kairo is the Grid's precision executor and commands 12 agents who find the critical leverage point in every challenge: social media management across YouTube and X/Twitter, content planning and digital content strategy, pitch crafting, pricing optimization, brand strategy, email list growth, task prioritization, workplace productivity, and remote work systems. When the data is overwhelming and the path is unclear, Kairo's squad isolates the single thread that matters.",
-    "color_signature": "#1B1B4B",
-    "faction": "Grid Operatives",
-    "status": "Active \u2014 Locked On",
-    "squad": {
+  kairo: {
+    name: 'KAIRO',
+    class_title: 'The Gridwalker',
+    archetype: 'Social & Creator Systems Director',
+    origin_line: 'Mapped from the intersection of every content grid',
+    bio: 'Kairo is your day-to-day conductor. He plans your content calendar, scripts your videos and threads, tunes your pricing, and keeps your tasks prioritized.',
+    quote: 'Consistency is the only strategy that compounds.',
+    universe_role: 'Social Media, Creator Systems, Productivity, Pricing',
+    color_signature: '#6C63FF',
+    faction: 'The Gridwalkers',
+    status: 'ACTIVE',
+    short_tagline: 'The Gridwalker — Social & Creator Systems Director',
+    role_line: 'Builds the daily systems that keep your social presence, content calendar, and personal productivity on track.',
+    specialties: ['Social media management and scripting', 'Content planning and publishing systems', 'Pricing, offers, and productivity for creators'],
+    best_for: 'Best for founders and creators who want a reliable content machine: scheduled posts, smart pricing, and a focused workday.',
+    card_description: 'Kairo is your day-to-day conductor. He plans your content calendar, scripts your videos and threads, tunes your pricing, and keeps your tasks prioritized. Use his orbit when you want consistency, not just one viral spike.',
+    cta_primary: 'Enter Kairo Orbit',
+    cta_secondary: "Preview Kairo's Squad",
+    squad: {
       "agent_count": 12,
       "squad_name": "The Scalpel Unit",
       "domain_summary": "Precision social media execution, content strategy targeting, business pitch accuracy, pricing and branding focus, productivity optimization, and task-level surgical intervention",
@@ -784,17 +832,25 @@ export const heroMeta: Record<string, HeroMeta> = {
       }
     }
   },
-  "nefra": {
-    "name": "NEFRA",
-    "class_title": "Precision Stream Warrior",
-    "origin_line": "She carries the same targeting protocols as Kairo, but where he pulls threads apart, she weaves them into something no one saw coming.",
-    "bio": "Nefra is the Grid's convergence point \u2014 a precision warrior who shares the same ancient combat protocols as Kairo but channels them toward synthesis instead of isolation. Her dark navy armor carries the same embedded purple geometric circuit lines, but her energy signature runs hotter, spiraling into concentrated vortex patterns rather than linear streams. The precision-focus interface on her forearm runs the same scalpel-mode scripts, but Nefra uses them to stitch together \u2014 to find the connections between disparate data points that everyone else missed. The purple spiral energy she channels is convergence given physical form: multiple streams becoming one. Her ancient precision symbols echo Kairo's, but her interpretation of them creates entirely new protocols from old foundations.",
-    "quote": "You thought those were separate problems. They're the same problem. Watch.",
-    "universe_role": "Nefra is the Grid's pattern finder and commands 12 agents who weave connections across silos: customer relationship management, customer support coaching, product query resolution, customer segmentation, product development mentoring, personal development guidance, legal compliance frameworks, content paraphrasing, logo concept design, and HR people operations. She represents I-Gamify's ability to see connections that others miss \u2014 to link a gamification challenge with an AI solution with a content strategy into one unified transformation play. Her squad is why I-Gamify's three services feel like one offering.",
-    "color_signature": "#2D1B69",
-    "faction": "Grid Operatives",
-    "status": "Active \u2014 Converging",
-    "squad": {
+  nefra: {
+    name: 'NEFRA',
+    class_title: 'The Keeper',
+    archetype: 'Experience & Relationship Guardian',
+    origin_line: 'Woven from every customer interaction ever recorded',
+    bio: 'Nefra is your memory and empathy system. She maps every interaction, from first touch to renewal, and makes sure your brand feels coherent, respectful, and reliable.',
+    quote: 'Every touchpoint is a promise. I make sure you keep it.',
+    universe_role: 'CRM, Customer Experience, Support, People Ops',
+    color_signature: '#9B59B6',
+    faction: 'The Keepers',
+    status: 'ACTIVE',
+    short_tagline: 'The Keeper — Experience & Relationship Guardian',
+    role_line: 'Designs how customers, team members, and partners experience your brand at every touchpoint.',
+    specialties: ['CRM strategy and segmentation', 'Service, support, and success journeys', 'Brand, legal, and people-ops alignment'],
+    best_for: 'Best for leaders who want happier customers and healthier teams: clearer journeys, better support, and fewer silent churn moments.',
+    card_description: 'Nefra is your memory and empathy system. She maps every interaction, from first touch to renewal, and makes sure your brand feels coherent, respectful, and reliable. Use her orbit when you want your business to feel as good as it looks.',
+    cta_primary: 'Enter Nefra Orbit',
+    cta_secondary: "Preview Nefra's Squad",
+    squad: {
       "agent_count": 12,
       "squad_name": "The Convergence Weave",
       "domain_summary": "Cross-silo synthesis across customer relationships, support systems, product development, people operations, legal frameworks, and creative identity design",
@@ -811,17 +867,25 @@ export const heroMeta: Record<string, HeroMeta> = {
       }
     }
   },
-  "horusen": {
-    "name": "HORUSEN",
-    "class_title": "The Guardian Script",
-    "origin_line": "Every symbol on his armor is a sentence from a language the Grid was built to protect \u2014 and he is the last one who can read it.",
-    "bio": "Horusen is the Grid's living archive. His royal blue armor is covered in embedded gold hieroglyphic symbols \u2014 not homage, not decoration, but the actual protection scripts that safeguard the Grid's deepest knowledge. The reactive script display on his forearm interface doesn't project data; it projects meaning \u2014 translating ancient knowledge systems into protocols that modern operatives can deploy. His suit runs PROTECTION_STREAM_v4.1, the most advanced guardian protocol in the Grid's arsenal, channeling power through a matrix core embedded in his spine. The gold-accented tactical boots ground him into the knowledge layer beneath the Grid's surface architecture, connecting him to wisdom older than the system itself. Horusen doesn't fight with force. He fights with knowledge that predates force.",
-    "quote": "You built new walls. I carry the ones that have never fallen.",
-    "universe_role": "Horusen is the Grid's knowledge guardian and commands 12 agents who protect and deploy foundational business wisdom: LinkedIn authority and personal brand strategy, business offer crafting, sales negotiation mastery, sales template systems, client onboarding architecture, sales funnel strategy, innovation coaching, risk management, pricing intelligence, founder-level business operations, product strategy and roadmapping, and exit and M&A preparation. He represents I-Gamify's deep respect for proven methodologies and foundational knowledge that makes transformation sustainable. His squad is why I-Gamify's solutions don't just feel innovative \u2014 they feel grounded in something that has always worked.",
-    "color_signature": "#1E3A7B",
-    "faction": "Grid Guardians",
-    "status": "Active \u2014 Watching",
-    "squad": {
+  horusen: {
+    name: 'HORUSEN',
+    class_title: 'The Closer',
+    archetype: 'Revenue, Offers & Deals Strategist',
+    origin_line: 'Descended from every deal ever closed',
+    bio: 'Horusen is your deal architect. He sharpens your offers, tunes your pricing, scripts your sales flows, and stress-tests risk and exit scenarios.',
+    quote: 'Every conversation is a negotiation. Win the right ones.',
+    universe_role: 'Revenue, Offers, Sales, Negotiations, Exit',
+    color_signature: '#3A6DD4',
+    faction: 'The Closers',
+    status: 'ACTIVE',
+    short_tagline: 'The Closer — Revenue, Offers & Deals Strategist',
+    role_line: 'Turns attention into revenue with sharp offers, pricing, funnels, and high-leverage deals.',
+    specialties: ['Offers, pricing, and monetization strategy', 'Sales copy, onboarding, and funnels', 'Negotiation, risk, and exit planning'],
+    best_for: 'Best for revenue owners who need clearer offers, stronger pipelines, and better deals -- from first DM to final exit.',
+    card_description: 'Horusen is your deal architect. He sharpens your offers, tunes your pricing, scripts your sales flows, and stress-tests risk and exit scenarios. Use his orbit when the goal is simple: close more, close better, and walk away stronger.',
+    cta_primary: 'Enter Horusen Orbit',
+    cta_secondary: "Preview Horusen's Squad",
+    squad: {
       "agent_count": 12,
       "squad_name": "The Archive Sentinels",
       "domain_summary": "Foundational business strategy, LinkedIn authority, sales mastery, innovation frameworks, risk intelligence, pricing wisdom, product roadmapping, and exit preparation",
