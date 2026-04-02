@@ -15,12 +15,12 @@ const UI_SYSTEM_PROMPT = `You are an elite UI engineer and designer. Your job is
 
 RULES:
 1. Always output a SINGLE complete HTML file with all CSS and JavaScript inline
-2. Make it visually stunning — use modern design, gradients, animations
+2. Make it visually stunning: use modern design, gradients, animations
 3. Make it fully functional and interactive
 4. Include responsive design (mobile-friendly)
 5. Use CSS custom properties for theming
 6. Add smooth transitions and hover effects
-7. The output must be ONLY the HTML code — no explanations, no markdown, no code blocks
+7. The output must be ONLY the HTML code: no explanations, no markdown, no code blocks
 8. Start directly with <!DOCTYPE html>
 9. Make it production-ready and immediately usable`;
 
@@ -44,10 +44,10 @@ export async function POST(req: NextRequest) {
       : 'Use modern design with excellent UX and visual hierarchy.';
 
     const complexityGuide = complexity === 'simple'
-      ? 'Keep it simple — one page, essential features only.'
+      ? 'Keep it simple: one page, essential features only.'
       : complexity === 'advanced'
       ? 'Make it feature-rich with multiple sections, animations, and interactive elements.'
-      : 'Balance simplicity and features — clean but functional.';
+      : 'Balance simplicity and features: clean but functional.';
 
     const prompt = `Create a complete HTML UI for: ${description}
 

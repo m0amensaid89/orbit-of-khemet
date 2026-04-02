@@ -4,7 +4,6 @@ import { useState, useMemo, useEffect } from "react";
 import { heroAgents, heroMeta, getAgentLinkedTool } from "@/lib/agents";
 import { getCustomAgentsForHero, type CustomAgent } from "@/lib/custom-agents";
 import Link from "next/link";
-import { Zap, Plus } from "lucide-react";
 
 type Props = {
   slug: string;
@@ -65,7 +64,14 @@ export function AgentCommandCenter({ slug, accentColor }: Props) {
                 color: heroColor,
                 background: `${heroColor}08`
               }}>
-              <Plus className="w-3 h-3" />
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                {/* Scarab / plus with circle center */}
+                <circle cx="12" cy="12" r="3"/>
+                <line x1="12" y1="2" x2="12" y2="9"/>
+                <line x1="12" y1="15" x2="12" y2="22"/>
+                <line x1="2" y1="12" x2="9" y2="12"/>
+                <line x1="15" y1="12" x2="22" y2="12"/>
+              </svg>
               FORGE AGENT
             </button>
           </Link>
@@ -150,7 +156,12 @@ export function AgentCommandCenter({ slug, accentColor }: Props) {
               {/* Activate button */}
               <div className="flex items-center gap-2 mt-auto pt-2"
                 style={{ borderTop: `1px solid ${heroColor}15` }}>
-                <Zap className="w-3 h-3" style={{ color: heroColor }} />
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ color: heroColor }}>
+                  {/* Ankh symbol */}
+                  <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2"/>
+                  <line x1="12" y1="11" x2="12" y2="22" stroke="currentColor" strokeWidth="2"/>
+                  <line x1="7" y1="15" x2="17" y2="15" stroke="currentColor" strokeWidth="2"/>
+                </svg>
                 <span className="font-[Orbitron] text-[8px] tracking-[2px] uppercase"
                   style={{ color: heroColor }}>
                   ACTIVATE AGENT

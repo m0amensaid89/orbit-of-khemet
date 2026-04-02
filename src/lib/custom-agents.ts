@@ -1,4 +1,4 @@
-// Custom Agent Forge — Commander tier exclusive
+// Custom Agent Forge: Commander tier exclusive
 // Storage: localStorage (MVP). Schema is DB-ready for Stripe + auth migration.
 
 export type CustomAgent = {

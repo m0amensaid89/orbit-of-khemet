@@ -1,28 +1,21 @@
 
 > temp-app@0.1.0 dev
-> next dev --turbopack -p 3002
+> next dev --turbopack
 
    ▲ Next.js 15.5.14 (Turbopack)
-   - Local:        http://localhost:3002
-   - Network:      http://192.168.0.2:3002
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.0.2:3000
 
  ✓ Starting...
- ✓ Compiled middleware in 448ms
- ✓ Ready in 2.3s
- ○ Compiling / ...
- ✓ Compiled / in 7.8s
- GET / 200 in 9067ms
- ○ Compiling /forge ...
- ✓ Compiled /forge in 771ms
- GET /forge 200 in 1000ms
+ ○ Compiling middleware ...
+ ✓ Compiled middleware in 758ms
+ ✓ Ready in 2.4s
+ ○ Compiling /hub ...
+ ✓ Compiled /hub in 9.7s
+ GET /hub 200 in 11940ms
  ○ Compiling /heroes/[slug] ...
- ✓ Compiled /heroes/[slug] in 678ms
- ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3002". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
- GET /heroes/thoren?forged=true 200 in 1993ms
- GET /heroes/thoren.png 404 in 346ms
- ○ Compiling /chat ...
- GET /chat?hero=thoren&agent=custom_1774675483869 200 in 999ms
- ✓ Compiled /chat in 1061ms
- GET /profile 200 in 1211ms
- ○ Compiling /_not-found/page ...
- ✓ Compiled /_not-found/page in 790ms
+ ✓ Compiled /heroes/[slug] in 1654ms
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET /heroes/nexar 200 in 3340ms
+ GET /heroes/nexar.png 200 in 573ms
+ GET /heroes/nexar.png 200 in 546ms

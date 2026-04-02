@@ -39,7 +39,7 @@ export default function PricingPage() {
           CHOOSE YOUR ORBIT
         </h1>
         <p className="font-[Rajdhani] text-lg text-white/60 max-w-xl mx-auto mb-10">
-          7 heroes. 85 agents. Claude, Gemini, GPT, DeepSeek — all in one universe.
+          7 heroes. 85 agents. Claude, Gemini, GPT, DeepSeek: all in one universe.
         </p>
 
         {/* Billing Toggle */}
@@ -108,7 +108,7 @@ export default function PricingPage() {
                   { text: plan.models, active: true },
                   { text: "Image generation in chat", active: plan.imageGeneration },
                   { text: "Claude (Thoren orbit)", active: plan.claudeAccess },
-                  { text: "Auto-Router — AI picks best model", active: plan.autoRouter },
+                  { text: "Auto-Router: AI picks best model", active: plan.autoRouter },
                   { text: plan.support, active: true },
                 ].map((f, idx) => (
                   <li key={idx} className="flex items-start gap-3">
@@ -228,7 +228,7 @@ export default function PricingPage() {
 
       <div className="text-center pb-20 px-6 space-y-3">
         <p className="font-[Rajdhani] text-muted-foreground text-sm">
-          Payments coming soon. Start free today — no credit card required.
+          Payments coming soon. Start free today: no credit card required.
         </p>
         <p className="font-[Orbitron] text-[9px] tracking-widest uppercase text-primary/20">
           The Rise of the Grid · Leverage is the new gravity.

@@ -137,7 +137,7 @@ async function getRelevantKnowledge(
       maxTokens = 2000;
       modalities = ['image','text'];
     } else if (agent && !agent.startsWith('custom_')) {
-      // Agent-specific routing — find the agent and use its model
+      // Agent-specific routing: find the agent and use its model
       const heroAgentList = heroAgents[heroSlug as keyof typeof heroAgents] || [];
       const selectedAgent = heroAgentList.find((a: import('@/lib/agents').Agent) => a.id === agent);
       if (selectedAgent) {
