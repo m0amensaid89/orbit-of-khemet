@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { Shield, Copy, Download, RefreshCw, Star, GitFork, Code } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { useSearchParams } from 'next/navigation';
 
-export default function CodeSentinelPage() {
+function CodeSentinelContent() {
   const [repoUrl, setRepoUrl] = useState('');
   const [task, setTask] = useState('');
   const [selectedTask, setSelectedTask] = useState('');
@@ -24,6 +25,10 @@ export default function CodeSentinelPage() {
     'SECURITY AUDIT',
     'SUGGEST IMPROVEMENTS',
   ];
+
+  const searchParams = useSearchParams();
+  const fromAgent = searchParams.get('agent');
+  const fromHero = searchParams.get('from');
 
   const handleAnalyze = async () => {
     if (!repoUrl.trim() || isAnalyzing) return;
@@ -90,11 +95,22 @@ export default function CodeSentinelPage() {
 
   return (
     <div className="min-h-screen bg-black text-[#d0c5af] p-6 lg:p-12 relative overflow-hidden">
+      {fromHero && fromAgent && (
+        <div className="w-full px-6 py-2 flex items-center gap-3 absolute top-0 left-0 z-20"
+          style={{ background: 'rgba(212,175,55,0.06)', borderBottom: '1px solid rgba(212,175,55,0.1)' }}>
+          <span style={{ color: '#D4AF37', fontSize: '10px' }}>✦</span>
+          <span className="font-[Orbitron] text-[9px] tracking-[2px] uppercase"
+            style={{ color: 'rgba(212,175,55,0.6)' }}>
+            ACTIVATED FROM {fromHero.toUpperCase()} ORBIT
+          </span>
+        </div>
+      )}
+
       {/* Background accents */}
       <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-[#D4AF37]/5 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full bg-[#00A8E8]/5 blur-[120px] pointer-events-none" />
 
-      <div className="max-w-4xl mx-auto space-y-8 relative z-10">
+      <div className="max-w-4xl mx-auto space-y-8 relative z-10 mt-4">
 
         {/* Header */}
         <div className="text-center space-y-2">
@@ -266,5 +282,13 @@ export default function CodeSentinelPage() {
 
       </div>
     </div>
+  );
+}
+
+export default function CodeSentinelPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-black" />}>
+      <CodeSentinelContent />
+    </Suspense>
   );
 }

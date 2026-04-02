@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { heroAgents, heroMeta } from "@/lib/agents";
+import { heroAgents, heroMeta, getAgentLinkedTool } from "@/lib/agents";
 import { getCustomAgentsForHero, type CustomAgent } from "@/lib/custom-agents";
 import Link from "next/link";
 import { Zap, Plus } from "lucide-react";
@@ -92,10 +92,15 @@ export function AgentCommandCenter({ slug, accentColor }: Props) {
 
       {/* Agent grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {filteredAgents.map((agent) => (
+        {filteredAgents.map((agent) => {
+          const linkedTool = getAgentLinkedTool(agent);
+          const agentHref = linkedTool
+            ? `/${linkedTool}?from=${slug}&agent=${agent.id}`
+            : `/chat/${slug}?agent=${agent.id}`;
+          return (
           <Link
             key={agent.id}
-            href={`/chat/${slug}?agent=${agent.id}`}
+            href={agentHref}
             className="group block">
             <div
               className="h-full p-5 transition-all duration-200 cursor-pointer"
@@ -151,9 +156,33 @@ export function AgentCommandCenter({ slug, accentColor }: Props) {
                   ACTIVATE AGENT
                 </span>
               </div>
+
+              {(() => {
+                const tool = getAgentLinkedTool(agent);
+                if (!tool) return null;
+                const toolLabels: Record<string, string> = {
+                  'autopilot': 'AUTO-PILOT',
+                  'ui-builder': 'UI BUILDER',
+                  'sentinel': 'CODE SENTINEL',
+                  'brain': 'KHEMET BRAIN',
+                };
+                return (
+                  <div className="mt-2">
+                    <span className="font-[Orbitron] text-[7px] tracking-[2px] uppercase px-2 py-0.5"
+                      style={{
+                        background: 'rgba(212,175,55,0.08)',
+                        color: 'rgba(212,175,55,0.6)',
+                        border: '1px solid rgba(212,175,55,0.15)'
+                      }}>
+                      ✦ {toolLabels[tool]}
+                    </span>
+                  </div>
+                );
+              })()}
             </div>
           </Link>
-        ))}
+          );
+        })}
       </div>
 
       {/* Empty state */}
