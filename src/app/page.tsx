@@ -256,7 +256,7 @@ export default function LandingPage() {
               {
                 num: "01",
                 title: "CHOOSE YOUR HERO",
-                desc: "Select the specialist that matches your mission — from content to code to sales"
+                desc: "Select the specialist that matches your mission: content, code, or sales."
               },
               {
                 num: "02",
@@ -266,7 +266,7 @@ export default function LandingPage() {
               {
                 num: "03",
                 title: "RECEIVE YOUR DELIVERABLE",
-                desc: "Get a complete, actionable output — copy, strategy, code, or analysis — ready to deploy."
+                desc: "Get a complete, actionable output: copy, strategy, code, or analysis. Ready to deploy."
               }
             ].map((step, i) => (
               <FadeInSection key={step.num} delay={i * 0.2}>

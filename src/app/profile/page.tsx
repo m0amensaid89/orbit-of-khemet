@@ -129,7 +129,7 @@ export default function ProfilePage() {
                   <Shield className="w-3 h-3" /> {planInfo.name} Tier
                 </span>
                 <span className="font-[Orbitron] text-[10px] tracking-[3px] uppercase border border-white/20 text-white/60 px-4 py-1.5 rounded bg-white/5 flex items-center gap-1.5">
-                  <TrendingUp className="w-3 h-3" /> Level {stats.level} — {stats.level === 1 ? "Initiate" : stats.level === 2 ? "Scout" : stats.level === 3 ? "Agent" : stats.level === 4 ? "Operative" : stats.level === 5 ? "Commander" : stats.level === 6 ? "Architect" : "Grid Master"}
+                  <TrendingUp className="w-3 h-3" /> Level {stats.level}: {stats.level === 1 ? "Initiate" : stats.level === 2 ? "Scout" : stats.level === 3 ? "Agent" : stats.level === 4 ? "Operative" : stats.level === 5 ? "Commander" : stats.level === 6 ? "Architect" : "Grid Master"}
                 </span>
               </div>
 

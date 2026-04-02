@@ -32,18 +32,22 @@ export async function updateSession(request: NextRequest) {
 
   const { pathname } = request.nextUrl
 
-  // Protect /chat, /forge, /profile, /autopilot, /ui-builder, /sentinel, /departments, /browser routes
-   // AUDIT MODE — auth protection disabled temporarily
-  // if (
-  //   !user &&
-  //   (pathname.startsWith('/brain') || pathname.startsWith('/artifacts')|| pathname.startsWith('/profile') || pathname.startsWith('/master-orbit') || pathname.startsWith('/autopilot') || pathname.startsWith('/ui-builder') || pathname.startsWith('/sentinel') || pathname.startsWith('/departments') || pathname.startsWith('/browser'))
-  // ) {
-  //   if (!pathname.startsWith('/api')) {
-  //     const url = request.nextUrl.clone()
-  //     url.pathname = '/auth'
-  //     url.searchParams.set('redirect', request.nextUrl.pathname + request.nextUrl.search)
-  //     return NextResponse.redirect(url)
-  //   }
+ setup-core-foundation-17256597220472516335-7239126357861633104
+   Protect /chat, /forge, /profile, /autopilot, /ui-builder, /sentinel, /departments, /browser routes
+    AUDIT MODE — auth protection disabled temporarily
+   Protect /chat, /forge, /profile, /autopilot, /ui-builder, /sentinel, /departments routes
+    AUDIT MODE: auth protection disabled temporarily
+ setup-core-foundation-17256597220472516335
+   if (
+     !user &&
+     (pathname.startsWith('/brain') || pathname.startsWith('/artifacts')|| pathname.startsWith('/profile') || pathname.startsWith('/master-orbit') || pathname.startsWith('/autopilot') || pathname.startsWith('/ui-builder') || pathname.startsWith('/sentinel') || pathname.startsWith('/departments') || pathname.startsWith('/browser'))
+   ) {
+     if (!pathname.startsWith('/api')) {
+       const url = request.nextUrl.clone()
+       url.pathname = '/auth'
+      url.searchParams.set('redirect', request.nextUrl.pathname + request.nextUrl.search)
+       return NextResponse.redirect(url)
+     }
   // }
   return supabaseResponse
 }

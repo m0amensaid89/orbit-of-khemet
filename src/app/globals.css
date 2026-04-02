@@ -258,3 +258,23 @@ h1, h2, h3, h4 {
 p, span:not([class*="orbitron"]):not([class*="rajdhani"]), li, label {
   font-family: 'Inter', var(--font-inter), sans-serif;
 }
+
+/* EMPIRE SCROLLBAR */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0A0A0A;
+}
+::-webkit-scrollbar-thumb {
+  background: #D4AF37;
+  border-radius: 0px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #FBBF24;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #D4AF37 #0A0A0A;
+}

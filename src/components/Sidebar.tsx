@@ -43,6 +43,7 @@ export function Sidebar() {
           .from('chat_threads')
           .select('id, title, hero_slug, updated_at')
           .eq('user_id', session.user.id)
+          .or('archived.is.null,archived.eq.false')
           .order('updated_at', { ascending: false })
           .limit(10);
 
@@ -72,6 +73,7 @@ export function Sidebar() {
             .from('chat_threads')
             .select('id, title, hero_slug, updated_at')
             .eq('user_id', session.user.id)
+            .or('archived.is.null,archived.eq.false')
             .order('updated_at', { ascending: false })
             .limit(10);
           if (threads) {
@@ -210,15 +212,68 @@ export function Sidebar() {
               </div>
               <div className="px-3 space-y-1">
                 {recentThreads.map((thread) => (
-                  <Link
-                    key={thread.id}
-                    href={`/chat/${thread.hero_slug}?thread=${thread.id}`}
-                    className="block px-3 py-2 rounded-md hover:bg-[rgba(212,175,55,0.06)] border-l-[2px] border-transparent hover:border-[#D4AF37] transition-all group"
-                  >
-                    <p className="font-mono text-[11px] text-[#d0c5af]/60 truncate group-hover:text-[#D4AF37]">
-                      → {thread.title || 'New Chat'}
-                    </p>
-                  </Link>
+                  <div key={thread.id} className="group relative flex items-center">
+                    <Link
+                      href={`/chat/${thread.hero_slug}?thread=${thread.id}`}
+                      className="flex-1 flex items-center gap-2 px-4 py-2 transition-all text-sm truncate"
+                      style={{ color: 'rgba(208,197,175,0.6)' }}
+                    >
+                      <span style={{ color: 'rgba(212,175,55,0.4)', fontSize: '10px' }}>✦</span>
+                      <span className="font-[Rajdhani] truncate text-sm">
+                        {thread.title || 'New Mission'}
+                      </span>
+                    </Link>
+
+                    {/* Action buttons — show on hover */}
+                    <div className="absolute right-2 hidden group-hover:flex items-center gap-1"
+                      style={{ background: '#0A0A0A' }}>
+
+                      {/* Archive button */}
+                      <button
+                        onClick={async (e) => {
+                          e.preventDefault();
+                          await fetch(`/api/chat-threads/${thread.id}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ archived: true }),
+                          });
+                          setRecentThreads(prev => prev.filter(t => t.id !== thread.id));
+                        }}
+                        className="p-1 rounded transition-all hover:opacity-80"
+                        title="Archive mission"
+                        style={{ color: 'rgba(212,175,55,0.4)' }}
+                      >
+                        {/* Cartouche archive icon */}
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                          <rect x="3" y="8" width="18" height="10" rx="5"/>
+                          <line x1="8" y1="8" x2="8" y2="6"/>
+                          <line x1="12" y1="8" x2="12" y2="4"/>
+                          <line x1="16" y1="8" x2="16" y2="6"/>
+                        </svg>
+                      </button>
+
+                      {/* Delete button */}
+                      <button
+                        onClick={async (e) => {
+                          e.preventDefault();
+                          if (!confirm('Delete this mission permanently?')) return;
+                          await fetch(`/api/chat-threads/${thread.id}`, { method: 'DELETE' });
+                          setRecentThreads(prev => prev.filter(t => t.id !== thread.id));
+                        }}
+                        className="p-1 rounded transition-all hover:opacity-80"
+                        title="Delete mission"
+                        style={{ color: 'rgba(255,68,68,0.5)' }}
+                      >
+                        {/* Ankh delete icon */}
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                          <line x1="18" y1="6" x2="6" y2="18"/>
+                          <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>

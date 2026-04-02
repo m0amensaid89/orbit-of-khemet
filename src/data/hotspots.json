@@ -121,7 +121,7 @@
         "name": "Asymmetric Armor Plate",
         "x": 48,
         "y": 28,
-        "description": "Red fracture channels trace across aggressive angular geometry. Not circuit light — bleed, not flow.",
+        "description": "Red fracture channels trace across aggressive angular geometry. Not circuit light: bleed, not flow.",
         "detail_card_index": 0
       },
       {
@@ -148,7 +148,7 @@
         "name": "Diagonal Spine Fracture Channel",
         "x": 70,
         "y": 35,
-        "description": "Primary disruption conduit running diagonally — the direct inverse of Ramet's stabilization spine.",
+        "description": "Primary disruption conduit running diagonally: the direct inverse of Ramet's stabilization spine.",
         "detail_card_index": 3
       },
       {
@@ -232,7 +232,7 @@
         "name": "Precision-Stream Interface",
         "x": 28,
         "y": 40,
-        "description": "Scalpel mode active — reactive scripts converging to wrist for targeted data operations.",
+        "description": "Scalpel mode active: reactive scripts converging to wrist for targeted data operations.",
         "detail_card_index": 1
       },
       {
@@ -283,7 +283,7 @@
         "name": "Resonance-Stream Interface",
         "x": 28,
         "y": 40,
-        "description": "Scalpel mode with resonance frequency — dissolves rather than cuts.",
+        "description": "Scalpel mode with resonance frequency: dissolves rather than cuts.",
         "detail_card_index": 1
       },
       {
@@ -301,7 +301,7 @@
         "name": "Frequency Calibration Belt",
         "x": 50,
         "y": 55,
-        "description": "PRECISION_FOCUS_v1.0 — same designation, different frequency calibration.",
+        "description": "PRECISION_FOCUS_v1.0: same designation, different frequency calibration.",
         "detail_card_index": 3
       },
       {

@@ -1,4 +1,4 @@
-// Grid Energy — Daily credit system for Orbit of Khemet
+// Grid Energy: Daily credit system for Orbit of Khemet
 // Resets at midnight UTC every day. Fixed cost per model = predictable usage.
 import { createClient } from "@/lib/supabase/client";
 
@@ -63,7 +63,7 @@ export function getEnergyRemaining(): number {
   const storedDate = localStorage.getItem(ENERGY_DATE_KEY);
 
   if (storedDate !== today) {
-    // New day — reset energy
+    // New day: reset energy
     const max = PLAN_DAILY_ENERGY[plan] || 50;
     localStorage.setItem(ENERGY_KEY, String(max));
     localStorage.setItem(ENERGY_DATE_KEY, today);
@@ -235,7 +235,7 @@ export function trackAgentLaunch(): void {
   localStorage.setItem("orbit_stats", JSON.stringify(raw));
 }
 
-// Legacy compat — profile page may call this
+// Legacy compat: profile page may call this
 export function getEnergyStats() {
   const stats = getStats();
   return {

@@ -71,7 +71,7 @@ export default function HubPage() {
           Pick an AI specialist by goal: strategy, writing, analysis, growth, operations, sales, or learning.
         </p>
         <p className="font-[Rajdhani] text-sm" style={{ color: 'rgba(255,255,255,0.35)' }}>
-          Thoren: Governance — Ramet: Operations — Nexar: Transformation — Lyra: Growth Content — Kairo: Creator Systems — Nefra: Experience — Horusen: Revenue
+          Thoren: Governance. Ramet: Operations. Nexar: Transformation. Lyra: Growth Content. Kairo: Creator Systems. Nefra: Experience. Horusen: Revenue.
         </p>
       </div>
 
@@ -222,7 +222,14 @@ export default function HubPage() {
                           style={{ color: meta?.color_signature || '#D4AF37' }}>
                           ENTER ORBIT
                         </span>
-                        <span style={{ color: meta?.color_signature || '#D4AF37', fontSize: '12px' }}>→</span>
+                        {/* Djed Pillar — stability/direction */}
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: meta?.color_signature || '#D4AF37' }}>
+                          <line x1="12" y1="2" x2="12" y2="20"/>
+                          <line x1="7" y1="8" x2="17" y2="8"/>
+                          <line x1="6" y1="12" x2="18" y2="12"/>
+                          <line x1="5" y1="16" x2="19" y2="16"/>
+                          <line x1="8" y1="20" x2="16" y2="20"/>
+                        </svg>
                       </div>
                     </div>
                   </div>
