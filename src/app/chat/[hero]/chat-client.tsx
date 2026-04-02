@@ -169,16 +169,23 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  useEffect(() => {
+    const taskParam = searchParams.get('task');
+    if (taskParam && !input && messages.length === 0) {
+      handleInputChange({ target: { value: decodeURIComponent(taskParam) } } as React.ChangeEvent<HTMLInputElement>);
+    }
+  }, [searchParams, handleInputChange, input, messages.length]);
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4"
+    <div className="min-h-screen flex flex-col w-full px-6 md:px-12 py-4"
       style={{ background: `linear-gradient(135deg, ${bgDeep} 0%, ${bgMid} 100%)` }}>
 
       {/* Messenger window */}
-      <div className="w-full max-w-2xl flex flex-col rounded-2xl overflow-hidden shadow-2xl border"
-        style={{ borderColor: cardBorder, minHeight: '85vh', maxHeight: '90vh', background: bgDeep }}>
+      <div className="w-full h-full flex flex-col rounded-2xl overflow-hidden shadow-2xl border flex-1"
+        style={{ borderColor: cardBorder, background: bgDeep }}>
 
         {/* Window header */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b shrink-0"
+        <div className="flex items-center gap-3 px-4 py-3 border-b shrink-0 w-full"
           style={{ borderColor: cardBorder, background: bgMid }}>
           <button onClick={() => router.back()} className="text-white/40 hover:text-white/80 transition-colors p-1">
             <ArrowLeft className="w-4 h-4" />
@@ -262,10 +269,10 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                     )}
 
                     {/* Bubble */}
-                    <div className={`px-5 py-3.5 text-sm leading-relaxed shadow-md ${m.role === "user" ? "rounded-2xl rounded-br-sm" : "rounded-2xl rounded-tl-sm"}`}
+                    <div className={`px-5 py-3.5 text-sm leading-relaxed shadow-md font-[Rajdhani] max-w-3xl ${m.role === "user" ? "rounded-2xl rounded-br-sm" : "rounded-2xl rounded-tl-sm"}`}
                       style={m.role === "user"
-                        ? { background: "linear-gradient(135deg, #1A1A1A, #0A0A0A)", border: "1px solid #D4AF37", color: "#F5D38C", fontFamily: "var(--font-sans)" }
-                        : { background: bgMid, border: `1px solid ${cardBorder}`, color: "rgba(255,255,255,0.9)", fontFamily: "var(--font-sans)", borderLeftColor: accentColor, borderLeftWidth: "3px" }}>
+                        ? { background: "linear-gradient(135deg, #1A1A1A, #0A0A0A)", border: "1px solid #D4AF37", color: "#F5D38C" }
+                        : { background: bgMid, border: `1px solid ${cardBorder}`, color: "rgba(255,255,255,0.9)", borderLeftColor: accentColor, borderLeftWidth: "3px" }}>
                       <div className="whitespace-pre-wrap break-words">
   {(() => {
     const artifact = detectArtifact(m.content);
@@ -323,8 +330,8 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
             </div>
 
           {/* Input bar */}
-          <div className="shrink-0 p-4 border-t" style={{ borderColor: cardBorder, background: bgMid }}>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+          <div className="shrink-0 p-4 border-t w-full" style={{ borderColor: cardBorder, background: bgMid }}>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-2 max-w-4xl mx-auto w-full">
               {isListening && (
                 <div className="flex items-center gap-2 px-2 py-1">
                   <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#FF4444' }} />
@@ -345,21 +352,23 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                   onFocus={e => { e.target.style.borderColor = accentColor; e.target.style.boxShadow = `0 0 15px rgba(${hero?.palette?.["accent-rgb"] || "212,175,55"}, 0.15)`; }}
                   onBlur={e => { e.target.style.borderColor = cardBorder; e.target.style.boxShadow = "none"; }}
                 />
-                {/* Voice input button — only show if browser supports it */}
+                {/* Voice input button — prominent, always visible when supported */}
                 {voiceSupported && (
                   <button
                     type="button"
                     onClick={handleVoiceInput}
-                    className="absolute right-14 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center transition-all rounded-full"
+                    className="absolute right-14 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center transition-all"
                     style={{
-                      background: isListening ? 'rgba(255,68,68,0.15)' : 'transparent',
-                      border: isListening ? '1px solid rgba(255,68,68,0.4)' : '1px solid transparent',
+                      background: isListening
+                        ? 'rgba(255,68,68,0.2)'
+                        : 'rgba(212,175,55,0.1)',
+                      border: isListening
+                        ? '1px solid rgba(255,68,68,0.6)'
+                        : '1px solid rgba(212,175,55,0.3)',
                     }}
-                    title={isListening ? 'Stop listening' : 'Voice input'}
-                  >
-                    {/* Egyptian Lotus mic icon */}
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                      stroke={isListening ? '#FF4444' : 'rgba(212,175,55,0.6)'}
+                    title={isListening ? 'Stop listening' : 'Voice input'}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke={isListening ? '#FF4444' : '#D4AF37'}
                       strokeWidth="1.5" strokeLinecap="round">
                       <ellipse cx="12" cy="10" rx="4" ry="6"/>
                       <line x1="12" y1="16" x2="12" y2="22"/>

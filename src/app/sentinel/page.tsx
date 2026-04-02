@@ -116,7 +116,7 @@ function CodeSentinelContent() {
         <div className="text-center space-y-2">
           <div className="inline-flex items-center justify-center space-x-2 border border-[#D4AF37]/30 bg-[#D4AF37]/10 px-3 py-1 rounded-full mb-4">
             <span className="w-2 h-2 rounded-full bg-[#D4AF37] animate-pulse"></span>
-            <span className="font-[Orbitron] text-[10px] tracking-[0.2em] text-[#D4AF37] font-bold">PHASE VI ACTIVE</span>
+            <span className="font-[Orbitron] text-[10px] tracking-[0.2em] text-[#D4AF37] font-bold">EMPIRE ENGINE</span>
           </div>
           <h1 className="text-4xl md:text-6xl font-[Orbitron] font-black tracking-widest text-[#D4AF37] drop-shadow-[0_0_15px_rgba(212,175,55,0.4)]">
             CODE SENTINEL

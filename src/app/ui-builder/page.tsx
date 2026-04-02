@@ -116,7 +116,7 @@ function UIBuilderContent() {
           INTERFACE FORGE
         </div>
         <div className="mt-3 text-xs tracking-widest px-3 py-1 rounded-full" style={{ backgroundColor: 'rgba(212,175,55,0.1)', color: 'rgba(212,175,55,0.8)', border: '1px solid rgba(212,175,55,0.3)' }}>
-          PHASE V ACTIVE
+          EMPIRE ENGINE
         </div>
       </div>
 

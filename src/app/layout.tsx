@@ -11,8 +11,8 @@ import "@fontsource/exo-2/400-italic.css";
 import "./globals.css";
 import { Footer } from "@/components/Footer";
 import { GlobalNav } from "@/components/GlobalNav";
-import { Sidebar } from "@/components/Sidebar";
 import PageTransition from "@/components/PageTransition";
+import { LayoutShell } from "@/components/LayoutShell";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -38,18 +38,14 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <div className="md:hidden">
           <GlobalNav />
         </div>
-        {/* Full layout: sidebar + content */}
-        <div className="flex min-h-screen">
-          <Sidebar />
-          <div className="flex-1 flex flex-col min-w-0">
-            <PageTransition>
-              <main className="flex-1 flex flex-col">
-                {children}
-              </main>
-              <Footer />
-            </PageTransition>
-          </div>
-        </div>
+        <LayoutShell>
+          <PageTransition>
+            <main className="flex-1 flex flex-col min-h-screen">
+              {children}
+            </main>
+            <Footer />
+          </PageTransition>
+        </LayoutShell>
       </body>
     </html>
   );

@@ -1,26 +1,151 @@
 'use client';
 
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { heroOrder } from '@/lib/heroes';
+import { heroMeta } from '@/lib/agents';
+
 export default function ArtifactsPage() {
+  const [showNewRelic, setShowNewRelic] = useState(false);
+  const [selectedHero, setSelectedHero] = useState('');
+  const [task, setTask] = useState('');
+  const router = useRouter();
+
+  const handleLaunch = () => {
+    if (!selectedHero || !task.trim()) return;
+    router.push(`/chat/${selectedHero}?task=${encodeURIComponent(task)}&relic=true`);
+  };
+
   return (
-    <main className="container mx-auto px-4 py-12 flex flex-col items-center">
-      <div className="w-full max-w-4xl">
-        <p className="font-[Orbitron] text-[8px] tracking-[5px] uppercase mb-3" style={{ color: 'rgba(212,175,55,0.5)' }}>
-          EMPIRE ENGINE
-        </p>
-        <h1 className="font-[Orbitron] text-4xl font-black tracking-tighter mb-2" style={{ color: '#D4AF37' }}>
-          ARTIFACT GALLERY
-        </h1>
-        <p className="font-[Rajdhani] text-lg mb-12" style={{ color: '#d0c5af' }}>
-          Your generated apps, documents, and data files.
-        </p>
-        <div className="flex flex-col items-center justify-center py-24 gap-4" style={{ outline: '1px solid rgba(212,175,55,0.08)', background: '#131313' }}>
-          <p className="font-[Orbitron] text-xs tracking-widest uppercase" style={{ color: 'rgba(212,175,55,0.4)' }}>
-            ARTIFACTS APPEAR HERE
-          </p>
-          <p className="font-[Rajdhani] text-sm text-center max-w-md" style={{ color: '#d0c5af' }}>
-            Ask any agent to build you a dashboard, spreadsheet, or app. Your artifacts will be saved here automatically.
-          </p>
+    <main className="min-h-screen bg-[#0A0A0A] px-6 py-10">
+
+      {/* Header */}
+      <div className="mb-10 border-b pb-8" style={{ borderColor: 'rgba(212,175,55,0.08)' }}>
+        <p className="font-[Orbitron] text-[9px] tracking-[5px] uppercase mb-3"
+          style={{ color: 'rgba(212,175,55,0.5)' }}>SUPER SKILLS</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="font-[Orbitron] text-4xl font-black tracking-tighter mb-2"
+              style={{ color: '#D4AF37' }}>EMPIRE RELICS</h1>
+            <p className="font-[Rajdhani] text-lg" style={{ color: '#d0c5af' }}>
+              Your generated apps, documents, and outputs.
+            </p>
+          </div>
+          <button
+            onClick={() => setShowNewRelic(true)}
+            className="font-[Orbitron] text-[9px] tracking-[3px] uppercase px-6 py-3 transition-all"
+            style={{
+              background: 'linear-gradient(135deg, #D4AF37, #FBBF24)',
+              color: '#0A0A0A',
+              fontWeight: 700,
+            }}>
+            + NEW RELIC
+          </button>
         </div>
+      </div>
+
+      {/* New Relic creation panel */}
+      {showNewRelic && (
+        <div className="mb-10 p-6 flex flex-col gap-6"
+          style={{ background: '#111111', border: '1px solid rgba(212,175,55,0.15)' }}>
+          <div className="flex items-center justify-between">
+            <p className="font-[Orbitron] text-sm font-bold" style={{ color: '#D4AF37' }}>
+              NEW RELIC MISSION
+            </p>
+            <button onClick={() => setShowNewRelic(false)}
+              style={{ color: 'rgba(255,255,255,0.3)' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
+
+          {/* Step 1: Select hero */}
+          <div>
+            <p className="font-[Orbitron] text-[8px] tracking-[3px] uppercase mb-3"
+              style={{ color: 'rgba(212,175,55,0.5)' }}>
+              STEP 1: SELECT YOUR HERO
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {heroOrder.map(slug => {
+                const meta = heroMeta[slug as keyof typeof heroMeta];
+                return (
+                  <button key={slug} onClick={() => setSelectedHero(slug)}
+                    className="p-3 text-left transition-all"
+                    style={{
+                      background: selectedHero === slug ? `${meta?.color_signature}15` : 'transparent',
+                      border: `1px solid ${selectedHero === slug ? meta?.color_signature : 'rgba(212,175,55,0.1)'}`,
+                    }}>
+                    <div className="w-1.5 h-1.5 rounded-full mb-2"
+                      style={{ background: meta?.color_signature }} />
+                    <p className="font-[Orbitron] text-[9px] font-bold"
+                      style={{ color: selectedHero === slug ? meta?.color_signature : '#ffffff' }}>
+                      {meta?.name}
+                    </p>
+                    <p className="font-[Rajdhani] text-[10px] mt-0.5"
+                      style={{ color: 'rgba(255,255,255,0.4)' }}>
+                      {meta?.archetype}
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Step 2: Describe task */}
+          <div>
+            <p className="font-[Orbitron] text-[8px] tracking-[3px] uppercase mb-3"
+              style={{ color: 'rgba(212,175,55,0.5)' }}>
+              STEP 2: DESCRIBE YOUR RELIC
+            </p>
+            <textarea
+              value={task}
+              onChange={e => setTask(e.target.value)}
+              placeholder="Describe what you want to create: a report, a document, a tool, an analysis..."
+              rows={3}
+              className="w-full px-4 py-3 font-[Rajdhani] text-base resize-none"
+              style={{
+                background: '#0A0A0A',
+                border: '1px solid rgba(212,175,55,0.15)',
+                color: '#d0c5af',
+                outline: 'none',
+              }}
+            />
+          </div>
+
+          <button
+            onClick={handleLaunch}
+            disabled={!selectedHero || !task.trim()}
+            className="font-[Orbitron] text-[9px] tracking-[3px] uppercase px-8 py-3 transition-all disabled:opacity-40 self-start"
+            style={{
+              background: '#D4AF37',
+              color: '#0A0A0A',
+              fontWeight: 700,
+            }}>
+            LAUNCH MISSION
+          </button>
+        </div>
+      )}
+
+      {/* Empty state */}
+      <div className="flex flex-col items-center justify-center py-24 gap-4"
+        style={{ border: '1px solid rgba(212,175,55,0.08)', background: '#111111' }}>
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
+          stroke="rgba(212,175,55,0.3)" strokeWidth="1" strokeLinecap="round">
+          <circle cx="12" cy="7" r="4"/>
+          <line x1="12" y1="11" x2="12" y2="22"/>
+          <line x1="7" y1="15" x2="17" y2="15"/>
+        </svg>
+        <p className="font-[Orbitron] text-xs tracking-widest uppercase"
+          style={{ color: 'rgba(212,175,55,0.4)' }}>
+          NO RELICS CREATED YET
+        </p>
+        <p className="font-[Rajdhani] text-sm text-center max-w-xs"
+          style={{ color: '#d0c5af', opacity: 0.5 }}>
+          Click NEW RELIC to start a mission and generate your first empire relic.
+        </p>
       </div>
     </main>
   );

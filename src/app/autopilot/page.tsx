@@ -117,7 +117,7 @@ function AutopilotContent() {
         {/* Header Section */}
         <div className="text-center space-y-2">
           <div className="inline-block px-3 py-1 mb-2 border border-[#D4AF37]/30 bg-[#D4AF37]/10 rounded font-orbitron text-[10px] tracking-widest text-[#D4AF37]">
-            PHASE IV ACTIVE
+            EMPIRE ENGINE
           </div>
           <h1 className="text-5xl md:text-7xl font-orbitron font-bold text-transparent bg-clip-text bg-gradient-to-b from-[#FFF5D1] to-[#D4AF37] drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]">
             AUTO-PILOT

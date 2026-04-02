@@ -40,17 +40,16 @@ export default function BrowserPage() {
     <div className="min-h-screen bg-[#0A0A0A] text-white p-8">
 
       {/* Header */}
-      <div className="max-w-4xl mx-auto mb-10">
-        <p className="font-[Orbitron] text-[9px] tracking-[5px] uppercase mb-2"
+      <div className="w-full px-6 py-10 border-b mb-10" style={{ borderColor: 'rgba(212,175,55,0.08)' }}>
+        <p className="font-[Orbitron] text-[9px] tracking-[5px] uppercase mb-3"
           style={{ color: 'rgba(212,175,55,0.5)' }}>
-          BUILD TOOLS
+          SUPER SKILLS
         </p>
-        <h1 className="font-[Orbitron] text-3xl font-black mb-2"
+        <h1 className="font-[Orbitron] text-4xl font-black tracking-tighter mb-2"
           style={{ color: '#D4AF37' }}>
           BROWSER CONTROL
         </h1>
-        <p className="font-[Rajdhani] text-base"
-          style={{ color: '#d0c5af' }}>
+        <p className="font-[Rajdhani] text-lg" style={{ color: '#d0c5af' }}>
           Command a real browser. Describe your task and watch the agent execute it.
         </p>
       </div>
