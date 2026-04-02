@@ -101,7 +101,7 @@ export default function LandingPage() {
       {/* 1. STICKY NAV */}
       <nav className="sticky top-0 z-50 bg-[#0A0A0A] border-b border-[rgba(251,191,36,0.1)] py-4 px-6 md:px-12 flex justify-between items-center backdrop-blur-sm bg-opacity-90">
         <div className="font-[family-name:var(--font-cinzel)] font-bold text-[#FBBF24] text-xl tracking-wider">
-          ORBIT OF KHEMET
+          KHEMET
         </div>
         <div className="hidden md:flex gap-8 items-center text-sm tracking-wide">
           <Link href="#heroes" className="hover:text-[#FBBF24] transition-colors">HEROES</Link>
@@ -323,28 +323,6 @@ export default function LandingPage() {
         </svg>
       </a>
 
-      {/* 7. FOOTER */}
-      <footer className="bg-[#0A0A0A] border-t border-[rgba(251,191,36,0.1)] py-12 px-6 md:px-12 mt-20">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="text-center md:text-left">
-            <div className="font-[family-name:var(--font-cinzel)] font-bold text-[#FBBF24] text-xl tracking-wider mb-2">
-              KHEMET.AI
-            </div>
-            <p className="text-[#d0c5af] opacity-80 text-sm">Where Ancient Wisdom Meets Artificial Intelligence</p>
-          </div>
-
-          <div className="flex gap-6 text-sm">
-            <Link href="#heroes" className="hover:text-[#FBBF24] transition-colors">Heroes</Link>
-            <Link href="#agents" className="hover:text-[#FBBF24] transition-colors">Agents</Link>
-            <Link href="/pricing" className="hover:text-[#FBBF24] transition-colors">Pricing</Link>
-            <Link href="/hub" className="hover:text-[#FBBF24] transition-colors">Hub</Link>
-          </div>
-
-          <div className="text-[#d0c5af] opacity-60 text-sm">
-            © 2025 Khemet.ai / I-Gamify.net
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
