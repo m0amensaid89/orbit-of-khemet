@@ -1,73 +1,123 @@
+"use client";
+
 import { getHero } from "@/lib/heroes";
-import { heroAgents } from "@/lib/agents";
+import { heroAgents, heroMeta } from "@/lib/agents";
 import HeroImage from "./HeroImage";
-import { ChevronDown } from "lucide-react";
+import Link from "next/link";
 
 export default function HeroSplash({ slug }: { slug: string }) {
   const hero = getHero(slug);
-  const agents = heroAgents[slug] || [];
+  const meta = heroMeta[slug as keyof typeof heroMeta];
+  const agents = heroAgents[slug as keyof typeof heroAgents] || [];
 
-  if (!hero) return null;
-
-  const categories = new Set(agents.map(a => a.category)).size;
+  if (!hero || !meta) return null;
 
   return (
-    <section className="relative w-full min-h-[70vh] flex flex-col md:flex-row items-center justify-center overflow-hidden border-b border-white/5">
-      <div
-        className="absolute inset-0 z-0 opacity-80"
-        style={{ background: 'var(--hero-gradient)' }}
-      />
+    <section className="relative w-full min-h-[60vh] flex flex-col md:flex-row overflow-hidden border-b"
+      style={{ borderColor: 'rgba(212,175,55,0.1)', background: hero.palette['bg-deep'] }}>
 
-      <div className="container mx-auto px-4 z-10 flex flex-col md:flex-row items-stretch h-full gap-8 py-12 md:py-0">
-
-        {/* Left Side: Hero Image */}
-        <div className="flex-1 relative min-h-[40vh] md:min-h-full flex items-center justify-center order-2 md:order-1 rounded-2xl overflow-hidden border border-white/10" style={{ borderColor: 'var(--hero-card-border)' }}>
-           <HeroImage slug={slug} type="splash" className="w-full h-full min-h-[40vh]" />
-        </div>
-
-        {/* Right Side: Identity Block */}
-        <div className="flex-1 flex flex-col justify-center order-1 md:order-2 space-y-6">
-          <div className="space-y-2">
-            <span
-              className="inline-block px-3 py-1 rounded-full text-[11px] font-[Orbitron] uppercase tracking-[0.2em]"
-              style={{ backgroundColor: 'rgba(255,255,255,0.05)', color: 'var(--hero-accent)', border: '1px solid var(--hero-card-border)' }}
-            >
-              {hero.class_title}
-            </span>
-            <h1
-              className="text-[clamp(48px,7vw,96px)] font-[Orbitron] font-black uppercase leading-none tracking-tighter drop-shadow-lg"
-              style={{ color: 'var(--hero-primary)', textShadow: '0 0 40px var(--hero-glow-strong)' }}
-            >
-              {hero.name}
-            </h1>
-            <p
-              className="text-[22px] font-[Rajdhani] font-light leading-relaxed max-w-2xl"
-              style={{ color: '#e0e0e0' }}
-            >
-              {hero.origin_line}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-3 gap-4 pt-8 border-t border-white/10 mt-8" style={{ borderColor: 'var(--hero-card-border)' }}>
-            <div className="flex flex-col">
-              <span className="text-[10px] font-[Orbitron] tracking-[4px] uppercase opacity-70 mb-1" style={{ color: 'var(--hero-primary)' }}>Agents</span>
-              <span className="text-2xl font-[Orbitron] font-bold" style={{ color: 'var(--hero-accent)' }}>{hero.squad?.agent_count || agents.length}</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-[10px] font-[Orbitron] tracking-[4px] uppercase opacity-70 mb-1" style={{ color: 'var(--hero-primary)' }}>Categories</span>
-              <span className="text-2xl font-[Orbitron] font-bold" style={{ color: 'var(--hero-accent)' }}>{categories}</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-[10px] font-[Orbitron] tracking-[4px] uppercase opacity-70 mb-1" style={{ color: 'var(--hero-primary)' }}>Domain</span>
-              <span className="text-sm font-[Rajdhani] font-medium tracking-widest uppercase mt-1" style={{ color: 'var(--hero-text-dim)' }}>{hero.faction}</span>
-            </div>
-          </div>
-        </div>
-
+      {/* Left — Hero Image */}
+      <div className="relative md:w-[380px] w-full min-h-[320px] shrink-0 overflow-hidden">
+        <HeroImage slug={slug} type="splash" className="w-full h-full object-cover" />
+        <div className="absolute inset-0" style={{
+          background: 'linear-gradient(to right, transparent 60%, ' + hero.palette['bg-deep'] + ')'
+        }} />
       </div>
 
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 animate-bounce opacity-50">
-        <ChevronDown className="w-8 h-8" style={{ color: 'var(--hero-primary)' }} />
+      {/* Right — Identity Block */}
+      <div className="flex-1 flex flex-col justify-center px-8 py-10 gap-6 relative z-10">
+
+        {/* Archetype label */}
+        <div className="flex items-center gap-3">
+          <div className="w-2 h-2 rounded-full animate-pulse"
+            style={{ background: meta.color_signature }} />
+          <span className="font-[Orbitron] text-[10px] tracking-[4px] uppercase"
+            style={{ color: meta.color_signature }}>
+            {meta.archetype}
+          </span>
+        </div>
+
+        {/* Hero name */}
+        <div>
+          <h1 className="font-[Orbitron] font-black leading-none tracking-tighter"
+            style={{
+              fontSize: 'clamp(48px, 6vw, 80px)',
+              color: hero.palette.primary,
+              textShadow: `0 0 40px ${meta.color_signature}40`
+            }}>
+            {meta.name}
+          </h1>
+          <p className="font-[Rajdhani] text-xl mt-2" style={{ color: 'rgba(212,175,55,0.7)' }}>
+            {meta.short_tagline}
+          </p>
+        </div>
+
+        {/* Role line */}
+        <p className="font-[Rajdhani] text-lg leading-relaxed max-w-xl"
+          style={{ color: '#d0c5af' }}>
+          {meta.role_line}
+        </p>
+
+        {/* Specialties */}
+        <div className="flex flex-col gap-2">
+          {meta.specialties.map((s, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <span style={{ color: meta.color_signature }}>✦</span>
+              <span className="font-[Rajdhani] text-base" style={{ color: '#d0c5af' }}>{s}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Best for */}
+        <p className="font-[Rajdhani] text-base italic max-w-xl"
+          style={{ color: 'rgba(255,255,255,0.4)' }}>
+          {meta.best_for}
+        </p>
+
+        {/* CTAs */}
+        <div className="flex items-center gap-4 flex-wrap">
+          <Link href={`/chat/${slug}`}>
+            <button className="font-[Orbitron] text-xs tracking-[3px] uppercase px-8 py-3 transition-all hover:-translate-y-0.5"
+              style={{
+                background: `linear-gradient(135deg, ${meta.color_signature}, ${meta.color_signature}cc)`,
+                color: '#0A0A0A',
+                fontWeight: 700
+              }}>
+              {meta.cta_primary}
+            </button>
+          </Link>
+          <button className="font-[Orbitron] text-xs tracking-[3px] uppercase px-8 py-3 transition-all"
+            style={{
+              background: 'transparent',
+              border: `1px solid ${meta.color_signature}40`,
+              color: meta.color_signature
+            }}
+            onClick={() => {
+              document.getElementById('agent-grid')?.scrollIntoView({ behavior: 'smooth' });
+            }}>
+            {meta.cta_secondary}
+          </button>
+        </div>
+
+        {/* Stats bar */}
+        <div className="flex items-center gap-8 pt-2">
+          <div>
+            <p className="font-[Orbitron] text-xl font-bold" style={{ color: '#D4AF37' }}>{agents.length}</p>
+            <p className="font-[Orbitron] text-[8px] tracking-[3px] uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>Agents</p>
+          </div>
+          <div style={{ width: '1px', height: '32px', background: 'rgba(255,255,255,0.1)' }} />
+          <div>
+            <p className="font-[Orbitron] text-xl font-bold" style={{ color: '#D4AF37' }}>
+              {Array.from(new Set(agents.map(a => a.category))).length}
+            </p>
+            <p className="font-[Orbitron] text-[8px] tracking-[3px] uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>Categories</p>
+          </div>
+          <div style={{ width: '1px', height: '32px', background: 'rgba(255,255,255,0.1)' }} />
+          <div>
+            <p className="font-[Orbitron] text-xl font-bold" style={{ color: '#D4AF37' }}>ACTIVE</p>
+            <p className="font-[Orbitron] text-[8px] tracking-[3px] uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>Status</p>
+          </div>
+        </div>
       </div>
     </section>
   );

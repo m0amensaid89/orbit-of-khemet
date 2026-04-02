@@ -1,4 +1,5 @@
 import { getHero, heroOrder } from "@/lib/heroes";
+import { heroMeta } from "@/lib/agents";
 import { notFound } from "next/navigation";
 import HeroSplash from "@/components/hero/HeroSplash";
 import { AgentCommandCenter } from "@/components/hero/AgentCommandCenter";
@@ -12,12 +13,13 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   const hero = getHero(slug);
+  const meta = heroMeta[slug as keyof typeof heroMeta];
 
   if (!hero) return {};
 
   return {
-    title: `${hero.name} — ${hero.class_title} | Orbit of Khemet`,
-    description: hero.origin_line,
+    title: `${hero.name} — ${meta?.archetype || hero.class_title} | Orbit of Khemet`,
+    description: meta?.card_description || hero.origin_line,
     openGraph: {
       title: `${hero.name} | I-Gamify Universe`,
       description: hero.quote,
@@ -37,6 +39,8 @@ export default async function HeroPage({ params }: PageProps) {
   if (!hero) {
     notFound();
   }
+
+  const meta = heroMeta[slug as keyof typeof heroMeta];
 
   const styleProps = {
     '--hero-primary': hero.palette.primary,
@@ -59,7 +63,7 @@ export default async function HeroPage({ params }: PageProps) {
       style={styleProps}
     >
       <HeroSplash slug={slug} />
-      <AgentCommandCenter slug={slug} accentColor={hero.palette.accent || "#D4AF37"} />
+      <AgentCommandCenter slug={slug} accentColor={meta?.color_signature || hero.palette.accent} />
       <UniverseConnections slug={slug} />
       <HeroNav slug={slug} />
     </main>
