@@ -250,3 +250,11 @@ html.light main.min-h-screen {
   background-color: #f5f0e8 !important;
 }
 /* ────────────────────────────────────────────────────────────── */
+
+/* EMPIRE TYPOGRAPHY SYSTEM */
+h1, h2, h3, h4 {
+  font-family: var(--font-cinzel-decorative), 'Cinzel Decorative', serif;
+}
+p, span:not([class*="orbitron"]):not([class*="rajdhani"]), li, label {
+  font-family: 'Inter', var(--font-inter), sans-serif;
+}
