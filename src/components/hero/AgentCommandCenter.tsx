@@ -1,27 +1,29 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { heroAgents } from "@/lib/agents";
-import { Zap } from "lucide-react";
-import Link from "next/link";
+import { heroAgents, heroMeta } from "@/lib/agents";
 import { getCustomAgentsForHero, type CustomAgent } from "@/lib/custom-agents";
+import Link from "next/link";
+import { Zap, Plus } from "lucide-react";
 
-type AgentCommandCenterProps = {
+type Props = {
   slug: string;
   accentColor: string;
 };
 
-export function AgentCommandCenter({ slug, accentColor }: AgentCommandCenterProps) {
+export function AgentCommandCenter({ slug, accentColor }: Props) {
   const [customAgents, setCustomAgents] = useState<CustomAgent[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [isCommander, setIsCommander] = useState(false);
+
+  const meta = heroMeta[slug as keyof typeof heroMeta];
+  const heroColor = meta?.color_signature || accentColor;
 
   useEffect(() => {
     setIsCommander(localStorage.getItem("orbit_plan") === "commander");
     setCustomAgents(getCustomAgentsForHero(slug));
   }, [slug]);
 
-  // Check for forged=true in URL params to refresh
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get("forged") === "true") {
@@ -35,141 +37,134 @@ export function AgentCommandCenter({ slug, accentColor }: AgentCommandCenterProp
 
   const categories = useMemo(() => {
     const cats = Array.from(new Set(allAgents.map(a => a.category)));
-    if (customAgents.length > 0 && !cats.includes("Custom")) {
-      cats.unshift("Custom");
-    }
     return ["All", ...cats];
-  }, [allAgents, customAgents]);
+  }, [allAgents]);
 
   const filteredAgents = useMemo(() => {
     if (selectedCategory === "All") return allAgents;
-    if (selectedCategory === "Custom") return customAgents;
     return allAgents.filter(a => a.category === selectedCategory);
-  }, [allAgents, selectedCategory, customAgents]);
+  }, [allAgents, selectedCategory]);
 
   return (
-    <div className="w-full">
-      {/* Roster Header */}
-      <div className="flex flex-col md:flex-row md:items-end gap-6 mb-12">
-        <div className="shrink-0 flex items-center justify-between w-full md:w-auto">
-          <div>
-            <h2 className="font-[Orbitron] text-xs tracking-[4px] uppercase text-muted-foreground mb-2">
-              Agent Roster
-            </h2>
-            <div className="flex items-baseline gap-3">
-              <span className="font-[Orbitron] text-5xl font-black text-foreground leading-none">
-                {allAgents.length}
-              </span>
-              <span className="font-mono text-[10px] tracking-widest text-[#00E5FF] bg-[#00E5FF]/10 px-2 py-0.5 rounded">
-                ACTIVE
-              </span>
-            </div>
-          </div>
+    <section id="agent-grid" className="w-full px-6 py-12" style={{ background: '#0A0A0A' }}>
 
-          {/* FORGE AGENT BUTTON (Commander Tier) */}
-          {isCommander && (
-            <Link href="/forge" className="md:ml-8">
-              <button className="flex items-center gap-2 font-[Orbitron] text-[9px] tracking-[2px] uppercase px-4 py-2 border hover:bg-white/5 transition-all rounded-sm"
-                style={{ borderColor: "rgba(212,175,55,0.4)", color: "#D4AF37" }}>
-                <Zap className="w-3.5 h-3.5" />
-                FORGE AGENT
-              </button>
-            </Link>
-          )}
+      {/* Section header */}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <p className="font-[Orbitron] text-[9px] tracking-[5px] uppercase mb-1"
+            style={{ color: 'rgba(212,175,55,0.5)' }}>SQUAD ROSTER</p>
+          <h2 className="font-[Orbitron] text-2xl font-bold" style={{ color: '#D4AF37' }}>
+            {meta?.name || slug.toUpperCase()} AGENTS
+          </h2>
         </div>
-
-        {/* Categories */}
-        <div className="flex-1 flex flex-wrap gap-2">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className="font-[Orbitron] text-[9px] tracking-widest uppercase px-4 py-2 rounded-full border transition-all"
+        {isCommander && (
+          <Link href={`/forge?hero=${slug}`}>
+            <button className="flex items-center gap-2 font-[Orbitron] text-[9px] tracking-[2px] uppercase px-4 py-2 transition-all"
               style={{
-                borderColor: selectedCategory === cat ? accentColor : "var(--border)",
-                color: selectedCategory === cat ? accentColor : "var(--muted-foreground)",
-                background: selectedCategory === cat ? `${accentColor}10` : "transparent",
-              }}
-            >
-              {cat} {cat !== "All" && `(${cat === "Custom" ? customAgents.length : allAgents.filter(a => a.category === cat).length})`}
+                border: `1px solid ${heroColor}40`,
+                color: heroColor,
+                background: `${heroColor}08`
+              }}>
+              <Plus className="w-3 h-3" />
+              FORGE AGENT
             </button>
-          ))}
-        </div>
+          </Link>
+        )}
       </div>
 
-      {/* Roster Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {filteredAgents.map((agent) => (
-          <div
-            key={agent.id}
-            className="group relative flex flex-col p-6 rounded-2xl border bg-card transition-all duration-300 hover:shadow-[0_0_30px_rgba(0,0,0,0.5)]"
+      {/* Category filters */}
+      <div className="flex gap-2 flex-wrap mb-8">
+        {categories.map(cat => (
+          <button
+            key={cat}
+            onClick={() => setSelectedCategory(cat)}
+            className="font-[Orbitron] text-[8px] tracking-[2px] uppercase px-3 py-1.5 transition-all"
             style={{
-              borderColor: "var(--border)",
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.borderColor = accentColor;
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
-            }}
-          >
-            <div className="flex items-start gap-4 mb-4">
-              <div
-                className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border transition-colors"
-                style={{
-                  background: "var(--muted)",
-                  borderColor: "var(--border)",
-                }}
-              >
-                <div
-                  className="w-4 h-4 rounded-sm rotate-45 transition-all group-hover:scale-110"
-                  style={{ background: accentColor }}
-                />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-[Orbitron] text-lg font-bold text-foreground mb-1 leading-tight group-hover:text-transparent group-hover:bg-clip-text transition-all"
-                  style={{ backgroundImage: `linear-gradient(to right, ${accentColor}, #fff)` }}>
-                  {agent.name}
-                </h3>
-                <p className="font-mono text-[9px] tracking-[2px] uppercase"
-                  style={{ color: `${accentColor}80` }}>
-                  {agent.role_summary}
-                </p>
-              </div>
-            </div>
-
-            <p className="font-[Rajdhani] text-muted-foreground text-sm flex-1 leading-relaxed mb-6">
-              {agent.description}
-            </p>
-
-            <div className="flex items-center justify-between pt-4 border-t border-border/50">
-              <div className="flex gap-2">
-                <span className="font-[Orbitron] text-[8px] tracking-widest uppercase text-muted-foreground/60 bg-muted/50 px-2 py-0.5 rounded-sm">
-                  {agent.category}
-                </span>
-
-                {/* CUSTOM BADGE */}
-                {"isCustom" in agent && (agent as CustomAgent).isCustom && (
-                  <span className="font-[Orbitron] text-[8px] tracking-[2px] uppercase px-2 py-0.5 rounded-full"
-                    style={{ background: "rgba(212,175,55,0.15)", color: "#D4AF37", border: "1px solid rgba(212,175,55,0.3)" }}>
-                    ✦ CUSTOM
-                  </span>
-                )}
-              </div>
-
-              <Link href={`/chat?hero=${slug}&agent=${agent.id}`}>
-                <button
-                  className="font-[Orbitron] text-[10px] tracking-[3px] uppercase font-bold flex items-center gap-2 opacity-50 group-hover:opacity-100 transition-all"
-                  style={{ color: accentColor }}
-                >
-                  Launch
-                  <span className="text-sm">→</span>
-                </button>
-              </Link>
-            </div>
-          </div>
+              background: selectedCategory === cat ? heroColor : 'transparent',
+              color: selectedCategory === cat ? '#0A0A0A' : heroColor,
+              border: `1px solid ${heroColor}40`,
+              fontWeight: selectedCategory === cat ? 700 : 400,
+            }}>
+            {cat}
+          </button>
         ))}
       </div>
-    </div>
+
+      {/* Agent grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {filteredAgents.map((agent) => (
+          <Link
+            key={agent.id}
+            href={`/chat/${slug}?agent=${agent.id}`}
+            className="group block">
+            <div
+              className="h-full p-5 transition-all duration-200 cursor-pointer"
+              style={{
+                background: '#111111',
+                border: `1px solid rgba(212,175,55,0.08)`,
+                borderLeft: `3px solid ${heroColor}`,
+              }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 20px ${heroColor}20`;
+                (e.currentTarget as HTMLDivElement).style.borderColor = `${heroColor}40`;
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLDivElement).style.boxShadow = 'none';
+                (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(212,175,55,0.08)';
+              }}>
+
+              {/* Category badge */}
+              <div className="mb-3">
+                <span className="font-[Orbitron] text-[7px] tracking-[2px] uppercase px-2 py-0.5"
+                  style={{
+                    background: `${heroColor}12`,
+                    color: heroColor,
+                    border: `1px solid ${heroColor}30`
+                  }}>
+                  {agent.category}
+                </span>
+              </div>
+
+              {/* Agent name */}
+              <h3 className="font-[Orbitron] text-sm font-bold mb-1 group-hover:text-[#D4AF37] transition-colors"
+                style={{ color: '#ffffff' }}>
+                {agent.name}
+              </h3>
+
+              {/* Role */}
+              <p className="font-[Rajdhani] text-sm mb-3" style={{ color: 'rgba(212,175,55,0.7)' }}>
+                {agent.role_summary}
+              </p>
+
+              {/* Description */}
+              <p className="font-[Rajdhani] text-xs leading-relaxed mb-4"
+                style={{ color: '#d0c5af', opacity: 0.7 }}>
+                {agent.description}
+              </p>
+
+              {/* Activate button */}
+              <div className="flex items-center gap-2 mt-auto pt-2"
+                style={{ borderTop: `1px solid ${heroColor}15` }}>
+                <Zap className="w-3 h-3" style={{ color: heroColor }} />
+                <span className="font-[Orbitron] text-[8px] tracking-[2px] uppercase"
+                  style={{ color: heroColor }}>
+                  ACTIVATE AGENT
+                </span>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      {/* Empty state */}
+      {filteredAgents.length === 0 && (
+        <div className="text-center py-20">
+          <p className="font-[Orbitron] text-xs tracking-widest uppercase"
+            style={{ color: 'rgba(212,175,55,0.3)' }}>
+            NO AGENTS IN THIS CATEGORY
+          </p>
+        </div>
+      )}
+    </section>
   );
 }
