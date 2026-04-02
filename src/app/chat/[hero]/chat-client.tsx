@@ -9,7 +9,8 @@ import { getHero } from "@/lib/heroes";
 import { getCustomAgentById } from "@/lib/custom-agents";
 import { trackMessage, getEnergyCost } from "@/lib/energy";
 import { useChat } from "@ai-sdk/react";
-
+import { detectArtifact, extractTitle, stripCodeBlocks } from '@/lib/artifacts';
+import { ArtifactRenderer } from '@/components/ArtifactRenderer';
 export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -206,7 +207,19 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                       style={m.role === "user"
                         ? { background: "linear-gradient(135deg, #1A1A1A, #0A0A0A)", border: "1px solid #D4AF37", color: "#F5D38C", fontFamily: "var(--font-sans)" }
                         : { background: bgMid, border: `1px solid ${cardBorder}`, color: "rgba(255,255,255,0.9)", fontFamily: "var(--font-sans)", borderLeftColor: accentColor, borderLeftWidth: "3px" }}>
-                      <div className="whitespace-pre-wrap break-words">{cleanContent}</div>
+                      <div className="whitespace-pre-wrap break-words">
+  {(() => {
+    const artifact = detectArtifact(m.content);
+    return artifact ? stripCodeBlocks(cleanContent) : cleanContent;
+  })()}
+</div>
+{(() => {
+  if (m.role !== 'assistant') return null;
+  const artifact = detectArtifact(m.content);
+  if (!artifact) return null;
+  const title = extractTitle(m.content, artifact);
+  return <ArtifactRenderer artifact={artifact} title={title} />;
+})()}
                     </div>
                     {(((m as { modelUsed?: string }).modelUsed) === "xiaomi/mimo-7b" || modelUsed === "xiaomi/mimo-7b") && (
                       <div className="self-start px-2 py-0.5 mt-1 rounded text-[10px] font-bold tracking-wider"
