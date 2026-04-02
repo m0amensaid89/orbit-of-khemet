@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Zap, Hexagon, Fingerprint, ShieldAlert, Shield, Cpu, LogIn, LogOut, User, Wand2 } from "lucide-react";
+import { Zap, Hexagon, Fingerprint, ShieldAlert, Shield, Cpu, LogIn, LogOut, User, Wand2, Building2 } from "lucide-react";
 import { getEnergyRemainingAsync } from "@/lib/energy";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -111,6 +111,20 @@ export function Sidebar() {
       </Link>
 
       <nav className="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
+        <Link
+          href="/departments"
+          className={`group flex items-center gap-3 px-3 py-3 rounded-md transition-all relative overflow-hidden ${
+            pathname === "/departments"
+              ? "bg-[#D4AF37]/10 text-[#D4AF37] border-l-2 border-[#D4AF37]"
+              : "text-muted-foreground hover:text-[#D4AF37] hover:bg-[#D4AF37]/5 border-l-2 border-transparent hover:border-[#D4AF37]/50"
+          }`}
+        >
+          <Building2 className="w-5 h-5 z-10" />
+          <span className="font-rajdhani font-medium text-lg z-10">Departments</span>
+          {pathname === "/departments" && (
+             <div className="absolute inset-0 bg-gradient-to-r from-[#D4AF37]/20 to-transparent opacity-50 z-0" />
+          )}
+        </Link>
         <Link
           href="/hub"
           className={`group flex items-center gap-3 px-3 py-3 rounded-md transition-all relative overflow-hidden ${

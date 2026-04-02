@@ -1,0 +1,27 @@
+
+> temp-app@0.1.0 dev
+> next dev --turbopack
+
+   ▲ Next.js 15.5.14 (Turbopack)
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.0.2:3000
+
+ ✓ Starting...
+ ○ Compiling middleware ...
+ ✓ Compiled middleware in 679ms
+ ✓ Ready in 2.3s
+ ○ Compiling /departments ...
+ ✓ Compiled /departments in 6.8s
+ HEAD /departments 200 in 7879ms
+ GET /departments 200 in 491ms
+ ○ Compiling /chat/[hero] ...
+ ✓ Compiled /chat/[hero] in 3.1s
+ GET /chat/nexar?autoprompt=Write+a+5-email+cold+outreach+sequence+for+a+B2B+SaaS+product+targeting+HR+directors 200 in 5087ms
+ ○ Compiling /api/chat ...
+ ✓ Compiled /api/chat in 1768ms
+CHAT API ERROR: OPENROUTER_API_KEY is missing
+ POST /api/chat 500 in 2015ms
+CHAT API ERROR: OPENROUTER_API_KEY is missing
+ POST /api/chat 500 in 2411ms
+ ✓ Compiled middleware in 9ms
+ ✓ Compiled in 159ms

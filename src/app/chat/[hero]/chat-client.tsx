@@ -36,7 +36,7 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
 
   const threadId = searchParams.get("thread");
 
-  const { messages, input, handleInputChange, handleSubmit, setMessages, isLoading } = useChat({
+  const { messages, input, handleInputChange, handleSubmit, setMessages, isLoading, append } = useChat({
     api: "/api/chat",
     body: { hero: heroParam, agent: agentParam, threadId },
     onFinish: () => trackMessage(),
@@ -105,6 +105,17 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
       }
     }
   }, [agentParam, heroParam, agent, agentName, isMaster, hero, messages.length, setMessages, threadId]);
+
+  const autoprompt = searchParams.get('autoprompt');
+
+  useEffect(() => {
+    if (autoprompt && messages.length === 1 && !isLoading) {
+      const decoded = decodeURIComponent(autoprompt);
+      setTimeout(() => {
+        append({ role: 'user', content: decoded });
+      }, 800);
+    }
+  }, [autoprompt, messages.length, isLoading, append]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
