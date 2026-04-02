@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { Wand2, Monitor, Code, Copy, Download, RotateCcw } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 
-export default function UIBuilderPage() {
+function UIBuilderContent() {
   const [description, setDescription] = useState('');
   const [style, setStyle] = useState('dark');
   const [complexity, setComplexity] = useState('standard');
@@ -12,6 +13,10 @@ export default function UIBuilderPage() {
   const [view, setView] = useState<'preview' | 'code'>('preview');
   const [history, setHistory] = useState<{html: string; description: string; time: string}[]>([]);
   const [refinement, setRefinement] = useState('');
+
+  const searchParams = useSearchParams();
+  const fromAgent = searchParams.get('agent');
+  const fromHero = searchParams.get('from');
 
   const handleGenerate = async () => {
     if (!description.trim() || isGenerating) return;
@@ -86,10 +91,20 @@ export default function UIBuilderPage() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#0a0a0a] text-[#d0c5af] p-6 pb-20 md:pb-6 overflow-y-auto w-full mx-auto" style={{ fontFamily: 'var(--font-rajdhani), sans-serif' }}>
+    <div className="flex flex-col h-full bg-[#0a0a0a] text-[#d0c5af] p-6 pb-20 md:pb-6 overflow-y-auto w-full mx-auto relative" style={{ fontFamily: 'var(--font-rajdhani), sans-serif' }}>
+      {fromHero && fromAgent && (
+        <div className="w-full px-6 py-2 flex items-center gap-3 absolute top-0 left-0 z-20"
+          style={{ background: 'rgba(212,175,55,0.06)', borderBottom: '1px solid rgba(212,175,55,0.1)' }}>
+          <span style={{ color: '#D4AF37', fontSize: '10px' }}>✦</span>
+          <span className="font-[Orbitron] text-[9px] tracking-[2px] uppercase"
+            style={{ color: 'rgba(212,175,55,0.6)' }}>
+            ACTIVATED FROM {fromHero.toUpperCase()} ORBIT
+          </span>
+        </div>
+      )}
 
       {/* Header */}
-      <div className="mb-8 text-center flex flex-col items-center">
+      <div className="mb-8 mt-4 text-center flex flex-col items-center">
         <h1 className="text-5xl md:text-6xl tracking-wider font-bold" style={{
           fontFamily: 'var(--font-orbitron), sans-serif',
           color: '#D4AF37',
@@ -345,5 +360,13 @@ export default function UIBuilderPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function UIBuilderPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#0a0a0a]" />}>
+      <UIBuilderContent />
+    </Suspense>
   );
 }

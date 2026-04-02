@@ -136,6 +136,20 @@ async function getRelevantKnowledge(
       model = 'google/gemini-2.5-flash-exp-image-generation';
       maxTokens = 2000;
       modalities = ['image','text'];
+    } else if (agent && !agent.startsWith('custom_')) {
+      // Agent-specific routing — find the agent and use its model
+      const heroAgentList = heroAgents[heroSlug as keyof typeof heroAgents] || [];
+      const selectedAgent = heroAgentList.find((a: import('@/lib/agents').Agent) => a.id === agent);
+      if (selectedAgent) {
+        const { getAgentModel } = await import('@/lib/agents');
+        model = getAgentModel(selectedAgent);
+        maxTokens = 4000;
+        tierInfo = null;
+      } else {
+        tierInfo = classifyMessage(lastMessage, heroSlug, messages.length);
+        model = tierInfo.model;
+        maxTokens = tierInfo.maxTokens;
+      }
     } else {
       tierInfo = classifyMessage(lastMessage, heroSlug, messages.length);
       model = tierInfo.model;
@@ -172,6 +186,17 @@ async function getRelevantKnowledge(
       }
     } else {
       systemPrompt += '\n\nYou are the MASTER ORBIT, commanding all 85 specialized agents across all 7 hero groups. Deliver elite-level responses.';
+    }
+
+    // Inject agent-specific system prompt when agent is selected
+    if (agent && !agent.startsWith('custom_')) {
+      const heroAgentList = heroAgents[heroSlug as keyof typeof heroAgents] || [];
+      const selectedAgent = heroAgentList.find((a: import('@/lib/agents').Agent) => a.id === agent);
+      if (selectedAgent?.prompt) {
+        systemPrompt = `${masterSystemPrompt}\n\n--- ACTIVE AGENT: ${selectedAgent.name} ---\nRole: ${selectedAgent.role_summary}\n${selectedAgent.prompt}`;
+      } else if (selectedAgent) {
+        systemPrompt = `${masterSystemPrompt}\n\n--- ACTIVE AGENT: ${selectedAgent.name} ---\nRole: ${selectedAgent.role_summary}\nCategory: ${selectedAgent.category}\nDescription: ${selectedAgent.description}\n\nYou are ${selectedAgent.name}, a specialized agent. Respond strictly within your domain of expertise: ${selectedAgent.role_summary}. Be precise, authoritative, and deliver immediately actionable outputs.`;
+      }
     }
 
     // Append to system prompt

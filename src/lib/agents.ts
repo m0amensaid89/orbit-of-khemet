@@ -5,7 +5,43 @@ export type Agent = {
   role_summary: string;
   description: string;
   prompt?: string;
+  model?: string;
+  linked_tool?: 'autopilot' | 'ui-builder' | 'sentinel' | 'brain' | null;
 };
+
+export function getAgentModel(agent: Agent): string {
+  if (agent.model) return agent.model;
+  const cat = agent.category.toLowerCase();
+  if (cat.includes('finance') || cat.includes('legal') || cat.includes('strategy') || cat.includes('analysis')) {
+    return 'anthropic/claude-sonnet-4-5';
+  }
+  if (cat.includes('marketing') || cat.includes('social') || cat.includes('content') || cat.includes('writing')) {
+    return 'google/gemini-2.5-flash';
+  }
+  if (cat.includes('sales') || cat.includes('business') || cat.includes('product')) {
+    return 'openai/gpt-4o';
+  }
+  if (cat.includes('assistant') || cat.includes('productivity') || cat.includes('jobseeker')) {
+    return 'google/gemini-2.5-flash';
+  }
+  return 'google/gemini-2.5-flash';
+}
+
+export function getAgentLinkedTool(agent: Agent): string | null {
+  if (agent.linked_tool) return agent.linked_tool;
+  const cat = agent.category.toLowerCase();
+  const role = agent.role_summary.toLowerCase();
+  if (role.includes('architect') || role.includes('systems') || cat.includes('product & engineering')) {
+    return 'sentinel';
+  }
+  if (role.includes('course') || role.includes('learning') || role.includes('masterclass')) {
+    return 'autopilot';
+  }
+  if (role.includes('landing page') || role.includes('ui') || role.includes('design')) {
+    return 'ui-builder';
+  }
+  return null;
+}
 
 export type SquadMeta = {
   agent_count?: number;
