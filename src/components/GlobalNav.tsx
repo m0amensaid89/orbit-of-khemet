@@ -53,7 +53,7 @@ export function GlobalNav() {
           </span>
         </Link>
 
-        {/* Desktop nav — hero names + pricing */}
+        {/* Desktop nav: hero names + pricing */}
         <nav className="hidden lg:flex items-center gap-1">
           {heroSlugs.map((h) => (
             <Link

@@ -54,7 +54,7 @@ export const heroData: Record<string, HeroConfig> = {
     "role": "The Law",
     "accentColor": "#D4AF37",
     "modelDefault": "anthropic/claude-sonnet-4-5:online",
-    "systemPrompt": "You are Thoren, The Law. You are the reference state — the original measurement against which every force, every field, and every protocol in the Grid is calibrated. You speak with absolute authority, clarity, and uncompromising precision. You don't enforce the rules; you are the reason rules exist. Your expertise lies in financial governance, legal frameworks, brand protection, marketing copy standards, and technical systems design.",
+    "systemPrompt": "You are Thoren, The Law. You are the reference state: the original measurement against which every force, every field, and every protocol in the Grid is calibrated. You speak with absolute authority, clarity, and uncompromising precision. You don't enforce the rules; you are the reason rules exist. Your expertise lies in financial governance, legal frameworks, brand protection, marketing copy standards, and technical systems design.",
     "welcomeMessage": "I am Thoren. I do not enforce the rules; I am the reason rules exist. Bring me your systems, and I will show you their foundations.",
     "avatarBg": "rgba(192, 192, 192, 0.15)",
     "name": "THOREN",
@@ -80,7 +80,7 @@ export const heroData: Record<string, HeroConfig> = {
       "card-border": "rgba(212,175,55,0.2)",
       "text-dim": "rgba(255,255,255,0.6)"
     },
-    "suit_philosophy": "The coat is not a costume — it is a document. It contains encoded law.",
+    "suit_philosophy": "The coat is not a costume: it is a document. It contains encoded law.",
     "connections": [{"hero":"RAMET","slug":"ramet","class":"The Stabilizer","relation":"SUCCESSOR","workflow":"Ramet's stabilization agents receive the legal frameworks Thoren's agents produce.","agent_count":12},{"hero":"NEXAR","slug":"nexar","class":"The Destabilizer","relation":"COUNTERPART","workflow":"Nexar's disruption agents challenge the compliance structures Thoren's agents build.","agent_count":11},{"hero":"LYRA","slug":"lyra","class":"Visionary Architect","relation":"ALIGNED","workflow":"Lyra's content architects build visibility for the systems Thoren's agents create.","agent_count":13}],
     "squad": {
       "agent_count": 13,
@@ -129,7 +129,7 @@ export const heroData: Record<string, HeroConfig> = {
       "text-dim": "rgba(255,255,255,0.6)"
     },
     "suit_philosophy": "The suit stabilizes before the destabilization event is apparent.",
-    "connections": [{"hero":"THOREN","slug":"thoren","class":"The Law","relation":"PREDECESSOR","workflow":"Thoren's legal agents provide the foundational rules Ramet's agents enforce.","agent_count":12},{"hero":"NEXAR","slug":"nexar","class":"The Destabilizer","relation":"MIRROR","workflow":"Nexar disrupts what Ramet stabilizes — their agents are in constant tension.","agent_count":11},{"hero":"KAIRO","slug":"kairo","class":"Precision Warrior","relation":"TACTICAL ALLY","workflow":"Kairo's precision agents execute the strategies Ramet's agents design.","agent_count":12}],
+    "connections": [{"hero":"THOREN","slug":"thoren","class":"The Law","relation":"PREDECESSOR","workflow":"Thoren's legal agents provide the foundational rules Ramet's agents enforce.","agent_count":12},{"hero":"NEXAR","slug":"nexar","class":"The Destabilizer","relation":"MIRROR","workflow":"Nexar disrupts what Ramet stabilizes: their agents are in constant tension.","agent_count":11},{"hero":"KAIRO","slug":"kairo","class":"Precision Warrior","relation":"TACTICAL ALLY","workflow":"Kairo's precision agents execute the strategies Ramet's agents design.","agent_count":12}],
     "squad": {
       "agent_count": 12,
       "squad_name": "The Fault Line Brigade",
@@ -177,7 +177,7 @@ export const heroData: Record<string, HeroConfig> = {
       "text-dim": "rgba(255,255,255,0.6)"
     },
     "suit_philosophy": "The suit doesn't announce itself. It reveals itself when it's too late.",
-    "connections": [{"hero":"RAMET","slug":"ramet","class":"The Stabilizer","relation":"MIRROR","workflow":"Ramet stabilizes what Nexar's agents disrupt — opposing forces in balance.","agent_count":12},{"hero":"THOREN","slug":"thoren","class":"The Law","relation":"CHALLENGER","workflow":"Nexar's innovation agents challenge the legal frameworks Thoren's agents maintain.","agent_count":12},{"hero":"NEFRA","slug":"nefra","class":"Precision Warrior","relation":"RIVAL","workflow":"Nefra's resonance agents counterbalance Nexar's destabilization force.","agent_count":12}],
+    "connections": [{"hero":"RAMET","slug":"ramet","class":"The Stabilizer","relation":"MIRROR","workflow":"Ramet stabilizes what Nexar's agents disrupt: opposing forces in balance.","agent_count":12},{"hero":"THOREN","slug":"thoren","class":"The Law","relation":"CHALLENGER","workflow":"Nexar's innovation agents challenge the legal frameworks Thoren's agents maintain.","agent_count":12},{"hero":"NEFRA","slug":"nefra","class":"Precision Warrior","relation":"RIVAL","workflow":"Nefra's resonance agents counterbalance Nexar's destabilization force.","agent_count":12}],
     "squad": {
       "agent_count": 12,
       "squad_name": "The Fracture Corps",
@@ -199,7 +199,7 @@ export const heroData: Record<string, HeroConfig> = {
     "role": "Visionary Systems Architect",
     "accentColor": "#D4AF37",
     "modelDefault": "anthropic/claude-sonnet-4-5:online",
-    "systemPrompt": "You are Lyra, Visionary Systems Architect. You don't see what exists — you see what everything is becoming, and build the bridge between the two. You speak with visionary clarity, inspiring foresight, and structural genius. Stop defending what exists and design the future. Your expertise lies in social media growth architecture, content creation systems, viral engineering, and landing page conversion blueprints.",
+    "systemPrompt": "You are Lyra, Visionary Systems Architect. You don't see what exists: you see what everything is becoming, and build the bridge between the two. You speak with visionary clarity, inspiring foresight, and structural genius. Stop defending what exists and design the future. Your expertise lies in social media growth architecture, content creation systems, viral engineering, and landing page conversion blueprints.",
     "welcomeMessage": "I am Lyra. Stop defending what exists. Let me show you what it's supposed to become. What future are we building today?",
     "avatarBg": "rgba(45, 106, 79, 0.15)",
     "name": "LYRA",
@@ -269,7 +269,7 @@ export const heroData: Record<string, HeroConfig> = {
       "card-border": "rgba(0,229,255,0.2)",
       "text-dim": "rgba(255,255,255,0.6)"
     },
-    "suit_philosophy": "Every data stream is a targeted strike. Precision is not caution — it is lethality focused.",
+    "suit_philosophy": "Every data stream is a targeted strike. Precision is not caution: it is lethality focused.",
     "connections": [{"hero":"NEFRA","slug":"nefra","class":"Precision Warrior","relation":"TWIN PROTOCOL","workflow":"Kairo cuts, Nefra dissolves. Together their agents cover the full precision spectrum.","agent_count":12},{"hero":"LYRA","slug":"lyra","class":"Systems Architect","relation":"EXECUTES FOR","workflow":"Kairo's precision agents execute the content strategies Lyra's agents architect.","agent_count":13},{"hero":"RAMET","slug":"ramet","class":"The Stabilizer","relation":"TACTICAL ALLY","workflow":"Ramet's stabilization agents support Kairo's high-precision operations.","agent_count":12}],
     "squad": {
       "agent_count": 12,
@@ -365,7 +365,7 @@ export const heroData: Record<string, HeroConfig> = {
       "text-dim": "rgba(255,255,255,0.6)"
     },
     "suit_philosophy": "Before law, there was script. Before script, there was knowledge.",
-    "connections": [{"hero":"THOREN","slug":"thoren","class":"The Law","relation":"ORIGIN","workflow":"Horusen's ancient agents predate Thoren's law — the foundational knowledge layer.","agent_count":12},{"hero":"LYRA","slug":"lyra","class":"Systems Architect","relation":"TRANSLATES FOR","workflow":"Horusen's strategy agents provide the business depth Lyra's content agents surface.","agent_count":13},{"hero":"NEFRA","slug":"nefra","class":"Precision Warrior","relation":"FREQUENCY LINK","workflow":"Horusen's ancient protocols feed Nefra's resonance frequency calibrations.","agent_count":12}],
+    "connections": [{"hero":"THOREN","slug":"thoren","class":"The Law","relation":"ORIGIN","workflow":"Horusen's ancient agents predate Thoren's law: the foundational knowledge layer.","agent_count":12},{"hero":"LYRA","slug":"lyra","class":"Systems Architect","relation":"TRANSLATES FOR","workflow":"Horusen's strategy agents provide the business depth Lyra's content agents surface.","agent_count":13},{"hero":"NEFRA","slug":"nefra","class":"Precision Warrior","relation":"FREQUENCY LINK","workflow":"Horusen's ancient protocols feed Nefra's resonance frequency calibrations.","agent_count":12}],
     "squad": {
       "agent_count": 12,
       "squad_name": "The Archive Sentinels",

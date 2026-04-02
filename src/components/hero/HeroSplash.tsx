@@ -16,7 +16,7 @@ export default function HeroSplash({ slug }: { slug: string }) {
     <section className="relative w-full min-h-[60vh] flex flex-col md:flex-row overflow-hidden border-b"
       style={{ borderColor: 'rgba(212,175,55,0.1)', background: hero.palette['bg-deep'] }}>
 
-      {/* Left — Hero Image */}
+      {/* Left: Hero Image */}
       <div className="relative md:w-[380px] w-full min-h-[320px] shrink-0 overflow-hidden">
         <HeroImage slug={slug} type="splash" className="w-full h-full object-cover" />
         <div className="absolute inset-0" style={{
@@ -24,7 +24,7 @@ export default function HeroSplash({ slug }: { slug: string }) {
         }} />
       </div>
 
-      {/* Right — Identity Block */}
+      {/* Right: Identity Block */}
       <div className="flex-1 flex flex-col justify-center px-8 py-10 gap-6 relative z-10">
 
         {/* Archetype label */}

@@ -45,7 +45,7 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
         setMessages(prev => [...prev, {
           id: "energy-" + Date.now(),
           role: "assistant",
-          content: `⚡ GRID ENERGY DEPLETED — You've used all your daily energy. It resets at midnight UTC.
+          content: `⚡ GRID ENERGY DEPLETED: You've used all your daily energy. It resets at midnight UTC.
 
 Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
         }]);
@@ -88,7 +88,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
     }
   }, [threadId, setMessages]);
 
-  // Agent speaks first — onboarding message
+  // Agent speaks first: onboarding message
   useEffect(() => {
     if (messages.length === 0 && !threadId) {
       if (hero && hero.welcomeMessage) {

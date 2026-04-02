@@ -19,7 +19,7 @@ async function planSteps(goal: string): Promise<string[]> {
 Goal: ${goal}
 
 Return ONLY a JSON array of step strings. Example: ["Research the topic", "Write an outline", "Draft the content"]
-Return nothing else — just the JSON array.`,
+Return nothing else: just the JSON array.`,
     maxTokens: 500,
   });
 

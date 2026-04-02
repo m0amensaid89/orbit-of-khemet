@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: PageProps) {
   if (!hero) return {};
 
   return {
-    title: `${hero.name} — ${meta?.archetype || hero.class_title} | Orbit of Khemet`,
+    title: `${hero.name}: ${meta?.archetype || hero.class_title} | Orbit of Khemet`,
     description: meta?.card_description || hero.origin_line,
     openGraph: {
       title: `${hero.name} | I-Gamify Universe`,

@@ -10,13 +10,13 @@ import { Zap, ChevronDown, X } from "lucide-react";
 import { motion } from "framer-motion";
 
 const heroDisplayNames: Record<string, string> = {
-  thoren: "THOREN — The Law",
-  ramet: "RAMET — The Stabilizer",
-  nexar: "NEXAR — The Destabilizer",
-  lyra: "LYRA — Visionary Architect",
-  kairo: "KAIRO — Precision Warrior",
-  nefra: "NEFRA — Precision Warrior",
-  horusen: "HORUSEN — Script Guardian",
+  thoren: "THOREN: The Law",
+  ramet: "RAMET: The Stabilizer",
+  nexar: "NEXAR: The Destabilizer",
+  lyra: "LYRA: Visionary Architect",
+  kairo: "KAIRO: Precision Warrior",
+  nefra: "NEFRA: Precision Warrior",
+  horusen: "HORUSEN: Script Guardian",
 };
 
 export default function ForgePage() {
@@ -50,7 +50,7 @@ export default function ForgePage() {
       return;
     }
     if (!form.systemPrompt.trim()) {
-      setError("System prompt is required — this is what makes your agent unique.");
+      setError("System prompt is required: this is what makes your agent unique.");
       return;
     }
     setSaving(true);
