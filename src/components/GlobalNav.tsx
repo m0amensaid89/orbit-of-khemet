@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Sun, Moon, Menu, X, Zap } from "lucide-react";
+import { Sun, Moon, Menu, X, Zap, Building2 } from "lucide-react";
 
 const heroSlugs = [
   { slug: "thoren", name: "THOREN" },
@@ -105,7 +105,10 @@ export function GlobalNav() {
       {/* Mobile dropdown */}
       {mobileOpen && (
         <div className="lg:hidden border-t border-border/30 bg-background/95 backdrop-blur-md px-4 py-4 flex flex-col gap-1">
-          <p className="font-[Orbitron] text-[8px] tracking-[4px] uppercase text-muted-foreground/50 mb-2 px-2">Heroes</p>
+          <Link href="/departments" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
+            <Building2 className="w-3.5 h-3.5" /> DEPARTMENTS
+          </Link>
+          <p className="font-[Orbitron] text-[8px] tracking-[4px] uppercase text-muted-foreground/50 mb-2 px-2 mt-2">Heroes</p>
           {heroSlugs.map((h) => (
             <Link
               key={h.slug}
