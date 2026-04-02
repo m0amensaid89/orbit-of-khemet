@@ -76,6 +76,7 @@ export function GlobalNav() {
           <Link href="/forge" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-[#D4AF37] hover:text-[#E8C84A] transition-colors flex items-center gap-1"><Zap className="w-3 h-3" /> Forge</Link>
           <Link href="/autopilot" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">Auto-Pilot</Link>
           <Link href="/ui-builder" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">UI Builder</Link>
+          <Link href="/sentinel" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">Code Sentinel</Link>
           <Link href="/pricing" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">
             Pricing
           </Link>
@@ -122,6 +123,7 @@ export function GlobalNav() {
           <Link href="/forge" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-[#D4AF37] hover:text-[#E8C84A] transition-colors flex items-center gap-1"><Zap className="w-3 h-3" /> Forge</Link>
           <Link href="/autopilot" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">Auto-Pilot</Link>
           <Link href="/ui-builder" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">UI Builder</Link>
+          <Link href="/sentinel" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">Code Sentinel</Link>
           <Link href="/pricing" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">Pricing</Link>
         </div>
       )}
