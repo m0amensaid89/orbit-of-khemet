@@ -32,11 +32,11 @@ export async function updateSession(request: NextRequest) {
 
   const { pathname } = request.nextUrl
 
-  // Protect /chat, /forge, /profile, /autopilot, /ui-builder, /sentinel, /departments routes
+  // Protect /chat, /forge, /profile, /autopilot, /ui-builder, /sentinel, /departments, /browser routes
    // AUDIT MODE — auth protection disabled temporarily
   // if (
   //   !user &&
-  //   (pathname.startsWith('/brain') || pathname.startsWith('/artifacts')|| pathname.startsWith('/profile') || pathname.startsWith('/master-orbit') || pathname.startsWith('/autopilot') || pathname.startsWith('/ui-builder') || pathname.startsWith('/sentinel') || pathname.startsWith('/departments'))
+  //   (pathname.startsWith('/brain') || pathname.startsWith('/artifacts')|| pathname.startsWith('/profile') || pathname.startsWith('/master-orbit') || pathname.startsWith('/autopilot') || pathname.startsWith('/ui-builder') || pathname.startsWith('/sentinel') || pathname.startsWith('/departments') || pathname.startsWith('/browser'))
   // ) {
   //   if (!pathname.startsWith('/api')) {
   //     const url = request.nextUrl.clone()
