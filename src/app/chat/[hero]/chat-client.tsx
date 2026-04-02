@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ArrowLeft, Send, Loader2, Zap } from "lucide-react";
 import Image from "next/image";
@@ -36,6 +36,16 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
 
   const threadId = searchParams.get("thread");
 
+  const [isListening, setIsListening] = useState(false);
+  const [voiceSupported, setVoiceSupported] = useState(false);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
+      setVoiceSupported(true);
+    }
+  }, []);
+
   const { messages, input, handleInputChange, handleSubmit, setMessages, isLoading, append } = useChat({
     api: "/api/chat",
     body: { hero: heroParam, agent: agentParam, threadId },
@@ -68,6 +78,44 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
   };
   const currentModel = heroModelMap[heroParam] || "google/gemini-2.5-flash";
   const energyCost = getEnergyCost(currentModel);
+
+  const handleVoiceInput = useCallback(() => {
+    if (!voiceSupported) return;
+
+    const SpeechRecognitionAPI = (window as typeof window & {
+      SpeechRecognition?: typeof SpeechRecognition;
+      webkitSpeechRecognition?: typeof SpeechRecognition;
+    }).SpeechRecognition || (window as typeof window & {
+      webkitSpeechRecognition?: typeof SpeechRecognition;
+    }).webkitSpeechRecognition;
+
+    if (!SpeechRecognitionAPI) return;
+
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+      return;
+    }
+
+    const recognition = new SpeechRecognitionAPI();
+    recognition.lang = 'en-US';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onstart = () => setIsListening(true);
+
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
+      const transcript = event.results[0][0].transcript;
+      handleInputChange({ target: { value: transcript } } as React.ChangeEvent<HTMLInputElement>);
+      setIsListening(false);
+    };
+
+    recognition.onerror = () => setIsListening(false);
+    recognition.onend = () => setIsListening(false);
+
+    recognitionRef.current = recognition;
+    recognition.start();
+  }, [isListening, voiceSupported, handleInputChange]);
 
   useEffect(() => {
     if (threadId) {
@@ -277,9 +325,18 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
           {/* Input bar */}
           <div className="shrink-0 p-4 border-t" style={{ borderColor: cardBorder, background: bgMid }}>
             <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+              {isListening && (
+                <div className="flex items-center gap-2 px-2 py-1">
+                  <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#FF4444' }} />
+                  <span className="font-[Orbitron] text-[8px] tracking-[2px] uppercase"
+                    style={{ color: 'rgba(255,68,68,0.7)' }}>
+                    LISTENING...
+                  </span>
+                </div>
+              )}
               <div className="relative flex items-center w-full">
                 <input
-                  className="w-full pl-5 pr-16 py-4 rounded-xl text-base outline-none transition-all shadow-inner placeholder:text-white/20 font-[Rajdhani]"
+                  className={`w-full pl-5 ${voiceSupported ? 'pr-24' : 'pr-16'} py-4 rounded-xl text-base outline-none transition-all shadow-inner placeholder:text-white/20 font-[Rajdhani]`}
                   style={{ background: "#0A0A0A", border: `1px solid ${cardBorder}`, color: "white" }}
                   value={input}
                   placeholder={`Message ${agentName}...`}
@@ -288,6 +345,29 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                   onFocus={e => { e.target.style.borderColor = accentColor; e.target.style.boxShadow = `0 0 15px rgba(${hero?.palette?.["accent-rgb"] || "212,175,55"}, 0.15)`; }}
                   onBlur={e => { e.target.style.borderColor = cardBorder; e.target.style.boxShadow = "none"; }}
                 />
+                {/* Voice input button — only show if browser supports it */}
+                {voiceSupported && (
+                  <button
+                    type="button"
+                    onClick={handleVoiceInput}
+                    className="absolute right-14 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center transition-all rounded-full"
+                    style={{
+                      background: isListening ? 'rgba(255,68,68,0.15)' : 'transparent',
+                      border: isListening ? '1px solid rgba(255,68,68,0.4)' : '1px solid transparent',
+                    }}
+                    title={isListening ? 'Stop listening' : 'Voice input'}
+                  >
+                    {/* Egyptian Lotus mic icon */}
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                      stroke={isListening ? '#FF4444' : 'rgba(212,175,55,0.6)'}
+                      strokeWidth="1.5" strokeLinecap="round">
+                      <ellipse cx="12" cy="10" rx="4" ry="6"/>
+                      <line x1="12" y1="16" x2="12" y2="22"/>
+                      <line x1="8" y1="22" x2="16" y2="22"/>
+                      <line x1="6" y1="13" x2="18" y2="13"/>
+                    </svg>
+                  </button>
+                )}
                 <button type="submit" disabled={isLoading || !input.trim()}
                   className="absolute right-2 w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-all disabled:opacity-30 disabled:hover:scale-100 hover:scale-105"
                   style={{ background: accentColor, color: "#000", boxShadow: `0 0 10px rgba(${hero?.palette?.["accent-rgb"] || "212,175,55"}, 0.5)` }}>
