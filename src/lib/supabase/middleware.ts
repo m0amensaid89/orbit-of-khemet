@@ -33,18 +33,17 @@ export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Protect /chat, /forge, /profile, /autopilot, /ui-builder, /sentinel, /departments routes
-  if (
-    !user &&
-    (pathname.startsWith('/brain') || pathname.startsWith('/artifacts')|| pathname.startsWith('/profile') || pathname.startsWith('/master-orbit') || pathname.startsWith('/autopilot') || pathname.startsWith('/ui-builder') || pathname.startsWith('/sentinel') || pathname.startsWith('/departments'))
-  ) {
-    // Middleware must NOT redirect API routes — /api/chat must always be accessible
-    if (!pathname.startsWith('/api')) {
-      const url = request.nextUrl.clone()
-      url.pathname = '/auth'
-      url.searchParams.set('redirect', request.nextUrl.pathname + request.nextUrl.search)
-      return NextResponse.redirect(url)
-    }
-  }
-
+   // AUDIT MODE — auth protection disabled temporarily
+  // if (
+  //   !user &&
+  //   (pathname.startsWith('/brain') || pathname.startsWith('/artifacts')|| pathname.startsWith('/profile') || pathname.startsWith('/master-orbit') || pathname.startsWith('/autopilot') || pathname.startsWith('/ui-builder') || pathname.startsWith('/sentinel') || pathname.startsWith('/departments'))
+  // ) {
+  //   if (!pathname.startsWith('/api')) {
+  //     const url = request.nextUrl.clone()
+  //     url.pathname = '/auth'
+  //     url.searchParams.set('redirect', request.nextUrl.pathname + request.nextUrl.search)
+  //     return NextResponse.redirect(url)
+  //   }
+  // }
   return supabaseResponse
 }
