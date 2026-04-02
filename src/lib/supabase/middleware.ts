@@ -35,7 +35,7 @@ export async function updateSession(request: NextRequest) {
   // Protect /chat, /forge, /profile routes
   if (
     !user &&
-    (pathname.startsWith('/chat') || pathname.startsWith('/forge') || pathname.startsWith('/profile') || pathname.startsWith('/master-orbit') || pathname.startsWith('/brain'))
+    (pathname.startsWith('/brain') || pathname.startsWith('/artifacts')|| pathname.startsWith('/profile') || pathname.startsWith('/master-orbit') || pathname.startsWith('/brain'))
   ) {
     // Middleware must NOT redirect API routes — /api/chat must always be accessible
     if (!pathname.startsWith('/api')) {
