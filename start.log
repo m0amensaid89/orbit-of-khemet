@@ -3,9 +3,8 @@
 > next start
 
    ▲ Next.js 15.5.14
-   - Local:        http://localhost:3000
-   - Network:      http://192.168.0.2:3000
+   - Local:        http://localhost:3003
+   - Network:      http://192.168.0.2:3003
 
  ✓ Starting...
- ✓ Ready in 855ms
-CHAT API ERROR: OPENROUTER_API_KEY is missing
+ ✓ Ready in 809ms
