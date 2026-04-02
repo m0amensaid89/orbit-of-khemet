@@ -61,7 +61,7 @@ const openrouter = createOpenRouter({
     'X-Title': 'Orbit of Khemet -- Empire Engine'
   }
 });
-
+const ARTIFACT_SYSTEM_SUFFIX = `\n\nWhen asked to build, create, or generate something interactive or data-based, respond with a complete working code block:\n- Web apps, calculators, dashboards: use \`\`\`html with complete standalone HTML/CSS/JS\n- Data tables: use \`\`\`csv\n- Structured data: use \`\`\`json\n- Documents: use \`\`\`markdown\nMake code complete and immediately runnable. Include all styles inline. Never truncate.`;
 async function getRelevantKnowledge(
   userMessage: string,
   userId: string,
@@ -179,7 +179,7 @@ async function getRelevantKnowledge(
       systemPrompt += knowledgeContext;
     }
 
-
+systemPrompt += ARTIFACT_SYSTEM_SUFFIX;
     if (wantsImage) {
         const requestBody: Record<string,unknown> = {
           model,
