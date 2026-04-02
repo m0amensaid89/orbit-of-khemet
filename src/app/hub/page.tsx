@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { heroData, heroOrder } from "@/lib/heroes";
-import { heroMeta } from "@/lib/agents";
+import { heroAgents, heroMeta } from "@/lib/agents";
 
 const DEPARTMENTS = ["All", "Strategy", "Operations", "Marketing", "Sales", "Content", "Finance", "Learning"];
 const OUTCOMES = ["All", "Generate", "Analyze", "Automate", "Optimize", "Close"];
@@ -41,9 +41,10 @@ export default function HubPage() {
     meta: heroMeta[slug as keyof typeof heroMeta],
   }));
 
-  const filtered = useMemo(() => {
-    return heroes.filter(({ slug, data, meta }) => {
-      const q = search.toLowerCase();
+  const searchResults = useMemo(() => {
+    const q = search.toLowerCase();
+
+    const filteredHeroes = heroes.filter(({ slug, data, meta }) => {
       const matchSearch = !q ||
         data.name.toLowerCase().includes(q) ||
         (meta?.archetype || '').toLowerCase().includes(q) ||
@@ -52,7 +53,44 @@ export default function HubPage() {
       const matchOutcome = outcome === "All" || (outcomeMap[slug] || []).includes(outcome);
       return matchSearch && matchDept && matchOutcome;
     });
+
+    if (!q.trim()) return { heroes: filteredHeroes, agentMatches: [] };
+
+    const agentMatches: Array<{
+      heroSlug: string;
+      heroName: string;
+      heroColor: string;
+      agentName: string;
+      agentRole: string;
+      agentId: string;
+    }> = [];
+
+    heroOrder.forEach(slug => {
+      const agents = heroAgents[slug as keyof typeof heroAgents] || [];
+      const meta = heroMeta[slug as keyof typeof heroMeta];
+      agents.forEach(agent => {
+        if (
+          agent.name.toLowerCase().includes(q) ||
+          agent.role_summary.toLowerCase().includes(q) ||
+          agent.category.toLowerCase().includes(q) ||
+          agent.description.toLowerCase().includes(q)
+        ) {
+          agentMatches.push({
+            heroSlug: slug,
+            heroName: meta?.name || slug.toUpperCase(),
+            heroColor: meta?.color_signature || '#D4AF37',
+            agentName: agent.name,
+            agentRole: agent.role_summary,
+            agentId: agent.id,
+          });
+        }
+      });
+    });
+
+    return { heroes: filteredHeroes, agentMatches };
   }, [heroes, search, dept, outcome]);
+
+  const filtered = searchResults.heroes;
 
   return (
     <div className="flex flex-col min-h-screen bg-[#0A0A0A] text-white pb-24">
@@ -134,6 +172,41 @@ export default function HubPage() {
 
       {/* Hero Grid */}
       <main className="flex-1 px-6 md:px-12">
+        {search.trim() && searchResults.agentMatches.length > 0 && (
+          <div className="mb-8 max-w-7xl mx-auto">
+            <p className="font-[Orbitron] text-[8px] tracking-[3px] uppercase mb-3"
+              style={{ color: 'rgba(212,175,55,0.5)' }}>
+              AGENT MATCHES ({searchResults.agentMatches.length})
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {searchResults.agentMatches.slice(0, 6).map((match, i) => (
+                <a key={i} href={`/chat/${match.heroSlug}?agent=${match.agentId}`}
+                  className="flex items-center gap-3 p-3 transition-all"
+                  style={{
+                    background: '#111111',
+                    border: '1px solid rgba(212,175,55,0.08)',
+                    borderLeft: `3px solid ${match.heroColor}`,
+                  }}>
+                  <div>
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className="font-[Orbitron] text-[7px] tracking-[2px] uppercase"
+                        style={{ color: match.heroColor }}>
+                        {match.heroName}
+                      </span>
+                    </div>
+                    <p className="font-[Orbitron] text-xs font-bold" style={{ color: '#ffffff' }}>
+                      {match.agentName}
+                    </p>
+                    <p className="font-[Rajdhani] text-xs" style={{ color: '#d0c5af', opacity: 0.7 }}>
+                      {match.agentRole}
+                    </p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
         {filtered.length === 0 ? (
           <div className="text-center py-24">
             <p className="font-[Orbitron] text-xs tracking-widest uppercase"

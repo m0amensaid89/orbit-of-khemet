@@ -105,7 +105,7 @@ export default function MasterOrbitPage() {
           <div className="bg-gradient-to-r from-[#1A1A1A] to-[#0A0A0A] border border-[#D4AF37]/30 rounded-2xl overflow-hidden flex flex-col md:flex-row relative">
             <div className="absolute top-4 left-4 z-20">
               <span className="font-[Orbitron] text-[9px] tracking-[3px] uppercase px-3 py-1 rounded bg-black/80 border border-[#D4AF37]/50 text-[#D4AF37]">
-                Featured Node
+                COMMAND SUPER HEROES
               </span>
             </div>
 
@@ -131,9 +131,14 @@ export default function MasterOrbitPage() {
               </p>
 
               <div className="flex items-center gap-4 mt-auto">
-                <Link href={`/chat/${featuredHero.slug}`}>
-                  <button className="px-6 py-3 bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 border border-[#D4AF37]/50 text-[#D4AF37] font-[Orbitron] text-xs tracking-widest uppercase rounded flex items-center gap-2 transition-all hover:shadow-[0_0_15px_rgba(212,175,55,0.3)]">
-                    <MessageSquare className="w-4 h-4" /> Quick Chat
+                <Link href={`/heroes/${featuredHero.slug}`}>
+                  <button className="font-[Orbitron] text-[9px] tracking-[3px] uppercase px-6 py-3 transition-all"
+                    style={{
+                      background: 'linear-gradient(135deg, #D4AF37, #FBBF24)',
+                      color: '#0A0A0A',
+                      fontWeight: 700,
+                    }}>
+                    ENTER {featuredHero.name.toUpperCase()} ORBIT
                   </button>
                 </Link>
                 <Link href={`/heroes/${featuredHero.slug}`}>
@@ -191,9 +196,14 @@ export default function MasterOrbitPage() {
                          <span className="font-[Rajdhani] font-bold text-[#D4AF37]">{squadCount} Active</span>
                        </div>
 
-                       <Link href={`/chat/${hero.slug}`}>
-                         <button className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#D4AF37]/20 hover:border-[#D4AF37]/50 hover:text-[#D4AF37] transition-all" title={`Chat with ${hero.name}`}>
-                           <MessageSquare className="w-3.5 h-3.5" />
+                       <Link href={`/heroes/${hero.slug}`}>
+                         <button className="font-[Orbitron] text-[8px] tracking-[2px] uppercase px-3 py-1.5 w-full transition-all mt-2"
+                           style={{
+                             background: 'transparent',
+                             border: `1px solid ${heroData[hero.slug]?.palette?.primary || '#D4AF37'}40`,
+                             color: heroData[hero.slug]?.palette?.primary || '#D4AF37',
+                           }}>
+                           ENTER ORBIT
                          </button>
                        </Link>
                     </div>

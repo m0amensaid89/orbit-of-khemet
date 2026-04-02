@@ -37,7 +37,7 @@ export default function DepartmentsPage() {
           transition={{ duration: 0.6 }}
         >
           <div className="inline-block px-3 py-1 mb-4 rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/5 text-[#D4AF37] text-xs font-orbitron tracking-[0.2em]">
-            PHASE VII ACTIVE
+            EMPIRE ENGINE
           </div>
           <h1 className="text-4xl md:text-6xl font-orbitron font-bold text-[#D4AF37] mb-4 drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]">
             EMPIRE COMMAND

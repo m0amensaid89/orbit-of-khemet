@@ -29,6 +29,7 @@ export default function ForgePage() {
     category: "Custom",
     heroSlug: "thoren",
   });
+  const [agentPhoto, setAgentPhoto] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
@@ -55,7 +56,7 @@ export default function ForgePage() {
     }
     setSaving(true);
     try {
-      saveCustomAgent(form);
+      saveCustomAgent({ ...form, photo: agentPhoto || undefined });
       router.push(`/heroes/${form.heroSlug}?forged=true`);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to forge agent.");
@@ -133,6 +134,57 @@ export default function ForgePage() {
           </div>
 
           <div className="flex flex-col">
+            {/* Agent Photo Upload */}
+            <div className="flex flex-col gap-2 mb-6">
+              <label className="font-[Orbitron] text-[8px] tracking-[3px] uppercase"
+                style={{ color: 'rgba(212,175,55,0.5)' }}>
+                AGENT PHOTO (optional)
+              </label>
+              <p className="font-[Rajdhani] text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                Recommended: 400x400px square, JPG or PNG, max 2MB
+              </p>
+              <div className="flex items-center gap-4 mt-2">
+                {agentPhoto && (
+                  <div className="w-16 h-16 overflow-hidden rounded-md shrink-0"
+                    style={{ border: '1px solid rgba(212,175,55,0.2)' }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={agentPhoto} alt="Agent preview" className="w-full h-full object-cover" />
+                  </div>
+                )}
+                <label className="cursor-pointer font-[Orbitron] text-[8px] tracking-[2px] uppercase px-4 py-2 transition-all rounded hover:bg-[#D4AF37]/10"
+                  style={{
+                    border: '1px solid rgba(212,175,55,0.2)',
+                    color: 'rgba(212,175,55,0.6)',
+                    background: 'transparent',
+                  }}>
+                  {agentPhoto ? 'CHANGE PHOTO' : 'UPLOAD PHOTO'}
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      if (file.size > 2 * 1024 * 1024) {
+                        alert('Photo must be under 2MB');
+                        return;
+                      }
+                      const reader = new FileReader();
+                      reader.onload = (ev) => setAgentPhoto(ev.target?.result as string);
+                      reader.readAsDataURL(file);
+                    }}
+                  />
+                </label>
+                {agentPhoto && (
+                  <button type="button" onClick={() => { setAgentPhoto(null); }}
+                    className="font-[Orbitron] text-[8px] tracking-[2px] uppercase px-4 py-2 rounded hover:bg-red-500/10 transition-all"
+                    style={{ color: 'rgba(255,68,68,0.5)' }}>
+                    REMOVE
+                  </button>
+                )}
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
               <FloatingInput
                 id="name"
@@ -274,13 +326,22 @@ export default function ForgePage() {
 
               <div className="relative z-10 flex flex-col items-center text-center">
                 <div className="relative w-24 h-24 mb-6 rounded-full border-2 border-[#D4AF37] p-1 bg-black">
-                  <Image
-                    src={`/${form.heroSlug}.png`}
-                    alt={form.heroSlug}
-                    fill
-                    className="object-cover rounded-full opacity-80 mix-blend-luminosity group-hover:mix-blend-normal transition-all duration-500"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-                  />
+                  {agentPhoto ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={agentPhoto}
+                      alt={form.name || "Agent photo"}
+                      className="w-full h-full object-cover rounded-full mix-blend-luminosity group-hover:mix-blend-normal transition-all duration-500"
+                    />
+                  ) : (
+                    <Image
+                      src={`/${form.heroSlug}.png`}
+                      alt={form.heroSlug}
+                      fill
+                      className="object-cover rounded-full opacity-80 mix-blend-luminosity group-hover:mix-blend-normal transition-all duration-500"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                    />
+                  )}
                   <div className="absolute -bottom-2 -right-2 bg-[#D4AF37] text-black rounded-full p-1 border border-black">
                     <Zap className="w-3 h-3" />
                   </div>

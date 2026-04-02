@@ -11,6 +11,7 @@ export type CustomAgent = {
   heroSlug: string; // which hero orbit it belongs to
   createdAt: string; // ISO timestamp
   isCustom: true; // marker to distinguish from built-in agents
+  photo?: string; // base64 encoded image
 };
 
 const STORAGE_KEY = "orbit_custom_agents";

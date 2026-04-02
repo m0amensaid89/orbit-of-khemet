@@ -127,6 +127,10 @@ export function Sidebar() {
               <Compass className="w-4 h-4 z-10" />
               <span className="font-medium text-[16px] z-10">New Mission</span>
             </Link>
+            <Link href="/master-orbit" className={navItemClass("/master-orbit")}>
+              <Hexagon className="w-4 h-4 z-10" />
+              <span className="font-medium text-[16px] z-10">Master Orbit</span>
+            </Link>
             <Link href="#" className={navItemClass("#", true)}>
               <Search className="w-4 h-4 z-10" />
               <span className="font-medium text-[16px] z-10">Search</span>
@@ -140,39 +144,10 @@ export function Sidebar() {
 
         <div className="h-[1px] bg-[rgba(212,175,55,0.08)] mx-3" />
 
-        {/* HEROES Section */}
-        <div>
-          <div className="px-6 mb-2">
-            <span className="font-orbitron text-[10px] tracking-[8px] text-[rgba(212,175,55,0.4)] uppercase">HEROES</span>
-          </div>
-          <div className="px-3 space-y-1">
-            {Object.entries({
-              thoren: 'THOREN',
-              ramet: 'RAMET',
-              nexar: 'NEXAR',
-              lyra: 'LYRA',
-              kairo: 'KAIRO',
-              nefra: 'NEFRA',
-              horusen: 'HORUSEN'
-            }).map(([slug, name]) => (
-              <Link key={slug} href={`/heroes/${slug}`} className={navItemClass(`/heroes/${slug}`)}>
-                <span style={{ background: heroColors[slug] }} className="w-2 h-2 rounded-full inline-block shrink-0 shadow-[0_0_8px_rgba(255,255,255,0.2)]" />
-                <span className="font-medium text-[16px] z-10">{name}</span>
-              </Link>
-            ))}
-            <Link href="/master-orbit" className={navItemClass("/master-orbit")}>
-              <Hexagon className="w-4 h-4 z-10" />
-              <span className="font-medium text-[16px] z-10">Master Orbit</span>
-            </Link>
-          </div>
-        </div>
-
-        <div className="h-[1px] bg-[rgba(212,175,55,0.08)] mx-3" />
-
         {/* BUILD TOOLS Section */}
         <div>
           <div className="px-6 mb-2">
-            <span className="font-orbitron text-[10px] tracking-[8px] text-[rgba(212,175,55,0.4)] uppercase">BUILD TOOLS</span>
+            <span className="font-orbitron text-[10px] tracking-[8px] text-[rgba(212,175,55,0.4)] uppercase">SUPER SKILLS</span>
           </div>
           <div className="px-3 space-y-1">
             <Link href="/forge" className={navItemClass("/forge")}>
