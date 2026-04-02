@@ -2,153 +2,349 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
-import { Cpu, Users, Zap, Hexagon, TrendingUp, Shield } from "lucide-react";
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
 
-export default function Home() {
+const heroes = [
+  {
+    name: "Pharaoh's Scribe",
+    title: "Content & Copy Domination",
+    slug: "lyra",
+    icon: "✍️",
+    color: "#2D6A4F",
+    choose: "Choose when you need viral posts, courses, emails, or any written content that converts",
+    powers: ["Blog & Article Writing", "Email Sequences", "Course Content", "Social Copy"]
+  },
+  {
+    name: "Nile Strategist",
+    title: "Growth & Marketing Empire",
+    slug: "nexar",
+    icon: "📢",
+    color: "#FF4444",
+    choose: "Choose for lead-gen funnels, ad campaigns, SEO strategy, and growth planning",
+    powers: ["Cold Email Sequences", "SEO Strategy", "Ad Copy", "Growth Plans"]
+  },
+  {
+    name: "Pyramid Architect",
+    title: "Code & Systems Builder",
+    slug: "kairo",
+    icon: "⚙️",
+    color: "#6C63FF",
+    choose: "Choose for building agents, apps, automations, and technical systems",
+    powers: ["SOP Creation", "Automation Workflows", "Tech Stack Design", "Process Optimization"]
+  },
+  {
+    name: "Sphinx Oracle",
+    title: "Logic & Analysis Master",
+    slug: "thoren",
+    icon: "⚖️",
+    color: "#C0C0C0",
+    choose: "Choose for data analysis, research, decision frameworks, and legal documents",
+    powers: ["Data Analysis", "Research Reports", "Legal Templates", "Risk Assessment"]
+  },
+  {
+    name: "Ra's Visionary",
+    title: "Creative & Design Empire",
+    slug: "horusen",
+    icon: "🎯",
+    color: "#3A6DD4",
+    choose: "Choose for brand strategy, creative direction, storytelling, and business planning",
+    powers: ["Brand Strategy", "Business Plans", "Competitive Analysis", "OKR Setting"]
+  },
+  {
+    name: "Anubis Guardian",
+    title: "Sales & CRM Closer",
+    slug: "nefra",
+    icon: "💰",
+    color: "#9B59B6",
+    choose: "Choose for sales scripts, proposals, follow-up sequences, and closing deals",
+    powers: ["Sales Scripts", "Proposals", "Objection Handling", "Follow-up Sequences"]
+  },
+  {
+    name: "Isis Alchemist",
+    title: "eLearning & MasterClass Creator",
+    slug: "ramet",
+    icon: "📊",
+    color: "#4ECDC4",
+    choose: "Choose for financial reports, KPI dashboards, forecasting, and pricing strategy",
+    powers: ["KPI Frameworks", "Revenue Forecasting", "Pricing Strategy", "Budget Planning"]
+  },
+];
+
+const tiers = [
+  { name: "Scout", price: "Free" },
+  { name: "Explorer", price: "$19 / month", highlight: true },
+  { name: "Commander", price: "$49 / month" },
+];
+
+const FadeInSection = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px 0px" });
+
   return (
-    <main className="relative flex flex-col items-center justify-start overflow-x-hidden bg-black text-white w-full min-h-screen">
-      {/* Hero Section */}
-      <section className="relative w-full h-screen flex flex-col items-center justify-center pt-20">
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 30 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+      transition={{ duration: 0.6, delay }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+export default function LandingPage() {
+  return (
+    <div className="bg-[#0A0A0A] min-h-screen text-[#d0c5af] font-[family-name:var(--font-inter)]">
+
+      {/* 1. STICKY NAV */}
+      <nav className="sticky top-0 z-50 bg-[#0A0A0A] border-b border-[rgba(251,191,36,0.1)] py-4 px-6 md:px-12 flex justify-between items-center backdrop-blur-sm bg-opacity-90">
+        <div className="font-[family-name:var(--font-cinzel)] font-bold text-[#FBBF24] text-xl tracking-wider">
+          ORBIT OF KHEMET
+        </div>
+        <div className="hidden md:flex gap-8 items-center text-sm tracking-wide">
+          <Link href="#heroes" className="hover:text-[#FBBF24] transition-colors">HEROES</Link>
+          <Link href="#agents" className="hover:text-[#FBBF24] transition-colors">AGENTS</Link>
+          <Link href="#how-it-works" className="hover:text-[#FBBF24] transition-colors">HOW IT WORKS</Link>
+          <Link href="/pricing" className="hover:text-[#FBBF24] transition-colors">PRICING</Link>
+          <Link href="/hub">
+            <button className="bg-gradient-to-r from-[#FBBF24] to-[#F59E0B] text-black font-semibold py-2 px-6 rounded-md hover:scale-105 transition-transform duration-300">
+              ENTER THE ORBIT
+            </button>
+          </Link>
+        </div>
+      </nav>
+
+      {/* 2. HERO SECTION */}
+      <section className="relative w-full h-[calc(100vh-73px)] flex flex-col items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
             src="/group-banner.png"
-            alt="The 7 Heroes of Khemet"
+            alt="Orbit of Khemet Heroes"
             fill
             className="object-cover object-center"
             priority
             unoptimized
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black/30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/60 to-transparent" />
         </div>
 
-        <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-4xl mx-auto">
+        <div className="relative z-10 flex flex-col items-center text-center px-4">
           <motion.p
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
-            className="font-[Orbitron] text-[10px] tracking-[6px] uppercase text-[#D4AF37]/80 mb-4"
+            className="font-[family-name:var(--font-cinzel)] text-[#FBBF24] tracking-[0.3em] text-sm md:text-base mb-6 font-bold uppercase"
           >
-            The I-Gamify Grid
+            THE I-GAMIFY GRID
           </motion.p>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.1 }}
-            className="font-[Orbitron] text-5xl md:text-7xl font-black tracking-tighter text-white leading-none mb-6 drop-shadow-[0_0_30px_rgba(212,175,55,0.4)]"
-          >
-            ORBIT OF KHEMET
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}
-            className="font-[Rajdhani] text-xl md:text-2xl font-light text-white/70 max-w-2xl mb-12 leading-relaxed"
-          >
-            7 heroes. 85 agents. One unified AI system built to elevate your potential and gamify your workflows.
-          </motion.p>
-
-          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 0.4 }}>
-            <Link href="/hub">
-              <button className="group relative font-[Orbitron] text-sm tracking-[3px] uppercase px-12 py-5 bg-gradient-to-r from-[#D4AF37] to-[#FFD700] text-black font-bold transition-all duration-300 hover:shadow-[0_0_40px_rgba(255,215,0,0.6)] hover:-translate-y-1 rounded-sm overflow-hidden">
-                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
-                <span className="relative z-10">ENTER THE ORBIT</span>
-              </button>
-            </Link>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}>
+            <h1 className="font-[family-name:var(--font-cinzel)] font-black text-white text-5xl md:text-[80px] leading-tight drop-shadow-[0_0_20px_rgba(251,191,36,0.3)]">
+              ORBIT OF KHEMET
+            </h1>
+            <h2 className="font-[family-name:var(--font-cinzel)] font-black text-white text-4xl md:text-6xl drop-shadow-[0_0_20px_rgba(251,191,36,0.3)] mt-2">
+              The Empire Engine
+            </h2>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.6 }}>
-            <Link href="/pricing" className="font-[Orbitron] text-[9px] tracking-[3px] uppercase text-[#D4AF37]/50 hover:text-[#D4AF37] transition-colors mt-6 block">
-              View pricing & energy tiers →
+          <motion.p
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
+            className="mt-8 text-lg md:text-xl font-light tracking-wide max-w-3xl"
+          >
+            7 Elite Heroes  ✦  85 Named Agents  ✦  5 AI Models  ✦  I-Gamify Grid
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}
+            className="mt-12 flex flex-col sm:flex-row gap-6"
+          >
+            <Link href="/hub">
+              <button className="w-full sm:w-auto font-[family-name:var(--font-cinzel)] bg-gradient-to-r from-[#FBBF24] to-[#F59E0B] text-black font-bold text-lg px-8 py-4 rounded-md shadow-[0_0_15px_rgba(251,191,36,0.4)] animate-[pulse_2s_infinite]">
+                ENTER THE ORBIT
+              </button>
             </Link>
+            <a href="https://wa.me/+201553545453" target="_blank" rel="noopener noreferrer">
+              <button className="w-full sm:w-auto bg-transparent border-2 border-[#FBBF24] text-[#FBBF24] font-bold text-lg px-8 py-4 rounded-md hover:bg-[#FBBF24]/10 transition-colors">
+                Request Full Demo
+              </button>
+            </a>
           </motion.div>
         </div>
       </section>
 
-      {/* Social Proof / Stats Bar */}
-      <section className="relative z-10 w-full border-y border-[#D4AF37]/20 bg-black/80 backdrop-blur-md py-8">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-[#D4AF37]/10 text-center">
-          {[
-            { label: "Elite Heroes", value: "7" },
-            { label: "Named Agents", value: "85" },
-            { label: "AI Models", value: "5" },
-            { label: "Potential", value: "Infinite" },
-          ].map((stat, i) => (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.5 }}
-              className="flex flex-col items-center justify-center"
-            >
-              <div className="font-[Orbitron] text-3xl md:text-5xl font-black text-[#FFD700] mb-2 drop-shadow-[0_0_15px_rgba(255,215,0,0.3)]">{stat.value}</div>
-              <div className="font-[Orbitron] text-[10px] md:text-xs tracking-[3px] uppercase text-white/50">{stat.label}</div>
-            </motion.div>
+      {/* 3. 7 ELITE HEROES SHOWCASE */}
+      <section id="heroes" className="py-[120px] px-6 md:px-12 max-w-7xl mx-auto">
+        <FadeInSection className="text-center mb-16">
+          <h3 className="font-[family-name:var(--font-cinzel)] text-[#FBBF24] text-sm tracking-widest uppercase mb-4 font-bold">
+            ELITE COUNCIL
+          </h3>
+          <h2 className="font-[family-name:var(--font-cinzel)] text-white text-3xl md:text-5xl font-bold">
+            7 Heroes. Every Business Function.
+          </h2>
+        </FadeInSection>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {heroes.map((hero, i) => (
+            <FadeInSection key={hero.slug} delay={i * 0.1}>
+              <div
+                className="bg-[#111111] border border-[rgba(251,191,36,0.1)] rounded-lg p-7 h-full flex flex-col group transition-all duration-300 hover:border-[#FBBF24]"
+                style={{ borderLeftColor: hero.color, borderLeftWidth: '3px' }}
+                onMouseEnter={(e) => e.currentTarget.style.boxShadow = `0 0 30px ${hero.color}20`}
+                onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'none'}
+              >
+                <div className="flex items-center gap-4 mb-4">
+                  <span className="text-4xl">{hero.icon}</span>
+                  <div>
+                    <h4 className="font-[family-name:var(--font-cinzel)] text-[#FBBF24] font-bold text-lg leading-tight">
+                      {hero.name}
+                    </h4>
+                    <p className="text-[#06B6D4] text-xs font-medium mt-1 uppercase tracking-wider">{hero.title}</p>
+                  </div>
+                </div>
+
+                <div className="mb-4 flex-grow">
+                  <p className="text-[10px] text-[#FBBF24] font-bold tracking-widest uppercase mb-2">WHEN TO CHOOSE</p>
+                  <p className="text-sm text-[#d0c5af] opacity-90 leading-relaxed mb-4">{hero.choose}</p>
+
+                  <ul className="space-y-2">
+                    {hero.powers.map(power => (
+                      <li key={power} className="text-sm flex items-start gap-2">
+                        <span style={{ color: hero.color }}>✦</span>
+                        <span className="text-[#d0c5af] opacity-80">{power}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="mt-auto pt-6">
+                  <Link href={`/chat/${hero.slug}`}>
+                    <button
+                      className="w-full py-3 rounded-md text-sm font-semibold transition-colors duration-300 border"
+                      style={{
+                        borderColor: hero.color,
+                        color: hero.color,
+                        // CSS hover effect handled with a styled approach using global classes or inline styles would be tricky, using tailwind trick:
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = `${hero.color}20`;
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                      }}
+                    >
+                      ACTIVATE HERO →
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            </FadeInSection>
           ))}
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="relative z-10 w-full py-24 px-6 bg-[#0A0A0A]">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="font-[Orbitron] text-3xl md:text-4xl font-bold text-white mb-4">THE POWER OF THE ORBIT</h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent mx-auto" />
-          </div>
+      {/* 4. HOW IT WORKS */}
+      <section id="how-it-works" className="py-[120px] px-6 md:px-12 bg-[#111111]/50">
+        <div className="max-w-7xl mx-auto">
+          <FadeInSection className="text-center mb-16">
+            <h2 className="font-[family-name:var(--font-cinzel)] text-white text-3xl md:text-5xl font-bold">
+              Command the Empire in 3 Steps
+            </h2>
+          </FadeInSection>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { icon: Users, title: "7 Specialized Heroes", desc: "Command elite AI avatars tailored for coding, marketing, logic, and creative dominance." },
-              { icon: Hexagon, title: "85 Named Agents", desc: "A sprawling hierarchy of micro-agents designed to execute any micro-task efficiently." },
-              { icon: Cpu, title: "Smart AI Routing", desc: "Seamlessly routes tasks through MiMo, Claude 3.5 Sonnet, and OpenAI o3-mini based on complexity." },
-            ].map((feat, i) => (
-              <motion.div
-                key={feat.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ delay: i * 0.2, duration: 0.6 }}
-                className="bg-[#131313] border border-[#D4AF37]/20 rounded-xl p-8 hover:border-[#D4AF37]/60 transition-colors group hover:shadow-[0_0_30px_rgba(212,175,55,0.1)] relative overflow-hidden"
-              >
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37]/5 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-[#D4AF37]/10 transition-colors" />
-                <feat.icon className="w-10 h-10 text-[#D4AF37] mb-6 group-hover:scale-110 transition-transform duration-300 drop-shadow-[0_0_10px_rgba(212,175,55,0.5)]" />
-                <h3 className="font-[Orbitron] text-xl font-bold text-white mb-3">{feat.title}</h3>
-                <p className="text-white/60 font-[Rajdhani] text-lg leading-relaxed">{feat.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works Section */}
-      <section className="relative z-10 w-full py-24 px-6 bg-black border-t border-white/5">
-        <div className="max-w-5xl mx-auto text-center">
-          <h2 className="font-[Orbitron] text-3xl md:text-4xl font-bold text-white mb-16">HOW IT WORKS</h2>
-
-          <div className="flex flex-col md:flex-row items-center justify-center gap-12 relative">
-            {/* Connecting Line */}
-            <div className="hidden md:block absolute top-1/2 left-[10%] right-[10%] h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent -translate-y-1/2 z-0" />
-
-            {[
-              { step: "01", title: "Choose Your Hero", icon: Shield, desc: "Select the specialized avatar that fits your mission parameters." },
-              { step: "02", title: "Activate Agents", icon: Zap, desc: "Deploy specific sub-agents to tackle distinct parts of your workload." },
-              { step: "03", title: "Dominate the Grid", icon: TrendingUp, desc: "Receive highly optimized, routed AI output to accelerate your progress." },
+              {
+                num: "01",
+                title: "CHOOSE YOUR HERO",
+                desc: "Select the specialist that matches your mission — from content to code to sales"
+              },
+              {
+                num: "02",
+                title: "BRIEF YOUR MISSION",
+                desc: "Type your goal in plain language. No prompting skills needed. The agents know what to do."
+              },
+              {
+                num: "03",
+                title: "RECEIVE YOUR DELIVERABLE",
+                desc: "Get a complete, actionable output — copy, strategy, code, or analysis — ready to deploy."
+              }
             ].map((step, i) => (
-              <motion.div
-                key={step.step}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.2, duration: 0.5 }}
-                className="relative z-10 flex flex-col items-center max-w-xs"
-              >
-                <div className="w-20 h-20 rounded-full bg-[#1A1A1A] border-2 border-[#D4AF37] flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(212,175,55,0.2)]">
-                  <span className="font-[Orbitron] font-black text-2xl text-[#FFD700]">{step.step}</span>
+              <FadeInSection key={step.num} delay={i * 0.2}>
+                <div className="bg-[#111111] rounded-lg p-8 relative overflow-hidden group hover:shadow-[0_0_30px_rgba(251,191,36,0.15)] transition-all duration-300 h-full border border-[rgba(251,191,36,0.05)] hover:border-[rgba(251,191,36,0.2)]">
+                  <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#FBBF24] to-[#F59E0B]" />
+                  <div className="font-[family-name:var(--font-cinzel)] text-[72px] text-[#FBBF24]/20 font-bold leading-none mb-4 group-hover:text-[#FBBF24]/30 transition-colors">
+                    {step.num}
+                  </div>
+                  <h3 className="font-[family-name:var(--font-cinzel)] text-white text-xl font-bold mb-3">{step.title}</h3>
+                  <p className="text-[#d0c5af] opacity-80 leading-relaxed">{step.desc}</p>
                 </div>
-                <h3 className="font-[Orbitron] text-lg font-bold text-white mb-2">{step.title}</h3>
-                <p className="text-white/50 font-[Rajdhani] text-base">{step.desc}</p>
-              </motion.div>
+              </FadeInSection>
             ))}
           </div>
         </div>
       </section>
-    </main>
+
+      {/* 5. PRICING TEASER */}
+      <section id="pricing" className="py-[120px] px-6 md:px-12 max-w-5xl mx-auto">
+        <FadeInSection className="text-center mb-16">
+          <h2 className="font-[family-name:var(--font-cinzel)] text-white text-3xl md:text-5xl font-bold mb-4">
+            Choose Your Tier
+          </h2>
+          <p className="text-xl text-[#d0c5af] opacity-90">Start free. Scale as you grow.</p>
+        </FadeInSection>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {tiers.map((tier, i) => (
+            <FadeInSection key={tier.name} delay={i * 0.1}>
+              <div className={`bg-[#111111] rounded-lg p-8 text-center flex flex-col items-center justify-center h-full border ${tier.highlight ? 'border-[#FBBF24] shadow-[0_0_20px_rgba(251,191,36,0.2)]' : 'border-[rgba(251,191,36,0.1)]'}`}>
+                <h3 className="font-[family-name:var(--font-cinzel)] text-[#FBBF24] text-2xl font-bold mb-6">{tier.name}</h3>
+                <div className="text-white text-3xl font-bold mb-8">{tier.price}</div>
+                <Link href="/pricing" className="w-full">
+                  <button className="w-full border border-[#FBBF24] text-[#FBBF24] py-3 rounded-md hover:bg-[#FBBF24] hover:text-black transition-colors duration-300 font-semibold text-sm">
+                    VIEW FULL PRICING →
+                  </button>
+                </Link>
+              </div>
+            </FadeInSection>
+          ))}
+        </div>
+      </section>
+
+      {/* 6. FLOATING WHATSAPP BUTTON */}
+      <a
+        href="https://wa.me/+201553545453"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 w-[60px] h-[60px] bg-[#25D366] rounded-full flex items-center justify-center z-[9999] hover:scale-110 transition-transform shadow-lg cursor-pointer"
+        aria-label="Contact us on WhatsApp"
+      >
+        <svg viewBox="0 0 24 24" width="32" height="32" fill="white">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+        </svg>
+      </a>
+
+      {/* 7. FOOTER */}
+      <footer className="bg-[#0A0A0A] border-t border-[rgba(251,191,36,0.1)] py-12 px-6 md:px-12 mt-20">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="text-center md:text-left">
+            <div className="font-[family-name:var(--font-cinzel)] font-bold text-[#FBBF24] text-xl tracking-wider mb-2">
+              KHEMET.AI
+            </div>
+            <p className="text-[#d0c5af] opacity-80 text-sm">Where Ancient Wisdom Meets Artificial Intelligence</p>
+          </div>
+
+          <div className="flex gap-6 text-sm">
+            <Link href="#heroes" className="hover:text-[#FBBF24] transition-colors">Heroes</Link>
+            <Link href="#agents" className="hover:text-[#FBBF24] transition-colors">Agents</Link>
+            <Link href="/pricing" className="hover:text-[#FBBF24] transition-colors">Pricing</Link>
+            <Link href="/hub" className="hover:text-[#FBBF24] transition-colors">Hub</Link>
+          </div>
+
+          <div className="text-[#d0c5af] opacity-60 text-sm">
+            © 2025 Khemet.ai / I-Gamify.net
+          </div>
+        </div>
+      </footer>
+    </div>
   );
 }
