@@ -25,7 +25,13 @@ export function Sidebar() {
   const [user, setUser] = useState<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
   const [profile, setProfile] = useState<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
   const [recentThreads, setRecentThreads] = useState<any[]>([]); // eslint-disable-line @typescript-eslint/no-explicit-any
+  const [superSkillsOpen, setSuperSkillsOpen] = useState(true);
+  const [threadSearch, setThreadSearch] = useState('');
   const supabase = createClient();
+
+  const filteredThreads = recentThreads.filter(t =>
+    !threadSearch || (t.title || 'New Mission').toLowerCase().includes(threadSearch.toLowerCase())
+  );
 
   useEffect(() => {
     async function fetchSessionAndEnergy() {
@@ -139,46 +145,53 @@ export function Sidebar() {
               <Search className="w-4 h-4 z-10" />
               <span className="font-medium text-[16px] z-10">Search</span>
             </Link>
-            <Link href="/hub" className={navItemClass("/hub")}>
-              <BookOpen className="w-4 h-4 z-10" />
-              <span className="font-medium text-[16px] z-10">Codices</span>
-            </Link>
+            {/* Codices (future feature — project management) removed until implemented */}
           </div>
         </div>
 
         <div className="h-[1px] bg-[rgba(212,175,55,0.08)] mx-3" />
 
-        {/* BUILD TOOLS Section */}
-        <div>
-          <div className="px-6 mb-2">
-            <span className="font-orbitron text-[10px] tracking-[8px] text-[rgba(212,175,55,0.4)] uppercase">SUPER SKILLS</span>
-          </div>
-          <div className="px-3 space-y-1">
-            <Link href="/forge" className={navItemClass("/forge")}>
-              <Hammer className="w-4 h-4 z-10" />
-              <span className="font-medium text-[16px] z-10">Agent Forge</span>
-            </Link>
-            <Link href="/autopilot" className={navItemClass("/autopilot")}>
-              <Cpu className="w-4 h-4 z-10" />
-              <span className="font-medium text-[16px] z-10">Auto-Pilot</span>
-            </Link>
-            <Link href="/ui-builder" className={navItemClass("/ui-builder")}>
-              <Wand2 className="w-4 h-4 z-10" />
-              <span className="font-medium text-[16px] z-10">UI Builder</span>
-            </Link>
-            <Link href="/sentinel" className={navItemClass("/sentinel")}>
-              <Shield className="w-4 h-4 z-10" />
-              <span className="font-medium text-[16px] z-10">Code Sentinel</span>
-            </Link>
-            <Link href="/browser" className={navItemClass("/browser")}>
-              <Globe className="w-4 h-4 z-10" />
-              <span className="font-medium text-[16px] z-10">Browser Control</span>
-            </Link>
-            <Link href="/artifacts" className={navItemClass("/artifacts")}>
-              <Gem className="w-4 h-4 z-10" />
-              <span className="font-medium text-[16px] z-10">Empire Relics</span>
-            </Link>
-          </div>
+        {/* SUPER SKILLS Section */}
+        <div style={{ borderTop: '1px solid rgba(212,175,55,0.08)' }}>
+          <button
+            onClick={() => setSuperSkillsOpen(prev => !prev)}
+            className="w-full flex items-center justify-between px-6 py-3 transition-all hover:bg-[rgba(212,175,55,0.03)]">
+            <span className="font-orbitron text-[10px] tracking-[8px] uppercase"
+              style={{ color: 'rgba(212,175,55,0.4)' }}>SUPER SKILLS</span>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+              stroke="rgba(212,175,55,0.4)" strokeWidth="2" strokeLinecap="round"
+              style={{ transform: superSkillsOpen ? 'rotate(0deg)' : 'rotate(-90deg)', transition: 'transform 0.2s' }}>
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+          {superSkillsOpen && (
+            <div className="flex flex-col px-3 space-y-1">
+              <Link href="/forge" className={navItemClass("/forge")}>
+                <Hammer className="w-4 h-4 z-10" />
+                <span className="font-medium text-[16px] z-10">Agent Forge</span>
+              </Link>
+              <Link href="/autopilot" className={navItemClass("/autopilot")}>
+                <Cpu className="w-4 h-4 z-10" />
+                <span className="font-medium text-[16px] z-10">Auto-Pilot</span>
+              </Link>
+              <Link href="/ui-builder" className={navItemClass("/ui-builder")}>
+                <Wand2 className="w-4 h-4 z-10" />
+                <span className="font-medium text-[16px] z-10">UI Builder</span>
+              </Link>
+              <Link href="/sentinel" className={navItemClass("/sentinel")}>
+                <Shield className="w-4 h-4 z-10" />
+                <span className="font-medium text-[16px] z-10">Code Sentinel</span>
+              </Link>
+              <Link href="/browser" className={navItemClass("/browser")}>
+                <Globe className="w-4 h-4 z-10" />
+                <span className="font-medium text-[16px] z-10">Browser Control</span>
+              </Link>
+              <Link href="/artifacts" className={navItemClass("/artifacts")}>
+                <Gem className="w-4 h-4 z-10" />
+                <span className="font-medium text-[16px] z-10">Empire Relics</span>
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* MISSION LOG Section */}
@@ -189,8 +202,23 @@ export function Sidebar() {
               <div className="px-6 mb-2">
                 <span className="font-orbitron text-[10px] tracking-[8px] text-[rgba(212,175,55,0.4)] uppercase">MISSION LOG</span>
               </div>
+              <div className="px-4 pb-2">
+                <input
+                  type="text"
+                  value={threadSearch}
+                  onChange={e => setThreadSearch(e.target.value)}
+                  placeholder="Search missions..."
+                  className="w-full px-3 py-1.5 text-xs font-[Rajdhani]"
+                  style={{
+                    background: 'rgba(212,175,55,0.04)',
+                    border: '1px solid rgba(212,175,55,0.1)',
+                    color: '#d0c5af',
+                    outline: 'none',
+                  }}
+                />
+              </div>
               <div className="px-3 space-y-1">
-                {recentThreads.map((thread) => (
+                {filteredThreads.map((thread) => (
                   <div key={thread.id} className="group relative flex items-center">
                     <Link
                       href={`/chat/${thread.hero_slug}?thread=${thread.id}`}

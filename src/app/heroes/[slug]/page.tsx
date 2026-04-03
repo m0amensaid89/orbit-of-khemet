@@ -3,8 +3,6 @@ import { heroMeta } from "@/lib/agents";
 import { notFound } from "next/navigation";
 import HeroSplash from "@/components/hero/HeroSplash";
 import { AgentCommandCenter } from "@/components/hero/AgentCommandCenter";
-import UniverseConnections from "@/components/hero/UniverseConnections";
-import HeroNav from "@/components/hero/HeroNav";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -64,8 +62,6 @@ export default async function HeroPage({ params }: PageProps) {
     >
       <HeroSplash slug={slug} />
       <AgentCommandCenter slug={slug} accentColor={meta?.color_signature || hero.palette.accent} />
-      <UniverseConnections slug={slug} />
-      <HeroNav slug={slug} />
     </main>
   );
 }

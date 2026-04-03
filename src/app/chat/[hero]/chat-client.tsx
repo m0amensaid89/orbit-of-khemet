@@ -177,7 +177,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
   }, [searchParams, handleInputChange, input, messages.length]);
 
   return (
-    <div className="min-h-screen flex flex-col w-full px-6 md:px-12 py-4"
+    <div className="h-screen overflow-hidden flex flex-col w-full px-6 md:px-12 py-4"
       style={{ background: `linear-gradient(135deg, ${bgDeep} 0%, ${bgMid} 100%)` }}>
 
       {/* Messenger window */}
@@ -185,7 +185,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
         style={{ borderColor: cardBorder, background: bgDeep }}>
 
         {/* Window header */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b shrink-0 w-full"
+        <div className="shrink-0 flex items-center gap-3 px-4 py-3 border-b w-full"
           style={{ borderColor: cardBorder, background: bgMid }}>
           <button onClick={() => router.back()} className="text-white/40 hover:text-white/80 transition-colors p-1">
             <ArrowLeft className="w-4 h-4" />
@@ -229,7 +229,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
         </div>
 
         {/* Breadcrumb */}
-        <div className="px-4 py-2 text-[10px] font-mono tracking-widest flex items-center gap-2 shrink-0"
+        <div className="shrink-0 px-4 py-2 text-[10px] font-mono tracking-widest flex items-center gap-2"
           style={{ color: accentColor, opacity: 0.5, borderBottom: `0.5px solid ${cardBorder}` }}>
           <span className="cursor-pointer hover:opacity-100 transition-opacity" onClick={() => router.push('/')}>Universe</span>
           <span>›</span>
@@ -330,7 +330,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
             </div>
 
           {/* Input bar */}
-          <div className="shrink-0 p-4 border-t w-full" style={{ borderColor: cardBorder, background: bgMid }}>
+          <div className="shrink-0 px-6 pb-6 pt-3 border-t w-full" style={{ borderColor: cardBorder, background: bgMid }}>
             <form onSubmit={handleSubmit} className="flex flex-col gap-2 max-w-4xl mx-auto w-full">
               {isListening && (
                 <div className="flex items-center gap-2 px-2 py-1">
