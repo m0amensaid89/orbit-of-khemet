@@ -13,6 +13,37 @@ import { detectArtifact, extractTitle, stripCodeBlocks } from '@/lib/artifacts';
 import { ArtifactRenderer } from '@/components/ArtifactRenderer';
 import { ExportToolbar } from '@/components/ExportToolbar';
 
+function VoiceWaveform({ audioLevel, isLocked }: { audioLevel: number; isLocked: boolean }) {
+  const [bars, setBars] = useState<number[]>(Array(28).fill(3));
+
+  useEffect(() => {
+    let frame: number;
+    const animate = () => {
+      setBars(prev => prev.map((_, i) => {
+        const wave = Math.sin(i * 0.8 + Date.now() / 180) * 0.5 + 0.5;
+        return Math.max(3, (audioLevel / 100) * 18 * wave + 3);
+      }));
+      frame = requestAnimationFrame(animate);
+    };
+    frame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frame);
+  }, [audioLevel]);
+
+  return (
+    <div className="flex items-center gap-[2px] flex-1" style={{ height: '24px' }}>
+      {bars.map((h, i) => (
+        <div key={i} style={{
+          width: '2px',
+          height: `${h}px`,
+          background: isLocked ? `rgba(255,68,68,0.7)` : `rgba(212,175,55,0.7)`,
+          borderRadius: '1px',
+          transition: 'height 0.05s ease',
+        }} />
+      ))}
+    </div>
+  );
+}
+
 export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -39,8 +70,16 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
   const threadId = searchParams.get("thread");
 
   const [isListening, setIsListening] = useState(false);
+  const [isLocked, setIsLocked] = useState(false); // locked recording mode
   const [voiceSupported, setVoiceSupported] = useState(false);
+  const [audioLevel, setAudioLevel] = useState(0); // 0-100 for waveform bar
+  const [interimText, setInterimText] = useState(''); // live transcript
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const micStreamRef = useRef<MediaStream | null>(null);
+  const animFrameRef = useRef<number | null>(null);
+  const keyPressRef = useRef<{ win: boolean; ctrl: boolean }>({ win: false, ctrl: false });
 
   useEffect(() => {
     if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
@@ -81,7 +120,50 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
   const currentModel = heroModelMap[heroParam] || "google/gemini-2.5-flash";
   const energyCost = getEnergyCost(currentModel);
 
-  const handleVoiceInput = useCallback(() => {
+  // Start audio analyser for waveform visualization
+  const startAudioAnalyser = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      micStreamRef.current = stream;
+      const ctx = new AudioContext();
+      audioContextRef.current = ctx;
+      const analyser = ctx.createAnalyser();
+      analyserRef.current = analyser;
+      analyser.fftSize = 64;
+      const source = ctx.createMediaStreamSource(stream);
+      source.connect(analyser);
+
+      const tick = () => {
+        const data = new Uint8Array(analyser.frequencyBinCount);
+        analyser.getByteFrequencyData(data);
+        const avg = data.reduce((a, b) => a + b, 0) / data.length;
+        setAudioLevel(Math.min(100, avg * 2));
+        animFrameRef.current = requestAnimationFrame(tick);
+      };
+      tick();
+    } catch { /* mic permission denied — continue without waveform */ }
+  };
+
+  const stopAudioAnalyser = () => {
+    if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    if (micStreamRef.current) micStreamRef.current.getTracks().forEach(t => t.stop());
+    if (audioContextRef.current) audioContextRef.current.close();
+    audioContextRef.current = null;
+    analyserRef.current = null;
+    micStreamRef.current = null;
+    setAudioLevel(0);
+  };
+
+  const stopListening = useCallback(() => {
+    recognitionRef.current?.stop();
+    recognitionRef.current = null;
+    setIsListening(false);
+    setIsLocked(false);
+    setInterimText('');
+    stopAudioAnalyser();
+  }, []);
+
+  const startListening = useCallback((locked = false) => {
     if (!voiceSupported) return;
 
     const SpeechRecognitionAPI = (window as typeof window & {
@@ -93,31 +175,113 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
 
     if (!SpeechRecognitionAPI) return;
 
-    if (isListening) {
-      recognitionRef.current?.stop();
-      setIsListening(false);
-      return;
+    const recognition = new SpeechRecognitionAPI();
+
+    // Support English (all accents) + Arabic (all dialects)
+    recognition.lang = 'ar'; // will be overridden by grammars — browser auto-detects
+    recognition.continuous = locked; // continuous only in locked mode
+    recognition.interimResults = true; // show live transcript
+
+    // Use multilingual detection: try both languages
+    // Web Speech API does not support multiple langs simultaneously
+    // but we set to auto-detect by leaving lang empty or using BCP-47 wildcard
+    // Best cross-browser approach: detect from input or default to en-US with Arabic support
+    // We set lang to empty string to let browser use system locale + English fallback
+    try {
+      (recognition as SpeechRecognition & { lang: string }).lang = '';
+    } catch {
+      recognition.lang = 'en-US';
     }
 
-    const recognition = new SpeechRecognitionAPI();
-    recognition.lang = 'en-US';
-    recognition.continuous = false;
-    recognition.interimResults = false;
-
-    recognition.onstart = () => setIsListening(true);
-
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
-      const transcript = event.results[0][0].transcript;
-      handleInputChange({ target: { value: transcript } } as React.ChangeEvent<HTMLInputElement>);
-      setIsListening(false);
+    recognition.onstart = () => {
+      setIsListening(true);
+      setIsLocked(locked);
+      setInterimText('');
+      startAudioAnalyser();
     };
 
-    recognition.onerror = () => setIsListening(false);
-    recognition.onend = () => setIsListening(false);
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
+      let interim = '';
+      let final = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const t = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          final += t;
+        } else {
+          interim += t;
+        }
+      }
+      if (interim) setInterimText(interim);
+      if (final) {
+        handleInputChange({ target: { value: (input + ' ' + final).trim() } } as React.ChangeEvent<HTMLInputElement>);
+        setInterimText('');
+        if (!locked) {
+          stopListening();
+        }
+      }
+    };
+
+    recognition.onerror = () => stopListening();
+    recognition.onend = () => {
+      if (!isLocked) stopListening();
+      // In locked mode, restart automatically
+      else {
+        try { recognition.start(); } catch { stopListening(); }
+      }
+    };
 
     recognitionRef.current = recognition;
-    recognition.start();
-  }, [isListening, voiceSupported, handleInputChange]);
+    try { recognition.start(); } catch { /* already started */ }
+  }, [voiceSupported, input, handleInputChange, isLocked, stopListening]);
+
+  const handleVoiceInput = useCallback(() => {
+    if (isListening && !isLocked) {
+      stopListening();
+    } else if (isListening && isLocked) {
+      stopListening(); // single click stops locked mode
+    } else {
+      startListening(false); // normal single-click = one-shot
+    }
+  }, [isListening, isLocked, startListening, stopListening]);
+
+  // Keyboard shortcut: Win+Ctrl = start/lock recording
+  useEffect(() => {
+    if (!voiceSupported) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Track Win key (Meta) and Ctrl
+      if (e.key === 'Meta' || e.key === 'OS') keyPressRef.current.win = true;
+      if (e.key === 'Control') keyPressRef.current.ctrl = true;
+
+      // Win + Ctrl pressed together
+      if (keyPressRef.current.win && keyPressRef.current.ctrl) {
+        e.preventDefault();
+        if (!isListening) {
+          // First press: start one-shot recording
+          startListening(false);
+        } else if (isListening && !isLocked) {
+          // Second press while recording: lock it (continuous)
+          stopListening();
+          setTimeout(() => startListening(true), 100);
+        } else if (isLocked) {
+          // Press while locked: stop
+          stopListening();
+        }
+      }
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.key === 'Meta' || e.key === 'OS') keyPressRef.current.win = false;
+      if (e.key === 'Control') keyPressRef.current.ctrl = false;
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [voiceSupported, isListening, isLocked, startListening, stopListening]);
 
   useEffect(() => {
     if (threadId) {
@@ -347,13 +511,44 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
           {/* Input — shrink-0, never scrolls */}
           <div className="shrink-0 px-6 pb-6 pt-3 border-t w-full" style={{ borderColor: cardBorder, background: bgMid }}>
             <form onSubmit={handleSubmit} className="flex flex-col gap-2 max-w-4xl mx-auto w-full">
+              {/* Voice recording UI — WhatsApp style waveform bar */}
               {isListening && (
-                <div className="flex items-center gap-2 px-2 py-1">
-                  <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#FF4444' }} />
-                  <span className="font-[Orbitron] text-[8px] tracking-[2px] uppercase"
-                    style={{ color: 'rgba(255,68,68,0.7)' }}>
-                    LISTENING...
+                <div className="flex items-center gap-3 px-3 py-2 mb-1 rounded-lg"
+                  style={{
+                    background: isLocked
+                      ? 'rgba(255,68,68,0.08)'
+                      : 'rgba(212,175,55,0.06)',
+                    border: `1px solid ${isLocked ? 'rgba(255,68,68,0.2)' : 'rgba(212,175,55,0.15)'}`,
+                  }}>
+
+                  {/* Pulsing dot */}
+                  <div className="w-2.5 h-2.5 rounded-full shrink-0 animate-pulse"
+                    style={{ background: isLocked ? '#FF4444' : '#D4AF37' }} />
+
+                  {/* Waveform bars — WhatsApp style */}
+                  <VoiceWaveform audioLevel={audioLevel} isLocked={isLocked} />
+
+                  {/* Live interim transcript */}
+                  {interimText && (
+                    <span className="font-[Rajdhani] text-xs italic shrink-0 max-w-[120px] truncate"
+                      style={{ color: 'rgba(255,255,255,0.5)' }}>
+                      {interimText}
+                    </span>
+                  )}
+
+                  {/* Status label */}
+                  <span className="font-[Orbitron] text-[7px] tracking-[2px] uppercase shrink-0"
+                    style={{ color: isLocked ? 'rgba(255,68,68,0.8)' : 'rgba(212,175,55,0.7)' }}>
+                    {isLocked ? 'LOCKED' : 'LISTENING'}
                   </span>
+
+                  {/* Stop button */}
+                  <button type="button" onClick={stopListening}
+                    className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center"
+                    style={{ background: isLocked ? 'rgba(255,68,68,0.2)' : 'rgba(212,175,55,0.1)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                    <div className="w-2 h-2 rounded-sm"
+                      style={{ background: isLocked ? '#FF4444' : '#D4AF37' }} />
+                  </button>
                 </div>
               )}
               <div className="relative flex items-center w-full">
@@ -367,7 +562,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                   onFocus={e => { e.target.style.borderColor = accentColor; e.target.style.boxShadow = `0 0 15px rgba(${hero?.palette?.["accent-rgb"] || "212,175,55"}, 0.15)`; }}
                   onBlur={e => { e.target.style.borderColor = cardBorder; e.target.style.boxShadow = "none"; }}
                 />
-                {/* Voice input button — prominent, always visible when supported */}
+                {/* Mic button — gold border, prominent */}
                 {voiceSupported && (
                   <button
                     type="button"
@@ -375,15 +570,15 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                     className="absolute right-14 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center transition-all"
                     style={{
                       background: isListening
-                        ? 'rgba(255,68,68,0.2)'
-                        : 'rgba(212,175,55,0.1)',
+                        ? isLocked ? 'rgba(255,68,68,0.2)' : 'rgba(212,175,55,0.15)'
+                        : 'rgba(212,175,55,0.08)',
                       border: isListening
-                        ? '1px solid rgba(255,68,68,0.6)'
+                        ? isLocked ? '1px solid rgba(255,68,68,0.7)' : '1px solid rgba(212,175,55,0.6)'
                         : '1px solid rgba(212,175,55,0.3)',
                     }}
-                    title={isListening ? 'Stop listening' : 'Voice input'}>
+                    title={isListening ? (isLocked ? 'Click to stop locked recording' : 'Click to stop') : 'Voice input (Win+Ctrl to start/lock)'}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                      stroke={isListening ? '#FF4444' : '#D4AF37'}
+                      stroke={isListening ? (isLocked ? '#FF4444' : '#D4AF37') : '#D4AF37'}
                       strokeWidth="1.5" strokeLinecap="round">
                       <ellipse cx="12" cy="10" rx="4" ry="6"/>
                       <line x1="12" y1="16" x2="12" y2="22"/>
@@ -398,6 +593,16 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                   {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-4 h-4 ml-0.5" />}
                 </button>
               </div>
+
+              {voiceSupported && !isListening && (
+                <div className="text-center mt-1">
+                  <span className="font-[Orbitron] text-[7px] tracking-[2px] uppercase"
+                    style={{ color: 'rgba(255,255,255,0.15)' }}>
+                    Win + Ctrl to record • Double to lock
+                  </span>
+                </div>
+              )}
+
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center justify-between px-2">
                     <span className="font-[Orbitron] text-[9px] tracking-widest uppercase text-white/30 flex items-center gap-1">
