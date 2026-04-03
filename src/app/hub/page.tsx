@@ -277,12 +277,12 @@ function HubPageContent() {
                       </div>
 
                       {/* Hero name */}
-                      <h2 className="font-[Orbitron] text-[8px] sm:text-[10px] lg:text-xs font-black tracking-tight" style={{ color: '#ffffff' }}>
+                      <h2 className="font-[Orbitron] text-[7px] sm:text-[7px] lg:text-xs font-black tracking-tight" style={{ color: '#ffffff' }}>
                         {data.name}
                       </h2>
 
                       {/* Short tagline */}
-                      <p className="font-[Rajdhani] text-[6px] sm:text-[7px] lg:text-[8px] leading-tight lg:leading-relaxed" style={{ color: '#d0c5af', opacity: 0.8 }}>
+                      <p className="font-[Rajdhani] text-[6px] sm:text-[6px] lg:text-[8px] leading-tight lg:leading-relaxed" style={{ color: '#d0c5af', opacity: 0.8 }}>
                         {meta?.role_line || data.role}
                       </p>
 
