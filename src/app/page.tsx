@@ -47,26 +47,8 @@ export default function LandingPage() {
   return (
     <div className="bg-[#0A0A0A] min-h-screen text-[#d0c5af] font-[family-name:var(--font-inter)]">
 
-      {/* 1. STICKY NAV */}
-      <nav className="sticky top-0 z-50 bg-[#0A0A0A] border-b border-[rgba(251,191,36,0.1)] py-4 px-6 md:px-12 flex justify-between items-center backdrop-blur-sm bg-opacity-90">
-        <div className="font-[family-name:var(--font-cinzel)] font-bold text-[#FBBF24] text-xl tracking-wider">
-          KHEMET
-        </div>
-        <div className="hidden md:flex gap-8 items-center text-sm tracking-wide">
-          <Link href="#heroes" className="hover:text-[#FBBF24] transition-colors">HEROES</Link>
-          <Link href="#agents" className="hover:text-[#FBBF24] transition-colors">AGENTS</Link>
-          <Link href="#how-it-works" className="hover:text-[#FBBF24] transition-colors">HOW IT WORKS</Link>
-          <Link href="/pricing" className="hover:text-[#FBBF24] transition-colors">PRICING</Link>
-          <Link href="/hub">
-            <button className="bg-gradient-to-r from-[#FBBF24] to-[#F59E0B] text-black font-semibold py-2 px-6 rounded-md hover:scale-105 transition-transform duration-300">
-              ENTER THE ORBIT
-            </button>
-          </Link>
-        </div>
-      </nav>
-
       {/* 2. HERO SECTION */}
-      <section className="relative w-full h-[calc(100vh-73px)] flex flex-col items-center justify-center overflow-hidden">
+      <section className="relative w-full min-h-[calc(100vh-73px)] py-12 flex flex-col items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
             src="/group-banner.png"
@@ -74,7 +56,6 @@ export default function LandingPage() {
             fill
             className="object-cover object-center"
             priority
-            unoptimized
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/60 to-transparent" />
         </div>
@@ -88,10 +69,10 @@ export default function LandingPage() {
           </motion.p>
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}>
-            <h1 className="font-[family-name:var(--font-cinzel)] font-black text-white text-5xl md:text-[80px] leading-tight drop-shadow-[0_0_20px_rgba(251,191,36,0.3)]">
+            <h1 className="font-[family-name:var(--font-cinzel)] font-black text-white text-4xl sm:text-5xl md:text-[80px] leading-tight drop-shadow-[0_0_20px_rgba(251,191,36,0.3)]">
               ORBIT OF KHEMET
             </h1>
-            <h2 className="font-[family-name:var(--font-cinzel)] font-black text-white text-4xl md:text-6xl drop-shadow-[0_0_20px_rgba(251,191,36,0.3)] mt-2">
+            <h2 className="font-[family-name:var(--font-cinzel)] font-black text-white text-3xl sm:text-4xl md:text-6xl drop-shadow-[0_0_20px_rgba(251,191,36,0.3)] mt-2">
               The Empire Engine
             </h2>
           </motion.div>
@@ -136,11 +117,18 @@ export default function LandingPage() {
           {heroes.map((hero, i) => (
             <FadeInSection key={hero.slug} delay={i * 0.1}>
               <div
-                className="bg-[#111111] border border-[rgba(251,191,36,0.1)] rounded-lg p-7 h-full flex flex-col group transition-all duration-300 hover:border-[#FBBF24]"
-                style={{ borderLeftColor: hero.color, borderLeftWidth: '3px' }}
-                onMouseEnter={(e) => e.currentTarget.style.boxShadow = `0 0 30px ${hero.color}20`}
-                onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'none'}
+                className="bg-[#111111] border border-[rgba(251,191,36,0.1)] rounded-lg p-7 h-full flex flex-col group transition-all duration-300 hover:border-[#FBBF24] hover:shadow-lg"
+                style={{
+                  borderLeftColor: hero.color,
+                  borderLeftWidth: '3px',
+                  '--hover-shadow-color': `${hero.color}20`
+                } as React.CSSProperties}
               >
+                <style jsx>{`
+                  .hover\\:shadow-lg:hover {
+                    box-shadow: 0 0 30px var(--hover-shadow-color);
+                  }
+                `}</style>
                 <div className="flex items-center gap-4 mb-4">
                   <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0"
                     style={{ border: `2px solid ${hero.color}40` }}>
@@ -149,7 +137,6 @@ export default function LandingPage() {
                       alt={hero.name}
                       fill
                       className="object-cover object-top"
-                      unoptimized
                     />
                   </div>
                   <div>
@@ -177,23 +164,22 @@ export default function LandingPage() {
                 <div className="mt-auto pt-6">
                   <Link href={`/heroes/${hero.slug}`}>
                     <button
-                      className="w-full py-3 rounded-md text-sm font-semibold transition-colors duration-300 border"
+                      className="w-full py-3 rounded-md text-sm font-semibold transition-colors duration-300 border hero-btn"
                       style={{
                         borderColor: hero.color,
                         color: hero.color,
-                        // CSS hover effect handled with a styled approach using global classes or inline styles would be tricky, using tailwind trick:
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = `${hero.color}20`;
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                      }}
+                        '--hero-bg-hover': `${hero.color}20`,
+                      } as React.CSSProperties}
                     >
                       ACTIVATE HERO →
                     </button>
                   </Link>
                 </div>
+                <style jsx>{`
+                  .hero-btn:hover {
+                    background-color: var(--hero-bg-hover) !important;
+                  }
+                `}</style>
               </div>
             </FadeInSection>
           ))}

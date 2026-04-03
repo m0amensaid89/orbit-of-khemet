@@ -5,21 +5,18 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Sun, Moon, Menu, X, Zap, Building2 } from "lucide-react";
+import { heroOrder } from "@/lib/heroes";
 
-const heroSlugs = [
-  { slug: "thoren", name: "THOREN" },
-  { slug: "ramet", name: "RAMET" },
-  { slug: "nexar", name: "NEXAR" },
-  { slug: "lyra", name: "LYRA" },
-  { slug: "kairo", name: "KAIRO" },
-  { slug: "nefra", name: "NEFRA" },
-  { slug: "horusen", name: "HORUSEN" },
-];
+const heroSlugs = heroOrder.map(slug => ({
+  slug,
+  name: slug.toUpperCase(),
+}));
 
 export function GlobalNav() {
   const pathname = usePathname();
   const [isDark, setIsDark] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const isLandingPage = pathname === '/';
 
   useEffect(() => {
     const stored = localStorage.getItem("theme");
@@ -55,31 +52,47 @@ export function GlobalNav() {
 
         {/* Desktop nav: hero names + pricing */}
         <nav className="hidden lg:flex items-center gap-1">
-          {heroSlugs.map((h) => (
-            <Link
-              key={h.slug}
-              href={`/heroes/${h.slug}`}
-              className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 rounded transition-all duration-200 hover:text-primary"
-              style={{
-                color: currentSlug === h.slug ? "var(--color-khemet-gold, #D4AF37)" : undefined,
-                borderBottom: currentSlug === h.slug ? "1px solid #D4AF37" : "1px solid transparent",
-              }}
-            >
-              {h.name}
-            </Link>
-          ))}
-          <div className="w-px h-4 bg-border/50 mx-2" />
-          <Link href="/hub" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">
-            Hub
-          </Link>
-          <Link href="/profile" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">Profile</Link>
-          <Link href="/forge" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-[#D4AF37] hover:text-[#E8C84A] transition-colors flex items-center gap-1"><Zap className="w-3 h-3" /> Forge</Link>
-          <Link href="/autopilot" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">Auto-Pilot</Link>
-          <Link href="/ui-builder" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">UI Builder</Link>
-          <Link href="/sentinel" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">Code Sentinel</Link>
-          <Link href="/pricing" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">
-            Pricing
-          </Link>
+          {isLandingPage ? (
+            <>
+              <Link href="#heroes" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">HEROES</Link>
+              <Link href="#agents" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">AGENTS</Link>
+              <Link href="#how-it-works" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">HOW IT WORKS</Link>
+              <Link href="/pricing" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">PRICING</Link>
+              <Link href="/hub" className="ml-2">
+                <button className="bg-gradient-to-r from-[#FBBF24] to-[#F59E0B] text-black font-semibold text-xs py-1.5 px-4 rounded-md hover:scale-105 transition-transform duration-300">
+                  ENTER THE ORBIT
+                </button>
+              </Link>
+            </>
+          ) : (
+            <>
+              {heroSlugs.map((h) => (
+                <Link
+                  key={h.slug}
+                  href={`/heroes/${h.slug}`}
+                  className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 rounded transition-all duration-200 hover:text-primary"
+                  style={{
+                    color: currentSlug === h.slug ? "var(--color-khemet-gold, #D4AF37)" : undefined,
+                    borderBottom: currentSlug === h.slug ? "1px solid #D4AF37" : "1px solid transparent",
+                  }}
+                >
+                  {h.name}
+                </Link>
+              ))}
+              <div className="w-px h-4 bg-border/50 mx-2" />
+              <Link href="/hub" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">
+                Hub
+              </Link>
+              <Link href="/profile" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">Profile</Link>
+              <Link href="/forge" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-[#D4AF37] hover:text-[#E8C84A] transition-colors flex items-center gap-1"><Zap className="w-3 h-3" /> Forge</Link>
+              <Link href="/autopilot" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">Auto-Pilot</Link>
+              <Link href="/ui-builder" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">UI Builder</Link>
+              <Link href="/sentinel" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">Code Sentinel</Link>
+              <Link href="/pricing" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">
+                Pricing
+              </Link>
+            </>
+          )}
         </nav>
 
         {/* Right side: theme toggle + mobile menu */}
@@ -105,29 +118,45 @@ export function GlobalNav() {
       {/* Mobile dropdown */}
       {mobileOpen && (
         <div className="lg:hidden border-t border-border/30 bg-background/95 backdrop-blur-md px-4 py-4 flex flex-col gap-1">
-          <Link href="/departments" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
-            <Building2 className="w-3.5 h-3.5" /> DEPARTMENTS
-          </Link>
-          <p className="font-[Orbitron] text-[8px] tracking-[4px] uppercase text-muted-foreground/50 mb-2 px-2 mt-2">Heroes</p>
-          {heroSlugs.map((h) => (
-            <Link
-              key={h.slug}
-              href={`/heroes/${h.slug}`}
-              onClick={() => setMobileOpen(false)}
-              className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 rounded hover:bg-primary/10 hover:text-primary transition-colors"
-              style={{ color: currentSlug === h.slug ? "#D4AF37" : undefined }}
-            >
-              {h.name}
-            </Link>
-          ))}
-          <div className="h-px bg-border/30 my-2" />
-          <Link href="/hub" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">Hub</Link>
-          <Link href="/profile" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">Profile</Link>
-          <Link href="/forge" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-[#D4AF37] hover:text-[#E8C84A] transition-colors flex items-center gap-1"><Zap className="w-3 h-3" /> Forge</Link>
-          <Link href="/autopilot" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">Auto-Pilot</Link>
-          <Link href="/ui-builder" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">UI Builder</Link>
-          <Link href="/sentinel" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">Code Sentinel</Link>
-          <Link href="/pricing" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">Pricing</Link>
+          {isLandingPage ? (
+            <>
+              <Link href="#heroes" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">HEROES</Link>
+              <Link href="#agents" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">AGENTS</Link>
+              <Link href="#how-it-works" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">HOW IT WORKS</Link>
+              <Link href="/pricing" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">PRICING</Link>
+              <Link href="/hub" onClick={() => setMobileOpen(false)} className="mt-2">
+                <button className="w-full bg-gradient-to-r from-[#FBBF24] to-[#F59E0B] text-black font-semibold text-xs py-2.5 px-4 rounded-md transition-transform duration-300">
+                  ENTER THE ORBIT
+                </button>
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link href="/departments" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
+                <Building2 className="w-3.5 h-3.5" /> DEPARTMENTS
+              </Link>
+              <p className="font-[Orbitron] text-[8px] tracking-[4px] uppercase text-muted-foreground/50 mb-2 px-2 mt-2">Heroes</p>
+              {heroSlugs.map((h) => (
+                <Link
+                  key={h.slug}
+                  href={`/heroes/${h.slug}`}
+                  onClick={() => setMobileOpen(false)}
+                  className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 rounded hover:bg-primary/10 hover:text-primary transition-colors"
+                  style={{ color: currentSlug === h.slug ? "#D4AF37" : undefined }}
+                >
+                  {h.name}
+                </Link>
+              ))}
+              <div className="h-px bg-border/30 my-2" />
+              <Link href="/hub" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">Hub</Link>
+              <Link href="/profile" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">Profile</Link>
+              <Link href="/forge" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-[#D4AF37] hover:text-[#E8C84A] transition-colors flex items-center gap-1"><Zap className="w-3 h-3" /> Forge</Link>
+              <Link href="/autopilot" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">Auto-Pilot</Link>
+              <Link href="/ui-builder" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">UI Builder</Link>
+              <Link href="/sentinel" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">Code Sentinel</Link>
+              <Link href="/pricing" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">Pricing</Link>
+            </>
+          )}
         </div>
       )}
     </header>

@@ -61,7 +61,6 @@ export default function HeroImage({ slug, type, className = '' }: HeroImageProps
         className={`object-${type === 'splash' ? 'cover' : 'contain'}`}
         onError={() => setHasError(true)}
         priority={type === 'splash'}
-        unoptimized
       />
     </div>
   );

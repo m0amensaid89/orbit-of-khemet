@@ -9,7 +9,6 @@ import "@fontsource/rajdhani/700.css";
 import "@fontsource/exo-2/400.css";
 import "@fontsource/exo-2/400-italic.css";
 import "./globals.css";
-import { GlobalNav } from "@/components/GlobalNav";
 import PageTransition from "@/components/PageTransition";
 import { LayoutShell } from "@/components/LayoutShell";
 
@@ -45,10 +44,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} ${cinzel.variable} ${cinzelDecorative.variable} ${inter.variable} ${indieFlower.variable} ${roboto.variable} antialiased khemet-pattern text-foreground`}>
-        {/* Mobile only: top nav */}
-        <div className="md:hidden">
-          <GlobalNav />
-        </div>
         <LayoutShell>
           <PageTransition>
             <main className="flex-1 flex flex-col min-h-screen">
