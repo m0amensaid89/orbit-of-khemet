@@ -6,6 +6,7 @@ import { motion, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 import { heroMeta } from "@/lib/agents";
 import { heroOrder } from "@/lib/heroes";
+import { NEW_PLANS } from "@/lib/new-plans";
 
 const heroes = heroOrder.map(slug => {
   const meta = heroMeta[slug as keyof typeof heroMeta];
@@ -19,12 +20,6 @@ const heroes = heroOrder.map(slug => {
     photo: `/${slug}.png`,
   };
 });
-
-const tiers = [
-  { name: "Scout", price: "Free" },
-  { name: "Explorer", price: "$19 / month", highlight: true },
-  { name: "Commander", price: "$49 / month" },
-];
 
 const FadeInSection = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => {
   const ref = useRef(null);
@@ -45,7 +40,10 @@ const FadeInSection = ({ children, delay = 0, className = "" }: { children: Reac
 
 export default function LandingPage() {
   const [isHovered, setIsHovered] = useState(false);
+  const [pricingView, setPricingView] = useState<"personal" | "business">("personal");
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const displayedPlans = NEW_PLANS.filter(plan => plan.colorScheme === pricingView);
 
   const scrollLeft = () => {
     if (containerRef.current) {
@@ -225,7 +223,7 @@ export default function LandingPage() {
                   </div>
 
                   <div className="mt-auto pt-6">
-                    <Link href={`/heroes/${hero.slug}`}>
+                    <Link href="/pricing">
                       <button
                         className="w-full py-3 rounded-md text-sm font-semibold transition-colors duration-300 border"
                         style={{
@@ -296,19 +294,48 @@ export default function LandingPage() {
 
       {/* 5. PRICING TEASER */}
       <section id="pricing" className="pt-[60px] pb-[120px] px-6 md:px-12 max-w-5xl mx-auto">
-        <FadeInSection className="text-center mb-16">
+        <FadeInSection className="text-center mb-10">
           <h2 className="font-[family-name:var(--font-cinzel)] text-[#d4af37] text-3xl md:text-5xl font-bold mb-4">
             Choose Your Tier
           </h2>
           <p className="text-xl text-[#d0c5af] opacity-90">Start free. Scale as you grow.</p>
         </FadeInSection>
 
+        <FadeInSection className="flex justify-center mb-12">
+          <div className="bg-[#111111] border border-[rgba(251,191,36,0.2)] rounded-full p-1 inline-flex">
+            <button
+              onClick={() => setPricingView("personal")}
+              className={`px-8 py-3 rounded-full text-sm font-bold font-[family-name:var(--font-cinzel)] transition-all ${
+                pricingView === "personal"
+                  ? "bg-[#D4AF37] text-black"
+                  : "text-[#d0c5af] hover:text-white"
+              }`}
+            >
+              Personal
+            </button>
+            <button
+              onClick={() => setPricingView("business")}
+              className={`px-8 py-3 rounded-full text-sm font-bold font-[family-name:var(--font-cinzel)] transition-all ${
+                pricingView === "business"
+                  ? "bg-[#D4AF37] text-black"
+                  : "text-[#d0c5af] hover:text-white"
+              }`}
+            >
+              Business
+            </button>
+          </div>
+        </FadeInSection>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {tiers.map((tier, i) => (
-            <FadeInSection key={tier.name} delay={i * 0.1}>
-              <div className={`bg-[#111111] rounded-lg p-8 text-center flex flex-col items-center justify-center h-full border ${tier.highlight ? 'border-[#FBBF24] shadow-[0_0_20px_rgba(251,191,36,0.2)]' : 'border-[rgba(251,191,36,0.1)]'}`}>
-                <h3 className="font-[family-name:var(--font-cinzel)] text-[#FBBF24] text-2xl font-bold mb-6">{tier.name}</h3>
-                <div className="text-white text-3xl font-bold mb-8">{tier.price}</div>
+          {displayedPlans.map((plan, i) => (
+            <FadeInSection key={plan.id} delay={i * 0.1}>
+              <div className={`bg-[#111111] rounded-lg p-8 text-center flex flex-col items-center justify-between h-full border ${plan.popular ? 'border-[#FBBF24] shadow-[0_0_20px_rgba(251,191,36,0.2)]' : 'border-[rgba(251,191,36,0.1)]'}`}>
+                <div>
+                  <h3 className="font-[family-name:var(--font-cinzel)] text-[#FBBF24] text-xl font-bold mb-2">{plan.name}</h3>
+                  <p className="font-[family-name:var(--font-roboto)] text-sm text-[#d0c5af] h-10 mb-6">{plan.description}</p>
+                  <div className="text-white text-4xl font-bold mb-2">${plan.monthlyPrice} <span className="text-sm font-normal text-[#d0c5af]">/mo</span></div>
+                  <div className="text-[#D4AF37] font-[family-name:var(--font-roboto)] text-sm mb-8">{plan.credits.toLocaleString()} Credits</div>
+                </div>
                 <Link href="/pricing" className="w-full">
                   <button className="w-full border border-[#FBBF24] text-[#FBBF24] py-3 rounded-md hover:bg-[#FBBF24] hover:text-black transition-colors duration-300 font-semibold text-sm">
                     VIEW FULL PRICING →

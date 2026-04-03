@@ -11,6 +11,7 @@ export function LayoutShell({ children }: { children: React.ReactNode }) {
   const hideSidebar = pathname === '/' || pathname === '/auth' || pathname?.startsWith('/auth/');
 
   const isHomePage = pathname === '/';
+  const isChatPage = pathname?.startsWith('/chat');
 
   if (hideSidebar) {
     // Landing + auth: full width, footer visible at bottom
@@ -34,10 +35,10 @@ export function LayoutShell({ children }: { children: React.ReactNode }) {
         <div className="md:hidden">
           <GlobalNav />
         </div>
-        <div className="flex-1 overflow-y-auto">
+        <div className={`flex-1 ${isChatPage ? 'overflow-hidden' : 'overflow-y-auto'}`}>
           {children}
         </div>
-        <Footer isHomePage={isHomePage} />
+        {!isChatPage && <Footer isHomePage={isHomePage} />}
       </div>
     </div>
   );

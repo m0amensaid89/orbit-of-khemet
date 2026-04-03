@@ -338,7 +338,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
   return (
     <>
       {/* Outer — true full height, no padding, no scroll */}
-      <div className="h-screen overflow-hidden flex flex-col w-full"
+      <div className="h-full overflow-hidden flex flex-col w-full"
         style={{ background: bgDeep }}>
 
         {/* Inner card — fills remaining space */}
