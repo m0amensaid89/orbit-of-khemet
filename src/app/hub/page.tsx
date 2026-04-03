@@ -264,37 +264,27 @@ function HubPageContent() {
                     </div>
 
                     {/* Content */}
-                    <div className="p-2 sm:p-3 lg:p-5 flex flex-col gap-2 lg:gap-3 flex-1 overflow-hidden">
+                    <div className="p-2 flex flex-col gap-1 lg:gap-2 flex-1 overflow-hidden">
 
-                      {/* Archetype dot + label */}
-                      <div className="flex items-center gap-1.5 lg:gap-2">
-                        <div className="w-1 lg:w-1.5 h-1 lg:h-1.5 rounded-full shrink-0"
-                          style={{ background: meta?.color_signature || data.accentColor }} />
-                        <span className="font-[Orbitron] text-[5px] sm:text-[5px] lg:text-[6px] tracking-[1px] lg:tracking-[2px] uppercase"
-                          style={{ color: meta?.color_signature || data.accentColor }}>
-                          {meta?.archetype || data.role}
-                        </span>
-                      </div>
-
-                      {/* Hero name */}
-                      <h2 className="font-[Orbitron] text-[7px] sm:text-[7px] lg:text-xs font-black tracking-tight" style={{ color: '#ffffff' }}>
-                        {data.name}
-                      </h2>
-
-                      {/* Short tagline */}
-                      <p className="font-[Rajdhani] text-[6px] sm:text-[6px] lg:text-[8px] leading-tight lg:leading-relaxed" style={{ color: '#d0c5af', opacity: 0.8 }}>
-                        {meta?.role_line || data.role}
-                      </p>
-
-                      {/* Agent count */}
-                      <div className="flex items-center gap-1 lg:gap-2">
-                        <span className="font-[Orbitron] text-xs lg:text-lg font-bold" style={{ color: '#D4AF37' }}>
+                      {/* Top Line: Agent Count */}
+                      <div className="flex items-center gap-1">
+                        <span className="font-[Orbitron] text-[6px] font-bold" style={{ color: '#D4AF37' }}>
                           {heroAgents[slug as keyof typeof heroAgents]?.length || 0}
                         </span>
-                        <span className="font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[8px] tracking-[1px] lg:tracking-[2px] uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                        <span className="font-[Orbitron] text-[5px] tracking-[1px] uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>
                           AGENTS
                         </span>
                       </div>
+
+                      {/* Middle Line: Hero name */}
+                      <h2 className="font-[Orbitron] text-[7px] font-black tracking-tight uppercase" style={{ color: '#ffffff' }}>
+                        {data.name}
+                      </h2>
+
+                      {/* Bottom Line: Short Role */}
+                      <p className="font-[Rajdhani] text-[6px] leading-tight" style={{ color: '#d0c5af', opacity: 0.8 }}>
+                        {data.role}
+                      </p>
 
                       {/* Two action buttons */}
                       <div className="flex flex-col xl:flex-row gap-1.5 lg:gap-2 mt-auto pt-2 lg:pt-3"
