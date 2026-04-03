@@ -264,50 +264,50 @@ function HubPageContent() {
                     </div>
 
                     {/* Content */}
-                    <div className="p-2 flex flex-col gap-1 lg:gap-2 flex-1 overflow-hidden">
+                    <div className="p-1 sm:p-2 flex flex-col gap-0.5 sm:gap-1 flex-1 overflow-hidden">
 
                       {/* Top Line: Agent Count */}
                       <div className="flex items-center gap-1">
-                        <span className="font-[Orbitron] text-[6px] font-bold" style={{ color: '#D4AF37' }}>
+                        <span className="font-[Orbitron] text-[8px] xl:text-[10px] font-bold" style={{ color: '#D4AF37' }}>
                           {heroAgents[slug as keyof typeof heroAgents]?.length || 0}
                         </span>
-                        <span className="font-[Orbitron] text-[5px] tracking-[1px] uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                        <span className="font-[Orbitron] text-[6px] xl:text-[8px] tracking-[1px] uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>
                           AGENTS
                         </span>
                       </div>
 
                       {/* Middle Line: Hero name */}
-                      <h2 className="font-[Orbitron] text-[7px] font-black tracking-tight uppercase" style={{ color: '#ffffff' }}>
+                      <div className="font-[Orbitron] text-[6px] sm:text-[7px] md:text-[8px] lg:text-[9px] xl:text-[10px] 2xl:text-[12px] font-black tracking-tighter uppercase w-full truncate" style={{ color: '#ffffff', lineHeight: 1 }}>
                         {data.name}
-                      </h2>
+                      </div>
 
                       {/* Bottom Line: Short Role */}
-                      <p className="font-[Rajdhani] text-[6px] leading-tight" style={{ color: '#d0c5af', opacity: 0.8 }}>
+                      <div className="font-[Rajdhani] text-[7px] md:text-[8px] lg:text-[9px] xl:text-[10px] leading-tight w-full" style={{ color: '#d0c5af', opacity: 0.8 }}>
                         {data.role}
-                      </p>
+                      </div>
 
                       {/* Two action buttons */}
-                      <div className="flex flex-col xl:flex-row gap-1.5 lg:gap-2 mt-auto pt-2 lg:pt-3"
+                      <div className="flex flex-row gap-1 mt-auto pt-1 sm:pt-2 w-full"
                         style={{ borderTop: `1px solid ${meta?.color_signature || '#D4AF37'}15` }}>
                         <Link href={`/chat/${slug}`} className="flex-1 w-full" onClick={e => e.stopPropagation()}>
-                          <button className="w-full font-[Orbitron] text-[4px] sm:text-[5px] lg:text-[6px] tracking-[1px] lg:tracking-[2px] uppercase py-1.5 lg:py-2.5 transition-all px-1"
+                          <div className="w-full font-[Orbitron] text-[6px] lg:text-[7px] xl:text-[8px] tracking-[1px] uppercase py-1 md:py-1.5 transition-all px-0.5 text-center cursor-pointer"
                             style={{
                               background: `linear-gradient(135deg, ${meta?.color_signature}, ${meta?.color_signature}cc)`,
                               color: '#0A0A0A',
                               fontWeight: 700,
                             }}>
                             ENTER
-                          </button>
+                          </div>
                         </Link>
                         <Link href={`/heroes/${slug}`} className="flex-1 w-full" onClick={e => e.stopPropagation()}>
-                          <button className="w-full font-[Orbitron] text-[4px] sm:text-[5px] lg:text-[6px] tracking-[1px] lg:tracking-[2px] uppercase py-1.5 lg:py-2.5 transition-all px-1"
+                          <div className="w-full font-[Orbitron] text-[6px] lg:text-[7px] xl:text-[8px] tracking-[1px] uppercase py-1 md:py-1.5 transition-all px-0.5 text-center cursor-pointer"
                             style={{
                               background: 'transparent',
                               border: `1px solid ${meta?.color_signature}40`,
                               color: meta?.color_signature,
                             }}>
                             DETAILS
-                          </button>
+                          </div>
                         </Link>
                       </div>
                     </div>

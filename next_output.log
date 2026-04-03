@@ -1,23 +1,28 @@
+npm warn Unknown cli config "--turbopack". This will stop working in the next major version of npm.
 
 > temp-app@0.1.0 dev
 > next dev --turbopack
 
+ ⚠ Port 3000 is in use by an unknown process, using available port 3001 instead.
    ▲ Next.js 15.5.14 (Turbopack)
-   - Local:        http://localhost:3000
-   - Network:      http://192.168.0.2:3000
+   - Local:        http://localhost:3001
+   - Network:      http://192.168.0.2:3001
 
  ✓ Starting...
-Attention: Next.js now collects completely anonymous telemetry regarding usage.
-This information is used to shape Next.js' roadmap and prioritize features.
-You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
-https://nextjs.org/telemetry
-
  ○ Compiling middleware ...
- ✓ Compiled middleware in 831ms
- ✓ Ready in 2.5s
- ○ Compiling / ...
- ✓ Compiled / in 10s
- GET / 200 in 11536ms
- GET / 200 in 572ms
- GET / 200 in 575ms
- GET / 200 in 594ms
+ ✓ Compiled middleware in 1547ms
+ ✓ Ready in 4.1s
+ ○ Compiling /hub ...
+ ✓ Compiled /hub in 12s
+ GET /hub 200 in 13657ms
+ GET /hub 200 in 556ms
+ GET /hub 200 in 584ms
+ GET /hub 200 in 577ms
+ GET /hub 200 in 573ms
+ GET /hub 200 in 559ms
+ GET /hub 200 in 355ms
+ GET /hub 200 in 816ms
+ GET /hub 200 in 334ms
+ GET /hub 200 in 314ms
+ GET /hub 200 in 1159ms
+ GET /hub 200 in 911ms
