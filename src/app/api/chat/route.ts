@@ -1,10 +1,10 @@
 import { NextRequest } from 'next/server';
-import { heroAgents, masterSystemPrompt, getAgentModel } from '@/lib/agents';
+import { heroMeta, heroAgents, masterSystemPrompt, getAgentModel } from '@/lib/agents';
 import { createClient as createSupabaseClient, SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/server';
 import { getHero } from '@/lib/heroes';
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
-import { streamText } from 'ai';
+import { streamText, JSONValue } from 'ai';
 
 // ─── Sanitize unicode for OpenRouter headers ───────────────────────────────
 function sanitizeForFetch(text: string): string {
@@ -22,9 +22,18 @@ function isImageRequest(msg: string): boolean {
 }
 
 // ─── Task type detection ───────────────────────────────────────────────────
-type TaskType = 'coding' | 'reasoning' | 'creative' | 'analysis' | 'vision' | 'tool_calling' | 'simple' | 'export' | 'general';
+type TaskType = 'coding' | 'reasoning' | 'creative' | 'analysis' | 'vision' | 'tool_calling' | 'simple' | 'general';
 type Complexity = 'simple' | 'medium' | 'complex';
 type UserPlan = 'scout' | 'explorer' | 'commander';
+
+interface TaskProfile {
+  taskType: TaskType;
+  complexity: Complexity;
+  model: string;
+  maxTokens: number;
+  providerSort: 'throughput' | 'price' | 'latency';
+  maxPrice?: { prompt: number; completion: number };
+}
 
 function detectTaskType(msg: string): TaskType {
   const lower = msg.toLowerCase();
@@ -33,9 +42,7 @@ function detectTaskType(msg: string): TaskType {
   const creativeSignals = ['write','story','blog','email','caption','copy','headline','tagline','creative','marketing','social media post','newsletter'];
   const analysisSignals = ['analyze','report','data','metrics','kpi','forecast','compare','strategy','business plan','proposal','audit','review'];
   const simpleSignals = ['hi','hello','hey','thanks','ok','yes','no','what is','define','translate','calculate','convert','format','fix grammar'];
-  const exportSignals = ['export','pdf','excel','powerpoint','presentation','spreadsheet','word document','format as'];
 
-  if (exportSignals.some(s => lower.includes(s))) return 'export';
   if (codingSignals.some(s => lower.includes(s))) return 'coding';
   if (reasoningSignals.some(s => lower.includes(s))) return 'reasoning';
   if (analysisSignals.some(s => lower.includes(s))) return 'analysis';
@@ -59,7 +66,7 @@ function selectModel(
   heroSlug: string,
   plan: UserPlan,
   agentModel?: string
-): { model: string; maxTokens: number; providerSort: 'throughput' | 'price' | 'latency' | 'quality'; maxPrice?: { prompt: number; completion: number } } {
+): { model: string; maxTokens: number; providerSort: 'throughput' | 'price' | 'latency'; maxPrice?: { prompt: number; completion: number } } {
 
   // Scout plan — use free router
   if (plan === 'scout') {
@@ -93,13 +100,13 @@ function selectModel(
   if (taskType === 'coding') {
     if (complexity === 'complex') {
       return {
-        model: plan === 'commander' ? 'anthropic/claude-3.5-sonnet' : 'openai/gpt-4o',
+        model: plan === 'commander' ? 'anthropic/claude-sonnet-4-5' : 'openai/gpt-4o',
         maxTokens: plan === 'commander' ? 8000 : 4000,
-        providerSort: 'quality',
+        providerSort: 'quality' as 'throughput',
       };
     }
     return {
-      model: 'qwen/qwen-2.5-coder-32b-instruct',
+      model: 'openai/gpt-4o',
       maxTokens: 3000,
       providerSort: 'throughput',
     };
@@ -119,7 +126,7 @@ function selectModel(
   if (taskType === 'analysis') {
     if (complexity === 'complex' && plan === 'commander') {
       return {
-        model: 'anthropic/claude-3.5-sonnet',
+        model: 'anthropic/claude-sonnet-4-5',
         maxTokens: 8000,
         providerSort: 'throughput',
       };
@@ -128,15 +135,6 @@ function selectModel(
       model: 'openai/gpt-4o',
       maxTokens: 4000,
       providerSort: 'throughput',
-    };
-  }
-
-  // Export & Formatting Tasks
-  if (taskType === 'export') {
-    return {
-      model: 'anthropic/claude-3.5-sonnet', // Best at strict markdown formatting
-      maxTokens: 8000,
-      providerSort: 'quality',
     };
   }
 
@@ -152,7 +150,7 @@ function selectModel(
 
   // Hero-based routing for general tasks
   const heroRouting: Record<string, string> = {
-    thoren: 'anthropic/claude-3.5-sonnet',    // Legal, Finance — needs precision
+    thoren: 'anthropic/claude-sonnet-4-5',    // Legal, Finance — needs precision
     ramet: 'openai/gpt-4o',                    // Operations — balanced
     nexar: 'deepseek/deepseek-r1',             // Transformation — deep reasoning
     lyra: 'google/gemini-2.5-flash',           // Content — fast creative
@@ -244,7 +242,8 @@ export async function POST(req: NextRequest) {
 
     // Get user + plan
     const supabaseServer = await createClient();
-    const { data: { user } } = await supabaseServer.auth.getUser(); 
+    const { data: { user } } = await supabaseServer.auth.getUser();
+    const plan: UserPlan = (localStorage?.getItem?.('orbit_plan') as UserPlan) || 'explorer';
 
     // Get user plan from profile
     let userPlan: UserPlan = 'explorer';
@@ -277,13 +276,15 @@ export async function POST(req: NextRequest) {
     // Select model
     let model: string;
     let maxTokens: number;
-    let providerSort: 'throughput' | 'price' | 'latency' | 'quality';
+    let providerSort: 'throughput' | 'price' | 'latency';
     let maxPrice: { prompt: number; completion: number } | undefined;
+    let modalities: string[] | undefined;
 
     if (wantsImage) {
       model = 'google/gemini-2.5-flash-exp-image-generation';
       maxTokens = 2000;
       providerSort = 'throughput';
+      modalities = ['image', 'text'];
     } else {
       const selected = selectModel(taskType, complexity, heroSlug, userPlan, agentModel);
       model = selected.model;
@@ -294,6 +295,7 @@ export async function POST(req: NextRequest) {
 
     // Build system prompt
     const heroConfig = getHero(heroSlug);
+    const heroMetaData = heroMeta[heroSlug as keyof typeof heroMeta];
     let systemPrompt = heroConfig?.systemPrompt || masterSystemPrompt;
 
     // Inject agent-specific system prompt
@@ -328,40 +330,7 @@ export async function POST(req: NextRequest) {
           process.env.SUPABASE_SERVICE_ROLE_KEY!
         );
         if (!activeThreadId) {
-          // Generate smart title from first user message
-          let title = lastMessage.slice(0, 60);
-          try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 3000);
-            const titleRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-                'Content-Type': 'application/json',
-                'HTTP-Referer': 'https://orbit-of-khemet.vercel.app',
-              },
-              body: JSON.stringify({
-                model: 'google/gemini-2.5-flash',
-                max_tokens: 20,
-                messages: [
-                  {
-                    role: 'user',
-                    content: `Generate a 3-5 word title for this task. Reply with ONLY the title, no punctuation, no quotes:\n\n${lastMessage.slice(0, 200)}`,
-                  },
-                ],
-              }),
-              signal: controller.signal,
-            });
-            clearTimeout(timeoutId);
-            if (titleRes.ok) {
-              const titleData = await titleRes.json();
-              const generated = titleData.choices?.[0]?.message?.content?.trim();
-              if (generated && generated.length > 0 && generated.length < 60) {
-                title = generated;
-              }
-            }
-          } catch { /* use fallback title */ }
-
+          const title = lastMessage.slice(0, 60);
           const { data: newThread } = await supabaseAdmin
             .from('chat_threads')
             .insert({ user_id: user.id, hero_slug: heroSlug, title })
@@ -380,8 +349,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Build provider options
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const providerOptions: Record<string, any> = {
+    const providerOptions: Record<string, JSONValue> = {
       sort: providerSort,
       allow_fallbacks: true,
       data_collection: 'deny',
@@ -397,7 +365,7 @@ export async function POST(req: NextRequest) {
       content: m.content,
     }));
 
-    const result = streamText({
+    const result = await streamText({
       model: openrouter(model),
       system: systemPrompt,
       messages: modelMessages,

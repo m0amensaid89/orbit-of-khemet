@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import { heroMeta } from "@/lib/agents";
 import { heroOrder } from "@/lib/heroes";
 
@@ -44,6 +44,40 @@ const FadeInSection = ({ children, delay = 0, className = "" }: { children: Reac
 };
 
 export default function LandingPage() {
+  const [isHovered, setIsHovered] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const scrollLeft = () => {
+    if (containerRef.current) {
+      containerRef.current.scrollBy({ left: -400, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (containerRef.current) {
+      containerRef.current.scrollBy({ left: 400, behavior: 'smooth' });
+    }
+  };
+
+  // Simple auto-scroll that pauses on hover
+  useEffect(() => {
+    if (isHovered || !containerRef.current) return;
+
+    const interval = setInterval(() => {
+      if (containerRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
+        // If we reached the end, snap back to start
+        if (scrollLeft + clientWidth >= scrollWidth - 10) {
+          containerRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          containerRef.current.scrollBy({ left: 400, behavior: 'smooth' });
+        }
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [isHovered]);
+
   return (
     <div className="bg-[#0A0A0A] min-h-screen text-[#d0c5af] font-[family-name:var(--font-inter)]">
 
@@ -103,83 +137,116 @@ export default function LandingPage() {
       </section>
 
       {/* 3. 7 ELITE HEROES SHOWCASE */}
-      <section id="heroes" className="py-[120px] px-6 md:px-12 max-w-full mx-auto">
-        <FadeInSection className="text-center mb-16">
+      <section id="heroes" className="py-[120px] px-6 md:px-12 max-w-full mx-auto relative overflow-hidden">
+        <FadeInSection className="text-center mb-16 relative">
           <h2 className="font-[family-name:var(--font-cinzel)] text-[#d4af37] text-3xl md:text-5xl font-bold">
             7 Heroes. Every Business Function.
           </h2>
+          <div className="flex gap-4 justify-center mt-8">
+            <button
+              onClick={scrollLeft}
+              className="w-12 h-12 flex items-center justify-center rounded-full border border-[#FBBF24]/30 text-[#FBBF24] hover:bg-[#FBBF24]/10 transition-colors"
+            >
+              ←
+            </button>
+            <button
+              onClick={scrollRight}
+              className="w-12 h-12 flex items-center justify-center rounded-full border border-[#FBBF24]/30 text-[#FBBF24] hover:bg-[#FBBF24]/10 transition-colors"
+            >
+              →
+            </button>
+          </div>
         </FadeInSection>
 
-        <div className="grid grid-cols-1 md:grid-cols-7 gap-4 lg:gap-6">
-          {heroes.map((hero, i) => (
-            <FadeInSection key={hero.slug} delay={i * 0.1}>
-              <div
-                className="bg-[#111111] border border-[rgba(251,191,36,0.1)] rounded-lg p-7 h-full flex flex-col group transition-all duration-300 hover:border-[#FBBF24] hover:shadow-lg"
-                style={{
-                  borderLeftColor: hero.color,
-                  borderLeftWidth: '3px',
-                  '--hover-shadow-color': `${hero.color}20`
-                } as React.CSSProperties}
-              >
-                <style jsx>{`
-                  .hover\\:shadow-lg:hover {
-                    box-shadow: 0 0 30px var(--hover-shadow-color);
-                  }
-                `}</style>
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0"
-                    style={{ border: `2px solid ${hero.color}40` }}>
-                    <Image
-                      src={hero.photo}
-                      alt={hero.name}
-                      fill
-                      className="object-cover object-top"
-                    />
+        <div
+          className="relative -mx-6 md:-mx-12 px-6 md:px-12"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          <div
+            ref={containerRef}
+            className="flex gap-4 lg:gap-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory scroll-smooth pb-8"
+            style={{
+              scrollbarWidth: 'none', /* Firefox */
+              msOverflowStyle: 'none'  /* IE and Edge */
+            }}
+          >
+            <style jsx>{`
+              div::-webkit-scrollbar {
+                display: none;
+              }
+            `}</style>
+
+            {heroes.map((hero, i) => (
+              <FadeInSection key={hero.slug} delay={i * 0.1} className="shrink-0 w-[85vw] md:w-[calc(33.333%-16px)] snap-center">
+                <div
+                  className="bg-[#111111] border border-[rgba(251,191,36,0.1)] rounded-lg p-7 h-full flex flex-col group transition-all duration-300 hover:border-[#FBBF24]"
+                  style={{
+                    borderLeftColor: hero.color,
+                    borderLeftWidth: '3px',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = `0 0 30px ${hero.color}20`;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0"
+                      style={{ border: `2px solid ${hero.color}40` }}>
+                      <Image
+                        src={hero.photo}
+                        alt={hero.name}
+                        fill
+                        className="object-cover object-top"
+                      />
+                    </div>
+                    <div>
+                      <h4 className="font-[family-name:var(--font-cinzel)] text-[#FBBF24] font-bold text-lg leading-tight">
+                        {hero.name}
+                      </h4>
+                      <p className="font-[family-name:var(--font-roboto)] text-[#06B6D4] text-xs font-medium mt-1 uppercase tracking-wider">{hero.title}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="font-[family-name:var(--font-cinzel)] text-[#FBBF24] font-bold text-lg leading-tight">
-                      {hero.name}
-                    </h4>
-                    <p className="font-[family-name:var(--font-roboto)] text-[#06B6D4] text-xs font-medium mt-1 uppercase tracking-wider">{hero.title}</p>
+
+                  <div className="mb-4 flex-grow font-[family-name:var(--font-roboto)]">
+                    <p className="font-[family-name:var(--font-roboto)] text-[10px] text-[#FBBF24] font-bold tracking-widest uppercase mb-2">WHEN TO CHOOSE</p>
+                    <p className="font-[family-name:var(--font-roboto)] text-sm text-[#d0c5af] opacity-90 leading-relaxed mb-4 line-clamp-3">{hero.choose}</p>
+
+                    <ul className="space-y-2 font-[family-name:var(--font-roboto)]">
+                      {hero.powers.slice(0, 3).map(power => (
+                        <li key={power} className="font-[family-name:var(--font-roboto)] text-sm flex items-start gap-2">
+                          <span style={{ color: hero.color }}>✦</span>
+                          <span className="font-[family-name:var(--font-roboto)] text-[#d0c5af] opacity-80 line-clamp-1">{power}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="mt-auto pt-6">
+                    <Link href={`/heroes/${hero.slug}`}>
+                      <button
+                        className="w-full py-3 rounded-md text-sm font-semibold transition-colors duration-300 border"
+                        style={{
+                          borderColor: hero.color,
+                          color: hero.color,
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = `${hero.color}20`;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                        }}
+                      >
+                        ACTIVATE HERO →
+                      </button>
+                    </Link>
                   </div>
                 </div>
-
-                <div className="mb-4 flex-grow font-[family-name:var(--font-roboto)]">
-                  <p className="font-[family-name:var(--font-roboto)] text-[10px] text-[#FBBF24] font-bold tracking-widest uppercase mb-2">WHEN TO CHOOSE</p>
-                  <p className="font-[family-name:var(--font-roboto)] text-sm text-[#d0c5af] opacity-90 leading-relaxed mb-4">{hero.choose}</p>
-
-                  <ul className="space-y-2 font-[family-name:var(--font-roboto)]">
-                    {hero.powers.map(power => (
-                      <li key={power} className="font-[family-name:var(--font-roboto)] text-sm flex items-start gap-2">
-                        <span style={{ color: hero.color }}>✦</span>
-                        <span className="font-[family-name:var(--font-roboto)] text-[#d0c5af] opacity-80">{power}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="mt-auto pt-6">
-                  <Link href={`/heroes/${hero.slug}`}>
-                    <button
-                      className="w-full py-3 rounded-md text-sm font-semibold transition-colors duration-300 border hero-btn"
-                      style={{
-                        borderColor: hero.color,
-                        color: hero.color,
-                        '--hero-bg-hover': `${hero.color}20`,
-                      } as React.CSSProperties}
-                    >
-                      ACTIVATE HERO →
-                    </button>
-                  </Link>
-                </div>
-                <style jsx>{`
-                  .hero-btn:hover {
-                    background-color: var(--hero-bg-hover) !important;
-                  }
-                `}</style>
-              </div>
-            </FadeInSection>
-          ))}
+              </FadeInSection>
+            ))}
+          </div>
         </div>
       </section>
 
