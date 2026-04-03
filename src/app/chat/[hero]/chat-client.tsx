@@ -141,20 +141,13 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
   // Agent speaks first: onboarding message
   useEffect(() => {
     if (messages.length === 0 && !threadId) {
-      if (hero && hero.welcomeMessage) {
-        setMessages([{ id: "onboarding", role: "assistant", content: hero.welcomeMessage }]);
-      } else if (agent && "prompt" in agent && agent.prompt) {
-        const onboarding = getOnboardingMessage();
-        if (onboarding) {
-          setMessages([{ id: "onboarding", role: "assistant", content: onboarding }]);
-        } else {
-          setMessages([{ id: "onboarding", role: "assistant", content: `I am ${agentName}. ${agent.description || ""} How can I assist you today?` }]);
-        }
-      } else if (isMaster) {
+      if (isMaster) {
         setMessages([{ id: "onboarding", role: "assistant", content: `The Empire Engine is online. All 85 agents are standing by. What directive shall I execute?` }]);
+      } else {
+        setMessages([{ id: "onboarding", role: "assistant", content: `Welcome I am ${agentName} How can I help you Today` }]);
       }
     }
-  }, [agentParam, heroParam, agent, agentName, isMaster, hero, messages.length, setMessages, threadId]);
+  }, [agentParam, heroParam, agentName, isMaster, messages.length, setMessages, threadId]);
 
   const autoprompt = searchParams.get('autoprompt');
 
@@ -400,17 +393,17 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
               </div>
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center justify-between px-2">
-                    <span className="font-[Orbitron] text-[9px] tracking-widest uppercase text-white/30 flex items-center gap-1">
+                    <span className="font-[Orbitron] text-[9px] tracking-widest uppercase text-white/30 flex items-center gap-1 shrink-0">
                       <Zap className="w-3 h-3 text-[#D4AF37]" /> {energyCost} energy per message
                     </span>
-                    <span className="font-[Orbitron] text-[8px] tracking-[2px] uppercase text-white/20">
-                      Powered by Empire Engine
-                    </span>
-                  </div>
-                  <div className="text-center w-full px-2">
-                    <span className="font-[Rajdhani] text-[10px] text-white/30">
-                      Responses are generated using AI and may contain mistakes.
-                    </span>
+                    <div className="flex items-center gap-2 text-right">
+                      <span className="font-[Rajdhani] text-[10px] text-white/30">
+                        Responses are generated using AI and may contain mistakes.
+                      </span>
+                      <span className="font-[Orbitron] text-[8px] tracking-[2px] uppercase text-white/20">
+                        Powered by Empire Engine
+                      </span>
+                    </div>
                   </div>
                 </div>
               </form>
