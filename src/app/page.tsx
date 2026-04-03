@@ -4,72 +4,21 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import { heroMeta } from "@/lib/agents";
+import { heroOrder } from "@/lib/heroes";
 
-const heroes = [
-  {
-    name: "Pharaoh's Scribe",
-    title: "Content & Copy Domination",
-    slug: "lyra",
-    icon: "✍️",
-    color: "#2D6A4F",
-    choose: "Choose when you need viral posts, courses, emails, or any written content that converts",
-    powers: ["Blog & Article Writing", "Email Sequences", "Course Content", "Social Copy"]
-  },
-  {
-    name: "Nile Strategist",
-    title: "Growth & Marketing Empire",
-    slug: "nexar",
-    icon: "📢",
-    color: "#FF4444",
-    choose: "Choose for lead-gen funnels, ad campaigns, SEO strategy, and growth planning",
-    powers: ["Cold Email Sequences", "SEO Strategy", "Ad Copy", "Growth Plans"]
-  },
-  {
-    name: "Pyramid Architect",
-    title: "Code & Systems Builder",
-    slug: "kairo",
-    icon: "⚙️",
-    color: "#6C63FF",
-    choose: "Choose for building agents, apps, automations, and technical systems",
-    powers: ["SOP Creation", "Automation Workflows", "Tech Stack Design", "Process Optimization"]
-  },
-  {
-    name: "Sphinx Oracle",
-    title: "Logic & Analysis Master",
-    slug: "thoren",
-    icon: "⚖️",
-    color: "#C0C0C0",
-    choose: "Choose for data analysis, research, decision frameworks, and legal documents",
-    powers: ["Data Analysis", "Research Reports", "Legal Templates", "Risk Assessment"]
-  },
-  {
-    name: "Ra's Visionary",
-    title: "Creative & Design Empire",
-    slug: "horusen",
-    icon: "🎯",
-    color: "#3A6DD4",
-    choose: "Choose for brand strategy, creative direction, storytelling, and business planning",
-    powers: ["Brand Strategy", "Business Plans", "Competitive Analysis", "OKR Setting"]
-  },
-  {
-    name: "Anubis Guardian",
-    title: "Sales & CRM Closer",
-    slug: "nefra",
-    icon: "💰",
-    color: "#9B59B6",
-    choose: "Choose for sales scripts, proposals, follow-up sequences, and closing deals",
-    powers: ["Sales Scripts", "Proposals", "Objection Handling", "Follow-up Sequences"]
-  },
-  {
-    name: "Isis Alchemist",
-    title: "eLearning & MasterClass Creator",
-    slug: "ramet",
-    icon: "📊",
-    color: "#4ECDC4",
-    choose: "Choose for financial reports, KPI dashboards, forecasting, and pricing strategy",
-    powers: ["KPI Frameworks", "Revenue Forecasting", "Pricing Strategy", "Budget Planning"]
-  },
-];
+const heroes = heroOrder.map(slug => {
+  const meta = heroMeta[slug as keyof typeof heroMeta];
+  return {
+    slug,
+    name: meta?.name || slug.toUpperCase(),
+    title: meta?.archetype || '',
+    color: meta?.color_signature || '#D4AF37',
+    choose: meta?.best_for || '',
+    powers: meta?.specialties || [],
+    photo: `/${slug}.png`,
+  };
+});
 
 const tiers = [
   { name: "Scout", price: "Free" },
@@ -151,7 +100,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
             className="mt-8 text-lg md:text-xl font-light tracking-wide max-w-3xl"
           >
-            7 Elite Heroes  ✦  85 Named Agents  ✦  5 AI Models  ✦  I-Gamify Grid
+            7 Elite Heroes  ✦  85 Named Agents
           </motion.p>
 
           <motion.div
@@ -193,7 +142,16 @@ export default function LandingPage() {
                 onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'none'}
               >
                 <div className="flex items-center gap-4 mb-4">
-                  <span className="text-4xl">{hero.icon}</span>
+                  <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0"
+                    style={{ border: `2px solid ${hero.color}40` }}>
+                    <Image
+                      src={hero.photo}
+                      alt={hero.name}
+                      fill
+                      className="object-cover object-top"
+                      unoptimized
+                    />
+                  </div>
                   <div>
                     <h4 className="font-[family-name:var(--font-cinzel)] text-[#FBBF24] font-bold text-lg leading-tight">
                       {hero.name}
@@ -217,7 +175,7 @@ export default function LandingPage() {
                 </div>
 
                 <div className="mt-auto pt-6">
-                  <Link href={`/chat/${hero.slug}`}>
+                  <Link href={`/heroes/${hero.slug}`}>
                     <button
                       className="w-full py-3 rounded-md text-sm font-semibold transition-colors duration-300 border"
                       style={{

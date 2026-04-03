@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { heroOrder } from '@/lib/heroes';
 import { heroMeta } from '@/lib/agents';
 
@@ -9,11 +8,53 @@ export default function ArtifactsPage() {
   const [showNewRelic, setShowNewRelic] = useState(false);
   const [selectedHero, setSelectedHero] = useState('');
   const [task, setTask] = useState('');
-  const router = useRouter();
+  const [relicResult, setRelicResult] = useState<string | null>(null);
+  const [executing, setExecuting] = useState(false);
 
-  const handleLaunch = () => {
+  const handleLaunch = async () => {
     if (!selectedHero || !task.trim()) return;
-    router.push(`/chat/${selectedHero}?task=${encodeURIComponent(task)}&relic=true`);
+    setExecuting(true);
+    setRelicResult(null);
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [{ role: 'user', content: task }],
+          hero: selectedHero,
+          agent: '',
+          threadId: null,
+        }),
+      });
+
+      const reader = res.body?.getReader();
+      const decoder = new TextDecoder();
+      let fullText = '';
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const chunk = decoder.decode(value);
+          // Parse SSE chunks
+          const lines = chunk.split('\n');
+          for (const line of lines) {
+            if (line.startsWith('0:')) {
+              try {
+                const text = JSON.parse(line.slice(2));
+                fullText += text;
+                setRelicResult(fullText);
+              } catch {}
+            }
+          }
+        }
+      }
+    } catch (err) {
+      setRelicResult(`Error: ${(err as Error).message}`);
+    } finally {
+      setExecuting(false);
+    }
   };
 
   return (
@@ -117,15 +158,39 @@ export default function ArtifactsPage() {
 
           <button
             onClick={handleLaunch}
-            disabled={!selectedHero || !task.trim()}
+            disabled={executing || !selectedHero || !task.trim()}
             className="font-[Orbitron] text-[9px] tracking-[3px] uppercase px-8 py-3 transition-all disabled:opacity-40 self-start"
             style={{
               background: '#D4AF37',
               color: '#0A0A0A',
               fontWeight: 700,
             }}>
-            LAUNCH MISSION
+            {executing ? 'EXECUTING MISSION...' : 'LAUNCH MISSION'}
           </button>
+
+          {(executing || relicResult) && (
+            <div className="mt-8 p-6"
+              style={{ background: '#111111', border: '1px solid rgba(212,175,55,0.15)' }}>
+              <p className="font-[Orbitron] text-[8px] tracking-[3px] uppercase mb-4"
+                style={{ color: 'rgba(212,175,55,0.5)' }}>
+                {executing ? 'EXECUTING MISSION...' : 'RELIC OUTPUT'}
+              </p>
+              {executing && (
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#D4AF37' }} />
+                  <span className="font-[Rajdhani] text-sm" style={{ color: '#d0c5af' }}>
+                    Agent is crafting your relic...
+                  </span>
+                </div>
+              )}
+              {relicResult && (
+                <div className="font-[Rajdhani] text-sm leading-relaxed whitespace-pre-wrap"
+                  style={{ color: '#d0c5af' }}>
+                  {relicResult}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 

@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { heroData, heroOrder } from "@/lib/heroes";
 import { heroAgents, heroMeta } from "@/lib/agents";
@@ -30,10 +31,19 @@ const outcomeMap: Record<string, string[]> = {
   horusen: ["Close", "Generate"],
 };
 
-export default function HubPage() {
+function HubPageContent() {
   const [search, setSearch] = useState("");
   const [dept, setDept] = useState("All");
   const [outcome, setOutcome] = useState("All");
+  const searchParams = useSearchParams();
+  const focusSearch = searchParams.get('focus') === 'search';
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (focusSearch && searchRef.current) {
+      searchRef.current.focus();
+    }
+  }, [focusSearch]);
 
   const heroes = heroOrder.map(slug => ({
     slug,
@@ -54,8 +64,6 @@ export default function HubPage() {
       return matchSearch && matchDept && matchOutcome;
     });
 
-    if (!q.trim()) return { heroes: filteredHeroes, agentMatches: [] };
-
     const agentMatches: Array<{
       heroSlug: string;
       heroName: string;
@@ -66,15 +74,21 @@ export default function HubPage() {
     }> = [];
 
     heroOrder.forEach(slug => {
+      const matchDept = dept === "All" || (departmentMap[slug] || []).includes(dept);
+      const matchOutcome = outcome === "All" || (outcomeMap[slug] || []).includes(outcome);
+      if (!matchDept || !matchOutcome) return;
+
       const agents = heroAgents[slug as keyof typeof heroAgents] || [];
       const meta = heroMeta[slug as keyof typeof heroMeta];
+
       agents.forEach(agent => {
-        if (
+        const matchSearch = !q ||
           agent.name.toLowerCase().includes(q) ||
           agent.role_summary.toLowerCase().includes(q) ||
           agent.category.toLowerCase().includes(q) ||
-          agent.description.toLowerCase().includes(q)
-        ) {
+          agent.description.toLowerCase().includes(q);
+
+        if (matchSearch) {
           agentMatches.push({
             heroSlug: slug,
             heroName: meta?.name || slug.toUpperCase(),
@@ -119,6 +133,7 @@ export default function HubPage() {
         {/* Search */}
         <div className="relative max-w-md w-full mx-auto">
           <input
+            ref={searchRef}
             type="text"
             value={search}
             onChange={e => setSearch(e.target.value)}
@@ -232,16 +247,14 @@ export default function HubPage() {
                       borderTop: `3px solid ${meta?.color_signature || data.accentColor}`,
                     }}
                     onMouseEnter={e => {
-                      (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 30px ${meta?.color_signature || data.accentColor}20`;
-                      (e.currentTarget as HTMLDivElement).style.borderColor = `${meta?.color_signature || data.accentColor}40`;
+                      (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 30px ${meta?.color_signature}20`;
                     }}
                     onMouseLeave={e => {
                       (e.currentTarget as HTMLDivElement).style.boxShadow = 'none';
-                      (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(212,175,55,0.08)';
                     }}>
 
-                    {/* Hero image */}
-                    <div className="relative w-full aspect-[4/3] overflow-hidden">
+                    {/* Hero image — full width, fixed height */}
+                    <div className="relative w-full overflow-hidden" style={{ height: '280px' }}>
                       <Image
                         src={`/${slug}.png`}
                         alt={data.name}
@@ -250,13 +263,13 @@ export default function HubPage() {
                         unoptimized
                       />
                       <div className="absolute inset-0"
-                        style={{ background: `linear-gradient(to top, #111111 0%, transparent 60%)` }} />
+                        style={{ background: 'linear-gradient(to top, #111111 0%, transparent 60%)' }} />
                     </div>
 
                     {/* Content */}
                     <div className="p-5 flex flex-col gap-3 flex-1">
 
-                      {/* Archetype */}
+                      {/* Archetype dot + label */}
                       <div className="flex items-center gap-2">
                         <div className="w-1.5 h-1.5 rounded-full"
                           style={{ background: meta?.color_signature || data.accentColor }} />
@@ -266,43 +279,49 @@ export default function HubPage() {
                         </span>
                       </div>
 
-                      {/* Name */}
-                      <h2 className="font-[Orbitron] text-xl font-black tracking-tight"
-                        style={{ color: '#ffffff' }}>
+                      {/* Hero name */}
+                      <h2 className="font-[Orbitron] text-2xl font-black tracking-tight" style={{ color: '#ffffff' }}>
                         {data.name}
                       </h2>
 
-                      {/* Role line */}
-                      <p className="font-[Rajdhani] text-sm leading-relaxed"
-                        style={{ color: '#d0c5af', opacity: 0.8 }}>
+                      {/* Short tagline */}
+                      <p className="font-[Rajdhani] text-sm leading-relaxed" style={{ color: '#d0c5af', opacity: 0.8 }}>
                         {meta?.role_line || data.role}
                       </p>
 
-                      {/* Specialties */}
-                      <div className="flex flex-col gap-1 mt-1">
-                        {(meta?.specialties || []).slice(0, 2).map((s, idx) => (
-                          <div key={idx} className="flex items-center gap-1.5">
-                            <span style={{ color: meta?.color_signature, fontSize: '10px' }}>✦</span>
-                            <span className="font-[Rajdhani] text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>{s}</span>
-                          </div>
-                        ))}
+                      {/* Agent count */}
+                      <div className="flex items-center gap-2">
+                        <span className="font-[Orbitron] text-lg font-bold" style={{ color: '#D4AF37' }}>
+                          {heroAgents[slug as keyof typeof heroAgents]?.length || 0}
+                        </span>
+                        <span className="font-[Orbitron] text-[8px] tracking-[2px] uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                          AGENTS
+                        </span>
                       </div>
 
-                      {/* CTA */}
-                      <div className="mt-auto pt-4 flex items-center justify-between"
+                      {/* Two action buttons */}
+                      <div className="flex gap-2 mt-auto pt-3"
                         style={{ borderTop: `1px solid ${meta?.color_signature || '#D4AF37'}15` }}>
-                        <span className="font-[Orbitron] text-[8px] tracking-[2px] uppercase"
-                          style={{ color: meta?.color_signature || '#D4AF37' }}>
-                          ENTER ORBIT
-                        </span>
-                        {/* Djed Pillar — stability/direction */}
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: meta?.color_signature || '#D4AF37' }}>
-                          <line x1="12" y1="2" x2="12" y2="20"/>
-                          <line x1="7" y1="8" x2="17" y2="8"/>
-                          <line x1="6" y1="12" x2="18" y2="12"/>
-                          <line x1="5" y1="16" x2="19" y2="16"/>
-                          <line x1="8" y1="20" x2="16" y2="20"/>
-                        </svg>
+                        <Link href={`/chat/${slug}`} className="flex-1" onClick={e => e.stopPropagation()}>
+                          <button className="w-full font-[Orbitron] text-[8px] tracking-[2px] uppercase py-2.5 transition-all"
+                            style={{
+                              background: `linear-gradient(135deg, ${meta?.color_signature}, ${meta?.color_signature}cc)`,
+                              color: '#0A0A0A',
+                              fontWeight: 700,
+                            }}>
+                            ENTER ORBIT
+                          </button>
+                        </Link>
+                        <Link href={`/heroes/${slug}`} className="flex-1" onClick={e => e.stopPropagation()}>
+                          <button className="w-full font-[Orbitron] text-[8px] tracking-[2px] uppercase py-2.5 transition-all"
+                            style={{
+                              background: 'transparent',
+                              border: `1px solid ${meta?.color_signature}40`,
+                              color: meta?.color_signature,
+                            }}>
+                            VIEW DETAILS
+                          </button>
+                        </Link>
                       </div>
                     </div>
                   </div>
@@ -313,5 +332,13 @@ export default function HubPage() {
         )}
       </main>
     </div>
+  );
+}
+
+export default function HubPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#0A0A0A]" />}>
+      <HubPageContent />
+    </Suspense>
   );
 }

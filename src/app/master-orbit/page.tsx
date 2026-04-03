@@ -103,11 +103,6 @@ export default function MasterOrbitPage() {
         {/* Featured Hero Banner */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.6 }} className="w-full max-w-5xl mb-16">
           <div className="bg-gradient-to-r from-[#1A1A1A] to-[#0A0A0A] border border-[#D4AF37]/30 rounded-2xl overflow-hidden flex flex-col md:flex-row relative">
-            <div className="absolute top-4 left-4 z-20">
-              <span className="font-[Orbitron] text-[9px] tracking-[3px] uppercase px-3 py-1 rounded bg-black/80 border border-[#D4AF37]/50 text-[#D4AF37]">
-                COMMAND SUPER HEROES
-              </span>
-            </div>
 
             <div className="w-full md:w-1/3 aspect-square md:aspect-auto relative bg-[#131313] flex items-center justify-center overflow-hidden">
                <div className="absolute inset-0 bg-gradient-to-tr from-[#FF4444]/20 to-transparent z-10 mix-blend-overlay" />
@@ -150,70 +145,6 @@ export default function MasterOrbitPage() {
             </div>
           </div>
         </motion.div>
-
-        {/* The 7 Heroes Grid */}
-        <div className="w-full max-w-5xl">
-          <div className="flex items-center gap-4 mb-8">
-            <Database className="w-5 h-5 text-[#D4AF37]" />
-            <h2 className="font-[Orbitron] text-2xl font-bold text-white tracking-widest uppercase">Grid Nodes</h2>
-            <div className="flex-1 h-px bg-gradient-to-r from-[#D4AF37]/20 to-transparent ml-4" />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {heroOrder.map((slug, i) => {
-              const hero = heroData[slug];
-              const squadCount = heroAgents[slug]?.length || 0;
-
-              return (
-                <motion.div
-                  key={slug}
-                  initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 + (i * 0.05), duration: 0.5 }}
-                >
-                  <div className="bg-[#131313] border border-white/5 hover:border-white/20 rounded-lg p-5 flex flex-col transition-all group hover:shadow-[0_0_20px_rgba(0,0,0,0.5)] h-full relative overflow-hidden"
-                       style={{ borderLeftColor: hero.palette.primary, borderLeftWidth: '3px' }}>
-
-                    <div className="absolute -right-4 -top-4 w-24 h-24 rounded-full blur-2xl opacity-10 group-hover:opacity-20 transition-opacity" style={{ backgroundColor: hero.palette.primary }} />
-
-                    <div className="flex items-center gap-4 mb-4 relative z-10">
-                      <div className="w-12 h-12 rounded-md bg-[#1A1A1A] border border-white/10 overflow-hidden relative shrink-0">
-                        <Image
-                          src={`/${hero.slug}.png`}
-                          alt={hero.name}
-                          fill
-                          className="object-cover opacity-70 group-hover:opacity-100 transition-opacity"
-                          unoptimized
-                        />
-                      </div>
-                      <div>
-                        <h3 className="font-[Orbitron] font-bold text-lg text-white group-hover:text-[#D4AF37] transition-colors">{hero.name}</h3>
-                        <div className="font-[Rajdhani] text-xs text-white/40 uppercase tracking-wider">{hero.class_title}</div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5 relative z-10">
-                       <div className="flex flex-col">
-                         <span className="font-[Orbitron] text-[9px] text-white/30 uppercase tracking-widest">Agents</span>
-                         <span className="font-[Rajdhani] font-bold text-[#D4AF37]">{squadCount} Active</span>
-                       </div>
-
-                       <Link href={`/heroes/${hero.slug}`}>
-                         <button className="font-[Orbitron] text-[8px] tracking-[2px] uppercase px-3 py-1.5 w-full transition-all mt-2"
-                           style={{
-                             background: 'transparent',
-                             border: `1px solid ${heroData[hero.slug]?.palette?.primary || '#D4AF37'}40`,
-                             color: heroData[hero.slug]?.palette?.primary || '#D4AF37',
-                           }}>
-                           ENTER ORBIT
-                         </button>
-                       </Link>
-                    </div>
-
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
 
       </main>
     </div>

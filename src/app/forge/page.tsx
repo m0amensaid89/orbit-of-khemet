@@ -143,14 +143,34 @@ export default function ForgePage() {
               <p className="font-[Rajdhani] text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>
                 Recommended: 400x400px square, JPG or PNG, max 2MB
               </p>
-              <div className="flex items-center gap-4 mt-2">
-                {agentPhoto && (
-                  <div className="w-16 h-16 overflow-hidden rounded-md shrink-0"
-                    style={{ border: '1px solid rgba(212,175,55,0.2)' }}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={agentPhoto} alt="Agent preview" className="w-full h-full object-cover" />
-                  </div>
+              {/* Photo display area */}
+              <div className="relative mx-auto mb-4 overflow-hidden"
+                style={{
+                  width: '120px',
+                  height: '120px',
+                  border: `1px solid rgba(212,175,55,0.2)`,
+                  background: '#0A0A0A',
+                }}>
+                {agentPhoto ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={agentPhoto} alt="Agent" className="w-full h-full object-cover" />
+                ) : (
+                  /* Shadow hero silhouette SVG */
+                  <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+                    <rect width="120" height="120" fill="#0A0A0A"/>
+                    {/* Head */}
+                    <ellipse cx="60" cy="38" rx="18" ry="20" fill="rgba(212,175,55,0.08)" stroke="rgba(212,175,55,0.15)" strokeWidth="1"/>
+                    {/* Body */}
+                    <path d="M30 120 Q35 75 60 70 Q85 75 90 120Z" fill="rgba(212,175,55,0.08)" stroke="rgba(212,175,55,0.15)" strokeWidth="1"/>
+                    {/* Shoulders */}
+                    <path d="M35 75 Q30 65 25 70 L22 90 Q35 88 40 80Z" fill="rgba(212,175,55,0.06)"/>
+                    <path d="M85 75 Q90 65 95 70 L98 90 Q85 88 80 80Z" fill="rgba(212,175,55,0.06)"/>
+                    {/* Gold glow hint */}
+                    <ellipse cx="60" cy="60" rx="40" ry="45" fill="none" stroke="rgba(212,175,55,0.05)" strokeWidth="20"/>
+                  </svg>
                 )}
+              </div>
+              <div className="flex items-center justify-center gap-4 mt-2">
                 <label className="cursor-pointer font-[Orbitron] text-[8px] tracking-[2px] uppercase px-4 py-2 transition-all rounded hover:bg-[#D4AF37]/10"
                   style={{
                     border: '1px solid rgba(212,175,55,0.2)',
