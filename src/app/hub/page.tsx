@@ -267,22 +267,22 @@ function HubPageContent() {
                     <div className="p-2 sm:p-3 lg:p-5 flex flex-col gap-2 lg:gap-3 flex-1 overflow-hidden">
 
                       {/* Archetype dot + label */}
-                      <div className="flex items-center gap-1.5 lg:gap-2 truncate">
+                      <div className="flex items-center gap-1.5 lg:gap-2">
                         <div className="w-1 lg:w-1.5 h-1 lg:h-1.5 rounded-full shrink-0"
                           style={{ background: meta?.color_signature || data.accentColor }} />
-                        <span className="font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[7px] tracking-[1px] lg:tracking-[2px] uppercase truncate"
+                        <span className="font-[Orbitron] text-[5px] sm:text-[5px] lg:text-[6px] tracking-[1px] lg:tracking-[2px] uppercase"
                           style={{ color: meta?.color_signature || data.accentColor }}>
                           {meta?.archetype || data.role}
                         </span>
                       </div>
 
                       {/* Hero name */}
-                      <h2 className="font-[Orbitron] text-[8px] sm:text-[10px] lg:text-xs font-black tracking-tight truncate" style={{ color: '#ffffff' }}>
+                      <h2 className="font-[Orbitron] text-[8px] sm:text-[10px] lg:text-xs font-black tracking-tight" style={{ color: '#ffffff' }}>
                         {data.name}
                       </h2>
 
                       {/* Short tagline */}
-                      <p className="font-[Rajdhani] text-[6px] sm:text-[7px] lg:text-[8px] leading-tight lg:leading-relaxed overflow-hidden line-clamp-2" style={{ color: '#d0c5af', opacity: 0.8 }}>
+                      <p className="font-[Rajdhani] text-[6px] sm:text-[7px] lg:text-[8px] leading-tight lg:leading-relaxed" style={{ color: '#d0c5af', opacity: 0.8 }}>
                         {meta?.role_line || data.role}
                       </p>
 
@@ -300,7 +300,7 @@ function HubPageContent() {
                       <div className="flex flex-col xl:flex-row gap-1.5 lg:gap-2 mt-auto pt-2 lg:pt-3"
                         style={{ borderTop: `1px solid ${meta?.color_signature || '#D4AF37'}15` }}>
                         <Link href={`/chat/${slug}`} className="flex-1 w-full" onClick={e => e.stopPropagation()}>
-                          <button className="w-full font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[8px] tracking-[1px] lg:tracking-[2px] uppercase py-1.5 lg:py-2.5 transition-all truncate px-1"
+                          <button className="w-full font-[Orbitron] text-[4px] sm:text-[5px] lg:text-[6px] tracking-[1px] lg:tracking-[2px] uppercase py-1.5 lg:py-2.5 transition-all px-1"
                             style={{
                               background: `linear-gradient(135deg, ${meta?.color_signature}, ${meta?.color_signature}cc)`,
                               color: '#0A0A0A',
@@ -310,7 +310,7 @@ function HubPageContent() {
                           </button>
                         </Link>
                         <Link href={`/heroes/${slug}`} className="flex-1 w-full" onClick={e => e.stopPropagation()}>
-                          <button className="w-full font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[8px] tracking-[1px] lg:tracking-[2px] uppercase py-1.5 lg:py-2.5 transition-all truncate px-1"
+                          <button className="w-full font-[Orbitron] text-[4px] sm:text-[5px] lg:text-[6px] tracking-[1px] lg:tracking-[2px] uppercase py-1.5 lg:py-2.5 transition-all px-1"
                             style={{
                               background: 'transparent',
                               border: `1px solid ${meta?.color_signature}40`,
