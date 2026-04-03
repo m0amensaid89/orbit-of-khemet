@@ -251,71 +251,49 @@ html.light main.min-h-screen {
 }
 /* ────────────────────────────────────────────────────────────── */
 
-/* ═══════════════════════════════════════════════════
-   EMPIRE TYPOGRAPHY SYSTEM v2
-   H1, H2, Buttons  → Cinzel Decorative (Regular 400)
-   Body Text         → Indie Flower (400)
-   Caption, Input,
-   Secondary         → Roboto (400/500)
-   Orbitron          → UI micro-labels (preserved)
-   Rajdhani          → Chat subtitles (preserved)
-═══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   EMPIRE TYPOGRAPHY SYSTEM
+   Cinzel Decorative → headings
+   Roboto → body / paragraphs / inputs
+   Orbitron → UI labels / micro text
+   Rajdhani → subtitles / chat
+═══════════════════════════════════════ */
 
-/* H1 — Page titles */
+/* Headings — Cinzel Decorative, consistent sizing */
 h1 {
   font-family: var(--font-cinzel-decorative), 'Cinzel Decorative', serif;
-  font-weight: 400;
-  font-size: clamp(1.75rem, 4vw, 3.125rem); /* 28px → 50px */
-  line-height: 1.15;
-  letter-spacing: -0.01em;
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
 }
-
-/* H2 — Subheadings */
 h2 {
   font-family: var(--font-cinzel-decorative), 'Cinzel Decorative', serif;
-  font-weight: 400;
-  font-size: clamp(1.375rem, 3vw, 2rem); /* 22px → 32px */
-  line-height: 1.25;
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
 }
-
-/* H3 */
 h3 {
   font-family: var(--font-cinzel-decorative), 'Cinzel Decorative', serif;
-  font-weight: 400;
-  font-size: clamp(1.125rem, 2vw, 1.5rem);
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  font-weight: 700;
   line-height: 1.3;
 }
-
-/* H4 */
 h4 {
   font-family: var(--font-cinzel-decorative), 'Cinzel Decorative', serif;
-  font-weight: 400;
-  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+  font-weight: 600;
   line-height: 1.4;
 }
 
-/* Body text — Indie Flower */
-p, li {
-  font-family: var(--font-indie-flower), 'Indie Flower', cursive;
-  font-weight: 400;
-  font-size: clamp(1rem, 1.5vw, 1.125rem); /* 16px → 18px */
-  line-height: 1.7;
-  color: #d0c5af;
-}
-
-/* Secondary / Caption / Input — Roboto */
-label,
-input,
-textarea,
-select,
-caption,
-figcaption,
-small,
-.text-caption {
+/* Body text — Roboto */
+p, li, label, input, textarea, select {
   font-family: var(--font-roboto), 'Roboto', sans-serif;
   font-weight: 400;
-  font-size: clamp(0.8125rem, 1.2vw, 0.9375rem); /* 13px → 15px */
-  line-height: 1.5;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: #d0c5af;
 }
 
 /* Input fields — minimum 16px to prevent iOS zoom */
@@ -323,32 +301,26 @@ input, textarea, select {
   font-size: 1rem !important; /* 16px minimum */
 }
 
-/* Buttons — Cinzel Decorative Regular */
-button, [role="button"] {
-  font-family: var(--font-cinzel-decorative), 'Cinzel Decorative', serif;
-  font-weight: 400;
-  font-size: clamp(0.875rem, 1.3vw, 1rem); /* 14px → 16px */
-  line-height: 1;
-}
-
-/* Preserve Orbitron for micro UI labels */
-[class*="font-"][class*="Orbitron"],
+/* Preserve Orbitron for UI labels */
+.font-\[Orbitron\],
+[class*="font-orbitron"],
+[class*="font-[Orbitron]"],
 .orbitron {
   font-family: 'Orbitron', sans-serif !important;
 }
 
-/* Preserve Rajdhani for chat subtitles */
-[class*="font-"][class*="Rajdhani"],
+/* Preserve Rajdhani for subtitles/chat */
+.font-\[Rajdhani\],
+[class*="font-rajdhani"],
+[class*="font-[Rajdhani]"],
 .rajdhani {
   font-family: 'Rajdhani', sans-serif !important;
 }
 
-/* Cinzel Decorative utility class */
-[class*="cinzel-decorative"],
-[class*="font-cinzel-decorative"],
-[class*="var(--font-cinzel-decorative)"] {
+/* Cinzel Decorative utility */
+.font-\[family-name\:var\(--font-cinzel-decorative\)\],
+[class*="cinzel-decorative"] {
   font-family: var(--font-cinzel-decorative), 'Cinzel Decorative', serif !important;
-  font-weight: 400 !important;
 }
 
 /* EMPIRE SCROLLBAR */

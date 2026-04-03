@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Cinzel, Cinzel_Decorative, Inter, Indie_Flower, Roboto } from "next/font/google";
+import { Geist, Geist_Mono, Cinzel, Cinzel_Decorative, Inter, Roboto } from "next/font/google";
 import "@fontsource/orbitron/400.css";
 import "@fontsource/orbitron/700.css";
 import "@fontsource/orbitron/900.css";
@@ -24,12 +24,6 @@ const cinzelDecorative = Cinzel_Decorative({
   variable: "--font-cinzel-decorative",
 });
 
-const indieFlower = Indie_Flower({
-  weight: ["400"],
-  subsets: ["latin"],
-  variable: "--font-indie-flower",
-});
-
 const roboto = Roboto({
   weight: ["300", "400", "500"],
   subsets: ["latin"],
@@ -44,7 +38,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} ${cinzel.variable} ${cinzelDecorative.variable} ${inter.variable} ${indieFlower.variable} ${roboto.variable} antialiased khemet-pattern text-foreground`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${cinzel.variable} ${cinzelDecorative.variable} ${inter.variable} ${roboto.variable} antialiased khemet-pattern text-foreground`}>
         {/* Mobile only: top nav */}
         <div className="md:hidden">
           <GlobalNav />
