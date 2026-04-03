@@ -37,7 +37,11 @@ export default function BrowserPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-white p-8">
+    <div className="min-h-screen bg-[#0a0a0a] text-[#d0c5af] font-sans p-6 md:p-12 relative overflow-hidden">
+      {/* Background accents */}
+      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#D4AF37]/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-[#D4AF37]/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="max-w-4xl mx-auto relative z-10 space-y-8 mt-4">
 
       {/* Header */}
       <div className="w-full px-6 py-10 border-b mb-10" style={{ borderColor: 'rgba(212,175,55,0.08)' }}>
@@ -201,6 +205,7 @@ export default function BrowserPage() {
           )}
         </div>
       )}
+      </div>
     </div>
   );
 }

@@ -53,7 +53,7 @@ export type SquadMeta = {
 export type HeroMeta = {
   name: string;
   class_title: string;
-  archetype: string;
+  archetype: "Social & Creator Systems Director",
   origin_line: string;
   bio: string;
   quote: string;
@@ -712,7 +712,7 @@ export const heroMeta: Record<string, HeroMeta> = {
   thoren: {
     name: 'THOREN',
     class_title: 'The Law',
-    archetype: 'Governance & Finance Strategist',
+    archetype: "Social & Creator Systems Director",
     origin_line: 'Born from the axioms of order',
     bio: 'Thoren is the constitutional layer of the Empire. He turns chaos into clear rules, builds financial and legal foundations, and protects the empire you are trying to scale.',
     quote: 'I do not enforce the rules. I am the reason rules exist.',
