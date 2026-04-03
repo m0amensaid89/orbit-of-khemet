@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ArrowLeft, Send, Loader2, Zap } from "lucide-react";
 import Image from "next/image";
-import { heroAgents, getOnboardingMessage } from "@/lib/agents";
+import { heroAgents } from "@/lib/agents";
 import { getHero } from "@/lib/heroes";
 import { getCustomAgentById } from "@/lib/custom-agents";
 import { trackMessage, getEnergyCost } from "@/lib/energy";
