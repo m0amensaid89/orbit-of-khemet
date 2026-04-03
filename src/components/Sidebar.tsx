@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Zap, Hexagon, Shield, Cpu, LogIn, LogOut, User, Wand2, Compass, Search, BookOpen, Hammer, Gem, Globe } from "lucide-react";
-import Image from "next/image";
 import { getEnergyRemainingAsync } from "@/lib/energy";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -124,9 +123,7 @@ export function Sidebar() {
         <img
           src="/khemet-logo.png"
           alt="Khemet AI"
-          width={32}
-          height={32}
-          style={{ objectFit: 'contain', width: '32px', height: '32px' }}
+          style={{ width: '32px', height: '32px', objectFit: 'contain', display: 'block' }}
         />
         <span className="font-[family-name:var(--font-cinzel-decorative)] text-[#D4AF37] font-bold text-base tracking-wider">
           KHEMET AI
