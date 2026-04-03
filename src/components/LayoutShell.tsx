@@ -10,13 +10,15 @@ export function LayoutShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const hideSidebar = pathname === '/' || pathname === '/auth' || pathname?.startsWith('/auth/');
 
+  const isHomePage = pathname === '/';
+
   if (hideSidebar) {
     // Landing + auth: full width, footer visible at bottom
     return (
       <div className="flex flex-col min-h-screen bg-[#0A0A0A]">
         <GlobalNav />
         <div className="flex-1">{children}</div>
-        <Footer />
+        <Footer isHomePage={isHomePage} />
       </div>
     );
   }
@@ -35,7 +37,7 @@ export function LayoutShell({ children }: { children: React.ReactNode }) {
         <div className="flex-1 overflow-y-auto">
           {children}
         </div>
-        <Footer />
+        <Footer isHomePage={isHomePage} />
       </div>
     </div>
   );

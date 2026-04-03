@@ -1,6 +1,18 @@
 import Link from "next/link";
 
-export function Footer() {
+export function Footer({ isHomePage = false }: { isHomePage?: boolean }) {
+  if (!isHomePage) {
+    return (
+      <footer className="w-full border-t flex flex-col items-center justify-center shrink-0"
+        style={{ background: '#0A0A0A', borderColor: 'rgba(212,175,55,0.08)', height: '136px' }}>
+        <p className="font-[Orbitron] tracking-widest uppercase"
+          style={{ color: 'rgba(212,175,55,0.3)', fontSize: '9px' }}>
+          The Rise of the Grid • Leverage is the new gravity. © Orbit of Khemet — All rights reserved 2026
+        </p>
+      </footer>
+    );
+  }
+
   return (
     <footer className="w-full py-4 border-t flex flex-col items-center justify-center gap-2 shrink-0"
       style={{ background: '#0A0A0A', borderColor: 'rgba(212,175,55,0.08)' }}>
