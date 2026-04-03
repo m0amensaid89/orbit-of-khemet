@@ -105,19 +105,15 @@ function UIBuilderContent() {
 
       {/* Header */}
       <div className="mb-8 mt-4 text-center flex flex-col items-center">
-        <h1 className="text-5xl md:text-6xl tracking-wider font-bold" style={{
-          fontFamily: 'var(--font-orbitron), sans-serif',
-          color: '#D4AF37',
-          textShadow: '0 0 10px rgba(212,175,55,0.5), 0 0 20px rgba(212,175,55,0.3)'
-        }}>
-          UI BUILDER
-        </h1>
-        <div className="text-xl md:text-2xl mt-2 tracking-[0.2em] font-medium" style={{ color: '#d0c5af' }}>
-          INTERFACE FORGE
-        </div>
-        <div className="mt-3 text-xs tracking-widest px-3 py-1 rounded-full" style={{ backgroundColor: 'rgba(212,175,55,0.1)', color: 'rgba(212,175,55,0.8)', border: '1px solid rgba(212,175,55,0.3)' }}>
+        <div className="inline-block px-3 py-1 mb-2 border border-[#D4AF37]/30 bg-transparent rounded font-[family-name:var(--font-cinzel)] text-[10px] tracking-widest text-[#D4AF37] uppercase">
           EMPIRE ENGINE
         </div>
+        <h1 className="text-5xl md:text-7xl font-[family-name:var(--font-cinzel-decorative)] font-bold text-transparent bg-clip-text bg-gradient-to-b from-[#FFF5D1] to-[#D4AF37] drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]">
+          UI BUILDER
+        </h1>
+        <h2 className="text-xl md:text-3xl font-[family-name:var(--font-cinzel)] text-[#d0c5af] tracking-widest uppercase mt-2">
+          Interface Forge
+        </h2>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full max-w-7xl mx-auto">

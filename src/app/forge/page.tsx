@@ -119,18 +119,22 @@ export default function ForgePage() {
       <div className="w-full max-w-6xl flex flex-col lg:flex-row gap-12">
         {/* Left Side: Form */}
         <div className="w-full lg:w-3/5">
-          <div className="mb-10">
-            <div className="flex items-center gap-2 mb-4">
+          {/* Header */}
+          <div className="w-full mb-10 text-left flex flex-col items-start space-y-2">
+            <div className="mb-2">
               <span className="font-[Orbitron] text-[9px] tracking-[4px] uppercase px-3 py-1 rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/10 text-[#D4AF37]">
                 ✦ COMMANDER EXCLUSIVE
               </span>
             </div>
-            <h1 className="font-[Orbitron] text-4xl md:text-5xl font-black tracking-tighter text-white mb-4 leading-none drop-shadow-[0_0_20px_rgba(212,175,55,0.2)]">
+            <div className="inline-block px-3 py-1 mb-2 border border-[#D4AF37]/30 bg-transparent rounded font-[family-name:var(--font-cinzel)] text-[10px] tracking-widest text-[#D4AF37] uppercase">
+              EMPIRE ENGINE
+            </div>
+            <h1 className="text-5xl md:text-7xl font-[family-name:var(--font-cinzel-decorative)] font-bold text-transparent bg-clip-text bg-gradient-to-b from-[#FFF5D1] to-[#D4AF37] drop-shadow-[0_0_15px_rgba(212,175,55,0.3)] leading-none pb-2">
               AGENT FORGE
             </h1>
-            <p className="font-[Rajdhani] text-lg text-white/60">
-              Create a custom agent. Define its intelligence. Assign it to a hero orbit.
-            </p>
+            <h2 className="text-xl md:text-3xl font-[family-name:var(--font-cinzel)] text-[#d0c5af] tracking-widest uppercase mt-2">
+              Create a Custom Agent
+            </h2>
           </div>
 
           <div className="flex flex-col">

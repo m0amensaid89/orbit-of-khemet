@@ -61,28 +61,28 @@ export default function ArtifactsPage() {
     <main className="min-h-screen bg-[#0A0A0A] px-6 py-10">
 
       {/* Header */}
-      <div className="mb-10 border-b pb-8" style={{ borderColor: 'rgba(212,175,55,0.08)' }}>
-        <p className="font-[Orbitron] text-[9px] tracking-[5px] uppercase mb-3"
-          style={{ color: 'rgba(212,175,55,0.5)' }}>SUPER SKILLS</p>
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="font-[Orbitron] text-4xl font-black tracking-tighter mb-2"
-              style={{ color: '#D4AF37' }}>EMPIRE RELICS</h1>
-            <p className="font-[Rajdhani] text-lg" style={{ color: '#d0c5af' }}>
-              Your generated apps, documents, and outputs.
-            </p>
+      <div className="w-full px-6 py-10 mb-10 flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0 text-center md:text-left relative">
+        <div className="flex-1 flex flex-col items-center md:items-start space-y-2">
+          <div className="inline-block px-3 py-1 mb-2 border border-[#D4AF37]/30 bg-transparent rounded font-[family-name:var(--font-cinzel)] text-[10px] tracking-widest text-[#D4AF37] uppercase">
+            EMPIRE ENGINE
           </div>
-          <button
-            onClick={() => setShowNewRelic(true)}
-            className="font-[Orbitron] text-[9px] tracking-[3px] uppercase px-6 py-3 transition-all"
-            style={{
-              background: 'linear-gradient(135deg, #D4AF37, #FBBF24)',
-              color: '#0A0A0A',
-              fontWeight: 700,
-            }}>
-            + NEW RELIC
-          </button>
+          <h1 className="text-5xl md:text-7xl font-[family-name:var(--font-cinzel-decorative)] font-bold text-transparent bg-clip-text bg-gradient-to-b from-[#FFF5D1] to-[#D4AF37] drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]">
+            EMPIRE RELICS
+          </h1>
+          <h2 className="text-xl md:text-3xl font-[family-name:var(--font-cinzel)] text-[#d0c5af] tracking-widest uppercase mt-2">
+            Your generated apps and outputs
+          </h2>
         </div>
+        <button
+          onClick={() => setShowNewRelic(true)}
+          className="font-[Orbitron] text-[9px] tracking-[3px] uppercase px-6 py-3 transition-all rounded"
+          style={{
+            background: 'linear-gradient(135deg, #D4AF37, #FBBF24)',
+            color: '#0A0A0A',
+            fontWeight: 700,
+          }}>
+          + NEW RELIC
+        </button>
       </div>
 
       {/* New Relic creation panel */}

@@ -116,13 +116,13 @@ function AutopilotContent() {
 
         {/* Header Section */}
         <div className="text-center space-y-2">
-          <div className="inline-block px-3 py-1 mb-2 border border-[#D4AF37]/30 bg-[#D4AF37]/10 rounded font-orbitron text-[10px] tracking-widest text-[#D4AF37]">
+          <div className="inline-block px-3 py-1 mb-2 border border-[#D4AF37]/30 bg-transparent rounded font-[family-name:var(--font-cinzel)] text-[10px] tracking-widest text-[#D4AF37] uppercase">
             EMPIRE ENGINE
           </div>
-          <h1 className="text-5xl md:text-7xl font-orbitron font-bold text-transparent bg-clip-text bg-gradient-to-b from-[#FFF5D1] to-[#D4AF37] drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]">
+          <h1 className="text-5xl md:text-7xl font-[family-name:var(--font-cinzel-decorative)] font-bold text-transparent bg-clip-text bg-gradient-to-b from-[#FFF5D1] to-[#D4AF37] drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]">
             AUTO-PILOT
           </h1>
-          <h2 className="text-xl md:text-2xl font-rajdhani font-semibold text-[#d0c5af]/80 tracking-widest uppercase">
+          <h2 className="text-xl md:text-3xl font-[family-name:var(--font-cinzel)] text-[#d0c5af] tracking-widest uppercase mt-2">
             Autonomous Mission Execution
           </h2>
         </div>
@@ -148,18 +148,18 @@ function AutopilotContent() {
               disabled={phase === 'running'}
               placeholder="Describe your mission goal... e.g., Create a complete marketing strategy for I-Gamify.net including target audience analysis, content calendar, and campaign ideas"
               className="w-full h-32 p-4 bg-black/40 border border-[#D4AF37]/20 rounded text-[#d0c5af] placeholder:text-[#d0c5af]/30 focus:outline-none focus:border-[#D4AF37]/50 transition-colors resize-none disabled:opacity-50"
-              style={{ fontFamily: 'inherit' }}
+              style={{ fontFamily: 'var(--font-indie-flower)', fontSize: '1.2rem', letterSpacing: '0.05em' }}
             />
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-[#d0c5af]/50 font-rajdhani italic">
+            <p className="text-xl text-[#d0c5af] font-[family-name:var(--font-indie-flower)] tracking-wider">
               Auto-Pilot will break your goal into steps and execute each one autonomously.
             </p>
             <button
               onClick={handleLaunch}
               disabled={phase === 'running' || !goal.trim()}
-              className="w-full sm:w-auto px-8 py-3 rounded flex items-center justify-center gap-2 font-orbitron font-bold tracking-widest text-black transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
+              className="w-full sm:w-auto px-8 py-3 rounded flex items-center justify-center gap-2 font-[family-name:var(--font-cinzel)] font-bold tracking-widest text-black transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
               style={{ background: 'linear-gradient(135deg, #f2ca50, #D4AF37)', boxShadow: '0 0 15px rgba(212,175,55,0.4)' }}
             >
               {phase === 'running' ? (
@@ -170,7 +170,10 @@ function AutopilotContent() {
               ) : (
                 <>
                   <Play className="w-5 h-5" fill="currentColor" />
-                  LAUNCH MISSION
+                  <span className="flex flex-col items-center leading-none mt-1">
+                    <span>LAUNCH</span>
+                    <span>MISSION</span>
+                  </span>
                 </>
               )}
             </button>

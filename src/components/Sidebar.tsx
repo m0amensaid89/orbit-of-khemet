@@ -2,21 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Zap, Hexagon, Shield, Cpu, LogIn, LogOut, User, Wand2, Compass, Search, BookOpen, Hammer, Gem, Globe } from "lucide-react";
+import { Zap, Hexagon, Shield, Cpu, LogIn, LogOut, User, Wand2, Compass, Hammer, Gem, Globe } from "lucide-react";
 import { getEnergyRemainingAsync } from "@/lib/energy";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
-
-const heroColors: Record<string, string> = {
-  thoren:  '#C0C0C0',
-  ramet:   '#4ECDC4',
-  nexar:   '#FF4444',
-  lyra:    '#2D6A4F',
-  kairo:   '#6C63FF',
-  nefra:   '#9B59B6',
-  horusen: '#3A6DD4',
-};
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -144,10 +134,6 @@ export function Sidebar() {
             <Link href="/master-orbit" className={navItemClass("/master-orbit")}>
               <Hexagon className="w-4 h-4 z-10" />
               <span className="font-medium text-[16px] z-10">Master Orbit</span>
-            </Link>
-            <Link href="/hub?focus=search" className={navItemClass("/hub")}>
-              <Search className="w-4 h-4 z-10" />
-              <span className="font-medium text-[16px] z-10">Search</span>
             </Link>
             {/* Codices (future feature — project management) removed until implemented */}
           </div>
@@ -391,6 +377,39 @@ export function Sidebar() {
             </button>
           </Link>
         )}
+      </div>
+
+      {/* FOOTER Section */}
+      <div className="w-full py-3 border-t flex flex-col items-center justify-center gap-2 shrink-0"
+        style={{ background: '#0A0A0A', borderColor: 'rgba(212,175,55,0.08)' }}>
+        <div className="flex items-center gap-2">
+          <img
+            src="/khemet-logo.png"
+            alt="Khemet AI"
+            style={{ width: '16px', height: '16px', objectFit: 'contain', display: 'block', opacity: 0.7 }}
+          />
+          <span className="font-[family-name:var(--font-cinzel-decorative)] text-[8px] tracking-[3px] uppercase"
+            style={{ color: 'rgba(212,175,55,0.5)' }}>
+            KHEMET AI
+          </span>
+        </div>
+        <p className="font-[Orbitron] text-[6px] tracking-widest uppercase"
+          style={{ color: 'rgba(212,175,55,0.3)' }}>
+          The Rise of the Grid • Leverage is the new gravity.
+        </p>
+        <div className="flex items-center gap-2 mt-1 whitespace-nowrap">
+          <Link href="/privacy" className="font-[Rajdhani] text-[9px] hover:text-[#D4AF37] transition-colors" style={{ color: 'rgba(255,255,255,0.4)' }}>
+            Privacy Policy
+          </Link>
+          <span style={{ color: 'rgba(255,255,255,0.1)' }}>|</span>
+          <Link href="/terms" className="font-[Rajdhani] text-[9px] hover:text-[#D4AF37] transition-colors" style={{ color: 'rgba(255,255,255,0.4)' }}>
+            Terms of Service
+          </Link>
+          <span style={{ color: 'rgba(255,255,255,0.1)' }}>|</span>
+          <span className="font-[Rajdhani] text-[9px]" style={{ color: 'rgba(255,255,255,0.2)' }}>
+            © Orbit of Khemet 2026
+          </span>
+        </div>
       </div>
     </aside>
   );
