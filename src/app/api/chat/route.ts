@@ -22,7 +22,7 @@ function isImageRequest(msg: string): boolean {
 }
 
 // ─── Task type detection ───────────────────────────────────────────────────
-type TaskType = 'coding' | 'reasoning' | 'creative' | 'analysis' | 'vision' | 'tool_calling' | 'simple' | 'general';
+type TaskType = 'coding' | 'reasoning' | 'creative' | 'analysis' | 'vision' | 'tool_calling' | 'simple' | 'export' | 'general';
 type Complexity = 'simple' | 'medium' | 'complex';
 type UserPlan = 'scout' | 'explorer' | 'commander';
 
@@ -33,7 +33,9 @@ function detectTaskType(msg: string): TaskType {
   const creativeSignals = ['write','story','blog','email','caption','copy','headline','tagline','creative','marketing','social media post','newsletter'];
   const analysisSignals = ['analyze','report','data','metrics','kpi','forecast','compare','strategy','business plan','proposal','audit','review'];
   const simpleSignals = ['hi','hello','hey','thanks','ok','yes','no','what is','define','translate','calculate','convert','format','fix grammar'];
+  const exportSignals = ['export','pdf','excel','powerpoint','presentation','spreadsheet','word document','format as'];
 
+  if (exportSignals.some(s => lower.includes(s))) return 'export';
   if (codingSignals.some(s => lower.includes(s))) return 'coding';
   if (reasoningSignals.some(s => lower.includes(s))) return 'reasoning';
   if (analysisSignals.some(s => lower.includes(s))) return 'analysis';
@@ -91,13 +93,13 @@ function selectModel(
   if (taskType === 'coding') {
     if (complexity === 'complex') {
       return {
-        model: plan === 'commander' ? 'anthropic/claude-sonnet-4-5' : 'openai/gpt-4o',
+        model: plan === 'commander' ? 'anthropic/claude-3.5-sonnet' : 'openai/gpt-4o',
         maxTokens: plan === 'commander' ? 8000 : 4000,
         providerSort: 'quality',
       };
     }
     return {
-      model: 'openai/gpt-4o',
+      model: 'qwen/qwen-2.5-coder-32b-instruct',
       maxTokens: 3000,
       providerSort: 'throughput',
     };
@@ -117,7 +119,7 @@ function selectModel(
   if (taskType === 'analysis') {
     if (complexity === 'complex' && plan === 'commander') {
       return {
-        model: 'anthropic/claude-sonnet-4-5',
+        model: 'anthropic/claude-3.5-sonnet',
         maxTokens: 8000,
         providerSort: 'throughput',
       };
@@ -126,6 +128,15 @@ function selectModel(
       model: 'openai/gpt-4o',
       maxTokens: 4000,
       providerSort: 'throughput',
+    };
+  }
+
+  // Export & Formatting Tasks
+  if (taskType === 'export') {
+    return {
+      model: 'anthropic/claude-3.5-sonnet', // Best at strict markdown formatting
+      maxTokens: 8000,
+      providerSort: 'quality',
     };
   }
 
@@ -141,7 +152,7 @@ function selectModel(
 
   // Hero-based routing for general tasks
   const heroRouting: Record<string, string> = {
-    thoren: 'anthropic/claude-sonnet-4-5',    // Legal, Finance — needs precision
+    thoren: 'anthropic/claude-3.5-sonnet',    // Legal, Finance — needs precision
     ramet: 'openai/gpt-4o',                    // Operations — balanced
     nexar: 'deepseek/deepseek-r1',             // Transformation — deep reasoning
     lyra: 'google/gemini-2.5-flash',           // Content — fast creative
