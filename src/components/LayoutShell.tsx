@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { Sidebar } from '@/components/Sidebar';
+import { Footer } from '@/components/Footer';
 
 export function LayoutShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -14,7 +15,8 @@ export function LayoutShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen bg-[#0A0A0A]">
       <Sidebar />
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">{children}</div>
+      <div className="flex-1 overflow-auto pb-16">{children}</div>
+      <Footer />
     </div>
   );
 }

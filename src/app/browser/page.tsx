@@ -55,58 +55,70 @@ export default function BrowserPage() {
       </div>
 
       {/* Input panel */}
-      <div className="max-w-4xl mx-auto mb-8 flex flex-col gap-4">
+      <div className="max-w-4xl mx-auto mb-8 p-8 flex flex-col"
+        style={{
+          background: 'rgba(212,175,55,0.02)',
+          border: '1px solid rgba(212,175,55,0.12)',
+        }}>
 
-        <div>
-          <label className="font-[Orbitron] text-[8px] tracking-[3px] uppercase block mb-2"
-            style={{ color: 'rgba(212,175,55,0.5)' }}>
-            STARTING URL (optional)
+        {/* URL input */}
+        <div className="mb-6">
+          <label className="font-[Orbitron] text-[10px] tracking-[4px] uppercase block mb-2"
+            style={{ color: 'rgba(212,175,55,0.6)' }}>
+            REPOSITORY URL
           </label>
           <input
             type="text"
             value={url}
             onChange={e => setUrl(e.target.value)}
-            placeholder="https://google.com"
-            className="w-full px-4 py-3 font-[Rajdhani] text-base"
+            placeholder="https://example.com"
+            className="w-full px-5 py-4 font-mono text-sm"
             style={{
-              background: '#111111',
-              border: '1px solid rgba(212,175,55,0.15)',
+              background: 'rgba(212,175,55,0.03)',
+              border: '1px solid rgba(212,175,55,0.2)',
               color: '#d0c5af',
               outline: 'none',
             }}
           />
         </div>
 
-        <div>
-          <label className="font-[Orbitron] text-[8px] tracking-[3px] uppercase block mb-2"
-            style={{ color: 'rgba(212,175,55,0.5)' }}>
-            MISSION DIRECTIVE
+        {/* Task input — rename label to CUSTOM TASK */}
+        <div className="mb-6">
+          <label className="font-[Orbitron] text-[10px] tracking-[4px] uppercase block mb-2"
+            style={{ color: 'rgba(212,175,55,0.6)' }}>
+            CUSTOM TASK
           </label>
           <textarea
             value={task}
             onChange={e => setTask(e.target.value)}
-            placeholder="Search for AI agents in Egypt and take a screenshot of the results..."
-            rows={3}
-            className="w-full px-4 py-3 font-[Rajdhani] text-base resize-none"
+            placeholder="OR DESCRIBE A CUSTOM TASK ..."
+            rows={4}
+            className="w-full px-5 py-4 font-mono text-sm resize-none"
             style={{
-              background: '#111111',
-              border: '1px solid rgba(212,175,55,0.15)',
+              background: 'rgba(212,175,55,0.03)',
+              border: '1px solid rgba(212,175,55,0.2)',
               color: '#d0c5af',
               outline: 'none',
             }}
           />
         </div>
 
+        {/* Execute button — same style as DEPLOY SENTINEL */}
         <button
           onClick={execute}
           disabled={loading || !task.trim()}
-          className="font-[Orbitron] text-xs tracking-[3px] uppercase px-8 py-4 transition-all disabled:opacity-40"
+          className="w-full font-[Orbitron] text-sm tracking-[4px] uppercase py-4 transition-all disabled:opacity-40 flex items-center justify-center gap-3 mt-2"
           style={{
-            background: loading ? 'transparent' : '#D4AF37',
-            color: loading ? '#D4AF37' : '#0A0A0A',
-            border: '1px solid #D4AF37',
-            fontWeight: 700,
+            background: 'transparent',
+            border: '1px solid rgba(212,175,55,0.3)',
+            color: '#D4AF37',
           }}>
+          {/* Globe SVG icon */}
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
           {loading ? 'AGENT EXECUTING...' : 'EXECUTE MISSION'}
         </button>
       </div>

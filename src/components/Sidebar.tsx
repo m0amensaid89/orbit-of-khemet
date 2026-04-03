@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Zap, Hexagon, Shield, Cpu, LogIn, LogOut, User, Wand2, Compass, Search, BookOpen, Hammer, Gem, Globe } from "lucide-react";
+import Image from "next/image";
 import { getEnergyRemainingAsync } from "@/lib/energy";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -110,9 +111,12 @@ export function Sidebar() {
   return (
     <aside className="w-[260px] h-screen bg-[#0A0A0A] hidden md:flex flex-col sticky top-0 shrink-0 text-[#d0c5af] font-rajdhani">
       {/* Top Logo Area */}
-      <Link href="/" className="h-16 border-b border-[rgba(212,175,55,0.08)] flex items-center px-6">
-        <span className="font-orbitron font-bold text-lg text-[#D4AF37] drop-shadow-[0_0_8px_rgba(212,175,55,0.3)] hover:drop-shadow-[0_0_12px_rgba(212,175,55,0.5)] transition-all cursor-pointer">
-          ORBIT OF KHEMET
+      <Link href="/" className="h-16 border-b border-[#D4AF37]/20 flex items-center px-6 gap-3 group">
+        <div className="relative w-8 h-8 shrink-0">
+          <Image src="/khemet-logo.png" alt="Khemet AI" fill className="object-contain" />
+        </div>
+        <span className="font-[Orbitron] text-[#D4AF37] font-bold text-base tracking-wider">
+          KHEMET AI
         </span>
       </Link>
 
@@ -131,11 +135,11 @@ export function Sidebar() {
               <Hexagon className="w-4 h-4 z-10" />
               <span className="font-medium text-[16px] z-10">Master Orbit</span>
             </Link>
-            <Link href="#" className={navItemClass("#", true)}>
+            <Link href="/hub?focus=search" className={navItemClass("/hub")}>
               <Search className="w-4 h-4 z-10" />
               <span className="font-medium text-[16px] z-10">Search</span>
             </Link>
-            <Link href="/hub" className={navItemClass("/codices", true)}>
+            <Link href="/hub" className={navItemClass("/hub")}>
               <BookOpen className="w-4 h-4 z-10" />
               <span className="font-medium text-[16px] z-10">Codices</span>
             </Link>
