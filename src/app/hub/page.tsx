@@ -257,7 +257,7 @@ function HubPageContent() {
                         alt={data.name}
                         fill
                         className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                        unoptimized
+
                       />
                       <div className="absolute inset-0"
                         style={{ background: 'linear-gradient(to top, #111111 0%, transparent 60%)' }} />

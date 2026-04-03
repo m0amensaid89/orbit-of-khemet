@@ -223,7 +223,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
             className="shrink-0 flex items-center gap-1.5 px-3 py-1 rounded-full border text-[10px] font-mono uppercase tracking-widest hover:opacity-80 transition-opacity"
             style={{ borderColor: cardBorder, color: accentColor, background: `rgba(${hero?.palette?.["accent-rgb"] || "212,175,55"},0.08)` }}>
             <div className="w-4 h-4 rounded-full overflow-hidden">
-              <Image src={`/${heroParam}.png`} alt={heroName} width={16} height={16} className="object-cover" unoptimized
+              <Image src={`/${heroParam}.png`} alt={heroName} width={16} height={16} className="object-cover"
                 onError={(e) => { (e.target as HTMLImageElement).style.display='none'; }} />
             </div>
             {heroName}

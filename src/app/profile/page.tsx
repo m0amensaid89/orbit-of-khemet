@@ -341,7 +341,7 @@ export default function ProfilePage() {
                   <Link key={hero.slug} href={`/heroes/${hero.slug}`}>
                     <div className="flex items-center gap-4 p-3 rounded-xl border border-white/5 bg-[#1A1A1A] hover:bg-white/5 transition-colors group cursor-pointer">
                       <div className="relative w-12 h-12 rounded-full border border-white/10 overflow-hidden bg-black group-hover:border-[#D4AF37]/50 transition-colors">
-                        <Image src={`/${hero.slug}.png`} alt={hero.name} fill className="object-cover opacity-80 group-hover:opacity-100 transition-opacity" unoptimized />
+                        <Image src={`/${hero.slug}.png`} alt={hero.name} fill className="object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
                       </div>
                       <div className="flex-1">
                         <h3 className="font-[Orbitron] text-sm font-bold text-white group-hover:text-[#D4AF37] transition-colors">{hero.name}</h3>
