@@ -23,22 +23,26 @@ export function LayoutShell({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // App pages: sidebar + content + footer
+  // App pages: sidebar + content, footer spanning full width at bottom
   return (
-    <div className="flex h-screen overflow-hidden bg-[#0A0A0A]">
-      {/* Sidebar — full height, never moves on desktop */}
-      <Sidebar />
+    <div className="flex flex-col h-screen overflow-hidden bg-[#0A0A0A]">
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar — never moves on desktop */}
+        <Sidebar />
 
-      {/* Content column — scrollable, footer at bottom */}
-      <div className="flex flex-col flex-1 overflow-hidden">
-        <div className="md:hidden">
-          <GlobalNav />
+        {/* Content column — scrollable */}
+        <div className="flex flex-col flex-1 overflow-hidden">
+          <div className="md:hidden">
+            <GlobalNav />
+          </div>
+          <div className="flex-1 overflow-y-auto">
+            {children}
+          </div>
         </div>
-        <div className="flex-1 overflow-y-auto">
-          {children}
-        </div>
-        <Footer isHomePage={isHomePage} />
       </div>
+
+      {/* Footer — spanning full width below sidebar and content */}
+      <Footer isHomePage={isHomePage} />
     </div>
   );
 }

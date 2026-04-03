@@ -21,3 +21,4 @@ https://nextjs.org/telemetry
  ○ Compiling / ...
  ✓ Compiled / in 1114ms
  GET / 200 in 1519ms
+ GET /auth 200 in 3392ms
