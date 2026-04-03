@@ -52,7 +52,7 @@ function HubPageContent() {
   }));
 
   const searchResults = useMemo(() => {
-    const q = search.toLowerCase();
+    const q = search.toLowerCase().trim();
 
     const filteredHeroes = heroes.filter(({ slug, data, meta }) => {
       const matchSearch = !q ||
@@ -122,9 +122,6 @@ function HubPageContent() {
         <p className="font-[Rajdhani] text-lg mb-2" style={{ color: '#d0c5af' }}>
           Pick an AI specialist by goal: strategy, writing, analysis, growth, operations, sales, or learning.
         </p>
-        <p className="font-[Rajdhani] text-sm" style={{ color: 'rgba(255,255,255,0.35)' }}>
-          Thoren: Governance. Ramet: Operations. Nexar: Transformation. Lyra: Growth Content. Kairo: Creator Systems. Nefra: Experience. Horusen: Revenue.
-        </p>
       </div>
 
       {/* Filters */}
@@ -187,7 +184,7 @@ function HubPageContent() {
 
       {/* Hero Grid */}
       <main className="flex-1 px-6 md:px-12">
-        {search.trim() && searchResults.agentMatches.length > 0 && (
+        {(search.trim() || dept !== 'All' || outcome !== 'All') && searchResults.agentMatches.length > 0 && (
           <div className="mb-8 max-w-7xl mx-auto">
             <p className="font-[Orbitron] text-[8px] tracking-[3px] uppercase mb-3"
               style={{ color: 'rgba(212,175,55,0.5)' }}>

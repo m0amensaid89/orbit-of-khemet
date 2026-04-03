@@ -9,7 +9,6 @@ import "@fontsource/rajdhani/700.css";
 import "@fontsource/exo-2/400.css";
 import "@fontsource/exo-2/400-italic.css";
 import "./globals.css";
-import { Footer } from "@/components/Footer";
 import { GlobalNav } from "@/components/GlobalNav";
 import PageTransition from "@/components/PageTransition";
 import { LayoutShell } from "@/components/LayoutShell";
