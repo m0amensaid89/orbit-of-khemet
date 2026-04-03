@@ -228,7 +228,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
               <Image src={`/${heroParam}.png`} alt={heroName} width={16} height={16} className="object-cover"
                 onError={(e) => { (e.target as HTMLImageElement).style.display='none'; }} />
             </div>
-            {heroName}
+            {agentName !== heroName ? agentName : heroName}
           </button>
         </div>
 
@@ -398,13 +398,20 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                   {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-4 h-4 ml-0.5" />}
                 </button>
               </div>
-                <div className="flex items-center justify-between px-2">
-                  <span className="font-[Orbitron] text-[9px] tracking-widest uppercase text-white/30 flex items-center gap-1">
-                    <Zap className="w-3 h-3 text-[#D4AF37]" /> {energyCost} energy per message
-                  </span>
-                  <span className="font-[Orbitron] text-[8px] tracking-[2px] uppercase text-white/20">
-                    Powered by Empire Engine
-                  </span>
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center justify-between px-2">
+                    <span className="font-[Orbitron] text-[9px] tracking-widest uppercase text-white/30 flex items-center gap-1">
+                      <Zap className="w-3 h-3 text-[#D4AF37]" /> {energyCost} energy per message
+                    </span>
+                    <span className="font-[Orbitron] text-[8px] tracking-[2px] uppercase text-white/20">
+                      Powered by Empire Engine
+                    </span>
+                  </div>
+                  <div className="text-center w-full px-2">
+                    <span className="font-[Rajdhani] text-[10px] text-white/30">
+                      Responses are generated using AI and may contain mistakes.
+                    </span>
+                  </div>
                 </div>
               </form>
             </div>

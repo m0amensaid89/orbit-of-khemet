@@ -9,6 +9,24 @@ html {
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --text-xs: 0.6875rem; /* 11px */
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.8125rem; /* 13px */
+  --text-sm--line-height: 1.25rem;
+  --text-base: 0.9375rem; /* 15px */
+  --text-base--line-height: 1.5rem;
+  --text-lg: 1.0625rem; /* 17px */
+  --text-lg--line-height: 1.75rem;
+  --text-xl: 1.1875rem; /* 19px */
+  --text-xl--line-height: 1.75rem;
+  --text-2xl: 1.4375rem; /* 23px */
+  --text-2xl--line-height: 2rem;
+  --text-3xl: 1.8125rem; /* 29px */
+  --text-3xl--line-height: 2.25rem;
+  --text-4xl: 2.1875rem; /* 35px */
+  --text-4xl--line-height: 2.5rem;
+  --text-5xl: 2.9375rem; /* 47px */
+  --text-5xl--line-height: 1;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
@@ -269,7 +287,7 @@ html.light main.min-h-screen {
 h1 {
   font-family: var(--font-cinzel-decorative), 'Cinzel Decorative', serif;
   font-weight: 400;
-  font-size: clamp(1.75rem, 4vw, 3.125rem); /* 28px → 50px */
+  font-size: clamp(1.6875rem, 4vw, 3.0625rem); /* 27px → 49px */
   line-height: 1.15;
   letter-spacing: -0.01em;
 }
@@ -278,7 +296,7 @@ h1 {
 h2 {
   font-family: var(--font-cinzel-decorative), 'Cinzel Decorative', serif;
   font-weight: 400;
-  font-size: clamp(1.375rem, 3vw, 2rem); /* 22px → 32px */
+  font-size: clamp(1.3125rem, 3vw, 1.9375rem); /* 21px → 31px */
   line-height: 1.25;
 }
 
@@ -286,7 +304,7 @@ h2 {
 h3 {
   font-family: var(--font-cinzel-decorative), 'Cinzel Decorative', serif;
   font-weight: 400;
-  font-size: clamp(1.125rem, 2vw, 1.5rem);
+  font-size: clamp(1.0625rem, 2vw, 1.4375rem); /* 17px -> 23px */
   line-height: 1.3;
 }
 
@@ -294,7 +312,7 @@ h3 {
 h4 {
   font-family: var(--font-cinzel-decorative), 'Cinzel Decorative', serif;
   font-weight: 400;
-  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  font-size: clamp(0.9375rem, 1.5vw, 1.1375rem); /* 15px -> ~18px */
   line-height: 1.4;
 }
 
@@ -302,7 +320,7 @@ h4 {
 p, li {
   font-family: var(--font-indie-flower), 'Indie Flower', cursive;
   font-weight: 400;
-  font-size: clamp(1rem, 1.5vw, 1.125rem); /* 16px → 18px */
+  font-size: clamp(0.9375rem, 1.5vw, 1.0625rem); /* 15px → 17px */
   line-height: 1.7;
   color: #d0c5af;
 }
@@ -318,7 +336,7 @@ small,
 .text-caption {
   font-family: var(--font-roboto), 'Roboto', sans-serif;
   font-weight: 400;
-  font-size: clamp(0.8125rem, 1.2vw, 0.9375rem); /* 13px → 15px */
+  font-size: clamp(0.75rem, 1.2vw, 0.875rem); /* 12px → 14px */
   line-height: 1.5;
 }
 
@@ -331,7 +349,7 @@ input, textarea, select {
 button, [role="button"] {
   font-family: var(--font-cinzel-decorative), 'Cinzel Decorative', serif;
   font-weight: 400;
-  font-size: clamp(0.875rem, 1.3vw, 1rem); /* 14px → 16px */
+  font-size: clamp(0.8125rem, 1.3vw, 0.9375rem); /* 13px → 15px */
   line-height: 1;
 }
 
