@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Zap, Hexagon, Shield, Cpu, LogIn, LogOut, User, Wand2, Compass, Search, BookOpen, Hammer, Gem, Globe } from "lucide-react";
+import { Zap, Shield, Cpu, LogIn, LogOut, User, Wand2, Compass, Hammer, Gem, Globe } from "lucide-react";
 import { getEnergyRemainingAsync } from "@/lib/energy";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -25,6 +25,7 @@ export function Sidebar() {
   const [profile, setProfile] = useState<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
   const [recentThreads, setRecentThreads] = useState<any[]>([]); // eslint-disable-line @typescript-eslint/no-explicit-any
   const [superSkillsOpen, setSuperSkillsOpen] = useState(true);
+  const [missionLogOpen, setMissionLogOpen] = useState(true);
   const [threadSearch, setThreadSearch] = useState('');
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState('');
@@ -141,14 +142,12 @@ export function Sidebar() {
               <Compass className="w-4 h-4 z-10" />
               <span className="font-medium text-[16px] z-10">New Mission</span>
             </Link>
+            {/*
             <Link href="/master-orbit" className={navItemClass("/master-orbit")}>
               <Hexagon className="w-4 h-4 z-10" />
               <span className="font-medium text-[16px] z-10">Master Orbit</span>
             </Link>
-            <Link href="/hub?focus=search" className={navItemClass("/hub")}>
-              <Search className="w-4 h-4 z-10" />
-              <span className="font-medium text-[16px] z-10">Search</span>
-            </Link>
+            */}
             {/* Codices (future feature — project management) removed until implemented */}
           </div>
         </div>
@@ -203,25 +202,36 @@ export function Sidebar() {
           <>
             <div className="h-[1px] bg-[rgba(212,175,55,0.08)] mx-3" />
             <div>
-              <div className="px-6 mb-2">
-                <span className="font-orbitron text-[10px] tracking-[8px] text-[rgba(212,175,55,0.4)] uppercase">MISSION LOG</span>
-              </div>
-              <div className="px-4 pb-2">
-                <input
-                  type="text"
-                  value={threadSearch}
-                  onChange={e => setThreadSearch(e.target.value)}
-                  placeholder="Search missions..."
-                  className="w-full px-3 py-1.5 text-xs font-[Rajdhani]"
-                  style={{
-                    background: 'rgba(212,175,55,0.04)',
-                    border: '1px solid rgba(212,175,55,0.1)',
-                    color: '#d0c5af',
-                    outline: 'none',
-                  }}
-                />
-              </div>
-              <div className="px-3 space-y-1">
+              <button
+                onClick={() => setMissionLogOpen(prev => !prev)}
+                className="w-full flex items-center justify-between px-6 py-3 transition-all hover:bg-[rgba(212,175,55,0.03)] mb-1"
+              >
+                <span className="font-orbitron text-[10px] tracking-[8px] uppercase text-[rgba(212,175,55,0.4)]">MISSION LOG</span>
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+                  stroke="rgba(212,175,55,0.4)" strokeWidth="2" strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ transform: missionLogOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              {missionLogOpen && (
+                <>
+                  <div className="px-4 pb-2">
+                    <input
+                      type="text"
+                      value={threadSearch}
+                      onChange={e => setThreadSearch(e.target.value)}
+                      placeholder="Search missions..."
+                      className="w-full px-3 py-1.5 text-xs font-[Rajdhani]"
+                      style={{
+                        background: 'rgba(212,175,55,0.04)',
+                        border: '1px solid rgba(212,175,55,0.1)',
+                        color: '#d0c5af',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
+                  <div className="px-3 space-y-1">
                 {filteredThreads.map((thread) => (
                   <div key={thread.id} className="group relative flex items-center">
                     {renamingId === thread.id ? (
@@ -334,6 +344,8 @@ export function Sidebar() {
                   </div>
                 ))}
               </div>
+                </>
+              )}
             </div>
           </>
         )}
