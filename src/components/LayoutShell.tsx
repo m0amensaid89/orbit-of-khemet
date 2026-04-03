@@ -18,12 +18,17 @@ export function LayoutShell({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // App pages: sidebar + content + fixed footer
+  // App pages: sidebar + content + footer
   return (
-    <div className="flex min-h-screen bg-[#0A0A0A]">
+    <div className="flex h-screen overflow-hidden bg-[#0A0A0A]">
+      {/* Sidebar — full height, never moves */}
       <Sidebar />
+
+      {/* Content column — scrollable, footer at bottom */}
       <div className="flex flex-col flex-1 overflow-hidden">
-        <div className="flex-1 overflow-auto pb-16">{children}</div>
+        <div className="flex-1 overflow-y-auto">
+          {children}
+        </div>
         <Footer />
       </div>
     </div>
