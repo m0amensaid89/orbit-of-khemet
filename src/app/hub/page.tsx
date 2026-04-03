@@ -230,7 +230,7 @@ function HubPageContent() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
+          <div className="grid grid-cols-7 gap-2 md:gap-4 w-full mx-auto" style={{ maxWidth: '1920px' }}>
             {filtered.map(({ slug, data, meta }, i) => (
               <motion.div key={slug}
                 initial={{ opacity: 0, y: 20 }}
@@ -250,8 +250,8 @@ function HubPageContent() {
                       (e.currentTarget as HTMLDivElement).style.boxShadow = 'none';
                     }}>
 
-                    {/* Hero image — full width, fixed height */}
-                    <div className="relative w-full overflow-hidden" style={{ height: '280px' }}>
+                    {/* Hero image — full width, flexible aspect ratio */}
+                    <div className="relative w-full overflow-hidden aspect-[3/4] max-h-[300px]">
                       <Image
                         src={`/${slug}.png`}
                         alt={data.name}
@@ -264,59 +264,59 @@ function HubPageContent() {
                     </div>
 
                     {/* Content */}
-                    <div className="p-5 flex flex-col gap-3 flex-1">
+                    <div className="p-2 sm:p-3 lg:p-5 flex flex-col gap-2 lg:gap-3 flex-1 overflow-hidden">
 
                       {/* Archetype dot + label */}
-                      <div className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full"
+                      <div className="flex items-center gap-1.5 lg:gap-2 truncate">
+                        <div className="w-1 lg:w-1.5 h-1 lg:h-1.5 rounded-full shrink-0"
                           style={{ background: meta?.color_signature || data.accentColor }} />
-                        <span className="font-[Orbitron] text-[7px] tracking-[2px] uppercase"
+                        <span className="font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[7px] tracking-[1px] lg:tracking-[2px] uppercase truncate"
                           style={{ color: meta?.color_signature || data.accentColor }}>
                           {meta?.archetype || data.role}
                         </span>
                       </div>
 
                       {/* Hero name */}
-                      <h2 className="font-[Orbitron] text-2xl font-black tracking-tight" style={{ color: '#ffffff' }}>
+                      <h2 className="font-[Orbitron] text-xs sm:text-base lg:text-2xl font-black tracking-tight truncate" style={{ color: '#ffffff' }}>
                         {data.name}
                       </h2>
 
                       {/* Short tagline */}
-                      <p className="font-[Rajdhani] text-sm leading-relaxed" style={{ color: '#d0c5af', opacity: 0.8 }}>
+                      <p className="font-[Rajdhani] text-[8px] sm:text-[10px] lg:text-sm leading-tight lg:leading-relaxed overflow-hidden line-clamp-2" style={{ color: '#d0c5af', opacity: 0.8 }}>
                         {meta?.role_line || data.role}
                       </p>
 
                       {/* Agent count */}
-                      <div className="flex items-center gap-2">
-                        <span className="font-[Orbitron] text-lg font-bold" style={{ color: '#D4AF37' }}>
+                      <div className="flex items-center gap-1 lg:gap-2">
+                        <span className="font-[Orbitron] text-xs lg:text-lg font-bold" style={{ color: '#D4AF37' }}>
                           {heroAgents[slug as keyof typeof heroAgents]?.length || 0}
                         </span>
-                        <span className="font-[Orbitron] text-[8px] tracking-[2px] uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                        <span className="font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[8px] tracking-[1px] lg:tracking-[2px] uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>
                           AGENTS
                         </span>
                       </div>
 
                       {/* Two action buttons */}
-                      <div className="flex gap-2 mt-auto pt-3"
+                      <div className="flex flex-col xl:flex-row gap-1.5 lg:gap-2 mt-auto pt-2 lg:pt-3"
                         style={{ borderTop: `1px solid ${meta?.color_signature || '#D4AF37'}15` }}>
-                        <Link href={`/chat/${slug}`} className="flex-1" onClick={e => e.stopPropagation()}>
-                          <button className="w-full font-[Orbitron] text-[8px] tracking-[2px] uppercase py-2.5 transition-all"
+                        <Link href={`/chat/${slug}`} className="flex-1 w-full" onClick={e => e.stopPropagation()}>
+                          <button className="w-full font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[8px] tracking-[1px] lg:tracking-[2px] uppercase py-1.5 lg:py-2.5 transition-all truncate px-1"
                             style={{
                               background: `linear-gradient(135deg, ${meta?.color_signature}, ${meta?.color_signature}cc)`,
                               color: '#0A0A0A',
                               fontWeight: 700,
                             }}>
-                            ENTER ORBIT
+                            ENTER
                           </button>
                         </Link>
-                        <Link href={`/heroes/${slug}`} className="flex-1" onClick={e => e.stopPropagation()}>
-                          <button className="w-full font-[Orbitron] text-[8px] tracking-[2px] uppercase py-2.5 transition-all"
+                        <Link href={`/heroes/${slug}`} className="flex-1 w-full" onClick={e => e.stopPropagation()}>
+                          <button className="w-full font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[8px] tracking-[1px] lg:tracking-[2px] uppercase py-1.5 lg:py-2.5 transition-all truncate px-1"
                             style={{
                               background: 'transparent',
                               border: `1px solid ${meta?.color_signature}40`,
                               color: meta?.color_signature,
                             }}>
-                            VIEW DETAILS
+                            DETAILS
                           </button>
                         </Link>
                       </div>
