@@ -6,7 +6,7 @@ export function Footer() {
         <img
           src="/khemet-logo.png"
           alt="Khemet AI"
-          style={{ width: '20px', height: '20px', objectFit: 'contain', opacity: 0.6 }}
+          style={{ width: '20px', height: '20px', objectFit: 'contain', display: 'block', opacity: 0.7 }}
         />
         <span className="font-[family-name:var(--font-cinzel-decorative)] text-[8px] tracking-[3px] uppercase"
           style={{ color: 'rgba(212,175,55,0.5)' }}>

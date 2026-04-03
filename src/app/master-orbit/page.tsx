@@ -19,8 +19,8 @@ export default function MasterOrbitPage() {
         </p>
       </div>
 
-      {/* Hero cards — one per row */}
-      <div className="flex flex-col">
+      {/* Hero cards — 2 per row grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2">
         {heroOrder.map((slug) => {
           const hero = heroData[slug];
           const meta = heroMeta[slug as keyof typeof heroMeta];
@@ -28,73 +28,84 @@ export default function MasterOrbitPage() {
 
           return (
             <div key={slug}
-              className="flex flex-col md:flex-row w-full border-b"
+              className="flex flex-col border-b border-r"
               style={{
                 borderColor: 'rgba(212,175,55,0.06)',
-                minHeight: '280px',
+                minHeight: '320px',
               }}>
 
-              {/* Left: Hero image */}
-              <div className="relative md:w-[320px] shrink-0 overflow-hidden"
-                style={{ minHeight: '280px', background: hero.palette['bg-deep'] }}>
+              {/* Hero image — top half */}
+              <div className="relative w-full overflow-hidden" style={{ height: '220px' }}>
                 <img
                   src={`/${slug}-suit.png`}
                   alt={hero.name}
                   className="w-full h-full object-cover object-top"
                   onError={(e) => { (e.target as HTMLImageElement).src = `/${slug}.png`; }}
-                  style={{ position: 'absolute', inset: 0 }}
+                  style={{ display: 'block' }}
                 />
                 <div className="absolute inset-0"
-                  style={{ background: `linear-gradient(to right, transparent 70%, #0A0A0A)` }} />
-              </div>
+                  style={{ background: 'linear-gradient(to bottom, transparent 40%, #0A0A0A)' }} />
 
-              {/* Right: Info + CTAs */}
-              <div className="flex-1 flex flex-col justify-center px-8 py-8 gap-4">
-
-                {/* Archetype */}
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full animate-pulse"
-                    style={{ background: meta?.color_signature || hero.accentColor }} />
-                  <span className="font-[Orbitron] text-[9px] tracking-[3px] uppercase"
-                    style={{ color: meta?.color_signature || hero.accentColor }}>
-                    {meta?.archetype || hero.role}
+                {/* Agent count bubble — bottom left of image */}
+                <div className="absolute bottom-3 left-3 flex items-center gap-1.5 px-3 py-1 rounded-full"
+                  style={{
+                    background: 'rgba(10,10,10,0.85)',
+                    border: `1px solid ${meta?.color_signature || '#D4AF37'}40`,
+                    backdropFilter: 'blur(4px)',
+                  }}>
+                  <div className="w-1.5 h-1.5 rounded-full"
+                    style={{ background: meta?.color_signature || '#D4AF37' }} />
+                  <span className="font-[Orbitron] text-[9px] font-bold"
+                    style={{ color: meta?.color_signature || '#D4AF37' }}>
+                    {agentCount}
+                  </span>
+                  <span className="font-[Orbitron] text-[7px] tracking-[1px] uppercase"
+                    style={{ color: 'rgba(255,255,255,0.4)' }}>
+                    AGENTS
                   </span>
                 </div>
+              </div>
 
-                {/* Name */}
-                <h2 className="font-[Orbitron] text-4xl font-black tracking-tighter"
-                  style={{ color: meta?.color_signature || hero.palette.primary }}>
-                  {hero.name}
-                </h2>
+              {/* Info + CTAs — bottom half */}
+              <div className="flex flex-col justify-between flex-1 px-6 py-5 gap-3">
+                <div>
+                  {/* Archetype */}
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-1.5 h-1.5 rounded-full"
+                      style={{ background: meta?.color_signature || hero.accentColor }} />
+                    <span className="font-[Orbitron] text-[8px] tracking-[2px] uppercase"
+                      style={{ color: meta?.color_signature || hero.accentColor }}>
+                      {meta?.archetype || hero.role}
+                    </span>
+                  </div>
 
-                {/* Quote */}
-                <p className="font-[Rajdhani] text-lg italic max-w-xl"
-                  style={{ color: 'rgba(255,255,255,0.6)' }}>
-                  &quot;{meta?.bio?.split('.')[0] || hero.quote}&quot;
-                </p>
+                  {/* Name */}
+                  <h2 className="font-[Orbitron] text-2xl font-black"
+                    style={{ color: meta?.color_signature || hero.palette.primary }}>
+                    {hero.name}
+                  </h2>
 
-                {/* Agent count */}
-                <div className="flex items-center gap-2">
-                  <span className="font-[Orbitron] text-2xl font-bold"
-                    style={{ color: '#D4AF37' }}>{agentCount}</span>
-                  <span className="font-[Orbitron] text-[8px] tracking-[3px] uppercase"
-                    style={{ color: 'rgba(255,255,255,0.3)' }}>AGENTS</span>
+                  {/* Quote */}
+                  <p className="font-[Rajdhani] text-sm mt-1 leading-relaxed"
+                    style={{ color: 'rgba(255,255,255,0.5)' }}>
+                    &quot;{(meta?.bio || hero.quote || '').split('.')[0]}&quot;
+                  </p>
                 </div>
 
                 {/* CTAs */}
-                <div className="flex gap-3 flex-wrap">
-                  <Link href={`/chat/${slug}`}>
-                    <button className="font-[Orbitron] text-[9px] tracking-[3px] uppercase px-8 py-3 transition-all"
+                <div className="flex gap-2">
+                  <Link href={`/chat/${slug}`} className="flex-1">
+                    <button className="w-full font-[Orbitron] text-[8px] tracking-[2px] uppercase py-2.5 transition-all"
                       style={{
                         background: `linear-gradient(135deg, ${meta?.color_signature}, ${meta?.color_signature}cc)`,
                         color: '#0A0A0A',
                         fontWeight: 700,
                       }}>
-                      ENTER {hero.name} ORBIT
+                      ENTER ORBIT
                     </button>
                   </Link>
-                  <Link href={`/heroes/${slug}`}>
-                    <button className="font-[Orbitron] text-[9px] tracking-[3px] uppercase px-8 py-3 transition-all"
+                  <Link href={`/heroes/${slug}`} className="flex-1">
+                    <button className="w-full font-[Orbitron] text-[8px] tracking-[2px] uppercase py-2.5 transition-all"
                       style={{
                         background: 'transparent',
                         border: `1px solid ${meta?.color_signature}40`,
