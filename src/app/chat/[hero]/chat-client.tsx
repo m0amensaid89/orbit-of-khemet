@@ -177,14 +177,16 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
   }, [searchParams, handleInputChange, input, messages.length]);
 
   return (
-    <div className="h-screen overflow-hidden flex flex-col w-full px-6 md:px-12 py-4"
-      style={{ background: `linear-gradient(135deg, ${bgDeep} 0%, ${bgMid} 100%)` }}>
+    <>
+      {/* Outer — true full height, no padding, no scroll */}
+      <div className="h-screen overflow-hidden flex flex-col w-full"
+        style={{ background: bgDeep }}>
 
-      {/* Messenger window */}
-      <div className="w-full h-full flex flex-col rounded-2xl overflow-hidden shadow-2xl border flex-1"
-        style={{ borderColor: cardBorder, background: bgDeep }}>
+        {/* Inner card — fills remaining space */}
+        <div className="w-full h-full flex flex-col overflow-hidden"
+          style={{ background: bgMid, borderLeft: `1px solid ${cardBorder}` }}>
 
-        {/* Window header */}
+        {/* Header — shrink-0, never scrolls */}
         <div className="shrink-0 flex items-center gap-3 px-4 py-3 border-b w-full"
           style={{ borderColor: cardBorder, background: bgMid }}>
           <button onClick={() => router.back()} className="text-white/40 hover:text-white/80 transition-colors p-1">
@@ -238,8 +240,8 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
           <span style={{ opacity: 1, color: primaryColor }}>{agentName}</span>
         </div>
 
-          {/* Messages area */}
-          <div className="flex-1 overflow-y-auto px-4 py-6 flex flex-col gap-6"
+          {/* Messages — flex-1, scrolls internally */}
+          <div className="flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-6"
             style={{ background: bgDeep }}>
             {messages.map((m) => {
               // Extract model badge if present
@@ -329,7 +331,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
             <div ref={messagesEndRef} />
             </div>
 
-          {/* Input bar */}
+          {/* Input — shrink-0, never scrolls */}
           <div className="shrink-0 px-6 pb-6 pt-3 border-t w-full" style={{ borderColor: cardBorder, background: bgMid }}>
             <form onSubmit={handleSubmit} className="flex flex-col gap-2 max-w-4xl mx-auto w-full">
               {isListening && (
@@ -383,17 +385,18 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                   {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-4 h-4 ml-0.5" />}
                 </button>
               </div>
-              <div className="flex items-center justify-between px-2">
-                <span className="font-[Orbitron] text-[9px] tracking-widest uppercase text-white/30 flex items-center gap-1">
-                  <Zap className="w-3 h-3 text-[#D4AF37]" /> {energyCost} energy per message
-                </span>
-                <span className="font-[Orbitron] text-[8px] tracking-[2px] uppercase text-white/20">
-                  Powered by Empire Engine
-                </span>
-              </div>
-            </form>
+                <div className="flex items-center justify-between px-2">
+                  <span className="font-[Orbitron] text-[9px] tracking-widest uppercase text-white/30 flex items-center gap-1">
+                    <Zap className="w-3 h-3 text-[#D4AF37]" /> {energyCost} energy per message
+                  </span>
+                  <span className="font-[Orbitron] text-[8px] tracking-[2px] uppercase text-white/20">
+                    Powered by Empire Engine
+                  </span>
+                </div>
+              </form>
             </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

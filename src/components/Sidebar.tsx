@@ -27,6 +27,9 @@ export function Sidebar() {
   const [recentThreads, setRecentThreads] = useState<any[]>([]); // eslint-disable-line @typescript-eslint/no-explicit-any
   const [superSkillsOpen, setSuperSkillsOpen] = useState(true);
   const [threadSearch, setThreadSearch] = useState('');
+  const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [renameValue, setRenameValue] = useState('');
+  const [isRenaming, setIsRenaming] = useState(false);
   const supabase = createClient();
 
   const filteredThreads = recentThreads.filter(t =>
@@ -117,11 +120,15 @@ export function Sidebar() {
   return (
     <aside className="w-[260px] h-screen bg-[#0A0A0A] hidden md:flex flex-col sticky top-0 shrink-0 text-[#d0c5af] font-rajdhani">
       {/* Top Logo Area */}
-      <Link href="/" className="h-16 border-b border-[#D4AF37]/20 flex items-center px-6 gap-3 group">
-        <div className="relative w-8 h-8 shrink-0">
-          <Image src="/khemet-logo.png" alt="Khemet AI" fill className="object-contain" />
-        </div>
-        <span className="font-[Orbitron] text-[#D4AF37] font-bold text-base tracking-wider">
+      <Link href="/" className="h-16 border-b border-[#D4AF37]/20 flex items-center px-6 gap-3 shrink-0">
+        <img
+          src="/khemet-logo.png"
+          alt="Khemet AI"
+          width={32}
+          height={32}
+          style={{ objectFit: 'contain', width: '32px', height: '32px' }}
+        />
+        <span className="font-[family-name:var(--font-cinzel-decorative)] text-[#D4AF37] font-bold text-base tracking-wider">
           KHEMET AI
         </span>
       </Link>
@@ -220,22 +227,68 @@ export function Sidebar() {
               <div className="px-3 space-y-1">
                 {filteredThreads.map((thread) => (
                   <div key={thread.id} className="group relative flex items-center">
-                    <Link
-                      href={`/chat/${thread.hero_slug}?thread=${thread.id}`}
-                      className="flex-1 flex items-center gap-2 px-4 py-2 transition-all text-sm truncate"
-                      style={{ color: 'rgba(208,197,175,0.6)' }}
-                    >
-                      <span style={{ color: 'rgba(212,175,55,0.4)', fontSize: '10px' }}>✦</span>
-                      <span className="font-[Rajdhani] truncate text-sm">
-                        {thread.title || 'New Mission'}
-                      </span>
-                    </Link>
+                    {renamingId === thread.id ? (
+                      // Rename input mode
+                      <input
+                        autoFocus
+                        value={renameValue}
+                        onChange={e => setRenameValue(e.target.value)}
+                        onBlur={async () => {
+                          if (isRenaming) return;
+                          setIsRenaming(true);
+                          if (renameValue.trim() && renameValue.trim() !== thread.title) {
+                            await fetch(`/api/chat-threads/${thread.id}`, {
+                              method: 'PATCH',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ title: renameValue.trim() }),
+                            });
+                            setRecentThreads(prev =>
+                              prev.map(t => t.id === thread.id ? { ...t, title: renameValue.trim() } : t)
+                            );
+                          }
+                          setRenamingId(null);
+                          setIsRenaming(false);
+                        }}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter') {
+                            (e.target as HTMLInputElement).blur();
+                          }
+                          if (e.key === 'Escape') {
+                            setRenamingId(null);
+                            setIsRenaming(false);
+                          }
+                        }}
+                        className="flex-1 px-4 py-2 text-xs font-[Rajdhani] bg-transparent outline-none"
+                        style={{
+                          border: '1px solid rgba(212,175,55,0.3)',
+                          color: '#D4AF37',
+                        }}
+                      />
+                    ) : (
+                      <Link
+                        href={`/chat/${thread.hero_slug}?thread=${thread.id}`}
+                        className="flex-1 flex items-center gap-2 px-4 py-2 transition-all text-sm truncate"
+                        style={{ color: 'rgba(208,197,175,0.6)' }}
+                        onDoubleClick={(e) => {
+                          e.preventDefault();
+                          setRenamingId(thread.id);
+                          setRenameValue(thread.title || 'New Mission');
+                          setIsRenaming(false);
+                        }}
+                      >
+                        <span style={{ color: 'rgba(212,175,55,0.4)', fontSize: '10px' }}>✦</span>
+                        <span className="font-[Rajdhani] truncate text-sm">
+                          {thread.title || 'New Mission'}
+                        </span>
+                      </Link>
+                    )}
 
                     {/* Action buttons — show on hover */}
-                    <div className="absolute right-2 hidden group-hover:flex items-center gap-1"
-                      style={{ background: '#0A0A0A' }}>
+                    {renamingId !== thread.id && (
+                      <div className="absolute right-2 hidden group-hover:flex items-center gap-1"
+                        style={{ background: '#0A0A0A' }}>
 
-                      {/* Archive button */}
+                        {/* Archive button */}
                       <button
                         onClick={async (e) => {
                           e.preventDefault();
@@ -261,25 +314,26 @@ export function Sidebar() {
                       </button>
 
                       {/* Delete button */}
-                      <button
-                        onClick={async (e) => {
-                          e.preventDefault();
-                          if (!confirm('Delete this mission permanently?')) return;
-                          await fetch(`/api/chat-threads/${thread.id}`, { method: 'DELETE' });
-                          setRecentThreads(prev => prev.filter(t => t.id !== thread.id));
-                        }}
-                        className="p-1 rounded transition-all hover:opacity-80"
-                        title="Delete mission"
-                        style={{ color: 'rgba(255,68,68,0.5)' }}
-                      >
-                        {/* Ankh delete icon */}
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
-                          stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                          <line x1="18" y1="6" x2="6" y2="18"/>
-                          <line x1="6" y1="6" x2="18" y2="18"/>
-                        </svg>
-                      </button>
-                    </div>
+                        <button
+                          onClick={async (e) => {
+                            e.preventDefault();
+                            if (!confirm('Delete this mission permanently?')) return;
+                            await fetch(`/api/chat-threads/${thread.id}`, { method: 'DELETE' });
+                            setRecentThreads(prev => prev.filter(t => t.id !== thread.id));
+                          }}
+                          className="p-1 rounded transition-all hover:opacity-80"
+                          title="Delete mission"
+                          style={{ color: 'rgba(255,68,68,0.5)' }}
+                        >
+                          {/* Ankh delete icon */}
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                          </svg>
+                        </button>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

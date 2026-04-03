@@ -1,5 +1,5 @@
 import { getHero, heroOrder } from "@/lib/heroes";
-import { heroMeta } from "@/lib/agents";
+import { heroMeta, heroAgents } from "@/lib/agents";
 import { notFound } from "next/navigation";
 import HeroSplash from "@/components/hero/HeroSplash";
 import { AgentCommandCenter } from "@/components/hero/AgentCommandCenter";
@@ -62,6 +62,23 @@ export default async function HeroPage({ params }: PageProps) {
     >
       <HeroSplash slug={slug} />
       <AgentCommandCenter slug={slug} accentColor={meta?.color_signature || hero.palette.accent} />
+
+      <div className="flex justify-center py-8">
+        <div className="flex items-center gap-3 px-6 py-3 rounded-full"
+          style={{
+            background: 'rgba(212,175,55,0.06)',
+            border: '1px solid rgba(212,175,55,0.15)',
+          }}>
+          <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#D4AF37' }} />
+          <span className="font-[Orbitron] text-xl font-bold" style={{ color: '#D4AF37' }}>
+            {heroAgents[slug as keyof typeof heroAgents]?.length || 0}
+          </span>
+          <span className="font-[Orbitron] text-[9px] tracking-[3px] uppercase"
+            style={{ color: 'rgba(255,255,255,0.4)' }}>
+            AGENTS ASSIGNED
+          </span>
+        </div>
+      </div>
     </main>
   );
 }

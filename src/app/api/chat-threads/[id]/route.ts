@@ -48,7 +48,7 @@ export async function PATCH(
 ) {
   const { id } = await params;
   const body = await req.json();
-  const { archived } = body;
+  const { archived, title } = body;
 
   const supabaseServer = await createClient();
   const { data: { user } } = await supabaseServer.auth.getUser();
@@ -69,9 +69,13 @@ export async function PATCH(
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 
+  const updateData: Record<string, unknown> = {};
+  if (typeof archived !== 'undefined') updateData.archived = archived;
+  if (typeof title !== 'undefined') updateData.title = title;
+
   const { error } = await supabaseAdmin
     .from('chat_threads')
-    .update({ archived: archived ?? true })
+    .update(updateData)
     .eq('id', id);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });

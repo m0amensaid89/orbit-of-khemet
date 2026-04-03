@@ -317,7 +317,40 @@ export async function POST(req: NextRequest) {
           process.env.SUPABASE_SERVICE_ROLE_KEY!
         );
         if (!activeThreadId) {
-          const title = lastMessage.slice(0, 60);
+          // Generate smart title from first user message
+          let title = lastMessage.slice(0, 60);
+          try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3000);
+            const titleRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+                'Content-Type': 'application/json',
+                'HTTP-Referer': 'https://orbit-of-khemet.vercel.app',
+              },
+              body: JSON.stringify({
+                model: 'google/gemini-2.5-flash',
+                max_tokens: 20,
+                messages: [
+                  {
+                    role: 'user',
+                    content: `Generate a 3-5 word title for this task. Reply with ONLY the title, no punctuation, no quotes:\n\n${lastMessage.slice(0, 200)}`,
+                  },
+                ],
+              }),
+              signal: controller.signal,
+            });
+            clearTimeout(timeoutId);
+            if (titleRes.ok) {
+              const titleData = await titleRes.json();
+              const generated = titleData.choices?.[0]?.message?.content?.trim();
+              if (generated && generated.length > 0 && generated.length < 60) {
+                title = generated;
+              }
+            }
+          } catch { /* use fallback title */ }
+
           const { data: newThread } = await supabaseAdmin
             .from('chat_threads')
             .insert({ user_id: user.id, hero_slug: heroSlug, title })
