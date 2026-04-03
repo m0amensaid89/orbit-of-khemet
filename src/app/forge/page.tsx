@@ -313,15 +313,15 @@ export default function ForgePage() {
             {/* Actions */}
             <div className="flex items-center gap-4">
               <Link href="/profile" className="w-1/3">
-                <button className="w-full font-[Orbitron] text-[10px] tracking-[3px] uppercase py-4 border border-white/10 text-white/60 hover:text-white hover:border-white/30 transition-all rounded-xl hover:bg-white/5">
+                <button className="w-full font-[Orbitron] text-[10px] tracking-[3px] uppercase py-3 border transition-all rounded hover:bg-white/5" style={{ borderColor: 'rgba(212,175,55,0.3)', color: '#D4AF37' }}>
                   CANCEL
                 </button>
               </Link>
               <button
                 onClick={handleForge}
                 disabled={saving}
-                className="w-2/3 font-[Orbitron] text-[11px] tracking-[4px] uppercase py-4 font-bold transition-all disabled:opacity-50 flex items-center justify-center gap-2 rounded-xl hover:scale-[1.02]"
-                style={{ background: "linear-gradient(135deg, #f2ca50, #D4AF37)", color: "#000", boxShadow: "0 0 20px rgba(212,175,55,0.3)" }}
+                className="w-2/3 px-8 py-3 rounded flex items-center justify-center gap-2 font-orbitron font-bold tracking-widest text-black transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
+                style={{ background: "linear-gradient(135deg, #f2ca50, #D4AF37)", boxShadow: "0 0 15px rgba(212,175,55,0.4)" }}
               >
                 <Zap className="w-4 h-4" />
                 {saving ? "FORGING..." : "FORGE AGENT ✦"}
@@ -338,7 +338,7 @@ export default function ForgePage() {
             </h3>
 
             <motion.div
-              className="w-full bg-[#131313] rounded-2xl border border-white/5 p-8 flex flex-col relative overflow-hidden group shadow-[0_0_40px_rgba(0,0,0,0.5)]"
+              className="w-full flex flex-col relative overflow-hidden group p-8" style={{ backgroundColor: '#131313', border: '1px solid rgba(212,175,55,0.08)', borderRadius: '4px' }}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
             >
