@@ -53,7 +53,7 @@ export type SquadMeta = {
 export type HeroMeta = {
   name: string;
   class_title: string;
-  archetype: "Social & Creator Systems Director",
+  archetype: string;
   origin_line: string;
   bio: string;
   quote: string;
