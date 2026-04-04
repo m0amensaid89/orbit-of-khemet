@@ -314,10 +314,10 @@ function HubPageContent() {
                       </div>
 
                       {/* Two action buttons */}
-                      <div className="flex flex-col gap-1.5 pt-1 lg:pt-2 w-full"
+                      <div className="flex flex-row gap-1.5 pt-1 lg:pt-2 w-full"
                         style={{ borderTop: `1px solid ${meta?.color_signature || '#D4AF37'}15` }}>
                         <Link href={`/chat/${slug}`} className="w-full" onClick={e => e.stopPropagation()}>
-                          <button className="flex items-center justify-center w-full font-[Orbitron] text-[6px] sm:text-[7px] lg:text-[9px] tracking-[1px] uppercase py-1.5 lg:py-2 transition-all px-1"
+                          <button className="flex items-center justify-center w-full font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[8px] tracking-[0.5px] lg:tracking-[1px] uppercase py-1 lg:py-1.5 transition-all px-0.5 whitespace-nowrap overflow-hidden text-ellipsis"
                             style={{
                               background: `linear-gradient(135deg, ${meta?.color_signature}, ${meta?.color_signature}cc)`,
                               color: '#0A0A0A',
@@ -327,7 +327,7 @@ function HubPageContent() {
                           </button>
                         </Link>
                         <Link href={`/heroes/${slug}`} className="w-full" onClick={e => e.stopPropagation()}>
-                          <button className="flex items-center justify-center w-full font-[Orbitron] text-[6px] sm:text-[7px] lg:text-[9px] tracking-[1px] uppercase py-1.5 lg:py-2 transition-all px-1"
+                          <button className="flex items-center justify-center w-full font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[8px] tracking-[0.5px] lg:tracking-[1px] uppercase py-1 lg:py-1.5 transition-all px-0.5 whitespace-nowrap overflow-hidden text-ellipsis"
                             style={{
                               background: 'transparent',
                               border: `1px solid ${meta?.color_signature}40`,
