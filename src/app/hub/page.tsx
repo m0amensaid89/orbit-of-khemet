@@ -314,27 +314,27 @@ function HubPageContent() {
                       </div>
 
                       {/* Two action buttons */}
-                      <div className="flex flex-row gap-1.5 pt-1 lg:pt-2 w-full"
+                      <div className="flex flex-row gap-1 pt-1 lg:pt-2 w-full"
                         style={{ borderTop: `1px solid ${meta?.color_signature || '#D4AF37'}15` }}>
-                        <Link href={`/chat/${slug}`} className="w-full" onClick={e => e.stopPropagation()}>
-                          <button className="flex items-center justify-center w-full font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[8px] tracking-[0.5px] lg:tracking-[1px] uppercase py-1 lg:py-1.5 transition-all px-0.5 whitespace-nowrap overflow-hidden text-ellipsis"
+                        <Link href={`/chat/${slug}`} className="flex-1 min-w-0 flex" onClick={e => e.stopPropagation()}>
+                          <div className="flex items-center justify-center w-full h-full font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[6.5px] tracking-wider uppercase py-1 lg:py-1.5 transition-all px-0 cursor-pointer rounded-sm overflow-hidden whitespace-nowrap text-center leading-none"
                             style={{
                               background: `linear-gradient(135deg, ${meta?.color_signature}, ${meta?.color_signature}cc)`,
                               color: '#0A0A0A',
                               fontWeight: 700,
                             }}>
                             ENTER
-                          </button>
+                          </div>
                         </Link>
-                        <Link href={`/heroes/${slug}`} className="w-full" onClick={e => e.stopPropagation()}>
-                          <button className="flex items-center justify-center w-full font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[8px] tracking-[0.5px] lg:tracking-[1px] uppercase py-1 lg:py-1.5 transition-all px-0.5 whitespace-nowrap overflow-hidden text-ellipsis"
+                        <Link href={`/heroes/${slug}`} className="flex-1 min-w-0 flex" onClick={e => e.stopPropagation()}>
+                          <div className="flex items-center justify-center w-full h-full font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[6.5px] tracking-wider uppercase py-1 lg:py-1.5 transition-all px-0 cursor-pointer rounded-sm overflow-hidden whitespace-nowrap text-center leading-none"
                             style={{
                               background: 'transparent',
                               border: `1px solid ${meta?.color_signature}40`,
                               color: meta?.color_signature,
                             }}>
                             DETAILS
-                          </button>
+                          </div>
                         </Link>
                       </div>
                     </div>
