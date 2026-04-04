@@ -59,40 +59,71 @@ function detectComplexity(msg: string, convLen: number): Complexity {
   return 'simple';
 }
 
+// ─── Web search detection ──────────────────────────────────────────────────
+function needsWebSearch(msg: string): boolean {
+  const lower = msg.toLowerCase();
+  const webSignals = [
+    // Time-sensitive queries
+    'today', 'right now', 'currently', 'latest', 'recent', 'news',
+    'this week', 'this month', 'this year', '2025', '2026',
+    // Lookup intent
+    'what is the price', 'how much does', 'where can i find',
+    'search for', 'look up', 'find me', 'check',
+    // Live data
+    'stock price', 'weather', 'exchange rate', 'live', 'real-time',
+    // Research intent
+    'research', 'who is', 'what happened', 'when did', 'where is',
+    'find information', 'get information', 'tell me about',
+  ];
+  return webSignals.some(s => lower.includes(s));
+}
+
 // ─── Model selection matrix ────────────────────────────────────────────────
 function selectModel(
   taskType: TaskType,
   complexity: Complexity,
   heroSlug: string,
   plan: UserPlan,
-  agentModel?: string
-): { model: string; maxTokens: number; providerSort: 'throughput' | 'price' | 'latency'; maxPrice?: { prompt: number; completion: number } } {
+  agentModel?: string,
+  webSearch?: boolean
+): { model: string; maxTokens: number; providerSort: 'throughput' | 'price' | 'latency'; maxPrice?: { prompt: number; completion: number }; requiresWebSearch: boolean } {
+
+  // Apply :online suffix for web search capable models
+  // Note: MiMo and openrouter/auto do NOT support :online — skip them
+  const applyOnline = (model: string): string => {
+    if (!webSearch) return model;
+    if (model.startsWith('xiaomi/') || model === 'openrouter/auto' || model === 'openrouter/free') return model;
+    return model.includes(':') ? model : `${model}:online`;
+  };
 
   // Scout plan — use free router
   if (plan === 'scout') {
     return {
-      model: 'openrouter/free',
+      model: applyOnline('openrouter/free'),
       maxTokens: 1000,
       providerSort: 'price',
+      requiresWebSearch: webSearch ?? false,
     };
   }
 
   // Agent has explicit model assignment — use it
   if (agentModel && agentModel !== 'google/gemini-2.5-flash') {
     return {
-      model: agentModel,
+      model: applyOnline(agentModel),
       maxTokens: plan === 'commander' ? 6000 : 3000,
       providerSort: 'throughput',
+      requiresWebSearch: webSearch ?? false,
     };
   }
 
   // Simple tasks — fast + cheap
   if (taskType === 'simple') {
     return {
-      model: 'google/gemini-2.5-flash',
+      model: applyOnline('google/gemini-2.5-flash'),
       maxTokens: 1000,
       providerSort: 'throughput',
       maxPrice: { prompt: 0.1, completion: 0.5 },
+      requiresWebSearch: webSearch ?? false,
     };
   }
 
@@ -100,37 +131,28 @@ function selectModel(
   if (taskType === 'coding') {
     if (complexity === 'complex') {
       return {
-        model: plan === 'commander' ? 'anthropic/claude-sonnet-4-5' : 'openai/gpt-4o',
+        model: applyOnline(plan === 'commander' ? 'anthropic/claude-sonnet-4-5' : 'openai/gpt-4o'),
         maxTokens: plan === 'commander' ? 8000 : 4000,
         providerSort: 'quality' as 'throughput',
+        requiresWebSearch: webSearch ?? false,
       };
     }
     return {
-      model: 'openai/gpt-4o',
+      model: applyOnline('openai/gpt-4o'),
       maxTokens: 3000,
       providerSort: 'throughput',
+      requiresWebSearch: webSearch ?? false,
     };
   }
 
   // Reasoning tasks
   if (taskType === 'reasoning') {
-    // MiMo-V2-Flash: best-in-class reasoning at low cost ($0.09/M input)
     return {
-      model: plan === 'commander'
-        ? 'xiaomi/mimo-v2-pro'        // 1M context, deep agentic tasks
-        : 'xiaomi/mimo-v2-flash',     // fast reasoning, cost-efficient
+      model: applyOnline('deepseek/deepseek-r1'),
       maxTokens: plan === 'commander' ? 8000 : 4000,
       providerSort: 'throughput',
       maxPrice: { prompt: 1.0, completion: 3.0 },
-    };
-  }
-
-  // Vision tasks — MiMo-V2-Omni handles multimodal
-  if (taskType === 'vision') {
-    return {
-      model: 'xiaomi/mimo-v2-omni',
-      maxTokens: plan === 'commander' ? 6000 : 3000,
-      providerSort: 'throughput',
+      requiresWebSearch: webSearch ?? false,
     };
   }
 
@@ -138,25 +160,28 @@ function selectModel(
   if (taskType === 'analysis') {
     if (complexity === 'complex' && plan === 'commander') {
       return {
-        model: 'anthropic/claude-sonnet-4-5',
+        model: applyOnline('anthropic/claude-sonnet-4-5'),
         maxTokens: 8000,
         providerSort: 'throughput',
+        requiresWebSearch: webSearch ?? false,
       };
     }
     return {
-      model: 'openai/gpt-4o',
+      model: applyOnline('openai/gpt-4o'),
       maxTokens: 4000,
       providerSort: 'throughput',
+      requiresWebSearch: webSearch ?? false,
     };
   }
 
   // Creative tasks
   if (taskType === 'creative') {
     return {
-      model: 'google/gemini-2.5-flash',
+      model: applyOnline('google/gemini-2.5-flash'),
       maxTokens: plan === 'commander' ? 4000 : 2000,
       providerSort: 'throughput',
       maxPrice: { prompt: 0.5, completion: 2.0 },
+      requiresWebSearch: webSearch ?? false,
     };
   }
 
@@ -174,16 +199,18 @@ function selectModel(
   // Use auto router for master orbit
   if (heroSlug === 'master') {
     return {
-      model: 'openrouter/auto',
+      model: applyOnline('openrouter/auto'),
       maxTokens: plan === 'commander' ? 6000 : 3000,
       providerSort: 'throughput',
+      requiresWebSearch: webSearch ?? false,
     };
   }
 
   return {
-    model: heroRouting[heroSlug] || 'openrouter/auto',
+    model: applyOnline(heroRouting[heroSlug] || 'openrouter/auto'),
     maxTokens: plan === 'commander' ? 6000 : complexity === 'complex' ? 4000 : 2000,
     providerSort: 'throughput',
+    requiresWebSearch: webSearch ?? false,
   };
 }
 
@@ -251,6 +278,7 @@ export async function POST(req: NextRequest) {
     // Detect task profile
     const taskType = detectTaskType(lastMessage);
     const complexity = detectComplexity(lastMessage, messages.length);
+    const webSearch = needsWebSearch(lastMessage);
 
     // Get user + plan
     const supabaseServer = await createClient();
@@ -290,6 +318,7 @@ export async function POST(req: NextRequest) {
     let providerSort: 'throughput' | 'price' | 'latency';
     let maxPrice: { prompt: number; completion: number } | undefined;
     let modalities: string[] | undefined;
+    let requiresWebSearch = false;
 
     if (wantsImage) {
       model = 'google/gemini-2.5-flash-exp-image-generation';
@@ -297,11 +326,12 @@ export async function POST(req: NextRequest) {
       providerSort = 'throughput';
       modalities = ['image', 'text'];
     } else {
-      const selected = selectModel(taskType, complexity, heroSlug, userPlan, agentModel);
+      const selected = selectModel(taskType, complexity, heroSlug, userPlan, agentModel, webSearch);
       model = selected.model;
       maxTokens = selected.maxTokens;
       providerSort = selected.providerSort;
       maxPrice = selected.maxPrice;
+      requiresWebSearch = selected.requiresWebSearch;
     }
 
     // Build system prompt
@@ -365,7 +395,6 @@ export async function POST(req: NextRequest) {
       allow_fallbacks: true,
       data_collection: 'deny',
       order: ['anthropic', 'openai', 'google', 'deepseek', 'xiaomi'],
-      // Zero Data Retention where supported
       zdr: true,
     };
     if (maxPrice) {
@@ -421,6 +450,7 @@ export async function POST(req: NextRequest) {
     response.headers.set('X-Task-Type', taskType);
     response.headers.set('X-Complexity', complexity);
     response.headers.set('X-Plan-Used', userPlan);
+    response.headers.set('X-Web-Search', requiresWebSearch ? 'true' : 'false');
 
     return response;
 
