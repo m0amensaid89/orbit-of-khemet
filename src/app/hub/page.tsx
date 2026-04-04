@@ -230,7 +230,7 @@ function HubPageContent() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-7 gap-2 md:gap-4 w-full mx-auto" style={{ maxWidth: '1920px' }}>
+          <div className="grid grid-cols-7 gap-2 md:gap-3 w-full mx-auto" style={{ maxWidth: '1920px' }}>
             {filtered.map(({ slug, data, meta }, i) => (
               <motion.div key={slug}
                 initial={{ opacity: 0, y: 20 }}
@@ -267,50 +267,54 @@ function HubPageContent() {
                     <div className="p-2 sm:p-3 lg:p-5 flex flex-col gap-2 lg:gap-3 flex-1 overflow-hidden">
 
                       {/* Hero name (Main title) */}
-                      <h2 className="font-[Orbitron] text-[6px] sm:text-[7px] lg:text-[9px] font-black tracking-tight truncate uppercase"
-                        style={{ color: meta?.color_signature || data.accentColor }}>
-                        {
-                          slug === 'thoren' ? 'THOREN The Law' :
-                          slug === 'ramet' ? 'RAMET The Stabilizer' :
-                          slug === 'nexar' ? 'NEXAR The Destabilizer' :
-                          slug === 'lyra' ? 'LYRA The Signal' :
-                          slug === 'kairo' ? 'KAIRO The Gridwalker' :
-                          slug === 'nefra' ? 'NEFRA The Keeper' :
-                          slug === 'horusen' ? 'HORUSEN The Closer' :
-                          data.name
-                        }
-                      </h2>
+                      <div style={{ minHeight: '32px' }} className="flex flex-col justify-end">
+                        <h2 className="font-[Orbitron] text-[6px] sm:text-[8px] lg:text-[10px] 2xl:text-[12px] font-black tracking-tight uppercase leading-tight"
+                          style={{ color: meta?.color_signature || data.accentColor, wordBreak: 'break-word' }}>
+                          {
+                            slug === 'thoren' ? 'THOREN The Law' :
+                            slug === 'ramet' ? 'RAMET The Stabilizer' :
+                            slug === 'nexar' ? 'NEXAR The Destabilizer' :
+                            slug === 'lyra' ? 'LYRA The Signal' :
+                            slug === 'kairo' ? 'KAIRO The Gridwalker' :
+                            slug === 'nefra' ? 'NEFRA The Keeper' :
+                            slug === 'horusen' ? 'HORUSEN The Closer' :
+                            data.name
+                          }
+                        </h2>
+                      </div>
 
                       {/* Subtitle */}
-                      <p className="font-[Orbitron] text-[4.5px] sm:text-[5px] lg:text-[6px] tracking-widest uppercase truncate"
-                        style={{ color: '#ffffff' }}>
-                        {
-                          slug === 'thoren' ? 'Governance & Finance Strategist' :
-                          slug === 'ramet' ? 'Operations & Execution Lead' :
-                          slug === 'nexar' ? 'Transformation Architect' :
-                          slug === 'lyra' ? 'Growth Content & Virality Engine' :
-                          slug === 'kairo' ? 'Social & Creator Systems Director' :
-                          slug === 'nefra' ? 'Experience & Relationship Guardian' :
-                          slug === 'horusen' ? 'Revenue, Offers & Deals Strategist' :
-                          meta?.archetype || data.role
-                        }
-                      </p>
+                      <div style={{ minHeight: '28px' }}>
+                        <p className="font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[7px] 2xl:text-[8px] tracking-widest uppercase leading-tight mt-0.5"
+                          style={{ color: '#ffffff', wordBreak: 'break-word' }}>
+                          {
+                            slug === 'thoren' ? 'Governance & Finance Strategist' :
+                            slug === 'ramet' ? 'Operations & Execution Lead' :
+                            slug === 'nexar' ? 'Transformation Architect' :
+                            slug === 'lyra' ? 'Growth Content & Virality Engine' :
+                            slug === 'kairo' ? 'Social & Creator Systems Director' :
+                            slug === 'nefra' ? 'Experience & Relationship Guardian' :
+                            slug === 'horusen' ? 'Revenue, Offers & Deals Strategist' :
+                            meta?.archetype || data.role
+                          }
+                        </p>
+                      </div>
 
                       {/* Agent count */}
-                      <div className="flex items-center gap-1 lg:gap-2 mt-auto">
-                        <span className="font-[Orbitron] text-xs lg:text-lg font-bold" style={{ color: '#D4AF37' }}>
+                      <div className="flex items-center gap-1.5 mt-auto pt-1">
+                        <span className="font-[Orbitron] text-sm lg:text-lg font-bold" style={{ color: '#D4AF37' }}>
                           {heroAgents[slug as keyof typeof heroAgents]?.length || 0}
                         </span>
-                        <span className="font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[8px] tracking-[1px] lg:tracking-[2px] uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                        <span className="font-[Orbitron] text-[6px] sm:text-[7px] lg:text-[8px] tracking-[2px] uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>
                           AGENTS
                         </span>
                       </div>
 
                       {/* Two action buttons side-by-side */}
-                      <div className="flex flex-row gap-1 lg:gap-1.5 pt-2 lg:pt-3"
+                      <div className="flex flex-row gap-1.5 pt-2"
                         style={{ borderTop: `1px solid ${meta?.color_signature || '#D4AF37'}15` }}>
-                        <Link href={`/chat/${slug}`} className="flex-1 w-full min-w-0" onClick={e => e.stopPropagation()}>
-                          <button className="w-full font-[Orbitron] text-[4px] sm:text-[5px] lg:text-[6px] tracking-widest uppercase py-1 lg:py-1.5 transition-all truncate px-0.5 rounded-full"
+                        <Link href={`/chat/${slug}`} className="flex-1 min-w-0 flex" onClick={e => e.stopPropagation()}>
+                          <button className="w-full flex-1 font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[7px] 2xl:text-[9px] tracking-widest uppercase py-1.5 transition-all overflow-hidden whitespace-nowrap text-center rounded-full"
                             style={{
                               background: `linear-gradient(135deg, ${meta?.color_signature}, ${meta?.color_signature}cc)`,
                               color: '#0A0A0A',
@@ -319,8 +323,8 @@ function HubPageContent() {
                             ENTER
                           </button>
                         </Link>
-                        <Link href={`/heroes/${slug}`} className="flex-1 w-full min-w-0" onClick={e => e.stopPropagation()}>
-                          <button className="w-full font-[Orbitron] text-[4px] sm:text-[5px] lg:text-[6px] tracking-widest uppercase py-1 lg:py-1.5 transition-all truncate px-0.5 rounded-full"
+                        <Link href={`/heroes/${slug}`} className="flex-1 min-w-0 flex" onClick={e => e.stopPropagation()}>
+                          <button className="w-full flex-1 font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[7px] 2xl:text-[9px] tracking-widest uppercase py-1.5 transition-all overflow-hidden whitespace-nowrap text-center rounded-full"
                             style={{
                               background: 'transparent',
                               border: `1px solid ${meta?.color_signature}40`,
