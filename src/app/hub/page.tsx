@@ -151,12 +151,12 @@ function HubPageContent() {
             style={{ color: 'rgba(212,175,55,0.4)' }}>DEPT:</span>
           {DEPARTMENTS.map(d => (
             <button key={d} onClick={() => setDept(d)}
-              className="font-[Orbitron] text-[8px] tracking-[2px] uppercase px-3 py-1.5 transition-all"
+              className="font-[Orbitron] text-[8px] sm:text-[10px] lg:text-xs tracking-tight uppercase px-3 py-1.5 transition-all"
               style={{
                 background: dept === d ? '#D4AF37' : 'transparent',
                 color: dept === d ? '#0A0A0A' : 'rgba(212,175,55,0.6)',
                 border: '1px solid rgba(212,175,55,0.25)',
-                fontWeight: dept === d ? 700 : 400,
+                fontWeight: dept === d ? 900 : 400,
               }}>
               {d}
             </button>
@@ -169,12 +169,12 @@ function HubPageContent() {
             style={{ color: 'rgba(212,175,55,0.4)' }}>OUTCOME:</span>
           {OUTCOMES.map(o => (
             <button key={o} onClick={() => setOutcome(o)}
-              className="font-[Orbitron] text-[8px] tracking-[2px] uppercase px-3 py-1.5 transition-all"
+              className="font-[Orbitron] text-[8px] sm:text-[10px] lg:text-xs tracking-tight uppercase px-3 py-1.5 transition-all"
               style={{
                 background: outcome === o ? '#2563EB' : 'transparent',
                 color: outcome === o ? '#ffffff' : 'rgba(255,255,255,0.4)',
                 border: '1px solid rgba(37,99,235,0.3)',
-                fontWeight: outcome === o ? 700 : 400,
+                fontWeight: outcome === o ? 900 : 400,
               }}>
               {o}
             </button>
@@ -302,11 +302,6 @@ function HubPageContent() {
                       <div className="font-[Orbitron] text-[8px] sm:text-[10px] lg:text-xs font-black tracking-tight truncate mt-1 mb-1" style={{ color: '#ffffff' }}>
                         {data.name}
                       </div>
-
-                      {/* Short tagline */}
-                      <p className="font-[Rajdhani] text-[6px] sm:text-[7px] lg:text-[8px] leading-tight lg:leading-relaxed overflow-hidden line-clamp-2" style={{ color: '#d0c5af', opacity: 0.8 }}>
-                        {meta?.role_line || data.role}
-                      </p>
 
                       {/* Agent count */}
                       <div className="flex items-center gap-1 lg:gap-2">
