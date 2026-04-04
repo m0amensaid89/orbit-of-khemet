@@ -272,7 +272,7 @@ function HubPageContent() {
                       </div>
 
                       {/* Archetype dot + label */}
-                      <div className="flex items-start gap-1 lg:gap-1.5 mb-1">
+                      <div className="flex items-start gap-1 lg:gap-1.5 mb-1 flex-1">
                         <div className="w-1 lg:w-1.5 h-1 lg:h-1.5 rounded-full shrink-0 mt-0.5"
                           style={{ background: meta?.color_signature || data.accentColor }} />
                         <div className="flex flex-col leading-none">
@@ -317,7 +317,7 @@ function HubPageContent() {
                       <div className="flex flex-row gap-1 lg:gap-1.5 pt-1 lg:pt-2 w-full"
                         style={{ borderTop: `1px solid ${meta?.color_signature || '#D4AF37'}15` }}>
                         <Link href={`/chat/${slug}`} className="flex-1 min-w-0" onClick={e => e.stopPropagation()}>
-                          <button className="w-full font-[Orbitron] text-[4.5px] sm:text-[5.5px] lg:text-[6px] tracking-[0.5px] lg:tracking-[1px] uppercase py-1 lg:py-1.5 transition-all truncate px-0.5"
+                          <button className="flex items-center justify-center w-full font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[7px] tracking-[0.5px] lg:tracking-[1px] uppercase py-1.5 lg:py-2 transition-all px-1"
                             style={{
                               background: `linear-gradient(135deg, ${meta?.color_signature}, ${meta?.color_signature}cc)`,
                               color: '#0A0A0A',
@@ -327,7 +327,7 @@ function HubPageContent() {
                           </button>
                         </Link>
                         <Link href={`/heroes/${slug}`} className="flex-1 min-w-0" onClick={e => e.stopPropagation()}>
-                          <button className="w-full font-[Orbitron] text-[4.5px] sm:text-[5.5px] lg:text-[6px] tracking-[0.5px] lg:tracking-[1px] uppercase py-1 lg:py-1.5 transition-all truncate px-0.5"
+                          <button className="flex items-center justify-center w-full font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[7px] tracking-[0.5px] lg:tracking-[1px] uppercase py-1.5 lg:py-2 transition-all px-1"
                             style={{
                               background: 'transparent',
                               border: `1px solid ${meta?.color_signature}40`,
