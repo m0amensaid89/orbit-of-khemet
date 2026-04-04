@@ -712,7 +712,7 @@ export const heroMeta: Record<string, HeroMeta> = {
   thoren: {
     name: 'THOREN',
     class_title: 'The Law',
-    archetype: 'The Law',
+    archetype: 'The Law: Governance & Finance Strategist',
     origin_line: 'Born from the axioms of order',
     bio: 'Thoren is the constitutional layer of the Empire. He turns chaos into clear rules, builds financial and legal foundations, and protects the empire you are trying to scale.',
     quote: 'I do not enforce the rules. I am the reason rules exist.',
@@ -745,7 +745,7 @@ export const heroMeta: Record<string, HeroMeta> = {
   ramet: {
     name: 'RAMET',
     class_title: 'The Stabilizer',
-    archetype: 'Operations & Execution Lead',
+    archetype: 'The Stabilizer: Operations & Execution Lead',
     origin_line: 'Forged in the fires of systems under pressure',
     bio: 'Ramet is the fault-line watcher. He finds the weak points in your operations before they crack, then designs processes, content flows, and sales systems that keep everything online under stress.',
     quote: 'Stability is not the absence of chaos. It is the mastery of it.',
@@ -778,7 +778,7 @@ export const heroMeta: Record<string, HeroMeta> = {
   nexar: {
     name: 'NEXAR',
     class_title: 'The Destabilizer',
-    archetype: 'Transformation Architect',
+    archetype: 'The Destabilizer: Transformation Architect',
     origin_line: 'Emerged from the void between old systems and new ones',
     bio: 'Nexar is controlled disruption. He pulls apart decaying offers, rebuilds them into sharper products and programs, and layers in analytics so you know what is actually working.',
     quote: 'Destruction is just creation that has not been named yet.',
@@ -812,7 +812,7 @@ export const heroMeta: Record<string, HeroMeta> = {
   lyra: {
     name: 'LYRA',
     class_title: 'The Signal',
-    archetype: 'Growth Content & Virality Engine',
+    archetype: 'The Signal: Growth Content & Virality Engine',
     origin_line: 'Crystallized from the frequency of reach',
     bio: 'Lyra is your amplification field. She takes one core idea and explodes it into dozens of platform-native pieces: hooks, clips, carousels, newsletters, and pages.',
     quote: 'Every idea deserves to be heard. I make sure it is.',
@@ -841,7 +841,7 @@ export const heroMeta: Record<string, HeroMeta> = {
   kairo: {
     name: 'KAIRO',
     class_title: 'The Gridwalker',
-    archetype: 'Social & Creator Systems Director',
+    archetype: 'The Gridwalker: Social & Creator Systems Director',
     origin_line: 'Mapped from the intersection of every content grid',
     bio: 'Kairo is your day-to-day conductor. He plans your content calendar, scripts your videos and threads, tunes your pricing, and keeps your tasks prioritized.',
     quote: 'Consistency is the only strategy that compounds.',
@@ -871,7 +871,7 @@ export const heroMeta: Record<string, HeroMeta> = {
   nefra: {
     name: 'NEFRA',
     class_title: 'The Keeper',
-    archetype: 'Experience & Relationship Guardian',
+    archetype: 'The Keeper: Experience & Relationship Guardian',
     origin_line: 'Woven from every customer interaction ever recorded',
     bio: 'Nefra is your memory and empathy system. She maps every interaction, from first touch to renewal, and makes sure your brand feels coherent, respectful, and reliable.',
     quote: 'Every touchpoint is a promise. I make sure you keep it.',
@@ -906,7 +906,7 @@ export const heroMeta: Record<string, HeroMeta> = {
   horusen: {
     name: 'HORUSEN',
     class_title: 'The Closer',
-    archetype: 'Revenue, Offers & Deals Strategist',
+    archetype: 'The Closer: Revenue, Offers & Deals Strategist',
     origin_line: 'Descended from every deal ever closed',
     bio: 'Horusen is your deal architect. He sharpens your offers, tunes your pricing, scripts your sales flows, and stress-tests risk and exit scenarios.',
     quote: 'Every conversation is a negotiation. Win the right ones.',

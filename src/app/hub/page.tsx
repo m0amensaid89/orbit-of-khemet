@@ -267,19 +267,41 @@ function HubPageContent() {
                     <div className="p-2 sm:p-3 lg:p-5 flex flex-col gap-2 lg:gap-3 flex-1 overflow-hidden">
 
                       {/* Archetype dot + label */}
-                      <div className="flex items-center gap-1.5 lg:gap-2 truncate">
-                        <div className="w-1 lg:w-1.5 h-1 lg:h-1.5 rounded-full shrink-0"
+                      <div className="flex items-start gap-1.5 lg:gap-2 mb-1">
+                        <div className="w-1 lg:w-1.5 h-1 lg:h-1.5 rounded-full shrink-0 mt-1"
                           style={{ background: meta?.color_signature || data.accentColor }} />
-                        <span className="font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[7px] tracking-[1px] lg:tracking-[2px] uppercase truncate"
-                          style={{ color: meta?.color_signature || data.accentColor }}>
-                          {meta?.archetype || data.role}
-                        </span>
+                        <div className="flex flex-col">
+                           {(() => {
+                             const fullText = meta?.archetype || data.role;
+                             if (fullText.includes(':')) {
+                               const [title, desc] = fullText.split(':');
+                               return (
+                                 <>
+                                   <span className="font-[Orbitron] text-[6px] sm:text-[7px] lg:text-[8px] tracking-[1px] lg:tracking-[2px] uppercase font-bold"
+                                     style={{ color: meta?.color_signature || data.accentColor }}>
+                                     {title.trim()}
+                                   </span>
+                                   <span className="font-[Orbitron] text-[5px] sm:text-[5px] lg:text-[6px] tracking-[1px] uppercase mt-0.5 leading-tight"
+                                     style={{ color: meta?.color_signature || data.accentColor, opacity: 0.8, whiteSpace: 'normal', wordWrap: 'break-word' }}>
+                                     {desc.trim()}
+                                   </span>
+                                 </>
+                               )
+                             }
+                             return (
+                               <span className="font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[7px] tracking-[1px] lg:tracking-[2px] uppercase"
+                                 style={{ color: meta?.color_signature || data.accentColor, whiteSpace: 'normal', wordWrap: 'break-word' }}>
+                                 {fullText}
+                               </span>
+                             )
+                           })()}
+                        </div>
                       </div>
 
                       {/* Hero name */}
-                      <h2 className="font-[Orbitron] text-[8px] sm:text-[10px] lg:text-xs font-black tracking-tight truncate" style={{ color: '#ffffff' }}>
+                      <div className="font-[Orbitron] text-[8px] sm:text-[10px] lg:text-xs font-black tracking-tight truncate mt-1 mb-1" style={{ color: '#ffffff' }}>
                         {data.name}
-                      </h2>
+                      </div>
 
                       {/* Short tagline */}
                       <p className="font-[Rajdhani] text-[6px] sm:text-[7px] lg:text-[8px] leading-tight lg:leading-relaxed overflow-hidden line-clamp-2" style={{ color: '#d0c5af', opacity: 0.8 }}>

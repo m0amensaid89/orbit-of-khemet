@@ -112,18 +112,17 @@ function CodeSentinelContent() {
 
       <div className="max-w-4xl mx-auto space-y-8 relative z-10 mt-4">
 
-        {/* Header */}
+        {/* Header Section */}
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center space-x-2 border border-[#D4AF37]/30 bg-[#D4AF37]/10 px-3 py-1 rounded-full mb-4">
-            <span className="w-2 h-2 rounded-full bg-[#D4AF37] animate-pulse"></span>
-            <span className="font-[Orbitron] text-[10px] tracking-[0.2em] text-[#D4AF37] font-bold">EMPIRE ENGINE</span>
+          <div className="inline-block px-3 py-1 mb-2 border border-[#D4AF37]/30 bg-[#D4AF37]/10 rounded font-orbitron text-[10px] tracking-widest text-[#D4AF37]">
+            EMPIRE ENGINE
           </div>
-          <h1 className="text-4xl md:text-6xl font-[Orbitron] font-black tracking-widest text-[#D4AF37] drop-shadow-[0_0_15px_rgba(212,175,55,0.4)]">
+          <h1 className="text-5xl md:text-7xl font-orbitron font-bold text-transparent bg-clip-text bg-gradient-to-b from-[#FFF5D1] to-[#D4AF37] drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]">
             CODE SENTINEL
           </h1>
-          <p className="text-xl font-[Rajdhani] tracking-widest text-[#d0c5af]/80 uppercase">
-            REPOSITORY INTELLIGENCE
-          </p>
+          <h2 className="text-xl md:text-2xl font-rajdhani font-semibold text-[#d0c5af]/80 tracking-widest uppercase">
+            Repository Intelligence
+          </h2>
         </div>
 
         {/* Input Panel */}

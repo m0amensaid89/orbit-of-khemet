@@ -104,7 +104,7 @@ function UIBuilderContent() {
       )}
 
       {/* Header Section */}
-        <div className="text-center space-y-2">
+        <div className="text-center space-y-2 mb-8">
           <div className="inline-block px-3 py-1 mb-2 border border-[#D4AF37]/30 bg-[#D4AF37]/10 rounded font-orbitron text-[10px] tracking-widest text-[#D4AF37]">
             EMPIRE ENGINE
           </div>
