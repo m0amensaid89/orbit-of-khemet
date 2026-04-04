@@ -35,7 +35,7 @@ export function LayoutShell({ children }: { children: React.ReactNode }) {
         <div className="md:hidden">
           <GlobalNav />
         </div>
-        <div className={`flex-1 ${isChatPage ? 'overflow-hidden' : 'overflow-y-auto'}`}>
+        <div className={`flex flex-col flex-1 ${isChatPage ? 'overflow-hidden' : 'overflow-y-auto'}`}>
           {children}
         </div>
         {!isChatPage && <Footer isHomePage={isHomePage} />}
