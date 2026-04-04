@@ -115,34 +115,23 @@ export default function ForgePage() {
   };
 
   return (
-    <main className="min-h-screen py-24 px-6 flex justify-center bg-[#0A0A0A] overflow-hidden relative">
-      {/* Background accents */}
-      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#D4AF37]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-[#D4AF37]/5 blur-[120px] rounded-full pointer-events-none" />
-
-      <div className="w-full max-w-6xl flex flex-col gap-12 relative z-10">
-
-        {/* Header Section */}
-        <div className="text-center space-y-2 mb-4">
-          <div className="inline-block px-3 py-1 mb-2 border border-[#D4AF37]/30 bg-[#D4AF37]/10 rounded font-orbitron text-[10px] tracking-widest text-[#D4AF37]">
-            EMPIRE ENGINE
-          </div>
-          <h1 className="text-5xl md:text-7xl font-orbitron font-bold text-transparent bg-clip-text bg-gradient-to-b from-[#FFF5D1] to-[#D4AF37] drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]">
-            AGENT FORGE
-          </h1>
-          <h2 className="text-xl md:text-2xl font-rajdhani font-semibold text-[#d0c5af]/80 tracking-widest uppercase">
-            Construct Neural Architecture
-          </h2>
-          <div className="flex items-center justify-center gap-2 mt-4">
-             <span className="font-[Orbitron] text-[9px] tracking-[4px] uppercase px-3 py-1 rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/10 text-[#D4AF37]">
-               ✦ COMMANDER EXCLUSIVE
-             </span>
-          </div>
-        </div>
-
-        <div className="flex flex-col lg:flex-row gap-12">
+    <main className="min-h-screen py-24 px-6 flex justify-center bg-[#0A0A0A] overflow-hidden">
+      <div className="w-full max-w-6xl flex flex-col lg:flex-row gap-12">
         {/* Left Side: Form */}
         <div className="w-full lg:w-3/5">
+          <div className="mb-10">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="font-[Orbitron] text-[9px] tracking-[4px] uppercase px-3 py-1 rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/10 text-[#D4AF37]">
+                ✦ COMMANDER EXCLUSIVE
+              </span>
+            </div>
+            <h1 className="font-[Orbitron] text-4xl md:text-5xl font-black tracking-tighter text-white mb-4 leading-none drop-shadow-[0_0_20px_rgba(212,175,55,0.2)]">
+              AGENT FORGE
+            </h1>
+            <p className="font-[Rajdhani] text-lg text-white/60">
+              Create a custom agent. Define its intelligence. Assign it to a hero orbit.
+            </p>
+          </div>
 
           <div className="flex flex-col">
             {/* Agent Photo Upload */}
@@ -324,15 +313,15 @@ export default function ForgePage() {
             {/* Actions */}
             <div className="flex items-center gap-4">
               <Link href="/profile" className="w-1/3">
-                <button className="w-full font-[Orbitron] text-[10px] tracking-[3px] uppercase py-3 border transition-all rounded hover:bg-white/5" style={{ borderColor: 'rgba(212,175,55,0.3)', color: '#D4AF37' }}>
+                <button className="w-full font-[Orbitron] text-[10px] tracking-[3px] uppercase py-4 border border-white/10 text-white/60 hover:text-white hover:border-white/30 transition-all rounded-xl hover:bg-white/5">
                   CANCEL
                 </button>
               </Link>
               <button
                 onClick={handleForge}
                 disabled={saving}
-                className="w-2/3 px-8 py-3 rounded flex items-center justify-center gap-2 font-orbitron font-bold tracking-widest text-black transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
-                style={{ background: "linear-gradient(135deg, #f2ca50, #D4AF37)", boxShadow: "0 0 15px rgba(212,175,55,0.4)" }}
+                className="w-2/3 font-[Orbitron] text-[11px] tracking-[4px] uppercase py-4 font-bold transition-all disabled:opacity-50 flex items-center justify-center gap-2 rounded-xl hover:scale-[1.02]"
+                style={{ background: "linear-gradient(135deg, #f2ca50, #D4AF37)", color: "#000", boxShadow: "0 0 20px rgba(212,175,55,0.3)" }}
               >
                 <Zap className="w-4 h-4" />
                 {saving ? "FORGING..." : "FORGE AGENT ✦"}
@@ -349,7 +338,7 @@ export default function ForgePage() {
             </h3>
 
             <motion.div
-              className="w-full flex flex-col relative overflow-hidden group p-8" style={{ backgroundColor: '#131313', border: '1px solid rgba(212,175,55,0.08)', borderRadius: '4px' }}
+              className="w-full bg-[#131313] rounded-2xl border border-white/5 p-8 flex flex-col relative overflow-hidden group shadow-[0_0_40px_rgba(0,0,0,0.5)]"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
             >
@@ -405,7 +394,6 @@ export default function ForgePage() {
               </div>
             </motion.div>
           </div>
-        </div>
         </div>
       </div>
     </main>

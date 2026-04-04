@@ -151,12 +151,12 @@ function HubPageContent() {
             style={{ color: 'rgba(212,175,55,0.4)' }}>DEPT:</span>
           {DEPARTMENTS.map(d => (
             <button key={d} onClick={() => setDept(d)}
-              className="font-[Orbitron] text-[8px] sm:text-[10px] lg:text-xs tracking-tight uppercase px-3 py-1.5 transition-all"
+              className="font-[Orbitron] text-[8px] tracking-[2px] uppercase px-3 py-1.5 transition-all"
               style={{
                 background: dept === d ? '#D4AF37' : 'transparent',
                 color: dept === d ? '#0A0A0A' : 'rgba(212,175,55,0.6)',
                 border: '1px solid rgba(212,175,55,0.25)',
-                fontWeight: dept === d ? 900 : 400,
+                fontWeight: dept === d ? 700 : 400,
               }}>
               {d}
             </button>
@@ -169,12 +169,12 @@ function HubPageContent() {
             style={{ color: 'rgba(212,175,55,0.4)' }}>OUTCOME:</span>
           {OUTCOMES.map(o => (
             <button key={o} onClick={() => setOutcome(o)}
-              className="font-[Orbitron] text-[8px] sm:text-[10px] lg:text-xs tracking-tight uppercase px-3 py-1.5 transition-all"
+              className="font-[Orbitron] text-[8px] tracking-[2px] uppercase px-3 py-1.5 transition-all"
               style={{
                 background: outcome === o ? '#2563EB' : 'transparent',
                 color: outcome === o ? '#ffffff' : 'rgba(255,255,255,0.4)',
                 border: '1px solid rgba(37,99,235,0.3)',
-                fontWeight: outcome === o ? 900 : 400,
+                fontWeight: outcome === o ? 700 : 400,
               }}>
               {o}
             </button>
@@ -264,77 +264,60 @@ function HubPageContent() {
                     </div>
 
                     {/* Content */}
-                    <div className="p-2 sm:p-3 lg:p-3 xl:p-4 flex flex-col gap-1.5 lg:gap-2 flex-1 overflow-hidden">
-
-                      {/* Hero name */}
-                      <div className="font-[Orbitron] text-[8px] sm:text-[9px] lg:text-[10px] xl:text-[11px] font-black tracking-tight truncate mb-0.5" style={{ color: '#ffffff' }}>
-                        {data.name}
-                      </div>
+                    <div className="p-2 sm:p-3 lg:p-5 flex flex-col gap-2 lg:gap-3 flex-1 overflow-hidden">
 
                       {/* Archetype dot + label */}
-                      <div className="flex items-start gap-1 lg:gap-1.5 mb-1 flex-1">
-                        <div className="w-1 lg:w-1.5 h-1 lg:h-1.5 rounded-full shrink-0 mt-0.5"
+                      <div className="flex items-center gap-1.5 lg:gap-2 truncate">
+                        <div className="w-1 lg:w-1.5 h-1 lg:h-1.5 rounded-full shrink-0"
                           style={{ background: meta?.color_signature || data.accentColor }} />
-                        <div className="flex flex-col leading-none">
-                           {(() => {
-                             const fullText = meta?.archetype || data.role;
-                             if (fullText.includes(':')) {
-                               const [title, desc] = fullText.split(':');
-                               return (
-                                 <>
-                                   <span className="font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[7px] tracking-[1px] lg:tracking-[1.5px] uppercase font-bold mb-0.5"
-                                     style={{ color: meta?.color_signature || data.accentColor }}>
-                                     {title.trim()}
-                                   </span>
-                                   <span className="font-[Orbitron] text-[4px] sm:text-[4px] lg:text-[5px] tracking-[0.5px] lg:tracking-[0.5px] uppercase leading-tight"
-                                     style={{ color: meta?.color_signature || data.accentColor, opacity: 0.8, whiteSpace: 'normal', wordWrap: 'break-word' }}>
-                                     {desc.trim()}
-                                   </span>
-                                 </>
-                               )
-                             }
-                             return (
-                               <span className="font-[Orbitron] text-[4.5px] sm:text-[5.5px] lg:text-[6px] tracking-[0.5px] lg:tracking-[1px] uppercase"
-                                 style={{ color: meta?.color_signature || data.accentColor, whiteSpace: 'normal', wordWrap: 'break-word' }}>
-                                 {fullText}
-                               </span>
-                             )
-                           })()}
-                        </div>
+                        <span className="font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[7px] tracking-[1px] lg:tracking-[2px] uppercase truncate"
+                          style={{ color: meta?.color_signature || data.accentColor }}>
+                          {meta?.archetype || data.role}
+                        </span>
                       </div>
 
+                      {/* Hero name */}
+                      <h2 className="font-[Orbitron] text-[8px] sm:text-[10px] lg:text-xs font-black tracking-tight truncate" style={{ color: '#ffffff' }}>
+                        {data.name}
+                      </h2>
+
+                      {/* Short tagline */}
+                      <p className="font-[Rajdhani] text-[6px] sm:text-[7px] lg:text-[8px] leading-tight lg:leading-relaxed overflow-hidden line-clamp-2" style={{ color: '#d0c5af', opacity: 0.8 }}>
+                        {meta?.role_line || data.role}
+                      </p>
+
                       {/* Agent count */}
-                      <div className="flex items-center gap-1 lg:gap-2 mt-auto pb-1">
-                        <span className="font-[Orbitron] text-xs lg:text-sm font-bold" style={{ color: '#D4AF37' }}>
+                      <div className="flex items-center gap-1 lg:gap-2">
+                        <span className="font-[Orbitron] text-xs lg:text-lg font-bold" style={{ color: '#D4AF37' }}>
                           {heroAgents[slug as keyof typeof heroAgents]?.length || 0}
                         </span>
-                        <span className="font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[7px] tracking-[1px] lg:tracking-[2px] uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                        <span className="font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[8px] tracking-[1px] lg:tracking-[2px] uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>
                           AGENTS
                         </span>
                       </div>
 
                       {/* Two action buttons */}
-                      <div className="flex flex-row gap-1 pt-1 lg:pt-2 w-full"
+                      <div className="flex flex-col xl:flex-row gap-1.5 lg:gap-2 mt-auto pt-2 lg:pt-3"
                         style={{ borderTop: `1px solid ${meta?.color_signature || '#D4AF37'}15` }}>
-                        <Link href={`/chat/${slug}`} className="flex-1 min-w-0 flex" onClick={e => e.stopPropagation()}>
-                          <div className="flex items-center justify-center w-full h-full font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[6.5px] tracking-wider uppercase py-1 lg:py-1.5 transition-all px-0 cursor-pointer rounded-sm overflow-hidden whitespace-nowrap text-center leading-none"
+                        <Link href={`/chat/${slug}`} className="flex-1 w-full" onClick={e => e.stopPropagation()}>
+                          <button className="w-full font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[8px] tracking-[1px] lg:tracking-[2px] uppercase py-1.5 lg:py-2.5 transition-all truncate px-1"
                             style={{
                               background: `linear-gradient(135deg, ${meta?.color_signature}, ${meta?.color_signature}cc)`,
                               color: '#0A0A0A',
                               fontWeight: 700,
                             }}>
                             ENTER
-                          </div>
+                          </button>
                         </Link>
-                        <Link href={`/heroes/${slug}`} className="flex-1 min-w-0 flex" onClick={e => e.stopPropagation()}>
-                          <div className="flex items-center justify-center w-full h-full font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[6.5px] tracking-wider uppercase py-1 lg:py-1.5 transition-all px-0 cursor-pointer rounded-sm overflow-hidden whitespace-nowrap text-center leading-none"
+                        <Link href={`/heroes/${slug}`} className="flex-1 w-full" onClick={e => e.stopPropagation()}>
+                          <button className="w-full font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[8px] tracking-[1px] lg:tracking-[2px] uppercase py-1.5 lg:py-2.5 transition-all truncate px-1"
                             style={{
                               background: 'transparent',
                               border: `1px solid ${meta?.color_signature}40`,
                               color: meta?.color_signature,
                             }}>
                             DETAILS
-                          </div>
+                          </button>
                         </Link>
                       </div>
                     </div>

@@ -596,19 +596,15 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                 </div>
               )}
 
-                <div className="flex flex-col gap-1 mt-1">
-                  <div className="grid grid-cols-3 items-center px-2">
-                    <div className="flex items-center justify-start">
-                      <span className="font-[Orbitron] text-[9px] tracking-widest uppercase text-white/30 flex items-center gap-1">
-                        <Zap className="w-3 h-3 text-[#D4AF37]" /> {energyCost} energy per message
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-center text-center">
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center justify-between px-2">
+                    <span className="font-[Orbitron] text-[9px] tracking-widest uppercase text-white/30 flex items-center gap-1 shrink-0">
+                      <Zap className="w-3 h-3 text-[#D4AF37]" /> {energyCost} energy per message
+                    </span>
+                    <div className="flex items-center gap-2 text-right">
                       <span className="font-[Rajdhani] text-[10px] text-white/30">
                         Responses are generated using AI and may contain mistakes.
                       </span>
-                    </div>
-                    <div className="flex items-center justify-end text-right">
                       <span className="font-[Orbitron] text-[8px] tracking-[2px] uppercase text-white/20">
                         Powered by Empire Engine
                       </span>

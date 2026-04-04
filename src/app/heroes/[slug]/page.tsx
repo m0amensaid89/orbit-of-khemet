@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: PageProps) {
     openGraph: {
       title: `${hero.name} | I-Gamify Universe`,
       description: hero.quote,
-      images: [{ url: `/${slug}.png` }]
+      images: [{ url: `/heroes/${slug}.png` }]
     }
   };
 }

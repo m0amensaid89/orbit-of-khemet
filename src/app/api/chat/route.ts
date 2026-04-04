@@ -114,11 +114,23 @@ function selectModel(
 
   // Reasoning tasks
   if (taskType === 'reasoning') {
+    // MiMo-V2-Flash: best-in-class reasoning at low cost ($0.09/M input)
     return {
-      model: 'deepseek/deepseek-r1',
+      model: plan === 'commander'
+        ? 'xiaomi/mimo-v2-pro'        // 1M context, deep agentic tasks
+        : 'xiaomi/mimo-v2-flash',     // fast reasoning, cost-efficient
       maxTokens: plan === 'commander' ? 8000 : 4000,
       providerSort: 'throughput',
       maxPrice: { prompt: 1.0, completion: 3.0 },
+    };
+  }
+
+  // Vision tasks — MiMo-V2-Omni handles multimodal
+  if (taskType === 'vision') {
+    return {
+      model: 'xiaomi/mimo-v2-omni',
+      maxTokens: plan === 'commander' ? 6000 : 3000,
+      providerSort: 'throughput',
     };
   }
 
@@ -243,7 +255,6 @@ export async function POST(req: NextRequest) {
     // Get user + plan
     const supabaseServer = await createClient();
     const { data: { user } } = await supabaseServer.auth.getUser();
-    const plan: UserPlan = (localStorage?.getItem?.('orbit_plan') as UserPlan) || 'explorer';
 
     // Get user plan from profile
     let userPlan: UserPlan = 'explorer';
@@ -353,7 +364,9 @@ export async function POST(req: NextRequest) {
       sort: providerSort,
       allow_fallbacks: true,
       data_collection: 'deny',
-      order: ['anthropic', 'openai', 'google', 'deepseek'],
+      order: ['anthropic', 'openai', 'google', 'deepseek', 'xiaomi'],
+      // Zero Data Retention where supported
+      zdr: true,
     };
     if (maxPrice) {
       providerOptions.max_price = maxPrice;
@@ -365,13 +378,20 @@ export async function POST(req: NextRequest) {
       content: m.content,
     }));
 
+    // Enable MiMo thinking mode for reasoning models
+    const isMiMo = model.startsWith('xiaomi/mimo');
+    const mimoExtra: Record<string, JSONValue> = isMiMo
+      ? { enable_thinking: true }
+      : {};
+
     const result = await streamText({
       model: openrouter(model),
       system: systemPrompt,
       messages: modelMessages,
       maxTokens,
+      temperature: taskType === 'creative' ? 0.8 : 0.3,
       experimental_providerMetadata: {
-        openrouter: providerOptions,
+        openrouter: { ...providerOptions, ...mimoExtra },
       },
       onFinish: async ({ text }) => {
         if (user && activeThreadId) {
@@ -400,6 +420,7 @@ export async function POST(req: NextRequest) {
     response.headers.set('X-Model-Used', model);
     response.headers.set('X-Task-Type', taskType);
     response.headers.set('X-Complexity', complexity);
+    response.headers.set('X-Plan-Used', userPlan);
 
     return response;
 

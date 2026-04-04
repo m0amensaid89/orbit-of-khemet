@@ -103,20 +103,24 @@ function UIBuilderContent() {
         </div>
       )}
 
-      {/* Header Section */}
-        <div className="text-center space-y-2 mb-8">
-          <div className="inline-block px-3 py-1 mb-2 border border-[#D4AF37]/30 bg-[#D4AF37]/10 rounded font-orbitron text-[10px] tracking-widest text-[#D4AF37]">
-            EMPIRE ENGINE
-          </div>
-          <h1 className="text-5xl md:text-7xl font-orbitron font-bold text-transparent bg-clip-text bg-gradient-to-b from-[#FFF5D1] to-[#D4AF37] drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]">
-            UI BUILDER
-          </h1>
-          <h2 className="text-xl md:text-2xl font-rajdhani font-semibold text-[#d0c5af]/80 tracking-widest uppercase">
-            Interface Forge
-          </h2>
+      {/* Header */}
+      <div className="mb-8 mt-4 text-center flex flex-col items-center">
+        <h1 className="text-5xl md:text-6xl tracking-wider font-bold" style={{
+          fontFamily: 'var(--font-orbitron), sans-serif',
+          color: '#D4AF37',
+          textShadow: '0 0 10px rgba(212,175,55,0.5), 0 0 20px rgba(212,175,55,0.3)'
+        }}>
+          UI BUILDER
+        </h1>
+        <div className="text-xl md:text-2xl mt-2 tracking-[0.2em] font-medium" style={{ color: '#d0c5af' }}>
+          INTERFACE FORGE
         </div>
+        <div className="mt-3 text-xs tracking-widest px-3 py-1 rounded-full" style={{ backgroundColor: 'rgba(212,175,55,0.1)', color: 'rgba(212,175,55,0.8)', border: '1px solid rgba(212,175,55,0.3)' }}>
+          EMPIRE ENGINE
+        </div>
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full max-w-7xl mx-auto">
         {/* Input Panel */}
         <div className="lg:col-span-5 flex flex-col gap-6 p-6 rounded-lg" style={{ backgroundColor: '#131313', border: '1px solid rgba(212,175,55,0.08)' }}>
 
@@ -188,8 +192,12 @@ function UIBuilderContent() {
           <button
             onClick={handleGenerate}
             disabled={isGenerating || !description.trim()}
-            className="w-full mt-2 px-8 py-3 rounded flex items-center justify-center gap-2 font-orbitron font-bold tracking-widest text-black transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
-            style={{ background: 'linear-gradient(135deg, #f2ca50, #D4AF37)', boxShadow: '0 0 15px rgba(212,175,55,0.4)' }}
+            className="w-full mt-2 py-4 rounded font-bold tracking-widest flex items-center justify-center gap-2 transition-all duration-300 disabled:opacity-50"
+            style={{
+              fontFamily: 'var(--font-orbitron), sans-serif',
+              backgroundImage: 'linear-gradient(135deg, #f2ca50, #D4AF37)',
+              color: '#000000'
+            }}
           >
             {isGenerating ? (
               <>
@@ -295,8 +303,12 @@ function UIBuilderContent() {
                   <button
                     onClick={handleRefine}
                     disabled={isGenerating || !refinement.trim()}
-                    className="px-6 py-3 rounded flex items-center justify-center gap-2 font-orbitron font-bold tracking-widest text-black transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed whitespace-nowrap"
-                    style={{ background: 'linear-gradient(135deg, #f2ca50, #D4AF37)', boxShadow: '0 0 15px rgba(212,175,55,0.4)' }}
+                    className="py-3 px-6 rounded font-bold tracking-widest flex items-center justify-center gap-2 transition-all duration-300 disabled:opacity-50 whitespace-nowrap"
+                    style={{
+                      fontFamily: 'var(--font-orbitron), sans-serif',
+                      backgroundImage: 'linear-gradient(135deg, #f2ca50, #D4AF37)',
+                      color: '#000000'
+                    }}
                   >
                     <Wand2 size={16} />
                     ITERATE

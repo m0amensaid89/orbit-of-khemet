@@ -46,7 +46,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className={`${geistSans.variable} ${geistMono.variable} ${cinzel.variable} ${cinzelDecorative.variable} ${inter.variable} ${indieFlower.variable} ${roboto.variable} antialiased khemet-pattern text-foreground`}>
         <LayoutShell>
           <PageTransition>
-            <main className="flex-1 flex flex-col h-full">
+            <main className="flex-1 flex flex-col min-h-screen">
               {children}
             </main>
           </PageTransition>

@@ -58,37 +58,29 @@ export default function ArtifactsPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-[#d0c5af] font-sans p-6 md:p-12 relative overflow-hidden">
-      {/* Background accents */}
-      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#D4AF37]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-[#D4AF37]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="max-w-4xl mx-auto relative z-10 space-y-8 mt-4">
+    <main className="min-h-screen bg-[#0A0A0A] px-6 py-10">
 
-      {/* Header Section */}
-      <div className="flex flex-col items-center text-center space-y-4 mb-10">
-        <div className="space-y-2">
-          <div className="inline-block px-3 py-1 mb-2 border border-[#D4AF37]/30 bg-[#D4AF37]/10 rounded font-orbitron text-[10px] tracking-widest text-[#D4AF37]">
-            EMPIRE ENGINE
+      {/* Header */}
+      <div className="mb-10 border-b pb-8" style={{ borderColor: 'rgba(212,175,55,0.08)' }}>
+        <p className="font-[Orbitron] text-[9px] tracking-[5px] uppercase mb-3"
+          style={{ color: 'rgba(212,175,55,0.5)' }}>SUPER SKILLS</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="font-[Orbitron] text-4xl font-black tracking-tighter mb-2"
+              style={{ color: '#D4AF37' }}>EMPIRE RELICS</h1>
+            <p className="font-[Rajdhani] text-lg" style={{ color: '#d0c5af' }}>
+              Your generated apps, documents, and outputs.
+            </p>
           </div>
-          <h1 className="text-5xl md:text-7xl font-orbitron font-bold text-transparent bg-clip-text bg-gradient-to-b from-[#FFF5D1] to-[#D4AF37] drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]">
-            EMPIRE RELICS
-          </h1>
-          <h2 className="text-xl md:text-2xl font-rajdhani font-semibold text-[#d0c5af]/80 tracking-widest uppercase">
-            Your generated apps, documents, and outputs.
-          </h2>
-        </div>
-
-        <div className="mt-6">
-           <button
+          <button
             onClick={() => setShowNewRelic(true)}
-            className="font-[Orbitron] text-xs tracking-[3px] uppercase px-8 py-3 transition-all rounded hover:scale-105"
+            className="font-[Orbitron] text-[9px] tracking-[3px] uppercase px-6 py-3 transition-all"
             style={{
-              background: 'linear-gradient(135deg, #f2ca50, #D4AF37)',
+              background: 'linear-gradient(135deg, #D4AF37, #FBBF24)',
               color: '#0A0A0A',
               fontWeight: 700,
-              boxShadow: '0 0 15px rgba(212,175,55,0.2)',
             }}>
-            CREATE RELIC
+            + NEW RELIC
           </button>
         </div>
       </div>
@@ -219,7 +211,6 @@ export default function ArtifactsPage() {
           style={{ color: '#d0c5af', opacity: 0.5 }}>
           Click NEW RELIC to start a mission and generate your first empire relic.
         </p>
-      </div>
       </div>
     </main>
   );
