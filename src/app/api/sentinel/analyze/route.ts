@@ -18,8 +18,49 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabaseServer.auth.getUser();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { repoUrl, task } = await req.json();
-    if (!repoUrl) return Response.json({ error: 'Missing repoUrl' }, { status: 400 });
+    const { repoUrl, task, appIdea, platform } = await req.json();
+
+    // ─── APP BUILDER MODE ──────────────────────────────────────────────────
+    if (appIdea && !repoUrl) {
+      const isWebsite = !platform || platform === 'website';
+
+      const buildPrompt = isWebsite
+        ? `Build a complete, production-ready website for: ${appIdea}
+
+REQUIREMENTS:
+- Output ONE single complete HTML file with all CSS and JavaScript inline
+- Modern design: use CSS custom properties, smooth animations, glassmorphism or dark gradient theme
+- Fully responsive (mobile-first)
+- Interactive and functional
+- Professional navigation, hero section, features, CTA, footer
+- Use real placeholder content relevant to the idea
+- Include hover effects and micro-animations
+- Start with <!DOCTYPE html> — output ONLY the HTML, no markdown`
+        : `Create a detailed mobile app specification and wireframe description for: ${appIdea}
+
+Include: user flow, screen descriptions, key features, tech stack recommendation, MVP scope.`;
+
+      const { text } = await generateText({
+        model: openrouter('anthropic/claude-sonnet-4-5'),
+        system: 'You are an elite full-stack developer and designer. You build stunning, complete, production-ready web applications from a single description.',
+        prompt: buildPrompt,
+        maxTokens: 12000,
+      });
+
+      const result = isWebsite
+        ? text.replace(/^```html\n?/, '').replace(/\n?```$/, '').trim()
+        : text;
+
+      return Response.json({
+        mode: 'app_builder',
+        platform: platform || 'website',
+        result,
+        appIdea,
+      });
+    }
+
+    // ─── SENTINEL MODE (existing code, keep unchanged) ────────────────────
+    if (!repoUrl) return Response.json({ error: 'Missing repoUrl or appIdea' }, { status: 400 });
 
     const parsed = parseGitHubUrl(repoUrl);
     if (!parsed) return Response.json({ error: 'Invalid GitHub URL' }, { status: 400 });

@@ -13,6 +13,11 @@ import { detectArtifact, extractTitle, stripCodeBlocks } from '@/lib/artifacts';
 import { ArtifactRenderer } from '@/components/ArtifactRenderer';
 import { ExportToolbar } from '@/components/ExportToolbar';
 
+const IMAGE_TRIGGERS = ['draw','generate an image','create an image','make an image','illustrate','visualize','design a logo','create a logo','generate a logo','make a banner','create a poster','generate a visual','create artwork','paint','sketch me'];
+function isImageRequest(msg: string): boolean {
+  return IMAGE_TRIGGERS.some(t => msg.toLowerCase().includes(t));
+}
+
 function VoiceWaveform({ audioLevel, isLocked }: { audioLevel: number; isLocked: boolean }) {
   const [bars, setBars] = useState<number[]>(Array(28).fill(3));
 
@@ -73,6 +78,7 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
   const [isLocked, setIsLocked] = useState(false); // locked recording mode
   const [voiceSupported, setVoiceSupported] = useState(false);
   const [audioLevel, setAudioLevel] = useState(0); // 0-100 for waveform bar
+  const [generatingImage, setGeneratingImage] = useState(false);
   const [interimText, setInterimText] = useState(''); // live transcript
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -440,6 +446,35 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                         : { background: bgMid, border: `1px solid ${cardBorder}`, color: "rgba(255,255,255,0.9)", borderLeftColor: accentColor, borderLeftWidth: "3px" }}>
                       <div className="whitespace-pre-wrap break-words">
                         {(() => {
+                          // Check if this is an image response
+                          if (m.role === 'assistant') {
+                            const imgMatch = m.content.match(/!\[.*?\]\((data:image\/[^)]+)\)/);
+                            const urlMatch = m.content.match(/!\[.*?\]\((https?:\/\/[^)]+)\)/);
+                            const imageUrl = imgMatch?.[1] || urlMatch?.[1];
+                            if (imageUrl) {
+                              return (
+                                <div className="flex flex-col gap-3">
+                                  <div className="relative rounded-xl overflow-hidden" style={{ maxWidth: '400px' }}>
+                                    <img
+                                      src={imageUrl}
+                                      alt="Generated image"
+                                      className="w-full rounded-xl"
+                                      style={{ border: `1px solid ${cardBorder}` }}
+                                    />
+                                  </div>
+                                  <a
+                                    href={imageUrl}
+                                    download="khemet-image.png"
+                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-[Orbitron] tracking-widest uppercase transition-all hover:opacity-80 w-fit"
+                                    style={{ background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.3)', color: '#D4AF37' }}
+                                  >
+                                    ↓ Download Image
+                                  </a>
+                                </div>
+                              );
+                            }
+                          }
+                          // Default text rendering
                           const artifact = detectArtifact(m.content);
                           return artifact ? stripCodeBlocks(cleanContent) : cleanContent;
                         })()}
@@ -483,25 +518,59 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
             })}
 
             {/* Typing Indicator */}
-            {isLoading && (
-              <div className="flex gap-3 w-full flex-row">
-                <div className="relative w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-[Orbitron] text-xs border mt-1 shadow-lg overflow-hidden"
-                  style={{ background: `rgba(${hero?.palette?.["primary-rgb"] || "192,192,192"},0.1)`, borderColor: accentColor, color: accentColor }}>
-                  {!isMaster ? <Image src={`/${heroParam}.png`} alt={agentName} fill className="object-cover" sizes="40px" /> : agentInitials}
-                </div>
-                <div className="flex flex-col items-start max-w-[80%]">
-                  <span className="font-[Orbitron] text-[10px] tracking-widest uppercase mb-1.5 ml-1" style={{ color: primaryColor }}>
-                    {agentName} <span className="text-white/30 lowercase tracking-normal">is typing...</span>
-                  </span>
-                  <div className="px-5 py-4 rounded-2xl rounded-tl-sm flex items-center gap-2 shadow-md"
-                    style={{ background: bgMid, border: `1px solid ${cardBorder}`, borderLeftColor: accentColor, borderLeftWidth: "3px" }}>
-                    <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: accentColor, animationDelay: '0ms' }} />
-                    <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: accentColor, animationDelay: '150ms' }} />
-                    <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: accentColor, animationDelay: '300ms' }} />
+            {isLoading && (() => {
+              const lastUserMsg = messages.filter(m => m.role === 'user').at(-1)?.content || '';
+              const isImgLoading = isImageRequest(lastUserMsg);
+              return (
+                <div className="flex gap-3 w-full flex-row">
+                  <div className="relative w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-[Orbitron] text-xs border mt-1 shadow-lg overflow-hidden"
+                    style={{ background: `rgba(${hero?.palette?.['primary-rgb'] || '192,192,192'},0.1)`, borderColor: accentColor, color: accentColor }}>
+                    {!isMaster ? <Image src={`/${heroParam}.png`} alt={agentName} fill className="object-cover" sizes="40px" /> : agentInitials}
+                  </div>
+                  <div className="flex flex-col items-start max-w-[80%]">
+                    <span className="font-[Orbitron] text-[10px] tracking-widest uppercase mb-1.5 ml-1" style={{ color: primaryColor }}>
+                      {agentName} <span className="text-white/30 lowercase tracking-normal">{isImgLoading ? 'generating image...' : 'is typing...'}</span>
+                    </span>
+                    {isImgLoading ? (
+                      // Glowing blur box — image generating
+                      <div className="rounded-2xl overflow-hidden" style={{ width: '320px', height: '240px', position: 'relative' }}>
+                        <div style={{
+                          width: '100%', height: '100%',
+                          background: 'linear-gradient(135deg, rgba(212,175,55,0.08), rgba(6,182,212,0.08), rgba(212,175,55,0.08))',
+                          backgroundSize: '400% 400%',
+                          animation: 'shimmer 3s ease-in-out infinite',
+                          border: `1px solid ${cardBorder}`,
+                          borderRadius: '16px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '12px',
+                        }}>
+                          <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(212,175,55,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(212,175,55,0.8)" strokeWidth="1.5">
+                              <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+                              <polyline points="21,15 16,10 5,21"/>
+                            </svg>
+                          </div>
+                          <span style={{ fontFamily: 'Orbitron', fontSize: '9px', letterSpacing: '3px', color: 'rgba(212,175,55,0.6)', textTransform: 'uppercase' }}>
+                            Generating...
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      // Normal typing dots
+                      <div className="px-5 py-4 rounded-2xl rounded-tl-sm flex items-center gap-2 shadow-md"
+                        style={{ background: bgMid, border: `1px solid ${cardBorder}`, borderLeftColor: accentColor, borderLeftWidth: '3px' }}>
+                        <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: accentColor, animationDelay: '0ms' }} />
+                        <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: accentColor, animationDelay: '150ms' }} />
+                        <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: accentColor, animationDelay: '300ms' }} />
+                      </div>
+                    )}
                   </div>
                 </div>
-                </div>
-              )}
+              );
+            })()}
             <div ref={messagesEndRef} />
             </div>
 
@@ -619,6 +688,12 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
             </div>
         </div>
       </div>
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes shimmer {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+      `}} />
     </>
   );
 }

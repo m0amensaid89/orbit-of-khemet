@@ -1,8 +1,15 @@
 "use client";
 
-import { useState, Suspense } from 'react';
-import { Wand2, Monitor, Code, Copy, Download, RotateCcw } from 'lucide-react';
+import { useState, Suspense, useRef } from 'react';
+import { Wand2, Monitor, Code, Copy, Download, RotateCcw, Maximize2, X, History } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
+
+const COMPONENT_OPTIONS = [
+  'Navigation Bar', 'Hero Section', 'Features Grid', 'Pricing Table',
+  'Testimonials', 'FAQ Accordion', 'Contact Form', 'Footer',
+  'Image Gallery', 'Stats Counter', 'Team Section', 'CTA Banner',
+  'Login Form', 'Dashboard Layout', 'Card Grid', 'Timeline',
+];
 
 function UIBuilderContent() {
   const [description, setDescription] = useState('');
@@ -13,6 +20,13 @@ function UIBuilderContent() {
   const [view, setView] = useState<'preview' | 'code'>('preview');
   const [history, setHistory] = useState<{html: string; description: string; time: string}[]>([]);
   const [refinement, setRefinement] = useState('');
+  const [selectedComponents, setSelectedComponents] = useState<string[]>(['Navigation Bar', 'Hero Section', 'Footer']);
+  const [isHistoryDrawerOpen, setIsHistoryDrawerOpen] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  const toggleComponent = (c: string) => setSelectedComponents(prev =>
+    prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c]
+  );
 
   const searchParams = useSearchParams();
   const fromAgent = searchParams.get('agent');
@@ -25,7 +39,7 @@ function UIBuilderContent() {
       const res = await fetch('/api/ui-builder', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ description, style, complexity }),
+        body: JSON.stringify({ description, style, complexity, components: selectedComponents }),
       });
       const data = await res.json();
       if (data.html) {
@@ -90,6 +104,12 @@ function UIBuilderContent() {
     URL.revokeObjectURL(url);
   };
 
+  const handleFullscreen = () => {
+    if (iframeRef.current && iframeRef.current.requestFullscreen) {
+      iframeRef.current.requestFullscreen();
+    }
+  };
+
   return (
     <div className="flex flex-col h-full bg-[#0a0a0a] text-[#d0c5af] p-6 pb-20 md:pb-6 overflow-y-auto w-full mx-auto relative" style={{ fontFamily: 'var(--font-rajdhani), sans-serif' }}>
       {fromHero && fromAgent && (
@@ -114,11 +134,18 @@ function UIBuilderContent() {
           <h2 className="text-xl md:text-2xl font-rajdhani font-semibold text-[#d0c5af]/80 tracking-widest uppercase">
             Interface Forge
           </h2>
+          <button
+            onClick={() => setIsHistoryDrawerOpen(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 mt-2 font-[Orbitron] text-xs tracking-widest uppercase transition-all"
+            style={{ color: '#D4AF37', border: '1px solid rgba(212,175,55,0.3)', background: 'rgba(212,175,55,0.08)', borderRadius: '4px' }}
+          >
+            <History size={14} /> VIEW HISTORY
+          </button>
         </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-200px)]">
         {/* Input Panel */}
-        <div className="lg:col-span-5 flex flex-col gap-6 p-6 rounded-lg" style={{ backgroundColor: '#131313', border: '1px solid rgba(212,175,55,0.08)' }}>
+        <div className="flex flex-col gap-6 p-6 rounded-lg overflow-y-auto" style={{ backgroundColor: '#131313', border: '1px solid rgba(212,175,55,0.08)' }}>
 
           <div className="flex flex-col gap-2">
             <label className="text-xs tracking-widest font-bold" style={{ fontFamily: 'var(--font-orbitron), sans-serif', color: '#D4AF37' }}>
@@ -185,6 +212,32 @@ function UIBuilderContent() {
             </div>
           </div>
 
+          <div className="flex flex-col gap-2">
+            <label className="text-xs tracking-widest font-bold" style={{ fontFamily: 'var(--font-orbitron), sans-serif', color: '#D4AF37' }}>
+              COMPONENTS
+            </label>
+            <div className="flex flex-wrap gap-2 mb-6">
+              {COMPONENT_OPTIONS.map(c => (
+                <button
+                  key={c}
+                  onClick={() => toggleComponent(c)}
+                  className="px-3 py-1.5 rounded-full text-xs font-[Rajdhani] tracking-wider transition-all"
+                  style={{
+                    background: selectedComponents.includes(c) ? 'rgba(212,175,55,0.2)' : 'rgba(255,255,255,0.03)',
+                    border: `1px solid ${selectedComponents.includes(c) ? 'rgba(212,175,55,0.5)' : 'rgba(255,255,255,0.08)'}`,
+                    color: selectedComponents.includes(c) ? '#D4AF37' : 'rgba(255,255,255,0.4)',
+                  }}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="text-xs font-mono p-3 rounded" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.5)' }}>
+            Build: {description || '(your description)'} | Style: {style} | Components: {selectedComponents.join(', ')}
+          </div>
+
           <button
             onClick={handleGenerate}
             disabled={isGenerating || !description.trim()}
@@ -206,8 +259,34 @@ function UIBuilderContent() {
         </div>
 
         {/* Preview Panel */}
-        <div className="lg:col-span-7 flex flex-col gap-6">
-          {generatedHtml ? (
+        <div className="sticky top-0 flex flex-col gap-6">
+          {isGenerating ? (
+            <div className="flex flex-col rounded-lg overflow-hidden h-full min-h-[600px]" style={{ backgroundColor: '#131313', border: '1px solid rgba(212,175,55,0.08)' }}>
+              <div className="flex-1 w-full relative">
+                <div style={{
+                  width: '100%', height: '100%',
+                  background: 'linear-gradient(135deg, rgba(212,175,55,0.08), rgba(6,182,212,0.08), rgba(212,175,55,0.08))',
+                  backgroundSize: '400% 400%',
+                  animation: 'shimmer 3s ease-in-out infinite',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '16px',
+                }}>
+                  <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(212,175,55,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(212,175,55,0.8)" strokeWidth="1.5">
+                      <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+                      <polyline points="21,15 16,10 5,21"/>
+                    </svg>
+                  </div>
+                  <span style={{ fontFamily: 'Orbitron', fontSize: '12px', letterSpacing: '4px', color: 'rgba(212,175,55,0.6)', textTransform: 'uppercase' }}>
+                    Generating Interface...
+                  </span>
+                </div>
+              </div>
+            </div>
+          ) : generatedHtml ? (
             <>
               <div className="flex flex-col rounded-lg overflow-hidden" style={{ backgroundColor: '#131313', border: '1px solid rgba(212,175,55,0.08)' }}>
                 {/* Preview Header Bar */}
@@ -245,6 +324,9 @@ function UIBuilderContent() {
                         <Code size={14} /> CODE
                       </button>
                     </div>
+                    <button onClick={handleFullscreen} title="Fullscreen Preview" className="p-1.5 rounded transition-all duration-200 hover:bg-white/5" style={{ color: '#D4AF37' }}>
+                      <Maximize2 size={16} />
+                    </button>
                     <button onClick={handleCopy} title="Copy Code" className="p-1.5 rounded transition-all duration-200 hover:bg-white/5" style={{ color: '#D4AF37' }}>
                       <Copy size={16} />
                     </button>
@@ -258,6 +340,7 @@ function UIBuilderContent() {
                 <div className="relative w-full h-[600px] overflow-hidden" style={{ backgroundColor: view === 'code' ? '#0e0e0e' : '#ffffff' }}>
                   {view === 'preview' ? (
                     <iframe
+                      ref={iframeRef}
                       srcDoc={generatedHtml}
                       sandbox="allow-scripts allow-same-origin"
                       className="w-full h-full border-none bg-white"
@@ -304,36 +387,6 @@ function UIBuilderContent() {
                 </div>
               </div>
 
-              {/* History Section */}
-              {history.length > 0 && (
-                <div className="flex flex-col gap-3">
-                  <label className="text-xs tracking-widest font-bold" style={{ fontFamily: 'var(--font-orbitron), sans-serif', color: '#D4AF37' }}>
-                    GENERATION HISTORY
-                  </label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
-                    {history.map((item, idx) => (
-                      <div key={idx} className="flex flex-col p-3 rounded gap-2" style={{ backgroundColor: '#131313', border: '1px solid rgba(212,175,55,0.08)' }}>
-                        <div className="text-xs truncate" style={{ color: '#d0c5af' }} title={item.description}>
-                          {item.description || 'Interface Generation'}
-                        </div>
-                        <div className="flex items-center justify-between mt-auto">
-                          <span className="text-[10px]" style={{ color: '#888' }}>{item.time}</span>
-                          <button
-                            onClick={() => {
-                              setGeneratedHtml(item.html);
-                              setView('preview');
-                            }}
-                            className="flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded transition-all duration-200"
-                            style={{ backgroundColor: 'rgba(212,175,55,0.1)', color: '#D4AF37' }}
-                          >
-                            <RotateCcw size={10} /> RESTORE
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </>
           ) : (
             <div className="flex items-center justify-center h-[300px] lg:h-[600px] rounded-lg" style={{ backgroundColor: '#131313', border: '1px dashed rgba(212,175,55,0.2)' }}>
@@ -347,6 +400,83 @@ function UIBuilderContent() {
           )}
         </div>
       </div>
+
+      {/* History Drawer */}
+      <div
+        className={`fixed top-0 left-0 h-full w-80 shadow-2xl transition-transform duration-300 z-50`}
+        style={{
+          transform: isHistoryDrawerOpen ? 'translateX(0)' : 'translateX(-100%)',
+          backgroundColor: '#0a0a0a',
+          borderRight: '1px solid rgba(212,175,55,0.2)',
+        }}
+      >
+        <div className="flex items-center justify-between p-4 border-b" style={{ borderColor: 'rgba(212,175,55,0.1)' }}>
+          <h2 className="font-[Orbitron] text-sm tracking-widest text-[#D4AF37] uppercase flex items-center gap-2">
+            <History size={16} /> VERSION HISTORY
+          </h2>
+          <button
+            onClick={() => setIsHistoryDrawerOpen(false)}
+            className="p-1 hover:bg-white/5 rounded text-[#D4AF37]"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        <div className="p-4 flex flex-col gap-4 overflow-y-auto h-[calc(100vh-64px)]">
+          {history.length === 0 ? (
+            <div className="text-center text-xs text-[#d0c5af]/50 italic mt-8">
+              No generation history yet.
+            </div>
+          ) : (
+            history.map((item, idx) => (
+              <div key={idx} className="flex flex-col p-4 rounded-lg gap-3 transition-colors hover:bg-white/5" style={{ backgroundColor: '#131313', border: '1px solid rgba(212,175,55,0.1)' }}>
+                <div className="text-sm truncate font-medium" style={{ color: '#d0c5af' }} title={item.description}>
+                  {item.description || 'Interface Generation'}
+                </div>
+
+                <div className="w-full h-24 bg-white rounded overflow-hidden relative pointer-events-none opacity-80">
+                   <iframe
+                      srcDoc={item.html}
+                      className="w-[400%] h-[400%] origin-top-left scale-25 border-none"
+                      tabIndex={-1}
+                   />
+                </div>
+
+                <div className="flex items-center justify-between mt-1">
+                  <span className="text-xs" style={{ color: 'rgba(212,175,55,0.6)' }}>{item.time}</span>
+                  <button
+                    onClick={() => {
+                      setGeneratedHtml(item.html);
+                      setView('preview');
+                      setIsHistoryDrawerOpen(false);
+                    }}
+                    className="flex items-center gap-1 text-[10px] font-bold px-3 py-1.5 rounded transition-all duration-200"
+                    style={{ backgroundColor: 'rgba(212,175,55,0.15)', color: '#D4AF37', border: '1px solid rgba(212,175,55,0.3)' }}
+                  >
+                    <RotateCcw size={12} /> RESTORE
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+
+      {/* Overlay for Drawer */}
+      {isHistoryDrawerOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm"
+          onClick={() => setIsHistoryDrawerOpen(false)}
+        />
+      )}
+
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes shimmer {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+        .scale-25 { transform: scale(0.25); }
+      `}} />
     </div>
   );
 }

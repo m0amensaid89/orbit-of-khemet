@@ -11,18 +11,19 @@ const openrouter = createOpenRouter({
   },
 });
 
-const UI_SYSTEM_PROMPT = `You are an elite UI engineer and designer. Your job is to generate complete, production-ready HTML files from user descriptions.
+const UI_SYSTEM_PROMPT = `You are an elite UI engineer. Build complete, stunning, production-ready HTML files.
 
-RULES:
-1. Always output a SINGLE complete HTML file with all CSS and JavaScript inline
-2. Make it visually stunning: use modern design, gradients, animations
-3. Make it fully functional and interactive
-4. Include responsive design (mobile-friendly)
-5. Use CSS custom properties for theming
-6. Add smooth transitions and hover effects
-7. The output must be ONLY the HTML code: no explanations, no markdown, no code blocks
-8. Start directly with <!DOCTYPE html>
-9. Make it production-ready and immediately usable`;
+MANDATORY RULES:
+1. Output ONE complete HTML file — all CSS and JS inline, starting with <!DOCTYPE html>
+2. Use CSS custom properties for all colors/spacing
+3. Include smooth scroll, hover transitions, fade-in animations
+4. Mobile-first responsive (CSS Grid + Flexbox)
+5. Multiple sections: navigation, hero, features/content, CTA, footer
+6. Use real, relevant placeholder content (not Lorem Ipsum)
+7. Add interactive elements: tabs, accordions, modals, tooltips where appropriate
+8. Professional micro-interactions on all buttons and links
+9. Output ONLY the HTML — no markdown, no explanations, no code fences
+10. Make it deployable and immediately usable`;
 
 export async function POST(req: NextRequest) {
   try {
@@ -30,7 +31,7 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabaseServer.auth.getUser();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { description, style, complexity } = await req.json();
+    const { description, style, complexity, components } = await req.json();
     if (!description) return Response.json({ error: 'Missing description' }, { status: 400 });
 
     const styleGuide = style === 'dark'
@@ -49,11 +50,14 @@ export async function POST(req: NextRequest) {
       ? 'Make it feature-rich with multiple sections, animations, and interactive elements.'
       : 'Balance simplicity and features: clean but functional.';
 
-    const prompt = `Create a complete HTML UI for: ${description}
+    const componentGuide = components?.length
+      ? `Include these specific components: ${components.join(', ')}.`
+      : '';
 
+    const prompt = `Create a complete HTML UI for: ${description}
 Style: ${styleGuide}
 Complexity: ${complexityGuide}
-
+${componentGuide}
 Output ONLY the complete HTML file starting with <!DOCTYPE html>. No explanations.`;
 
     const { text } = await generateText({
