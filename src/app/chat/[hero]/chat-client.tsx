@@ -353,10 +353,14 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
           </button>
 
           {/* Agent avatar */}
-          <div className="relative w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-[Orbitron] font-bold text-sm border-2"
+          <div className="relative w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-[Orbitron] font-bold text-sm border-2 overflow-hidden"
             style={{ background: `rgba(${hero?.palette?.["primary-rgb"] || "192,192,192"},0.15)`, borderColor: accentColor, color: accentColor }}>
-            {agentInitials}
-            <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2"
+            {!isMaster ? (
+              <Image src={`/${heroParam}.png`} alt={agentName} fill className="object-cover" sizes="40px" />
+            ) : (
+              agentInitials
+            )}
+            <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 z-10"
               style={{ borderColor: bgMid }} />
           </div>
 
@@ -412,11 +416,11 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                 <div key={m.id} className={`flex gap-3 w-full ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
 
                   {/* Avatar */}
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-[Orbitron] text-xs border shadow-lg ${m.role === "user" ? "mt-auto" : "mt-1"}`}
+                  <div className={`relative w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-[Orbitron] text-xs border shadow-lg overflow-hidden ${m.role === "user" ? "mt-auto" : "mt-1"}`}
                     style={m.role === "user"
                       ? { background: "#1A1A1A", borderColor: "#D4AF37", color: "#D4AF37" }
                       : { background: `rgba(${hero?.palette?.["primary-rgb"] || "192,192,192"},0.1)`, borderColor: accentColor, color: accentColor }}>
-                    {m.role === "user" ? "YOU" : agentInitials}
+                    {m.role === "user" ? "YOU" : (!isMaster ? <Image src={`/${heroParam}.png`} alt={agentName} fill className="object-cover" sizes="40px" /> : agentInitials)}
                   </div>
 
                   {/* Bubble Container */}
@@ -481,9 +485,9 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
             {/* Typing Indicator */}
             {isLoading && (
               <div className="flex gap-3 w-full flex-row">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-[Orbitron] text-xs border mt-1 shadow-lg"
+                <div className="relative w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-[Orbitron] text-xs border mt-1 shadow-lg overflow-hidden"
                   style={{ background: `rgba(${hero?.palette?.["primary-rgb"] || "192,192,192"},0.1)`, borderColor: accentColor, color: accentColor }}>
-                  {agentInitials}
+                  {!isMaster ? <Image src={`/${heroParam}.png`} alt={agentName} fill className="object-cover" sizes="40px" /> : agentInitials}
                 </div>
                 <div className="flex flex-col items-start max-w-[80%]">
                   <span className="font-[Orbitron] text-[10px] tracking-widest uppercase mb-1.5 ml-1" style={{ color: primaryColor }}>
