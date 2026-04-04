@@ -264,29 +264,29 @@ function HubPageContent() {
                     </div>
 
                     {/* Content */}
-                    <div className="p-2 sm:p-3 lg:p-5 flex flex-col gap-2 lg:gap-3 flex-1 overflow-hidden">
+                    <div className="p-2 sm:p-3 lg:p-3 xl:p-4 flex flex-col gap-1.5 lg:gap-2 flex-1 overflow-hidden">
 
                       {/* Hero name */}
-                      <div className="font-[Orbitron] text-[8px] sm:text-[10px] lg:text-xs font-black tracking-tight truncate mb-1" style={{ color: '#ffffff' }}>
+                      <div className="font-[Orbitron] text-[8px] sm:text-[9px] lg:text-[10px] xl:text-[11px] font-black tracking-tight truncate mb-0.5" style={{ color: '#ffffff' }}>
                         {data.name}
                       </div>
 
                       {/* Archetype dot + label */}
-                      <div className="flex items-start gap-1.5 lg:gap-2 mb-1">
-                        <div className="w-1 lg:w-1.5 h-1 lg:h-1.5 rounded-full shrink-0 mt-1"
+                      <div className="flex items-start gap-1 lg:gap-1.5 mb-1">
+                        <div className="w-1 lg:w-1.5 h-1 lg:h-1.5 rounded-full shrink-0 mt-0.5"
                           style={{ background: meta?.color_signature || data.accentColor }} />
-                        <div className="flex flex-col">
+                        <div className="flex flex-col leading-none">
                            {(() => {
                              const fullText = meta?.archetype || data.role;
                              if (fullText.includes(':')) {
                                const [title, desc] = fullText.split(':');
                                return (
                                  <>
-                                   <span className="font-[Orbitron] text-[6px] sm:text-[7px] lg:text-[8px] tracking-[1px] lg:tracking-[2px] uppercase font-bold"
+                                   <span className="font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[7px] tracking-[1px] lg:tracking-[1.5px] uppercase font-bold mb-0.5"
                                      style={{ color: meta?.color_signature || data.accentColor }}>
                                      {title.trim()}
                                    </span>
-                                   <span className="font-[Orbitron] text-[4px] sm:text-[5px] lg:text-[6px] tracking-[0.5px] lg:tracking-[1px] uppercase mt-0.5 leading-tight"
+                                   <span className="font-[Orbitron] text-[4px] sm:text-[4px] lg:text-[5px] tracking-[0.5px] lg:tracking-[0.5px] uppercase leading-tight"
                                      style={{ color: meta?.color_signature || data.accentColor, opacity: 0.8, whiteSpace: 'normal', wordWrap: 'break-word' }}>
                                      {desc.trim()}
                                    </span>
@@ -294,7 +294,7 @@ function HubPageContent() {
                                )
                              }
                              return (
-                               <span className="font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[7px] tracking-[1px] lg:tracking-[2px] uppercase"
+                               <span className="font-[Orbitron] text-[4.5px] sm:text-[5.5px] lg:text-[6px] tracking-[0.5px] lg:tracking-[1px] uppercase"
                                  style={{ color: meta?.color_signature || data.accentColor, whiteSpace: 'normal', wordWrap: 'break-word' }}>
                                  {fullText}
                                </span>
@@ -304,20 +304,20 @@ function HubPageContent() {
                       </div>
 
                       {/* Agent count */}
-                      <div className="flex items-center gap-1 lg:gap-2">
-                        <span className="font-[Orbitron] text-xs lg:text-lg font-bold" style={{ color: '#D4AF37' }}>
+                      <div className="flex items-center gap-1 lg:gap-2 mt-auto pb-1">
+                        <span className="font-[Orbitron] text-xs lg:text-sm font-bold" style={{ color: '#D4AF37' }}>
                           {heroAgents[slug as keyof typeof heroAgents]?.length || 0}
                         </span>
-                        <span className="font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[8px] tracking-[1px] lg:tracking-[2px] uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                        <span className="font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[7px] tracking-[1px] lg:tracking-[2px] uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>
                           AGENTS
                         </span>
                       </div>
 
                       {/* Two action buttons */}
-                      <div className="flex flex-row gap-1 lg:gap-1.5 mt-auto pt-2 lg:pt-3 w-full"
+                      <div className="flex flex-row gap-1 lg:gap-1.5 pt-1 lg:pt-2 w-full"
                         style={{ borderTop: `1px solid ${meta?.color_signature || '#D4AF37'}15` }}>
                         <Link href={`/chat/${slug}`} className="flex-1 min-w-0" onClick={e => e.stopPropagation()}>
-                          <button className="w-full font-[Orbitron] text-[4.5px] sm:text-[5.5px] lg:text-[7px] tracking-[0.5px] lg:tracking-[1px] uppercase py-1.5 lg:py-2 transition-all truncate px-0.5"
+                          <button className="w-full font-[Orbitron] text-[4.5px] sm:text-[5.5px] lg:text-[6px] tracking-[0.5px] lg:tracking-[1px] uppercase py-1 lg:py-1.5 transition-all truncate px-0.5"
                             style={{
                               background: `linear-gradient(135deg, ${meta?.color_signature}, ${meta?.color_signature}cc)`,
                               color: '#0A0A0A',
@@ -327,7 +327,7 @@ function HubPageContent() {
                           </button>
                         </Link>
                         <Link href={`/heroes/${slug}`} className="flex-1 min-w-0" onClick={e => e.stopPropagation()}>
-                          <button className="w-full font-[Orbitron] text-[4.5px] sm:text-[5.5px] lg:text-[7px] tracking-[0.5px] lg:tracking-[1px] uppercase py-1.5 lg:py-2 transition-all truncate px-0.5"
+                          <button className="w-full font-[Orbitron] text-[4.5px] sm:text-[5.5px] lg:text-[6px] tracking-[0.5px] lg:tracking-[1px] uppercase py-1 lg:py-1.5 transition-all truncate px-0.5"
                             style={{
                               background: 'transparent',
                               border: `1px solid ${meta?.color_signature}40`,
