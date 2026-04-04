@@ -26,17 +26,18 @@ export async function GET(req: NextRequest) {
     // Fetch the thread to verify ownership
     const { data: thread } = await supabaseAdmin
       .from('chat_threads')
-      .select('user_id')
+      .select('id')
       .eq('id', threadId)
+      .eq('user_id', user.id)
       .single();
 
-    if (!thread || thread.user_id !== user.id) {
-       return Response.json({ error: 'Thread not found or unauthorized' }, { status: 404 });
+    if (!thread) {
+       return Response.json({ error: 'Thread not found' }, { status: 404 });
     }
 
     const { data: messages, error } = await supabaseAdmin
       .from('chat_messages')
-      .select('*')
+      .select('id, role, content, model_used, created_at')
       .eq('thread_id', threadId)
       .order('created_at', { ascending: true });
 

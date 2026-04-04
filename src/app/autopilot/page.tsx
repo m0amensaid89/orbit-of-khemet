@@ -11,6 +11,7 @@ function AutopilotContent() {
   const [steps, setSteps] = useState<string[]>([]);
   const [activeStep, setActiveStep] = useState<number>(-1);
   const [stepResults, setStepResults] = useState<Record<number, string>>({});
+  const [stepModels, setStepModels] = useState<Record<number, string>>({});
   const [finalResult, setFinalResult] = useState('');
 
   const searchParams = useSearchParams();
@@ -55,6 +56,9 @@ function AutopilotContent() {
             }
             if (data.type === 'step_complete') {
               setStepResults(prev => ({ ...prev, [data.stepIndex]: data.result }));
+              if (data.model) {
+                setStepModels(prev => ({ ...prev, [data.stepIndex]: data.model }));
+              }
             }
             if (data.type === 'synthesizing') setStatus('Synthesizing final deliverable...');
             if (data.type === 'complete') {
@@ -222,6 +226,12 @@ function AutopilotContent() {
                         <h4 className={`font-rajdhani text-lg ${isActive ? 'text-[#D4AF37]' : 'text-[#d0c5af]'}`}>
                           {step}
                         </h4>
+                        {isComplete && stepModels[index] && (
+                          <span className="ml-2 font-[Orbitron] text-[8px] tracking-[2px] uppercase px-2 py-0.5 rounded-full"
+                            style={{ background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.5)', color: '#D4AF37' }}>
+                            ✦ {stepModels[index]}
+                          </span>
+                        )}
                       </div>
 
                       {isComplete && stepResults[index] && (

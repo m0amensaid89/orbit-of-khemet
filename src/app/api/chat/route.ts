@@ -21,10 +21,24 @@ function isImageRequest(msg: string): boolean {
   return IMAGE_TRIGGERS.some(t => msg.toLowerCase().includes(t));
 }
 
+function detectImageComplexity(msg: string): 'simple' | 'detailed' | 'complex' {
+  const lower = msg.toLowerCase();
+  const complexSignals = ['photorealistic','8k','hyper detailed','cinematic','full scene','landscape','architecture','product render','professional'];
+  const detailedSignals = ['character','portrait','logo','banner','poster','illustration','concept art'];
+  if (complexSignals.some(s => lower.includes(s))) return 'complex';
+  if (detailedSignals.some(s => lower.includes(s))) return 'detailed';
+  return 'simple';
+}
+
+function selectImageModel(complexity: 'simple' | 'detailed' | 'complex'): string {
+  if (complexity === 'simple') return 'google/gemini-2.5-flash-exp-image-generation';
+  if (complexity === 'detailed') return 'google/gemini-2.5-flash-exp-image-generation';
+  return 'openai/gpt-image-1';
+}
+
 // ─── Task type detection ───────────────────────────────────────────────────
 type TaskType = 'coding' | 'reasoning' | 'creative' | 'analysis' | 'vision' | 'tool_calling' | 'simple' | 'general';
 type Complexity = 'simple' | 'medium' | 'complex';
-type UserPlan = 'scout' | 'explorer' | 'commander';
 
 interface TaskProfile {
   taskType: TaskType;
@@ -59,118 +73,101 @@ function detectComplexity(msg: string, convLen: number): Complexity {
   return 'simple';
 }
 
+function needsWebSearch(msg: string): boolean {
+  const lower = msg.toLowerCase();
+  const signals = [
+    'today','right now','currently','latest','recent','news','this week',
+    'this month','2025','2026','stock price','weather','exchange rate',
+    'live','real-time','search for','look up','find me','check',
+    'who is','what happened','when did','where is','research',
+    'find information','tell me about',
+  ];
+  return signals.some(s => lower.includes(s));
+}
+
 // ─── Model selection matrix ────────────────────────────────────────────────
 function selectModel(
   taskType: TaskType,
   complexity: Complexity,
   heroSlug: string,
-  plan: UserPlan,
-  agentModel?: string
+  agentModel?: string,
+  webSearch?: boolean
 ): { model: string; maxTokens: number; providerSort: 'throughput' | 'price' | 'latency'; maxPrice?: { prompt: number; completion: number } } {
 
-  // Scout plan — use free router
-  if (plan === 'scout') {
-    return {
-      model: 'openrouter/free',
-      maxTokens: 1000,
-      providerSort: 'price',
-    };
-  }
+  const applyOnline = (m: string): string => {
+    if (!webSearch) return m;
+    if (m.startsWith('xiaomi/') || m.startsWith('openrouter/')) return m;
+    return m.includes(':') ? m : `${m}:online`;
+  };
 
   // Agent has explicit model assignment — use it
   if (agentModel && agentModel !== 'google/gemini-2.5-flash') {
     return {
-      model: agentModel,
-      maxTokens: plan === 'commander' ? 6000 : 3000,
+      model: applyOnline(agentModel),
+      maxTokens: 6000,
       providerSort: 'throughput',
     };
   }
 
   // Simple tasks — fast + cheap
   if (taskType === 'simple') {
-    return {
-      model: 'google/gemini-2.5-flash',
-      maxTokens: 1000,
-      providerSort: 'throughput',
-      maxPrice: { prompt: 0.1, completion: 0.5 },
-    };
+    return { model: applyOnline('google/gemini-2.5-flash'), maxTokens: 1000, providerSort: 'latency' };
   }
 
   // Coding tasks
   if (taskType === 'coding') {
     if (complexity === 'complex') {
-      return {
-        model: plan === 'commander' ? 'anthropic/claude-sonnet-4-5' : 'openai/gpt-4o',
-        maxTokens: plan === 'commander' ? 8000 : 4000,
-        providerSort: 'quality' as 'throughput',
-      };
+      return { model: applyOnline('anthropic/claude-sonnet-4-5'), maxTokens: 8000, providerSort: 'throughput' };
     }
+    return { model: applyOnline('openai/gpt-4o'), maxTokens: 4000, providerSort: 'throughput' };
+  }
+
+  // Reasoning tasks — MiMo-V2
+  if (taskType === 'reasoning') {
     return {
-      model: 'openai/gpt-4o',
-      maxTokens: 3000,
+      model: applyOnline(complexity === 'complex' ? 'xiaomi/mimo-v2-pro' : 'xiaomi/mimo-v2-flash'),
+      maxTokens: complexity === 'complex' ? 8000 : 4000,
       providerSort: 'throughput',
     };
   }
 
-  // Reasoning tasks
-  if (taskType === 'reasoning') {
-    return {
-      model: 'deepseek/deepseek-r1',
-      maxTokens: plan === 'commander' ? 8000 : 4000,
-      providerSort: 'throughput',
-      maxPrice: { prompt: 1.0, completion: 3.0 },
-    };
+  // Vision tasks
+  if (taskType === 'vision') {
+    return { model: applyOnline('xiaomi/mimo-v2-omni'), maxTokens: 4000, providerSort: 'throughput' };
   }
 
   // Analysis tasks
   if (taskType === 'analysis') {
-    if (complexity === 'complex' && plan === 'commander') {
-      return {
-        model: 'anthropic/claude-sonnet-4-5',
-        maxTokens: 8000,
-        providerSort: 'throughput',
-      };
-    }
     return {
-      model: 'openai/gpt-4o',
-      maxTokens: 4000,
+      model: applyOnline(complexity === 'complex' ? 'anthropic/claude-sonnet-4-5' : 'openai/gpt-4o'),
+      maxTokens: complexity === 'complex' ? 8000 : 4000,
       providerSort: 'throughput',
     };
   }
 
   // Creative tasks
   if (taskType === 'creative') {
-    return {
-      model: 'google/gemini-2.5-flash',
-      maxTokens: plan === 'commander' ? 4000 : 2000,
-      providerSort: 'throughput',
-      maxPrice: { prompt: 0.5, completion: 2.0 },
-    };
+    return { model: applyOnline('google/gemini-2.5-flash'), maxTokens: 4000, providerSort: 'throughput' };
   }
 
   // Hero-based routing for general tasks
   const heroRouting: Record<string, string> = {
-    thoren: 'anthropic/claude-sonnet-4-5',    // Legal, Finance — needs precision
-    ramet: 'openai/gpt-4o',                    // Operations — balanced
-    nexar: 'deepseek/deepseek-r1',             // Transformation — deep reasoning
-    lyra: 'google/gemini-2.5-flash',           // Content — fast creative
-    kairo: 'google/gemini-2.5-flash',          // Social — fast
-    nefra: 'openai/gpt-4o',                    // Experience — empathetic
-    horusen: 'openai/gpt-4o',                  // Revenue — strategic
+    thoren:  'anthropic/claude-sonnet-4-5',  // Legal, Finance
+    ramet:   'openai/gpt-4o',                // Operations
+    nexar:   'xiaomi/mimo-v2-pro',           // Transformation — deep reasoning
+    lyra:    'google/gemini-2.5-flash',      // Content — creative
+    kairo:   'google/gemini-2.5-flash',      // Social — fast
+    nefra:   'openai/gpt-4o',               // Experience
+    horusen: 'openai/gpt-4o',              // Revenue
   };
 
-  // Use auto router for master orbit
   if (heroSlug === 'master') {
-    return {
-      model: 'openrouter/auto',
-      maxTokens: plan === 'commander' ? 6000 : 3000,
-      providerSort: 'throughput',
-    };
+    return { model: applyOnline('openrouter/auto'), maxTokens: 6000, providerSort: 'throughput' };
   }
 
   return {
-    model: heroRouting[heroSlug] || 'openrouter/auto',
-    maxTokens: plan === 'commander' ? 6000 : complexity === 'complex' ? 4000 : 2000,
+    model: applyOnline(heroRouting[heroSlug] || 'openrouter/auto'),
+    maxTokens: complexity === 'complex' ? 4000 : 2000,
     providerSort: 'throughput',
   };
 }
@@ -239,14 +236,14 @@ export async function POST(req: NextRequest) {
     // Detect task profile
     const taskType = detectTaskType(lastMessage);
     const complexity = detectComplexity(lastMessage, messages.length);
+    const webSearch = needsWebSearch(lastMessage);
 
-    // Get user + plan
+    // Get user
     const supabaseServer = await createClient();
     const { data: { user } } = await supabaseServer.auth.getUser();
-    const plan: UserPlan = (localStorage?.getItem?.('orbit_plan') as UserPlan) || 'explorer';
 
     // Get user plan from profile
-    let userPlan: UserPlan = 'explorer';
+    let userPlan = 'explorer';
     if (user) {
       try {
         const supabaseAdmin = createSupabaseClient(
@@ -258,7 +255,7 @@ export async function POST(req: NextRequest) {
           .select('plan')
           .eq('id', user.id)
           .single();
-        if (profile?.plan) userPlan = profile.plan as UserPlan;
+        if (profile?.plan) userPlan = profile.plan;
       } catch { /* use default */ }
     }
 
@@ -279,14 +276,17 @@ export async function POST(req: NextRequest) {
     let providerSort: 'throughput' | 'price' | 'latency';
     let maxPrice: { prompt: number; completion: number } | undefined;
     let modalities: string[] | undefined;
+    let imgComplexity = 'none';
 
     if (wantsImage) {
-      model = 'google/gemini-2.5-flash-exp-image-generation';
-      maxTokens = 2000;
+      const detectedImgComplexity = detectImageComplexity(lastMessage);
+      imgComplexity = detectedImgComplexity;
+      model = selectImageModel(detectedImgComplexity);
+      maxTokens = detectedImgComplexity === 'complex' ? 4000 : 2000;
       providerSort = 'throughput';
       modalities = ['image', 'text'];
     } else {
-      const selected = selectModel(taskType, complexity, heroSlug, userPlan, agentModel);
+      const selected = selectModel(taskType, complexity, heroSlug, agentModel, webSearch);
       model = selected.model;
       maxTokens = selected.maxTokens;
       providerSort = selected.providerSort;
@@ -349,12 +349,16 @@ export async function POST(req: NextRequest) {
     }
 
     // Build provider options
+    const isMiMo = model.startsWith('xiaomi/');
     const providerOptions: Record<string, JSONValue> = {
       sort: providerSort,
       allow_fallbacks: true,
       data_collection: 'deny',
-      order: ['anthropic', 'openai', 'google', 'deepseek'],
+      zdr: true,
+      order: ['anthropic', 'openai', 'google', 'deepseek', 'xiaomi'],
+      ...(isMiMo ? { enable_thinking: true } : {}),
     };
+
     if (maxPrice) {
       providerOptions.max_price = maxPrice;
     }
@@ -370,6 +374,7 @@ export async function POST(req: NextRequest) {
       system: systemPrompt,
       messages: modelMessages,
       maxTokens,
+      temperature: taskType === 'creative' ? 0.8 : 0.3,
       experimental_providerMetadata: {
         openrouter: providerOptions,
       },
@@ -400,6 +405,8 @@ export async function POST(req: NextRequest) {
     response.headers.set('X-Model-Used', model);
     response.headers.set('X-Task-Type', taskType);
     response.headers.set('X-Complexity', complexity);
+    response.headers.set('X-Web-Search', webSearch ? 'true' : 'false');
+    response.headers.set('X-Image-Complexity', wantsImage ? imgComplexity : 'none');
 
     return response;
 

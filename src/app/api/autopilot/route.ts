@@ -38,6 +38,19 @@ Return nothing else: just the JSON array.`,
   ];
 }
 
+function selectStepModel(step: string): string {
+  const lower = step.toLowerCase();
+  if (['code','implement','build','script','debug','function'].some(s => lower.includes(s)))
+    return 'anthropic/claude-sonnet-4-5'; // coding
+  if (['research','analyze','strategy','data','assess','evaluate'].some(s => lower.includes(s)))
+    return 'openai/gpt-4o:online'; // analysis + web
+  if (['write','draft','content','copy','blog','email','headline'].some(s => lower.includes(s)))
+    return 'google/gemini-2.5-flash'; // creative
+  if (['plan','design','architect','structure','outline','organize'].some(s => lower.includes(s)))
+    return 'xiaomi/mimo-v2-flash'; // reasoning/planning
+  return 'openai/gpt-4o'; // general
+}
+
 async function executeStep(
   step: string,
   goal: string,
@@ -49,7 +62,7 @@ async function executeStep(
     : '';
 
   const { text } = await generateText({
-    model: openrouter('anthropic/claude-sonnet-4-5'),
+    model: openrouter(selectStepModel(step)),
     system: heroSystemPrompt,
     prompt: `Overall goal: ${goal}${context}\n\nCurrent task: ${step}\n\nComplete this specific task thoroughly. Be concrete and actionable.`,
     maxTokens: 2000,
@@ -98,7 +111,7 @@ export async function POST(req: NextRequest) {
             results.push(result);
 
             controller.enqueue(encoder.encode(
-              `data: ${JSON.stringify({ type: 'step_complete', stepIndex: i, step, result })}\n\n`
+              `data: ${JSON.stringify({ type: 'step_complete', stepIndex: i, step, result, model: selectStepModel(step) })}\n\n`
             ));
           }
 
