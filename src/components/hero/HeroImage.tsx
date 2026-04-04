@@ -17,8 +17,8 @@ export default function HeroImage({ slug, type, className = '' }: HeroImageProps
   if (!hero) return null;
 
   const src = type === 'splash'
-    ? `/heroes/${slug}.png`
-    : `/heroes/${slug}-suit.png`;
+    ? `/${slug}.png`
+    : `/${slug}-suit.png`;
 
   if (hasError) {
     return (
