@@ -65,21 +65,23 @@ export default function ArtifactsPage() {
       <div className="max-w-4xl mx-auto relative z-10 space-y-8 mt-4">
 
       {/* Header Section */}
-      <div className="text-center space-y-2 relative mb-10">
-        <div className="inline-block px-3 py-1 mb-2 border border-[#D4AF37]/30 bg-[#D4AF37]/10 rounded font-orbitron text-[10px] tracking-widest text-[#D4AF37]">
-          EMPIRE ENGINE
+      <div className="flex flex-col items-center text-center space-y-4 mb-10">
+        <div className="space-y-2">
+          <div className="inline-block px-3 py-1 mb-2 border border-[#D4AF37]/30 bg-[#D4AF37]/10 rounded font-orbitron text-[10px] tracking-widest text-[#D4AF37]">
+            EMPIRE ENGINE
+          </div>
+          <h1 className="text-5xl md:text-7xl font-orbitron font-bold text-transparent bg-clip-text bg-gradient-to-b from-[#FFF5D1] to-[#D4AF37] drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]">
+            EMPIRE RELICS
+          </h1>
+          <h2 className="text-xl md:text-2xl font-rajdhani font-semibold text-[#d0c5af]/80 tracking-widest uppercase">
+            Your generated apps, documents, and outputs.
+          </h2>
         </div>
-        <h1 className="text-5xl md:text-7xl font-orbitron font-bold text-transparent bg-clip-text bg-gradient-to-b from-[#FFF5D1] to-[#D4AF37] drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]">
-          EMPIRE RELICS
-        </h1>
-        <h2 className="text-xl md:text-2xl font-rajdhani font-semibold text-[#d0c5af]/80 tracking-widest uppercase">
-          Your generated apps, documents, and outputs.
-        </h2>
 
-        <div className="absolute right-0 top-1/2 -translate-y-1/2 hidden md:block">
+        <div className="mt-6">
            <button
             onClick={() => setShowNewRelic(true)}
-            className="font-[Orbitron] text-xs tracking-[3px] uppercase px-6 py-3 transition-all rounded hover:scale-105"
+            className="font-[Orbitron] text-xs tracking-[3px] uppercase px-8 py-3 transition-all rounded hover:scale-105"
             style={{
               background: 'linear-gradient(135deg, #f2ca50, #D4AF37)',
               color: '#0A0A0A',
@@ -87,19 +89,6 @@ export default function ArtifactsPage() {
               boxShadow: '0 0 15px rgba(212,175,55,0.2)',
             }}>
             CREATE RELIC
-          </button>
-        </div>
-        {/* Mobile create button */}
-        <div className="md:hidden mt-4 pt-4 border-t border-[#D4AF37]/10">
-           <button
-            onClick={() => setShowNewRelic(true)}
-            className="w-full font-[Orbitron] text-xs tracking-[3px] uppercase px-6 py-3 transition-all rounded"
-            style={{
-              background: 'linear-gradient(135deg, #D4AF37, #FBBF24)',
-              color: '#0A0A0A',
-              fontWeight: 700,
-            }}>
-            + NEW RELIC
           </button>
         </div>
       </div>
