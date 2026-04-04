@@ -267,7 +267,7 @@ function HubPageContent() {
                     <div className="p-2 sm:p-3 lg:p-5 flex flex-col gap-2 lg:gap-3 flex-1 overflow-hidden">
 
                       {/* Hero name (Main title) */}
-                      <h2 className="font-[Orbitron] text-[8px] sm:text-[10px] lg:text-xs font-black tracking-tight truncate uppercase"
+                      <h2 className="font-[Orbitron] text-[6px] sm:text-[7px] lg:text-[9px] font-black tracking-tight truncate uppercase"
                         style={{ color: meta?.color_signature || data.accentColor }}>
                         {
                           slug === 'thoren' ? 'THOREN The Law' :
@@ -282,7 +282,7 @@ function HubPageContent() {
                       </h2>
 
                       {/* Subtitle */}
-                      <p className="font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[7px] tracking-[1px] lg:tracking-[2px] uppercase truncate"
+                      <p className="font-[Orbitron] text-[4.5px] sm:text-[5px] lg:text-[6px] tracking-widest uppercase truncate"
                         style={{ color: '#ffffff' }}>
                         {
                           slug === 'thoren' ? 'Governance & Finance Strategist' :
@@ -307,10 +307,10 @@ function HubPageContent() {
                       </div>
 
                       {/* Two action buttons side-by-side */}
-                      <div className="flex flex-row gap-1.5 lg:gap-2 pt-2 lg:pt-3"
+                      <div className="flex flex-row gap-1 lg:gap-1.5 pt-2 lg:pt-3"
                         style={{ borderTop: `1px solid ${meta?.color_signature || '#D4AF37'}15` }}>
                         <Link href={`/chat/${slug}`} className="flex-1 w-full min-w-0" onClick={e => e.stopPropagation()}>
-                          <button className="w-full font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[8px] tracking-[1px] lg:tracking-[2px] uppercase py-1.5 lg:py-2.5 transition-all truncate px-1 rounded-full"
+                          <button className="w-full font-[Orbitron] text-[4px] sm:text-[5px] lg:text-[6px] tracking-widest uppercase py-1 lg:py-1.5 transition-all truncate px-0.5 rounded-full"
                             style={{
                               background: `linear-gradient(135deg, ${meta?.color_signature}, ${meta?.color_signature}cc)`,
                               color: '#0A0A0A',
@@ -320,7 +320,7 @@ function HubPageContent() {
                           </button>
                         </Link>
                         <Link href={`/heroes/${slug}`} className="flex-1 w-full min-w-0" onClick={e => e.stopPropagation()}>
-                          <button className="w-full font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[8px] tracking-[1px] lg:tracking-[2px] uppercase py-1.5 lg:py-2.5 transition-all truncate px-1 rounded-full"
+                          <button className="w-full font-[Orbitron] text-[4px] sm:text-[5px] lg:text-[6px] tracking-widest uppercase py-1 lg:py-1.5 transition-all truncate px-0.5 rounded-full"
                             style={{
                               background: 'transparent',
                               border: `1px solid ${meta?.color_signature}40`,
