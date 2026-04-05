@@ -66,13 +66,15 @@ export default function ArtifactsPage() {
 
       {/* Header */}
       <div className="mb-10 border-b pb-8" style={{ borderColor: 'rgba(212,175,55,0.08)' }}>
-        <p className="font-[Orbitron] text-[9px] tracking-[5px] uppercase mb-3"
-          style={{ color: 'rgba(212,175,55,0.5)' }}>SUPER SKILLS</p>
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="font-[Orbitron] text-4xl font-black tracking-tighter mb-2"
-              style={{ color: '#D4AF37' }}>EMPIRE RELICS</h1>
-            <p className="font-[Rajdhani] text-lg" style={{ color: '#d0c5af' }}>
+          <div className="space-y-2">
+            <div className="inline-block px-3 py-1 mb-2 border border-[#D4AF37]/30 bg-[#D4AF37]/10 rounded font-cinzel text-[10px] tracking-widest text-[#D4AF37] uppercase">
+              SUPER SKILLS
+            </div>
+            <h1 className="text-5xl md:text-7xl font-cinzel-decorative font-normal text-transparent bg-clip-text bg-gradient-to-b from-[#FFF5D1] to-[#D4AF37] drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]">
+              EMPIRE RELICS
+            </h1>
+            <p className="text-xl md:text-2xl font-cinzel-decorative font-normal text-[#d0c5af]/80 tracking-widest uppercase">
               Your generated apps, documents, and outputs.
             </p>
           </div>

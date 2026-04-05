@@ -44,12 +44,12 @@ export default function BrowserPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-[#d0c5af] font-sans flex flex-col">
-      {/* Header */}
-      <div className="px-8 py-6 border-b" style={{ borderColor: 'rgba(212,175,55,0.1)' }}>
-        <p className="font-[Orbitron] text-[9px] tracking-[5px] uppercase mb-1" style={{ color: 'rgba(212,175,55,0.5)' }}>
+      {/* Header Section */}
+      <div className="px-8 py-6 border-b text-center space-y-2" style={{ borderColor: 'rgba(212,175,55,0.1)' }}>
+        <div className="inline-block px-3 py-1 mb-2 border border-[#D4AF37]/30 bg-[#D4AF37]/10 rounded font-cinzel text-[10px] tracking-widest text-[#D4AF37] uppercase">
           SUPER SKILLS
-        </p>
-        <h1 className="font-[Orbitron] text-3xl font-black tracking-tighter" style={{ color: '#D4AF37' }}>
+        </div>
+        <h1 className="text-5xl md:text-7xl font-cinzel-decorative font-normal text-transparent bg-clip-text bg-gradient-to-b from-[#FFF5D1] to-[#D4AF37] drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]">
           BROWSER CONTROL
         </h1>
       </div>

@@ -109,13 +109,13 @@ function AutopilotContent() {
 
         {/* Header Section */}
         <div className="text-center space-y-2">
-          <div className="inline-block px-3 py-1 mb-2 border border-[#D4AF37]/30 bg-[#D4AF37]/10 rounded font-orbitron text-[10px] tracking-widest text-[#D4AF37]">
+          <div className="inline-block px-3 py-1 mb-2 border border-[#D4AF37]/30 bg-[#D4AF37]/10 rounded font-cinzel text-[10px] tracking-widest text-[#D4AF37]">
             EMPIRE ENGINE
           </div>
-          <h1 className="text-5xl md:text-7xl font-orbitron font-bold text-transparent bg-clip-text bg-gradient-to-b from-[#FFF5D1] to-[#D4AF37] drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]">
+          <h1 className="text-5xl md:text-7xl font-cinzel-decorative font-normal text-transparent bg-clip-text bg-gradient-to-b from-[#FFF5D1] to-[#D4AF37] drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]">
             AUTO-PILOT
           </h1>
-          <h2 className="text-xl md:text-2xl font-rajdhani font-semibold text-[#d0c5af]/80 tracking-widest uppercase">
+          <h2 className="text-xl md:text-2xl font-cinzel-decorative font-normal text-[#d0c5af]/80 tracking-widest uppercase">
             Autonomous Mission Execution
           </h2>
         </div>
