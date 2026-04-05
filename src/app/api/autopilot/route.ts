@@ -147,7 +147,6 @@ async function executeStep(
 }
 
 async function generateImageFromPrompt(prompt: string): Promise<string> {
-  // Use OpenRouter with Gemini image generation modality
   const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -157,46 +156,55 @@ async function generateImageFromPrompt(prompt: string): Promise<string> {
       'X-Title': 'Orbit of Khemet -- Empire Engine',
     },
     body: JSON.stringify({
-      model: 'google/gemini-2.5-flash-exp-image-generation',
+      model: 'google/gemini-2.5-flash-image',
       messages: [
         {
           role: 'user',
-          content: prompt,
+          content: [
+            { type: 'text', text: prompt },
+          ],
         },
       ],
       modalities: ['image', 'text'],
-      provider: {
-        allow_fallbacks: false,
-      },
     }),
   });
 
   if (!response.ok) {
-    throw new Error(`Image generation failed: ${response.status}`);
+    const errText = await response.text();
+    throw new Error(`Image generation failed (${response.status}): ${errText}`);
   }
 
   const data = await response.json();
 
-  // Extract base64 image from response
-  const parts = data?.choices?.[0]?.message?.content;
-  if (Array.isArray(parts)) {
-    for (const part of parts) {
-      if (part.type === 'image_url' && part.image_url?.url) {
-        return part.image_url.url; // Already a data URL or CDN URL
-      }
-    }
+  // CORRECT extraction path per OpenRouter docs:
+  // Image is in choices[0].message.images[0].image_url.url
+  const images = data?.choices?.[0]?.message?.images;
+  if (Array.isArray(images) && images.length > 0) {
+    const url = images[0]?.image_url?.url;
+    if (url) return url; // Already a data:image/png;base64,... URL
   }
 
-  // Fallback: check inline_data format
-  if (Array.isArray(parts)) {
-    for (const part of parts) {
-      if (part.inline_data?.mime_type?.startsWith('image/')) {
+  // Fallback: sometimes it's in content array as image_url type
+  const contentParts = data?.choices?.[0]?.message?.content;
+  if (Array.isArray(contentParts)) {
+    for (const part of contentParts) {
+      if (part.type === 'image_url' && part.image_url?.url) {
+        return part.image_url.url;
+      }
+      // Gemini inline_data format
+      if (part.inline_data?.mime_type?.startsWith('image/') && part.inline_data?.data) {
         return `data:${part.inline_data.mime_type};base64,${part.inline_data.data}`;
       }
     }
   }
 
-  throw new Error('No image returned from model');
+  // Last fallback: if content is a plain base64 string
+  const rawContent = data?.choices?.[0]?.message?.content;
+  if (typeof rawContent === 'string' && rawContent.startsWith('data:image')) {
+    return rawContent;
+  }
+
+  throw new Error(`No image in response. Raw response: ${JSON.stringify(data).slice(0, 500)}`);
 }
 
 export async function POST(req: NextRequest) {
