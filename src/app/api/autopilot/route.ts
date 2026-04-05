@@ -11,6 +11,83 @@ const openrouter = createOpenRouter({
   },
 });
 
+type OutputType = 'word' | 'pdf' | 'powerpoint' | 'excel' | 'website' | 'image' | 'video' | 'text';
+
+function detectOutputType(goal: string): OutputType {
+  const lower = goal.toLowerCase();
+  if (['website', 'web page', 'landing page', 'html', 'web app'].some(s => lower.includes(s))) return 'website';
+  if (['presentation', 'powerpoint', 'pptx', 'slides', 'deck'].some(s => lower.includes(s))) return 'powerpoint';
+  if (['excel', 'spreadsheet', 'xlsx', 'table', 'sheet', 'csv'].some(s => lower.includes(s))) return 'excel';
+  if (['pdf', 'report', 'document', 'formal report'].some(s => lower.includes(s))) return 'pdf';
+  if (['word', 'docx', '.doc', 'word document'].some(s => lower.includes(s))) return 'word';
+  if (['image', 'poster', 'banner', 'logo', 'illustration', 'infographic', 'visual'].some(s => lower.includes(s))) return 'image';
+  if (['video', 'animation', 'reel', 'clip'].some(s => lower.includes(s))) return 'video';
+  return 'text'; // default — rich markdown
+}
+
+function buildSynthesisPrompt(goal: string, steps: string[], results: string[], outputType: OutputType): string {
+  const context = results.map((r, i) => `STEP ${i + 1}: ${steps[i]}\n${r}`).join('\n\n---\n\n');
+  const base = `Goal: ${goal}\n\nCompleted steps:\n${context}\n\n`;
+
+  switch (outputType) {
+    case 'website':
+      return base + `Synthesize all research and content above into ONE complete, production-ready HTML file.
+Requirements:
+- Start with <!DOCTYPE html> — all CSS and JS inline
+- Modern dark or light design with smooth animations
+- Fully responsive mobile-first
+- Multiple sections: nav, hero, features/content, CTA, footer
+- Real content based on the goal (not Lorem Ipsum)
+- Output ONLY the raw HTML — no markdown, no explanation, no code fences`;
+
+    case 'powerpoint':
+      return base + `Create a complete PowerPoint presentation script.
+Format as structured markdown with clear slide boundaries:
+## SLIDE 1: [TITLE]
+**Speaker notes:** ...
+Content: ...
+
+## SLIDE 2: [SECTION]
+...
+Include 8-12 slides. Make it professional and presentation-ready.`;
+
+    case 'excel':
+      return base + `Create a complete spreadsheet as a CSV with headers and realistic data rows.
+Format: pure CSV starting on line 1 (no explanation, no markdown).
+Include relevant formulas as text in a separate "Formulas" section after the CSV.`;
+
+    case 'pdf':
+    case 'word':
+      return base + `Write a complete, professional ${outputType === 'pdf' ? 'PDF report' : 'Word document'}.
+Use proper markdown structure: # H1, ## H2, ### H3, **bold**, bullet points.
+Include: Executive Summary, all major sections, Conclusion, and Recommendations.
+Be thorough — this should be a complete, ready-to-use document.`;
+
+    case 'image':
+      return base + `Write a detailed, professional image generation prompt that captures everything from the research above.
+Format:
+PROMPT: [single detailed image prompt — 2-3 sentences describing style, content, composition, lighting]
+STYLE: [e.g., photorealistic, flat illustration, 3D render]
+DIMENSIONS: [e.g., 1920x1080 landscape]
+Then add: CONTENT BRIEF — explain what the image should communicate (2-3 sentences).`;
+
+    case 'video':
+      return base + `Write a complete video script and storyboard.
+Include: Scene-by-scene breakdown, voiceover script, visual descriptions, music/SFX notes.
+Format each scene as:
+SCENE [N]: [TITLE]
+Duration: [X seconds]
+Visual: [description]
+Voiceover: [script]
+`;
+
+    default: // text
+      return base + `Synthesize all the above into a single comprehensive, well-structured final deliverable.
+Use clear markdown formatting with headers, bullet points, and sections.
+This should be the complete, actionable answer to the original goal.`;
+  }
+}
+
 async function planSteps(goal: string): Promise<string[]> {
   const { text } = await generateText({
     model: openrouter('google/gemini-2.5-flash'),
@@ -80,6 +157,9 @@ export async function POST(req: NextRequest) {
     const { goal } = await req.json();
     if (!goal) return Response.json({ error: 'Missing goal' }, { status: 400 });
 
+    // Detect what the user wants to produce
+    const outputType = detectOutputType(goal);
+
     const heroSystemPrompt = `You are an elite AI agent operating within the Orbit of Khemet Empire Engine. You execute tasks with precision, delivering high-quality, actionable results. Be thorough, specific, and professional.`;
 
     const encoder = new TextEncoder();
@@ -95,7 +175,7 @@ export async function POST(req: NextRequest) {
           const steps = await planSteps(goal);
 
           controller.enqueue(encoder.encode(
-            `data: ${JSON.stringify({ type: 'steps', steps })}\n\n`
+            `data: ${JSON.stringify({ type: 'steps', steps, outputType })}\n\n`
           ));
 
           const results: string[] = [];
@@ -111,7 +191,7 @@ export async function POST(req: NextRequest) {
             results.push(result);
 
             controller.enqueue(encoder.encode(
-              `data: ${JSON.stringify({ type: 'step_complete', stepIndex: i, step, result, model: selectStepModel(step) })}\n\n`
+              `data: ${JSON.stringify({ type: 'step_complete', stepIndex: i, step, result })}\n\n`
             ));
           }
 
@@ -123,12 +203,12 @@ export async function POST(req: NextRequest) {
           const { text: finalResult } = await generateText({
             model: openrouter('anthropic/claude-sonnet-4-5'),
             system: heroSystemPrompt,
-            prompt: `Goal: ${goal}\n\nCompleted steps and results:\n${results.map((r, i) => `STEP ${i + 1}: ${steps[i]}\n${r}`).join('\n\n---\n\n')}\n\nSynthesize all the above into a single comprehensive, well-structured final deliverable. This should be the complete answer to the original goal.`,
-            maxTokens: 4000,
+            prompt: buildSynthesisPrompt(goal, steps, results, outputType),
+            maxTokens: outputType === 'website' ? 12000 : 4000,
           });
 
           controller.enqueue(encoder.encode(
-            `data: ${JSON.stringify({ type: 'complete', result: finalResult })}\n\n`
+            `data: ${JSON.stringify({ type: 'complete', result: finalResult, outputType })}\n\n`
           ));
 
           controller.close();
