@@ -14,10 +14,11 @@ export function LayoutShell({ children }: { children: React.ReactNode }) {
   const isChatPage = pathname?.startsWith('/chat');
 
   if (hideSidebar) {
+    const isAuthPage = pathname === '/auth' || pathname?.startsWith('/auth/');
     // Landing + auth: full width, footer visible at bottom
     return (
       <div className="flex flex-col min-h-screen bg-[#0A0A0A]">
-        <GlobalNav />
+        {!isAuthPage && <GlobalNav />}
         <div className="flex-1">{children}</div>
         <Footer isHomePage={isHomePage} />
       </div>

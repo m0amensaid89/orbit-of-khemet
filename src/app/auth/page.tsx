@@ -92,7 +92,7 @@ function AuthForm() {
             height={80}
             className="mb-4"
           />
-          <h1 className="font-cinzel text-3xl text-white tracking-widest mt-2 uppercase">
+          <h1 className="font-cinzel text-3xl text-white tracking-widest mt-2 uppercase whitespace-nowrap">
             VOICE OF KHEMET
           </h1>
         </div>
