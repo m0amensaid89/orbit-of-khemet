@@ -64,12 +64,10 @@ Include: Executive Summary, all major sections, Conclusion, and Recommendations.
 Be thorough — this should be a complete, ready-to-use document.`;
 
     case 'image':
-      return base + `Write a detailed, professional image generation prompt that captures everything from the research above.
-Format:
-PROMPT: [single detailed image prompt — 2-3 sentences describing style, content, composition, lighting]
-STYLE: [e.g., photorealistic, flat illustration, 3D render]
-DIMENSIONS: [e.g., 1920x1080 landscape]
-Then add: CONTENT BRIEF — explain what the image should communicate (2-3 sentences).`;
+      return base + `Based on all the research above, write ONE single, detailed image generation prompt.
+Output ONLY the prompt text — no labels, no headers, no explanation.
+The prompt should be 2-4 sentences describing: subject, style, composition, lighting, colors, mood.
+Example format: "A majestic green frog sitting on a lily pad, wearing a tiny golden crown, digital illustration style, vibrant emerald and gold colors, soft bokeh background, children's book art style, warm cheerful lighting."`;
 
     case 'video':
       return base + `Write a complete video script and storyboard.
@@ -148,6 +146,59 @@ async function executeStep(
   return text;
 }
 
+async function generateImageFromPrompt(prompt: string): Promise<string> {
+  // Use OpenRouter with Gemini image generation modality
+  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+      'Content-Type': 'application/json',
+      'HTTP-Referer': 'https://orbit-of-khemet.vercel.app',
+      'X-Title': 'Orbit of Khemet -- Empire Engine',
+    },
+    body: JSON.stringify({
+      model: 'google/gemini-2.5-flash-exp-image-generation',
+      messages: [
+        {
+          role: 'user',
+          content: prompt,
+        },
+      ],
+      modalities: ['image', 'text'],
+      provider: {
+        allow_fallbacks: false,
+      },
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Image generation failed: ${response.status}`);
+  }
+
+  const data = await response.json();
+
+  // Extract base64 image from response
+  const parts = data?.choices?.[0]?.message?.content;
+  if (Array.isArray(parts)) {
+    for (const part of parts) {
+      if (part.type === 'image_url' && part.image_url?.url) {
+        return part.image_url.url; // Already a data URL or CDN URL
+      }
+    }
+  }
+
+  // Fallback: check inline_data format
+  if (Array.isArray(parts)) {
+    for (const part of parts) {
+      if (part.inline_data?.mime_type?.startsWith('image/')) {
+        return `data:${part.inline_data.mime_type};base64,${part.inline_data.data}`;
+      }
+    }
+  }
+
+  throw new Error('No image returned from model');
+}
+
 export async function POST(req: NextRequest) {
   try {
     const supabaseServer = await createClient();
@@ -197,15 +248,38 @@ export async function POST(req: NextRequest) {
 
           // Final synthesis
           controller.enqueue(encoder.encode(
-            `data: ${JSON.stringify({ type: 'synthesizing', message: 'Synthesizing final deliverable...' })}\n\n`
+            `data: ${JSON.stringify({ type: 'synthesizing', message: outputType === 'image' ? 'Generating image...' : 'Synthesizing final deliverable...' })}\n\n`
           ));
 
-          const { text: finalResult } = await generateText({
-            model: openrouter('anthropic/claude-sonnet-4-5'),
-            system: heroSystemPrompt,
-            prompt: buildSynthesisPrompt(goal, steps, results, outputType),
-            maxTokens: outputType === 'website' ? 12000 : 4000,
-          });
+          let finalResult: string;
+
+          if (outputType === 'image') {
+            // Step 1: Build the image prompt from research results
+            const { text: imagePrompt } = await generateText({
+              model: openrouter('google/gemini-2.5-flash'),
+              system: heroSystemPrompt,
+              prompt: buildSynthesisPrompt(goal, steps, results, outputType),
+              maxTokens: 500,
+            });
+
+            // Step 2: Generate the actual image using the prompt
+            try {
+              const imageUrl = await generateImageFromPrompt(imagePrompt.trim());
+              // Return a markdown image tag — frontend will detect and render it
+              finalResult = `![Generated Image](${imageUrl})`;
+            } catch {
+              // If image generation fails, fall back to showing the prompt
+              finalResult = `Image generation encountered an issue. Here is the prompt that was created:\n\n${imagePrompt}`;
+            }
+          } else {
+            const { text } = await generateText({
+              model: openrouter('anthropic/claude-sonnet-4-5'),
+              system: heroSystemPrompt,
+              prompt: buildSynthesisPrompt(goal, steps, results, outputType),
+              maxTokens: outputType === 'website' ? 12000 : 4000,
+            });
+            finalResult = text;
+          }
 
           controller.enqueue(encoder.encode(
             `data: ${JSON.stringify({ type: 'complete', result: finalResult, outputType })}\n\n`
