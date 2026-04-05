@@ -4,7 +4,6 @@
 
 html {
   scroll-behavior: smooth;
-  zoom: 0.75;
 }
 
 @custom-variant dark (&:is(.dark *));
