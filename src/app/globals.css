@@ -4,6 +4,12 @@
 
 html {
   scroll-behavior: smooth;
+  zoom: 0.75;
+}
+
+html, body {
+  min-height: 133.3333vh;
+  background-color: var(--color-background);
 }
 
 @custom-variant dark (&:is(.dark *));
@@ -165,6 +171,15 @@ html {
   }
   html {
     @apply font-sans;
+  }
+  .min-h-screen {
+    min-height: 133.3333vh;
+  }
+  .h-screen {
+    height: 133.3333vh;
+  }
+  .w-screen {
+    width: 133.3333vw;
   }
 }
 
