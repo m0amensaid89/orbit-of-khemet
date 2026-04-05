@@ -11,7 +11,7 @@ function AutopilotContent() {
   const [steps, setSteps] = useState<string[]>([]);
   const [activeStep, setActiveStep] = useState<number>(-1);
   const [stepResults, setStepResults] = useState<Record<number, string>>({});
-  const [stepModels, setStepModels] = useState<Record<number, string>>({});
+  const [outputType, setOutputType] = useState<string>('text');
   const [finalResult, setFinalResult] = useState('');
 
   const searchParams = useSearchParams();
@@ -49,20 +49,21 @@ function AutopilotContent() {
             const data = JSON.parse(line.slice(6));
 
             if (data.type === 'planning') setStatus('Analyzing mission...');
-            if (data.type === 'steps') setSteps(data.steps);
+            if (data.type === 'steps') {
+              setSteps(data.steps);
+              if (data.outputType) setOutputType(data.outputType);
+            }
             if (data.type === 'step_start') {
               setActiveStep(data.stepIndex);
               setStatus(`Executing Step ${data.stepIndex + 1}...`);
             }
             if (data.type === 'step_complete') {
               setStepResults(prev => ({ ...prev, [data.stepIndex]: data.result }));
-              if (data.model) {
-                setStepModels(prev => ({ ...prev, [data.stepIndex]: data.model }));
-              }
             }
             if (data.type === 'synthesizing') setStatus('Synthesizing final deliverable...');
             if (data.type === 'complete') {
               setFinalResult(data.result);
+              if (data.outputType) setOutputType(data.outputType);
               setPhase('complete');
               setActiveStep(-1);
               setStatus('Mission Complete');
@@ -85,18 +86,6 @@ function AutopilotContent() {
 
   const handleCopy = () => {
     navigator.clipboard.writeText(finalResult);
-  };
-
-  const handleDownload = () => {
-    const blob = new Blob([finalResult], { type: 'text/markdown' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'autopilot-result.md';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
   };
 
   return (
@@ -194,52 +183,41 @@ function AutopilotContent() {
               </h3>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-1.5">
               {steps.map((step, index) => {
                 const isActive = activeStep === index;
-                const isComplete = stepResults[index] !== undefined || (phase === 'complete');
-
+                const isComplete = stepResults[index] !== undefined || phase === 'complete';
                 return (
                   <div
                     key={index}
-                    className={`flex items-start gap-4 p-4 rounded bg-black/20 border transition-all duration-300 ${
-                      isActive
-                        ? 'border-l-2 border-[#D4AF37] border-y-transparent border-r-transparent bg-gradient-to-r from-[#D4AF37]/10 to-transparent'
+                    className="flex items-center gap-3 px-4 py-2 rounded transition-all duration-300"
+                    style={{
+                      background: isActive
+                        ? 'rgba(212,175,55,0.06)'
+                        : 'transparent',
+                      borderLeft: isActive
+                        ? '2px solid #D4AF37'
                         : isComplete
-                          ? 'border-transparent border-l-2 border-[#4CAF50]/50'
-                          : 'border-transparent opacity-50'
-                    }`}
+                        ? '2px solid rgba(74,222,128,0.4)'
+                        : '2px solid rgba(255,255,255,0.05)',
+                      opacity: !isActive && !isComplete ? 0.4 : 1,
+                    }}
                   >
-                    <div className="shrink-0 mt-0.5">
+                    <div className="shrink-0">
                       {isComplete ? (
-                        <CheckCircle className="w-5 h-5 text-[#4CAF50]" />
+                        <CheckCircle className="w-3.5 h-3.5 text-green-400" />
                       ) : isActive ? (
-                        <Loader2 className="w-5 h-5 text-[#D4AF37] animate-spin" />
+                        <Loader2 className="w-3.5 h-3.5 text-[#D4AF37] animate-spin" />
                       ) : (
-                        <Circle className="w-5 h-5 text-[#d0c5af]/30" />
+                        <Circle className="w-3.5 h-3.5" style={{ color: 'rgba(255,255,255,0.2)' }} />
                       )}
                     </div>
-
-                    <div className="flex-1 space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-orbitron text-xs text-[#D4AF37]/70">STEP {index + 1}</span>
-                        <h4 className={`font-rajdhani text-lg ${isActive ? 'text-[#D4AF37]' : 'text-[#d0c5af]'}`}>
-                          {step}
-                        </h4>
-                        {isComplete && stepModels[index] && (
-                          <span className="ml-2 font-[Orbitron] text-[8px] tracking-[2px] uppercase px-2 py-0.5 rounded-full"
-                            style={{ background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.5)', color: '#D4AF37' }}>
-                            ✦ {stepModels[index]}
-                          </span>
-                        )}
-                      </div>
-
-                      {isComplete && stepResults[index] && (
-                        <p className="text-sm text-[#d0c5af]/60 italic font-mono bg-black/30 p-2 rounded border border-white/5">
-                          {stepResults[index].substring(0, 100)}...
-                        </p>
-                      )}
-                    </div>
+                    <span
+                      className="font-[Rajdhani] text-sm tracking-wide"
+                      style={{ color: isActive ? '#D4AF37' : isComplete ? '#d0c5af' : 'rgba(208,197,175,0.5)' }}
+                    >
+                      {step}
+                    </span>
                   </div>
                 );
               })}
@@ -248,41 +226,154 @@ function AutopilotContent() {
         )}
 
         {/* Final Result Section */}
-        {phase === 'complete' && finalResult && (
-          <div
-            style={{ backgroundColor: '#131313', border: '1px solid rgba(212,175,55,0.08)', borderRadius: '4px' }}
-            className="p-6 md:p-8 space-y-6 shadow-[0_0_30px_rgba(212,175,55,0.1)] border-t border-t-[#D4AF37]/50"
-          >
-            <div className="flex items-center justify-between border-b border-[#D4AF37]/20 pb-4">
-              <h3 className="font-orbitron text-xl font-bold tracking-widest text-[#D4AF37] flex items-center gap-2">
-                <CheckCircle className="w-6 h-6" />
-                MISSION COMPLETE
-              </h3>
-              <div className="flex gap-2">
-                <button
-                  onClick={handleCopy}
-                  className="p-2 rounded bg-black/40 border border-[#D4AF37]/30 text-[#D4AF37] hover:bg-[#D4AF37]/10 transition-colors flex items-center gap-2 text-sm font-rajdhani"
-                  title="Copy to clipboard"
-                >
-                  <Copy className="w-4 h-4" /> <span className="hidden sm:inline">Copy</span>
-                </button>
-                <button
-                  onClick={handleDownload}
-                  className="p-2 rounded bg-black/40 border border-[#D4AF37]/30 text-[#D4AF37] hover:bg-[#D4AF37]/10 transition-colors flex items-center gap-2 text-sm font-rajdhani"
-                  title="Download as .md"
-                >
-                  <Download className="w-4 h-4" /> <span className="hidden sm:inline">Download .md</span>
-                </button>
+        {phase === 'complete' && finalResult && (() => {
+          // --- WEBSITE output: full iframe preview
+          if (outputType === 'website') {
+            return (
+              <div style={{ backgroundColor: '#131313', border: '1px solid rgba(212,175,55,0.08)', borderRadius: '4px' }} className="p-6 space-y-4">
+                <div className="flex items-center justify-between border-b border-[#D4AF37]/20 pb-4">
+                  <h3 className="font-[Orbitron] text-xl font-bold tracking-widest text-[#D4AF37] flex items-center gap-2">
+                    <CheckCircle className="w-6 h-6" /> WEBSITE BUILT
+                  </h3>
+                  <div className="flex gap-2">
+                    <button onClick={handleCopy} className="p-2 rounded border border-[#D4AF37]/30 text-[#D4AF37] hover:bg-[#D4AF37]/10 transition-colors flex items-center gap-2 text-sm font-[Rajdhani]">
+                      <Copy className="w-4 h-4" /> Copy HTML
+                    </button>
+                    <button
+                      onClick={() => {
+                        const blob = new Blob([finalResult], { type: 'text/html' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a'); a.href = url; a.download = 'khemet-website.html';
+                        document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+                      }}
+                      className="p-2 rounded border border-[#D4AF37]/30 text-[#D4AF37] hover:bg-[#D4AF37]/10 transition-colors flex items-center gap-2 text-sm font-[Rajdhani]"
+                    >
+                      <Download className="w-4 h-4" /> Download
+                    </button>
+                  </div>
+                </div>
+                <iframe
+                  srcDoc={finalResult}
+                  className="w-full rounded"
+                  style={{ height: '600px', border: '1px solid rgba(212,175,55,0.1)', background: '#fff' }}
+                  sandbox="allow-scripts allow-same-origin"
+                  title="Generated Website"
+                />
+              </div>
+            );
+          }
+
+          // --- EXCEL/CSV output: render as table
+          if (outputType === 'excel') {
+            const lines = finalResult.trim().split('\n');
+            const headers = lines[0]?.split(',') || [];
+            const rows = lines.slice(1).map(l => l.split(','));
+            return (
+              <div style={{ backgroundColor: '#131313', border: '1px solid rgba(212,175,55,0.08)', borderRadius: '4px' }} className="p-6 space-y-4">
+                <div className="flex items-center justify-between border-b border-[#D4AF37]/20 pb-4">
+                  <h3 className="font-[Orbitron] text-xl font-bold tracking-widest text-[#D4AF37] flex items-center gap-2">
+                    <CheckCircle className="w-6 h-6" /> SPREADSHEET READY
+                  </h3>
+                  <div className="flex gap-2">
+                    <button onClick={handleCopy} className="p-2 rounded border border-[#D4AF37]/30 text-[#D4AF37] hover:bg-[#D4AF37]/10 transition-colors flex items-center gap-2 text-sm font-[Rajdhani]">
+                      <Copy className="w-4 h-4" /> Copy CSV
+                    </button>
+                    <button
+                      onClick={() => {
+                        const blob = new Blob([finalResult], { type: 'text/csv' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a'); a.href = url; a.download = 'khemet-data.csv';
+                        document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+                      }}
+                      className="p-2 rounded border border-[#D4AF37]/30 text-[#D4AF37] hover:bg-[#D4AF37]/10 transition-colors flex items-center gap-2 text-sm font-[Rajdhani]"
+                    >
+                      <Download className="w-4 h-4" /> Download CSV
+                    </button>
+                  </div>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid rgba(212,175,55,0.2)' }}>
+                        {headers.map((h, i) => (
+                          <th key={i} className="text-left px-3 py-2 font-[Orbitron] text-[9px] tracking-widest uppercase" style={{ color: '#D4AF37' }}>
+                            {h.trim().replace(/^"|"$/g, '')}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rows.slice(0, 50).map((row, ri) => (
+                        <tr key={ri} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
+                          {row.map((cell, ci) => (
+                            <td key={ci} className="px-3 py-2 font-[Rajdhani] text-sm" style={{ color: '#d0c5af' }}>
+                              {cell.trim().replace(/^"|"$/g, '')}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          // --- IMAGE output: show prompt in a styled card
+          if (outputType === 'image') {
+            return (
+              <div style={{ backgroundColor: '#131313', border: '1px solid rgba(212,175,55,0.08)', borderRadius: '4px' }} className="p-6 space-y-4">
+                <div className="flex items-center justify-between border-b border-[#D4AF37]/20 pb-4">
+                  <h3 className="font-[Orbitron] text-xl font-bold tracking-widest text-[#D4AF37] flex items-center gap-2">
+                    <CheckCircle className="w-6 h-6" /> IMAGE BRIEF READY
+                  </h3>
+                  <button onClick={handleCopy} className="p-2 rounded border border-[#D4AF37]/30 text-[#D4AF37] hover:bg-[#D4AF37]/10 transition-colors flex items-center gap-2 text-sm font-[Rajdhani]">
+                    <Copy className="w-4 h-4" /> Copy Prompt
+                  </button>
+                </div>
+                <div className="p-5 rounded" style={{ background: 'rgba(212,175,55,0.04)', border: '1px solid rgba(212,175,55,0.12)', borderLeft: '3px solid #D4AF37' }}>
+                  <pre className="whitespace-pre-wrap font-[Rajdhani] text-sm leading-relaxed" style={{ color: '#d0c5af' }}>
+                    {finalResult}
+                  </pre>
+                </div>
+              </div>
+            );
+          }
+
+          // --- ALL OTHER types (text, pdf, word, powerpoint, video): styled markdown viewer
+          return (
+            <div style={{ backgroundColor: '#131313', border: '1px solid rgba(212,175,55,0.08)', borderRadius: '4px' }} className="p-6 space-y-4 shadow-[0_0_30px_rgba(212,175,55,0.05)]">
+              <div className="flex items-center justify-between border-b border-[#D4AF37]/20 pb-4">
+                <h3 className="font-[Orbitron] text-xl font-bold tracking-widest text-[#D4AF37] flex items-center gap-2">
+                  <CheckCircle className="w-6 h-6" /> MISSION COMPLETE
+                </h3>
+                <div className="flex gap-2">
+                  <button onClick={handleCopy} className="p-2 rounded border border-[#D4AF37]/30 text-[#D4AF37] hover:bg-[#D4AF37]/10 transition-colors flex items-center gap-2 text-sm font-[Rajdhani]">
+                    <Copy className="w-4 h-4" /> Copy
+                  </button>
+                  <button
+                    onClick={() => {
+                      const ext = outputType === 'powerpoint' ? 'md' : outputType === 'excel' ? 'csv' : 'md';
+                      const blob = new Blob([finalResult], { type: 'text/plain' });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a'); a.href = url;
+                      a.download = `khemet-${outputType}.${ext}`;
+                      document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+                    }}
+                    className="p-2 rounded border border-[#D4AF37]/30 text-[#D4AF37] hover:bg-[#D4AF37]/10 transition-colors flex items-center gap-2 text-sm font-[Rajdhani]"
+                  >
+                    <Download className="w-4 h-4" /> Download
+                  </button>
+                </div>
+              </div>
+              <div className="bg-black/40 border border-white/5 rounded p-6 max-h-[600px] overflow-y-auto custom-scrollbar">
+                <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed" style={{ color: '#d0c5af' }}>
+                  {finalResult}
+                </pre>
               </div>
             </div>
-
-            <div className="bg-black/40 border border-white/5 rounded p-6 max-h-[600px] overflow-y-auto custom-scrollbar">
-              <pre className="whitespace-pre-wrap font-sans text-sm text-[#d0c5af] leading-relaxed">
-                {finalResult}
-              </pre>
-            </div>
-          </div>
-        )}
+          );
+        })()}
 
       </div>
 
