@@ -267,34 +267,25 @@ function HubPageContent() {
                     <div className="p-2 sm:p-3 lg:p-5 flex flex-col gap-2 lg:gap-3 flex-1 overflow-hidden">
 
                       {/* Hero name (Main title) */}
-                      <div style={{ minHeight: '32px' }} className="flex flex-col justify-end">
+                      <div style={{ minHeight: '16px' }} className="flex flex-col justify-end">
                         <h2 className="font-[Orbitron] text-[6px] sm:text-[8px] lg:text-[10px] 2xl:text-[12px] font-black tracking-tight uppercase leading-tight"
                           style={{ color: meta?.color_signature || data.accentColor, wordBreak: 'break-word' }}>
-                          {
-                            slug === 'thoren' ? 'THOREN The Law' :
-                            slug === 'ramet' ? 'RAMET The Stabilizer' :
-                            slug === 'nexar' ? 'NEXAR The Destabilizer' :
-                            slug === 'lyra' ? 'LYRA The Signal' :
-                            slug === 'kairo' ? 'KAIRO The Gridwalker' :
-                            slug === 'nefra' ? 'NEFRA The Keeper' :
-                            slug === 'horusen' ? 'HORUSEN The Closer' :
-                            data.name
-                          }
+                          {data.name}
                         </h2>
                       </div>
 
                       {/* Subtitle */}
-                      <div style={{ minHeight: '28px' }}>
-                        <p className="font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[7px] 2xl:text-[8px] tracking-widest uppercase leading-tight mt-0.5"
+                      <div style={{ minHeight: '44px' }}>
+                        <p className="font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[7px] 2xl:text-[8px] tracking-widest uppercase leading-tight mt-0.5 whitespace-pre-line"
                           style={{ color: '#ffffff', wordBreak: 'break-word' }}>
                           {
-                            slug === 'thoren' ? 'Governance & Finance Strategist' :
-                            slug === 'ramet' ? 'Operations & Execution Lead' :
-                            slug === 'nexar' ? 'Transformation Architect' :
-                            slug === 'lyra' ? 'Growth Content & Virality Engine' :
-                            slug === 'kairo' ? 'Social & Creator Systems Director' :
-                            slug === 'nefra' ? 'Experience & Relationship Guardian' :
-                            slug === 'horusen' ? 'Revenue, Offers & Deals Strategist' :
+                            slug === 'thoren' ? 'The Law\nGovernance & Finance Strategist' :
+                            slug === 'ramet' ? 'The Stabilizer\nOperations & Execution Lead' :
+                            slug === 'nexar' ? 'The Destabilizer\nTransformation Architect' :
+                            slug === 'lyra' ? 'The Signal\nGrowth Content & Virality Engine' :
+                            slug === 'kairo' ? 'The Gridwalker\nSocial & Creator Systems Director' :
+                            slug === 'nefra' ? 'The Keeper\nExperience & Relationship Guardian' :
+                            slug === 'horusen' ? 'The Closer\nRevenue, Offers & Deals Strategist' :
                             meta?.archetype || data.role
                           }
                         </p>
