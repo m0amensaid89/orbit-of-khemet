@@ -1,11 +1,19 @@
+export const runtime = 'edge';
+export const maxDuration = 60;
+
 import { NextRequest } from 'next/server';
 import { classifyIntent } from '@/lib/autopilot/classifier';
 import { executeTask } from '@/lib/autopilot/router';
 import { transformOutput } from '@/lib/autopilot/transformer';
 
-export const runtime = 'edge';
-
 export async function POST(req: NextRequest) {
+  if (!process.env.OPENROUTER_API_KEY) {
+    return new Response(
+      JSON.stringify({ error: 'OPENROUTER_API_KEY is not configured' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+
   try {
     const body = await req.json();
     const { messages, agentId, heroId } = body;
@@ -118,7 +126,8 @@ export async function POST(req: NextRequest) {
 
         } catch (error) {
            console.error('Streaming execution error:', error);
-           controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'error', message: String(error) })}\n\n`));
+           const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+           controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'error', message: errorMessage })}\n\n`));
         } finally {
           controller.close();
         }
@@ -128,8 +137,9 @@ export async function POST(req: NextRequest) {
     return new Response(stream, {
       headers: {
         'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
+        'Cache-Control': 'no-cache, no-transform',
         'Connection': 'keep-alive',
+        'X-Accel-Buffering': 'no',
       },
     });
 
