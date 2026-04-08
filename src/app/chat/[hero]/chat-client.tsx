@@ -8,7 +8,12 @@ import { heroAgents } from "@/lib/agents";
 import { getHero } from "@/lib/heroes";
 import { getCustomAgentById } from "@/lib/custom-agents";
 import { trackMessage, getEnergyCost } from "@/lib/energy";
-import { useChat } from "@ai-sdk/react";
+import { useChat, Message } from "@ai-sdk/react";
+import { HTMLPreviewCard } from "@/components/chat/output-cards/HTMLPreviewCard";
+import { DocumentViewCard } from "@/components/chat/output-cards/DocumentViewCard";
+import { CodeBlockCard } from "@/components/chat/output-cards/CodeBlockCard";
+import { ImageCard } from "@/components/chat/output-cards/ImageCard";
+import { RenderedOutput } from "@/lib/autopilot/transformer";
 import { detectArtifact, extractTitle, stripCodeBlocks } from '@/lib/artifacts';
 import { ArtifactRenderer } from '@/components/ArtifactRenderer';
 import { ExportToolbar } from '@/components/ExportToolbar';
@@ -93,10 +98,11 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
     }
   }, []);
 
-  const { messages, input, handleInputChange, handleSubmit, setMessages, isLoading, append } = useChat({
-    api: "/api/chat",
-    body: { hero: heroParam, agent: agentParam, threadId },
-    onFinish: () => trackMessage(),
+  type CustomMessage = Message & { rendered_output?: RenderedOutput };
+  const { messages: rawMessages, input, handleInputChange, handleSubmit, setMessages, isLoading, append } = useChat({
+    api: "/api/autopilot",
+    body: { heroId: heroParam, agentId: agentParam, threadId },
+    onFinish: (message) => trackMessage(),
     onError: (err) => {
       if (err.message.includes("ENERGY DEPLETED")) {
         setMessages(prev => [...prev, {
@@ -111,6 +117,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
       }
     }
   });
+  const messages = rawMessages as CustomMessage[];
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const heroModelMap: Record<string, string> = {
@@ -446,35 +453,95 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                         : { background: bgMid, border: `1px solid ${cardBorder}`, color: "rgba(255,255,255,0.9)", borderLeftColor: accentColor, borderLeftWidth: "3px" }}>
                       <div className="whitespace-pre-wrap break-words">
                         {(() => {
-                          // Check if this is an image response
+                          // AutoPilot Output Rendering
+                          if (m.role === 'assistant' && m.rendered_output) {
+                             const output = m.rendered_output;
+                             switch (output.type) {
+                               case 'html':
+                                 return <HTMLPreviewCard html={output.html} />;
+                               case 'document':
+                                 return <DocumentViewCard markdown={output.markdown} />;
+                               case 'code':
+                                 return <CodeBlockCard code={output.code} language={output.language} />;
+                               case 'image':
+                                 return <ImageCard url={output.url} onRegenerate={() => {
+                                     // Optional regenerate logic implementation
+                                 }} />;
+                               case 'text':
+                                 return output.content;
+                             }
+                          }
+
+                          // Parse out stream fragments
+                          // The ai-sdk useChat hook aggregates all `data:` and `text` streams into a single `m.content` string.
+                          // We need to look for our custom JSON events in this string.
+                          if (m.role === 'assistant') {
+                            try {
+                               // Quick and dirty manual parse to extract the final render object if present
+                               const finalRenderMatch = m.content.match(/{"type":"final_render","rendered_output":({.*})}/);
+                               if (finalRenderMatch) {
+                                   const output = JSON.parse(finalRenderMatch[1]);
+                                   switch (output.type) {
+                                     case 'html': return <HTMLPreviewCard html={output.html} />;
+                                     case 'document': return <DocumentViewCard markdown={output.markdown} />;
+                                     case 'code': return <CodeBlockCard code={output.code} language={output.language} />;
+                                     case 'image': return <ImageCard url={output.url} onRegenerate={() => {}} />;
+                                     case 'text': return output.content;
+                                   }
+                               }
+
+                               // If not final render, try parsing non-streaming JSON (dalle image output)
+                               if (m.content.trim().startsWith('{') && m.content.includes('"rendered_output"')) {
+                                   const parsed = JSON.parse(m.content);
+                                   if (parsed.rendered_output) {
+                                       const output = parsed.rendered_output;
+                                       switch (output.type) {
+                                          case 'html': return <HTMLPreviewCard html={output.html} />;
+                                          case 'document': return <DocumentViewCard markdown={output.markdown} />;
+                                          case 'code': return <CodeBlockCard code={output.code} language={output.language} />;
+                                          case 'image': return <ImageCard url={output.url} onRegenerate={() => {}} />;
+                                          case 'text': return output.content;
+                                       }
+                                   }
+                               }
+
+                               // Try parsing classification
+                               const classMatch = m.content.match(/{"type":"classification","data":({.*})}/);
+                               if (classMatch) {
+                                  const classData = JSON.parse(classMatch[1]);
+                                  if (classData.task_type === 'image') {
+                                       return <ImageCard isLoading={true} />;
+                                  }
+
+                                  // Extract pure text delta removing all custom events and clean it up
+                                  const cleanText = cleanContent
+                                       .replace(/{"type":"classification","data":{.*?}}/g, '')
+                                       .replace(/{"type":"text_delta","content":".*?"}/g, '')
+                                       .replace(/{"type":"final_render","rendered_output":{.*?}}/g, '')
+                                       .trim();
+
+                                  return cleanText || (
+                                      <div className="flex items-center gap-2 text-[#D4AF37] italic text-xs animate-pulse">
+                                          <span>Initializing {classData.task_type} builder...</span>
+                                      </div>
+                                  );
+                               }
+
+                            } catch(e) {
+                               // normal text parse error fallback
+                            }
+                          }
+
+                          // Support raw image text urls during stream before final render (legacy fallback)
                           if (m.role === 'assistant') {
                             const imgMatch = m.content.match(/!\[.*?\]\((data:image\/[^)]+)\)/);
                             const urlMatch = m.content.match(/!\[.*?\]\((https?:\/\/[^)]+)\)/);
                             const imageUrl = imgMatch?.[1] || urlMatch?.[1];
                             if (imageUrl) {
-                              return (
-                                <div className="flex flex-col gap-3">
-                                  <div className="relative rounded-xl overflow-hidden" style={{ maxWidth: '400px' }}>
-                                    <img
-                                      src={imageUrl}
-                                      alt="Generated image"
-                                      className="w-full rounded-xl"
-                                      style={{ border: `1px solid ${cardBorder}` }}
-                                    />
-                                  </div>
-                                  <a
-                                    href={imageUrl}
-                                    download="khemet-image.png"
-                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-[Orbitron] tracking-widest uppercase transition-all hover:opacity-80 w-fit"
-                                    style={{ background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.3)', color: '#D4AF37' }}
-                                  >
-                                    ↓ Download Image
-                                  </a>
-                                </div>
-                              );
+                              return <ImageCard url={imageUrl} />;
                             }
                           }
-                          // Default text rendering
+
                           const artifact = detectArtifact(m.content);
                           return artifact ? stripCodeBlocks(cleanContent) : cleanContent;
                         })()}
