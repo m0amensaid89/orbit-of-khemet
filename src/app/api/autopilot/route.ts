@@ -107,20 +107,26 @@ export async function POST(req: NextRequest) {
                 }
             }
 
+            console.log('[ROUTER] Response status:', response.status);
+            console.log('[ROUTER] Response headers:', JSON.stringify(Object.fromEntries(response.headers.entries())));
+
             const reader = response.body?.getReader();
             if (!reader) throw new Error('No response body from OpenRouter');
 
             const decoder = new TextDecoder();
+            let chunkCount = 0;
 
             while (true) {
               const { done, value } = await reader.read();
               if (done) break;
 
               const chunk = decoder.decode(value, { stream: true });
-              const lines = chunk.split('\n').filter(line => line.startsWith('data: '));
+              if (chunkCount < 3) {
+                console.log(`[ROUTER] Raw chunk ${chunkCount}:`, JSON.stringify(chunk));
+              }
+              chunkCount++;
 
-              console.log('[ROUTER] Raw chunk:', chunk);
-              console.log('[ROUTER] Lines found:', lines.length);
+              const lines = chunk.split('\n').filter(line => line.startsWith('data: '));
 
               for (const line of lines) {
                 const jsonStr = line.replace('data: ', '').trim();
@@ -141,8 +147,9 @@ export async function POST(req: NextRequest) {
                   // skip malformed chunks
                 }
               }
-              console.log('[ROUTER] Full content so far:', fullContent.length, 'chars');
             }
+            console.log('[ROUTER] Total chunks received:', chunkCount);
+            console.log('[ROUTER] Final content length:', fullContent.length);
         }
 
         await fetchStream(modelId);

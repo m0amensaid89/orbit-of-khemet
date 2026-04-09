@@ -115,7 +115,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
       } else {
         // Do nothing on generic useChat disconnects unless it's a real network throw to prevent overwriting explicit stream errors
         if (err.message !== "Stream completed" && err.message !== "Failed to fetch") {
-           setMessages(prev => [...prev, { id: "err-"+Date.now(), role: "assistant", content: "Connection interrupted. Please try again." }]);
+           setMessages(prev => [...prev, { id: "err-"+Date.now(), role: "assistant", content: `Connection interrupted. [${err.message}] Please try again.` }]);
         }
       }
     }

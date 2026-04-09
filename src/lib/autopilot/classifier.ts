@@ -17,7 +17,7 @@ export async function classifyIntent(
   const defaultResult: ClassificationResult = {
     task_type: 'text',
     output_format: 'text_message',
-    model_id: 'deepseek/deepseek-v3',
+    model_id: 'anthropic/claude-sonnet-4-6',
     route: 'openrouter',
     credit_cost: 8,
     complexity: 'low',
@@ -59,7 +59,7 @@ Model selection:
 - document → model_id: "anthropic/claude-sonnet-4-6", credit_cost: 25
 - code → model_id: "qwen/qwen3-coder-480b-a35b:free", credit_cost: 15
 - image → model_id: "dall-e-3", route: "dalle_api", credit_cost: 60
-- text → model_id: "deepseek/deepseek-v3", credit_cost: 8`,
+- text → model_id: "anthropic/claude-sonnet-4-6", credit_cost: 8`,
           },
           {
             role: 'user',
