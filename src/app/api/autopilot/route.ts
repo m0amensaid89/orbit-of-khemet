@@ -26,6 +26,7 @@ export async function POST(req: NextRequest) {
   }
 
   const { messages, agentId, heroId } = body;
+  console.log('[AUTOPILOT] messages type:', typeof messages, 'isArray:', Array.isArray(messages), 'value:', JSON.stringify(messages));
   const lastMessage = messages?.[messages.length - 1]?.content || '';
 
   const stream = new ReadableStream({
@@ -90,7 +91,7 @@ export async function POST(req: NextRequest) {
                 model: modelToUse,
                 messages: [
                   { role: 'system', content: systemPrompt },
-                  ...(messages || []).map((m: { role: string; content: string }) => ({ role: m.role, content: m.content }))
+                  ...(Array.isArray(messages) ? messages : []).map((m: { role: string; content: string }) => ({ role: m.role, content: m.content }))
                 ],
                 stream: true,
               }),
