@@ -70,9 +70,10 @@ Return this exact JSON structure and nothing else:
           },
           {
             role: 'user',
-            content: `User message: ${message}\n\nAgent Context: ${JSON.stringify(agentContext)}`,
+            content: message,
           },
         ],
+        stream: false,
         response_format: { type: 'json_object' },
       }),
       signal: controller.signal,
