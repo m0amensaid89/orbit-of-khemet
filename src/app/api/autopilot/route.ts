@@ -93,7 +93,7 @@ export async function POST(req: NextRequest) {
                   { role: 'system', content: systemPrompt },
                   ...(Array.isArray(messages) ? messages : []).map((m: { role: string; content: string }) => ({ role: m.role, content: m.content }))
                 ],
-                stream: true,
+                stream: false, // Turned off streaming as requested to bypass chunk parse errors
               }),
             });
 
@@ -107,49 +107,17 @@ export async function POST(req: NextRequest) {
                 }
             }
 
-            console.log('[ROUTER] Response status:', response.status);
-            console.log('[ROUTER] Response headers:', JSON.stringify(Object.fromEntries(response.headers.entries())));
+            const data = await response.json();
+            console.log('[ROUTER] OpenRouter response preview:', JSON.stringify(data).substring(0, 200));
 
-            const reader = response.body?.getReader();
-            if (!reader) throw new Error('No response body from OpenRouter');
-
-            const decoder = new TextDecoder();
-            let chunkCount = 0;
-
-            while (true) {
-              const { done, value } = await reader.read();
-              if (done) break;
-
-              const chunk = decoder.decode(value, { stream: true });
-              if (chunkCount < 3) {
-                console.log(`[ROUTER] Raw chunk ${chunkCount}:`, JSON.stringify(chunk));
-              }
-              chunkCount++;
-
-              const lines = chunk.split('\n').filter(line => line.startsWith('data: '));
-
-              for (const line of lines) {
-                const jsonStr = line.replace('data: ', '').trim();
-                if (jsonStr === '[DONE]') break;
-
-                try {
-                  const parsed = JSON.parse(jsonStr);
-                  if (!parsed?.choices || !Array.isArray(parsed.choices)) {
-                    continue; // Skip malformed chunks or unexpected structures
-                  }
-
-                  const delta = parsed?.choices?.[0]?.delta?.content;
-                  if (delta) {
-                      fullContent += delta;
-                      controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'text_delta', content: delta })}\n\n`));
-                  }
-                } catch {
-                  // skip malformed chunks
-                }
-              }
+            if (!data?.choices?.[0]?.message?.content) {
+              throw new Error('OpenRouter returned empty content');
             }
-            console.log('[ROUTER] Total chunks received:', chunkCount);
-            console.log('[ROUTER] Final content length:', fullContent.length);
+
+            fullContent = data.choices[0].message.content;
+
+            // To ensure the frontend receives text as expected, simulate a single text chunk
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'text_delta', content: fullContent })}\n\n`));
         }
 
         await fetchStream(modelId);
