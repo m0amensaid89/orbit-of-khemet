@@ -121,11 +121,19 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
     const messageId = Date.now().toString();
     const assistantMessageId = "asst-" + messageId;
 
-    setMessages(prev => [...prev, { id: messageId, role: 'user', content: userMessage }]);
+    setMessages(prev => {
+      const alreadyExists = prev.some(m => m.role === 'user' && m.content === userMessage && m.id === messageId);
+      if (alreadyExists) return prev;
+      return [...prev, { id: messageId, role: 'user', content: userMessage }];
+    });
 
     try {
       // Add empty assistant message placeholder
-      setMessages(prev => [...prev, { id: assistantMessageId, role: 'assistant', content: '', loadingTaskType: 'processing' }]);
+      setMessages(prev => {
+        const alreadyExists = prev.some(m => m.id === assistantMessageId);
+        if (alreadyExists) return prev;
+        return [...prev, { id: assistantMessageId, role: 'assistant', content: '', loadingTaskType: 'processing' }];
+      });
 
       const res = await fetch('/api/autopilot', {
         method: 'POST',
@@ -174,7 +182,7 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
                console.log('[FRONTEND] final_render received:', parsed.rendered_output?.type);
                console.log('[FRONTEND] content html length:', parsed.rendered_output?.html?.length);
                renderedOutput = parsed.rendered_output;
-               setMessages(prev => prev.map(m => m.id === assistantMessageId ? { ...m, rendered_output: renderedOutput || undefined, content: fullContent || " " } : m));
+               setMessages(prev => prev.map(m => m.id === assistantMessageId ? { ...m, rendered_output: renderedOutput || undefined, content: fullContent || " ", loadingTaskType: undefined } : m));
             } else if (parsed.type === 'error') {
                throw new Error(parsed.message);
             }
