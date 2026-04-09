@@ -4,6 +4,8 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ArrowLeft, Send, Loader2, Zap } from "lucide-react";
 import Image from "next/image";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { heroAgents } from "@/lib/agents";
 import { getHero } from "@/lib/heroes";
 import { getCustomAgentById } from "@/lib/custom-agents";
@@ -191,6 +193,13 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
 
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [userScrolled, setUserScrolled] = useState(false);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const el = e.currentTarget;
+    const isAtBottom = Math.abs(el.scrollHeight - el.scrollTop - el.clientHeight) < 50;
+    setUserScrolled(!isAtBottom);
+  };
 
   const heroModelMap: Record<string, string> = {
     master:  "anthropic/claude-sonnet-4-5:online",
@@ -414,8 +423,10 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
   }, [autoprompt, messages.length, isLoading]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    if (!userScrolled) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, userScrolled]);
 
   useEffect(() => {
     const taskParam = searchParams.get('task');
@@ -494,6 +505,7 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
 
           {/* Messages — flex-1, scrolls internally */}
           <div className="flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-6"
+            onScroll={handleScroll}
             style={{ background: bgDeep }}>
             {messages.map((m) => {
               // Extract model badge if present
@@ -538,7 +550,7 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
                                case 'document': return <DocumentViewCard markdown={output.markdown} />;
                                case 'code': return <CodeBlockCard code={output.code} language={output.language} />;
                                case 'image': return <ImageCard url={output.url} onRegenerate={() => {}} />;
-                               case 'text': return output.content;
+                               case 'text': return <div className="prose prose-invert max-w-none text-sm prose-headings:font-['Cinzel_Decorative'] prose-headings:text-[#D4AF37] prose-a:text-[#06b6d4]"><ReactMarkdown remarkPlugins={[remarkGfm]}>{output.content}</ReactMarkdown></div>;
                              }
                           }
 
@@ -546,7 +558,7 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
                           if (m.role === 'assistant' && m.loadingTaskType) {
                               // If there is streaming text coming in alongside loading state, render it
                               if (m.content) {
-                                 return cleanContent;
+                                 return <div className="prose prose-invert max-w-none text-sm prose-headings:font-['Cinzel_Decorative'] prose-headings:text-[#D4AF37] prose-a:text-[#06b6d4]"><ReactMarkdown remarkPlugins={[remarkGfm]}>{cleanContent}</ReactMarkdown></div>;
                               }
 
                               if (m.loadingTaskType === 'image') {
