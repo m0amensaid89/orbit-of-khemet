@@ -17,7 +17,7 @@ export async function classifyIntent(
   const defaultResult: ClassificationResult = {
     task_type: 'text',
     output_format: 'text_message',
-    model_id: 'anthropic/claude-sonnet-4-6',
+    model_id: 'deepseek/deepseek-v3',
     route: 'openrouter',
     credit_cost: 8,
     complexity: 'low',
@@ -35,16 +35,30 @@ export async function classifyIntent(
         messages: [
           {
             role: 'system',
-            content: `You are an intent classification engine for an AI platform. Read the user message and return ONLY a JSON object. No explanation. No markdown. No preamble. Just JSON.
+            content: `You are a strict intent classification engine. Your ONLY job is to read the user message and return a JSON object. Nothing else. No explanation. No markdown. No preamble. Just raw JSON.
 
-Rules:
-- Webpage / landing page / website / UI / dashboard / HTML component → task_type: "website", output_format: "html_preview"
-- Marketing plan / business plan / strategy / report / proposal / guide / playbook / email sequence / SOP → task_type: "document", output_format: "document_view"
-- Code / script / function / automation / debug / refactor → task_type: "code", output_format: "code_block"
-- Image / logo / banner / poster / graphic / illustration → task_type: "image", output_format: "image_card"
-- Anything else → task_type: "text", output_format: "text_message"
+CLASSIFICATION RULES — apply in this exact order:
 
-Return this exact structure:
+Rule 1 — WEBSITE: If the message contains ANY of these words or phrases → classify as website:
+"landing page", "webpage", "web page", "website", "site", "homepage", "home page", "HTML", "frontend", "front-end", "UI", "interface", "dashboard", "portfolio", "build me a page", "create a page", "design a page", "make a page"
+→ task_type: "website", output_format: "html_preview", model_id: "anthropic/claude-sonnet-4-6", route: "openrouter", credit_cost: 40, complexity: "high"
+
+Rule 2 — IMAGE: If the message contains ANY of these → classify as image:
+"generate image", "create image", "design image", "draw", "illustrate", "logo", "banner", "poster", "thumbnail", "graphic", "visual", "picture", "photo"
+→ task_type: "image", output_format: "image_card", model_id: "dall-e-3", route: "dalle_api", credit_cost: 60, complexity: "high"
+
+Rule 3 — CODE: If the message contains ANY of these → classify as code:
+"write code", "write a script", "write a function", "write a class", "build a script", "create a function", "Python", "JavaScript", "TypeScript", "SQL", "debug", "refactor", "fix this code", "programming"
+→ task_type: "code", output_format: "code_block", model_id: "qwen/qwen3-coder-480b-a35b:free", route: "openrouter", credit_cost: 15, complexity: "medium"
+
+Rule 4 — DOCUMENT: If the message contains ANY of these → classify as document:
+"marketing plan", "business plan", "strategy", "report", "proposal", "playbook", "guide", "framework", "roadmap", "content plan", "email sequence", "SOP", "case study", "write me a full", "write me a detailed", "write me a comprehensive"
+→ task_type: "document", output_format: "document_view", model_id: "anthropic/claude-sonnet-4-6", route: "openrouter", credit_cost: 25, complexity: "medium"
+
+Rule 5 — TEXT: Everything else
+→ task_type: "text", output_format: "text_message", model_id: "anthropic/claude-sonnet-4-6", route: "openrouter", credit_cost: 8, complexity: "low"
+
+Return this exact JSON structure and nothing else:
 {
   "task_type": "website" | "document" | "code" | "image" | "text",
   "output_format": "html_preview" | "document_view" | "code_block" | "image_card" | "text_message",
@@ -52,14 +66,7 @@ Return this exact structure:
   "route": "openrouter" | "dalle_api",
   "credit_cost": number,
   "complexity": "low" | "medium" | "high"
-}
-
-Model selection:
-- website → model_id: "anthropic/claude-sonnet-4-6", credit_cost: 40
-- document → model_id: "anthropic/claude-sonnet-4-6", credit_cost: 25
-- code → model_id: "qwen/qwen3-coder-480b-a35b:free", credit_cost: 15
-- image → model_id: "dall-e-3", route: "dalle_api", credit_cost: 60
-- text → model_id: "anthropic/claude-sonnet-4-6", credit_cost: 8`,
+}`,
           },
           {
             role: 'user',
