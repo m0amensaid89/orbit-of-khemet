@@ -61,10 +61,17 @@ async function executeOpenRouterTask(
     });
 
     if (!response.ok) {
-      throw new Error(`OpenRouter API error: ${response.status} ${response.statusText}`);
+      const errText = await response.text();
+      throw new Error(`OpenRouter API error: ${response.status} — ${errText}`);
     }
 
     const data = await response.json();
+
+    if (!data?.choices || !Array.isArray(data.choices) || data.choices.length === 0) {
+      console.error('[ROUTER] Unexpected OpenRouter response structure:', JSON.stringify(data));
+      throw new Error('OpenRouter returned unexpected response structure');
+    }
+
     return {
       output_format: classification.output_format,
       content: data.choices[0].message.content,

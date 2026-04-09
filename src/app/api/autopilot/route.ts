@@ -83,15 +83,17 @@ export async function POST(req: NextRequest) {
               headers: {
                 'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
                 'Content-Type': 'application/json',
+                'HTTP-Referer': 'https://orbit.khemet.ai',
+                'X-Title': 'Orbit of Khemet',
               },
               body: JSON.stringify({
                 model: modelToUse,
-                stream: true,
                 messages: [
                   { role: 'system', content: systemPrompt },
-                  ...messages.map((m: { role: string; content: string }) => ({ role: m.role, content: m.content }))
-                ]
-              })
+                  ...(messages || []).map((m: { role: string; content: string }) => ({ role: m.role, content: m.content }))
+                ],
+                stream: true,
+              }),
             });
 
             if (!response.ok) {
@@ -99,13 +101,14 @@ export async function POST(req: NextRequest) {
                   console.log(`[AUTOPILOT] Model ${modelToUse} failed, falling back to openai/gpt-4o`);
                   return fetchStream('openai/gpt-4o', true);
                 } else {
-                  throw new Error(`OpenRouter Streaming API error: ${response.status}`);
+                  const errText = await response.text();
+                  throw new Error(`OpenRouter API error: ${response.status} — ${errText}`);
                 }
             }
 
-            if (!response.body) throw new Error("No response body");
+            const reader = response.body?.getReader();
+            if (!reader) throw new Error('No response body from OpenRouter');
 
-            const reader = response.body.getReader();
             const decoder = new TextDecoder();
 
             while (true) {
@@ -113,21 +116,25 @@ export async function POST(req: NextRequest) {
               if (done) break;
 
               const chunk = decoder.decode(value, { stream: true });
-              const lines = chunk.split('\n').filter(line => line.trim() !== '');
+              const lines = chunk.split('\n').filter(line => line.startsWith('data: '));
 
               for (const line of lines) {
-                if (line.includes('[DONE]')) continue;
-                if (line.startsWith('data: ')) {
-                  try {
-                    const data = JSON.parse(line.slice(6));
-                    const delta = data.choices[0]?.delta?.content || '';
-                    if (delta) {
-                        fullContent += delta;
-                        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'text_delta', content: delta })}\n\n`));
-                    }
-                  } catch (e) {
-                    // ignore partial chunk parsing errors
+                const jsonStr = line.replace('data: ', '').trim();
+                if (jsonStr === '[DONE]') break;
+
+                try {
+                  const parsed = JSON.parse(jsonStr);
+                  if (!parsed?.choices || !Array.isArray(parsed.choices)) {
+                    continue; // Skip malformed chunks or unexpected structures
                   }
+
+                  const delta = parsed?.choices?.[0]?.delta?.content;
+                  if (delta) {
+                      fullContent += delta;
+                      controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'text_delta', content: delta })}\n\n`));
+                  }
+                } catch {
+                  // skip malformed chunks
                 }
               }
             }
