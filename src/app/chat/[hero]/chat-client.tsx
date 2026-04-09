@@ -8,7 +8,7 @@ import { heroAgents } from "@/lib/agents";
 import { getHero } from "@/lib/heroes";
 import { getCustomAgentById } from "@/lib/custom-agents";
 import { trackMessage, getEnergyCost } from "@/lib/energy";
-import { useChat, Message } from "@ai-sdk/react";
+
 import { HTMLPreviewCard } from "@/components/chat/output-cards/HTMLPreviewCard";
 import { DocumentViewCard } from "@/components/chat/output-cards/DocumentViewCard";
 import { CodeBlockCard } from "@/components/chat/output-cards/CodeBlockCard";
@@ -98,29 +98,98 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
     }
   }, []);
 
-  type CustomMessage = Message & { rendered_output?: RenderedOutput };
-  const { messages: rawMessages, input, handleInputChange, handleSubmit, setMessages, isLoading, append } = useChat({
-    api: "/api/autopilot",
-    body: { heroId: heroParam, agentId: agentParam, threadId },
-    onFinish: (message) => trackMessage(),
-    onError: (err) => {
-      if (err.message.includes("ENERGY DEPLETED")) {
-        setMessages(prev => [...prev, {
-          id: "energy-" + Date.now(),
-          role: "assistant",
-          content: `⚡ GRID ENERGY DEPLETED: You've used all your daily energy. It resets at midnight UTC.
+  type CustomMessage = { id: string; role: "user" | "assistant"; content: string; rendered_output?: RenderedOutput; loadingTaskType?: string; };
 
-Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
-        }]);
-      } else {
-        // Do nothing on generic useChat disconnects unless it's a real network throw to prevent overwriting explicit stream errors
-        if (err.message !== "Stream completed" && err.message !== "Failed to fetch") {
-           setMessages(prev => [...prev, { id: "err-"+Date.now(), role: "assistant", content: `Connection interrupted. [${err.message}] Please try again.` }]);
+  const [messages, setMessages] = useState<CustomMessage[]>([]);
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value);
+  }, []);
+
+  const handleSubmit = async (e?: React.FormEvent<HTMLFormElement>) => {
+    if (e) e.preventDefault();
+    if (!input.trim() || isLoading) return;
+
+    const userMessage = input;
+    setInput("");
+    setIsLoading(true);
+
+    const messageId = Date.now().toString();
+    const assistantMessageId = "asst-" + messageId;
+
+    setMessages(prev => [...prev, { id: messageId, role: 'user', content: userMessage }]);
+
+    try {
+      // Add empty assistant message placeholder
+      setMessages(prev => [...prev, { id: assistantMessageId, role: 'assistant', content: '', loadingTaskType: 'processing' }]);
+
+      const res = await fetch('/api/autopilot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [...messages, { role: 'user', content: userMessage }],
+          agentId: agentParam,
+          heroId: heroParam,
+          threadId: threadId,
+        })
+      });
+
+      if (res.status === 402 || res.status === 403) {
+         setMessages(prev => prev.map(m => m.id === assistantMessageId ? { ...m, content: "⚡ GRID ENERGY DEPLETED. Upgrade your plan." } : m));
+         setIsLoading(false);
+         return;
+      }
+
+      const reader = res.body?.getReader();
+      if (!reader) throw new Error('No response body');
+
+      const decoder = new TextDecoder();
+      let fullContent = "";
+      let renderedOutput: RenderedOutput | null = null;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n').filter(l => l.startsWith('data: '));
+
+        for (const line of lines) {
+          try {
+            const jsonStr = line.replace('data: ', '').trim();
+            if (jsonStr === '[DONE]') continue;
+
+            const parsed = JSON.parse(jsonStr);
+
+            if (parsed.type === 'classification') {
+               setMessages(prev => prev.map(m => m.id === assistantMessageId ? { ...m, loadingTaskType: parsed.data.task_type } : m));
+            } else if (parsed.type === 'text_delta') {
+               fullContent += parsed.content;
+               setMessages(prev => prev.map(m => m.id === assistantMessageId ? { ...m, content: fullContent } : m));
+            } else if (parsed.type === 'final_render') {
+               renderedOutput = parsed.rendered_output;
+               setMessages(prev => prev.map(m => m.id === assistantMessageId ? { ...m, rendered_output: renderedOutput || undefined, content: fullContent || " " } : m));
+            } else if (parsed.type === 'error') {
+               throw new Error(parsed.message);
+            }
+          } catch (e) {
+            // skip malformed
+          }
         }
       }
+
+      trackMessage(); // Deduct energy
+    } catch (err) {
+       setMessages(prev => prev.map(m => m.id === assistantMessageId ? { ...m, content: `Connection interrupted. [${err instanceof Error ? err.message : 'Unknown error'}] Please try again.` } : m));
+    } finally {
+      setIsLoading(false);
+      setMessages(prev => prev.map(m => m.id === assistantMessageId ? { ...m, loadingTaskType: undefined } : m)); // clear loading
     }
-  });
-  const messages = rawMessages as CustomMessage[];
+  };
+
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const heroModelMap: Record<string, string> = {
@@ -335,10 +404,14 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
     if (autoprompt && messages.length === 1 && !isLoading) {
       const decoded = decodeURIComponent(autoprompt);
       setTimeout(() => {
-        append({ role: 'user', content: decoded });
+        setInput(decoded);
+        setTimeout(() => {
+           const form = document.querySelector('form');
+           if (form) form.requestSubmit();
+        }, 100);
       }, 800);
     }
-  }, [autoprompt, messages.length, isLoading, append]);
+  }, [autoprompt, messages.length, isLoading]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -456,108 +529,39 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                         : { background: bgMid, border: `1px solid ${cardBorder}`, color: "rgba(255,255,255,0.9)", borderLeftColor: accentColor, borderLeftWidth: "3px" }}>
                       <div className="whitespace-pre-wrap break-words">
                         {(() => {
-                          // AutoPilot Output Rendering
+
+                          // AutoPilot Output Rendering (Final Render)
                           if (m.role === 'assistant' && m.rendered_output) {
                              const output = m.rendered_output;
                              switch (output.type) {
-                               case 'html':
-                                 return <HTMLPreviewCard html={output.html} />;
-                               case 'document':
-                                 return <DocumentViewCard markdown={output.markdown} />;
-                               case 'code':
-                                 return <CodeBlockCard code={output.code} language={output.language} />;
-                               case 'image':
-                                 return <ImageCard url={output.url} onRegenerate={() => {
-                                     // Optional regenerate logic implementation
-                                 }} />;
-                               case 'text':
-                                 return output.content;
+                               case 'html': return <HTMLPreviewCard html={output.html} />;
+                               case 'document': return <DocumentViewCard markdown={output.markdown} />;
+                               case 'code': return <CodeBlockCard code={output.code} language={output.language} />;
+                               case 'image': return <ImageCard url={output.url} onRegenerate={() => {}} />;
+                               case 'text': return output.content;
                              }
                           }
 
-                          // Parse out stream fragments
-                          // The ai-sdk useChat hook aggregates all `data:` and `text` streams into a single `m.content` string.
-                          // We need to look for our custom JSON events in this string.
-                          if (m.role === 'assistant') {
-                            try {
-                               // Quick and dirty manual parse to extract the final render object if present
-                               const finalRenderMatch = m.content.match(/{"type":"final_render","rendered_output":({.*})}/);
-                               if (finalRenderMatch) {
-                                   const output = JSON.parse(finalRenderMatch[1]);
-                                   switch (output.type) {
-                                     case 'html': return <HTMLPreviewCard html={output.html} />;
-                                     case 'document': return <DocumentViewCard markdown={output.markdown} />;
-                                     case 'code': return <CodeBlockCard code={output.code} language={output.language} />;
-                                     case 'image': return <ImageCard url={output.url} onRegenerate={() => {}} />;
-                                     case 'text': return output.content;
-                                   }
-                               }
+                          // AutoPilot Loading State
+                          if (m.role === 'assistant' && m.loadingTaskType) {
+                              // If there is streaming text coming in alongside loading state, render it
+                              if (m.content) {
+                                 return cleanContent;
+                              }
 
-                               // If not final render, try parsing non-streaming JSON (dalle image output)
-                               if (m.content.trim().startsWith('{') && m.content.includes('"rendered_output"')) {
-                                   const parsed = JSON.parse(m.content);
-                                   if (parsed.rendered_output) {
-                                       const output = parsed.rendered_output;
-                                       switch (output.type) {
-                                          case 'html': return <HTMLPreviewCard html={output.html} />;
-                                          case 'document': return <DocumentViewCard markdown={output.markdown} />;
-                                          case 'code': return <CodeBlockCard code={output.code} language={output.language} />;
-                                          case 'image': return <ImageCard url={output.url} onRegenerate={() => {}} />;
-                                          case 'text': return output.content;
-                                       }
-                                   }
-                               }
-
-                               // Try parsing explicit streaming errors
-                               const errMatch = m.content.match(/{"type":"error","step":".*?","message":"(.*?)"}/);
-                               if (errMatch) {
-                                  return (
-                                     <div className="text-red-400 font-['Rajdhani']">
-                                        <span className="font-bold">Error:</span> {errMatch[1]}
-                                     </div>
-                                  );
-                               }
-
-                               // Try parsing classification
-                               const classMatch = m.content.match(/{"type":"classification","data":({.*})}/);
-                               if (classMatch) {
-                                  const classData = JSON.parse(classMatch[1]);
-                                  if (classData.task_type === 'image') {
-                                       return <ImageCard isLoading={true} />;
-                                  }
-
-                                  // Extract pure text delta removing all custom events and clean it up
-                                  const cleanText = cleanContent
-                                       .replace(/{"type":"classification","data":{.*?}}/g, '')
-                                       .replace(/{"type":"text_delta","content":".*?"}/g, '')
-                                       .replace(/{"type":"final_render","rendered_output":{.*?}}/g, '')
-                                       .replace(/{"type":"error","step":".*?","message":".*?"}/g, '')
-                                       .replace(/{"type":"done"}/g, '')
-                                       .trim();
-
-                                  return cleanText || (
-                                      <div className="flex items-center gap-2 text-[#D4AF37] italic text-xs animate-pulse">
-                                          <span>Initializing {classData.task_type} builder...</span>
-                                      </div>
-                                  );
-                               }
-
-                            } catch(e) {
-                               // normal text parse error fallback
-                            }
-                          }
-
-                          // Support raw image text urls during stream before final render (legacy fallback)
-                          if (m.role === 'assistant') {
-                            const imgMatch = m.content.match(/!\[.*?\]\((data:image\/[^)]+)\)/);
-                            const urlMatch = m.content.match(/!\[.*?\]\((https?:\/\/[^)]+)\)/);
-                            const imageUrl = imgMatch?.[1] || urlMatch?.[1];
-                            if (imageUrl) {
-                              return <ImageCard url={imageUrl} />;
-                            }
+                              if (m.loadingTaskType === 'image') {
+                                 return <ImageCard isLoading={true} />;
+                              }
+                              return (
+                                <div className="flex items-center gap-2 text-[#D4AF37] italic text-xs animate-pulse">
+                                    <span>Initializing {m.loadingTaskType} builder...</span>
+                                </div>
+                              );
                           }
 
                           const artifact = detectArtifact(m.content);
+
+
                           return artifact ? stripCodeBlocks(cleanContent) : cleanContent;
                         })()}
                       </div>
