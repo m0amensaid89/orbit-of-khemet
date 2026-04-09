@@ -113,7 +113,10 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
 Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
         }]);
       } else {
-        setMessages(prev => [...prev, { id: "err-"+Date.now(), role: "assistant", content: "Connection interrupted. Please try again." }]);
+        // Do nothing on generic useChat disconnects unless it's a real network throw to prevent overwriting explicit stream errors
+        if (err.message !== "Stream completed" && err.message !== "Failed to fetch") {
+           setMessages(prev => [...prev, { id: "err-"+Date.now(), role: "assistant", content: "Connection interrupted. Please try again." }]);
+        }
       }
     }
   });
@@ -505,6 +508,16 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                                    }
                                }
 
+                               // Try parsing explicit streaming errors
+                               const errMatch = m.content.match(/{"type":"error","step":".*?","message":"(.*?)"}/);
+                               if (errMatch) {
+                                  return (
+                                     <div className="text-red-400 font-['Rajdhani']">
+                                        <span className="font-bold">Error:</span> {errMatch[1]}
+                                     </div>
+                                  );
+                               }
+
                                // Try parsing classification
                                const classMatch = m.content.match(/{"type":"classification","data":({.*})}/);
                                if (classMatch) {
@@ -518,6 +531,8 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                                        .replace(/{"type":"classification","data":{.*?}}/g, '')
                                        .replace(/{"type":"text_delta","content":".*?"}/g, '')
                                        .replace(/{"type":"final_render","rendered_output":{.*?}}/g, '')
+                                       .replace(/{"type":"error","step":".*?","message":".*?"}/g, '')
+                                       .replace(/{"type":"done"}/g, '')
                                        .trim();
 
                                   return cleanText || (
