@@ -25,16 +25,24 @@ export async function POST(req: NextRequest) {
     return new Response(JSON.stringify({ error: 'Invalid JSON body' }), { status: 400 });
   }
 
-  const { messages, agentId, heroId } = body;
+  const { message, messages, agentId, heroId } = body;
   console.log('[AUTOPILOT] messages type:', typeof messages, 'isArray:', Array.isArray(messages), 'value:', JSON.stringify(messages));
-  const lastMessage = messages?.[messages.length - 1]?.content || '';
+
+  // Support both message (string) and messages (array) formats
+  const userMessage: string =
+    message ||
+    (Array.isArray(messages) && messages.length > 0
+      ? messages[messages.length - 1]?.content || ''
+      : '');
+
+  console.log('[AUTOPILOT] userMessage:', userMessage);
 
   const stream = new ReadableStream({
     async start(controller) {
       // Step 1: Classification
       let classification;
       try {
-        classification = await classifyIntent(lastMessage, { agentId: agentId || '', agentRole: heroId || '' });
+        classification = await classifyIntent(userMessage, { agentId: agentId || '', agentRole: heroId || '' });
         console.log('[AUTOPILOT] Classification result:', JSON.stringify(classification));
         controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'classification', data: classification })}\n\n`));
       } catch (err) {
@@ -48,7 +56,7 @@ export async function POST(req: NextRequest) {
       // Handle Image generation synchronously (no streaming)
       if (classification.route === 'dalle_api') {
         try {
-          const executionResult = await executeTask(classification, lastMessage);
+          const executionResult = await executeTask(classification, userMessage);
           console.log('[AUTOPILOT] Router result type:', executionResult?.output_format);
           const rendered_output = transformOutput(executionResult);
 
