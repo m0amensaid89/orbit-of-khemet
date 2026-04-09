@@ -119,6 +119,9 @@ export async function POST(req: NextRequest) {
               const chunk = decoder.decode(value, { stream: true });
               const lines = chunk.split('\n').filter(line => line.startsWith('data: '));
 
+              console.log('[ROUTER] Raw chunk:', chunk);
+              console.log('[ROUTER] Lines found:', lines.length);
+
               for (const line of lines) {
                 const jsonStr = line.replace('data: ', '').trim();
                 if (jsonStr === '[DONE]') break;
@@ -138,6 +141,7 @@ export async function POST(req: NextRequest) {
                   // skip malformed chunks
                 }
               }
+              console.log('[ROUTER] Full content so far:', fullContent.length, 'chars');
             }
         }
 
