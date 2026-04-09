@@ -171,6 +171,8 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
                fullContent += parsed.content;
                setMessages(prev => prev.map(m => m.id === assistantMessageId ? { ...m, content: fullContent } : m));
             } else if (parsed.type === 'final_render') {
+               console.log('[FRONTEND] final_render received:', parsed.rendered_output?.type);
+               console.log('[FRONTEND] content html length:', parsed.rendered_output?.html?.length);
                renderedOutput = parsed.rendered_output;
                setMessages(prev => prev.map(m => m.id === assistantMessageId ? { ...m, rendered_output: renderedOutput || undefined, content: fullContent || " " } : m));
             } else if (parsed.type === 'error') {

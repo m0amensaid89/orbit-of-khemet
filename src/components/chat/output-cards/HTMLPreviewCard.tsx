@@ -66,13 +66,16 @@ export function HTMLPreviewCard({ html }: HTMLPreviewCardProps) {
       </div>
 
       {/* Iframe content */}
+      <div style={{ color: 'gold', padding: '8px', fontSize: '12px' }}>
+        HTML Preview — {html?.length || 0} characters loaded
+      </div>
       <div className="w-full h-[480px] bg-white relative">
         <iframe
           ref={iframeRef}
           srcDoc={html}
           sandbox="allow-scripts"
-          className="w-full h-full border-none"
-          title="HTML Preview"
+          style={{ width: '100%', height: '480px', border: 'none', background: '#fff' }}
+          title="Generated Website Preview"
         />
       </div>
 
