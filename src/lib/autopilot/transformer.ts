@@ -1,5 +1,5 @@
 export type RenderedOutput =
-  | { type: 'html'; html: string }
+  | { type: 'html'; content: string }
   | { type: 'document'; markdown: string }
   | { type: 'code'; code: string; language: string }
   | { type: 'image'; url: string }
@@ -23,7 +23,7 @@ export function transformOutput(result: { output_format: string; content: string
             }
          }
       }
-      return { type: 'html', html: htmlContent.trim() };
+      return { type: 'html', content: htmlContent.trim() };
     }
     case 'document_view':
       return { type: 'document', markdown: content };

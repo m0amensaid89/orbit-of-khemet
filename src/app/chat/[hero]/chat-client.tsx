@@ -556,7 +556,7 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
                           if (m.role === 'assistant' && m.rendered_output) {
                              const output = m.rendered_output;
                              switch (output.type) {
-                               case 'html': return <HTMLPreviewCard html={output.html} />;
+                               case 'html': return <HTMLPreviewCard content={output.content} />;
                                case 'document': return <DocumentViewCard markdown={output.markdown} />;
                                case 'code': return <CodeBlockCard code={output.code} language={output.language} />;
                                case 'image': return <ImageCard url={output.url} onRegenerate={() => {}} />;

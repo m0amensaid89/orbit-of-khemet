@@ -4,18 +4,18 @@ import React, { useRef } from 'react';
 import { Maximize, Copy, ExternalLink, Download } from 'lucide-react';
 
 interface HTMLPreviewCardProps {
-  html: string;
+  content: string;
 }
 
-export function HTMLPreviewCard({ html }: HTMLPreviewCardProps) {
+export function HTMLPreviewCard({ content }: HTMLPreviewCardProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(html);
+    navigator.clipboard.writeText(content);
   };
 
   const handleDownload = () => {
-    const blob = new Blob([html], { type: 'text/html' });
+    const blob = new Blob([content], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -27,7 +27,7 @@ export function HTMLPreviewCard({ html }: HTMLPreviewCardProps) {
   };
 
   const handleOpenNewTab = () => {
-    const blob = new Blob([html], { type: 'text/html' });
+    const blob = new Blob([content], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
     window.open(url, '_blank');
   };
@@ -67,12 +67,12 @@ export function HTMLPreviewCard({ html }: HTMLPreviewCardProps) {
 
       {/* Iframe content */}
       <div style={{ color: 'gold', padding: '8px', fontSize: '12px' }}>
-        HTML Preview — {html?.length || 0} characters loaded
+        HTML Preview — {content?.length || 0} characters loaded
       </div>
       <div className="w-full h-[480px] bg-white relative">
         <iframe
           ref={iframeRef}
-          srcDoc={html}
+          srcDoc={content}
           sandbox="allow-scripts"
           style={{ width: '100%', height: '480px', border: 'none', background: '#fff' }}
           title="Generated Website Preview"
