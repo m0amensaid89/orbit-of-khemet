@@ -182,7 +182,7 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
                console.log('[FRONTEND] final_render received:', parsed.rendered_output?.type);
                console.log('[FRONTEND] content html length:', parsed.rendered_output?.html?.length);
                renderedOutput = parsed.rendered_output;
-               setMessages(prev => prev.map(m => m.id === assistantMessageId ? { ...m, rendered_output: renderedOutput || undefined, content: fullContent || " ", loadingTaskType: undefined } : m));
+               setMessages(prev => prev.map(m => m.id === assistantMessageId ? { ...m, rendered_output: renderedOutput || undefined, content: renderedOutput ? '' : (fullContent || ' '), loadingTaskType: undefined } : m));
             } else if (parsed.type === 'error') {
                throw new Error(parsed.message);
             }
@@ -584,7 +584,7 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
                           const artifact = detectArtifact(m.content);
 
 
-                          return artifact ? stripCodeBlocks(cleanContent) : cleanContent;
+                          return artifact ? stripCodeBlocks(cleanContent) : <div className="prose prose-invert max-w-none text-sm prose-headings:font-['Cinzel_Decorative'] prose-headings:text-[#D4AF37] prose-a:text-[#06b6d4]"><ReactMarkdown remarkPlugins={[remarkGfm]}>{cleanContent}</ReactMarkdown></div>;
                         })()}
                       </div>
                       {(() => {

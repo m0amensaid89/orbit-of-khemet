@@ -74,9 +74,6 @@ export function HTMLPreviewCard({ content }: HTMLPreviewCardProps) {
       </div>
 
       {/* Iframe content */}
-      <div style={{ color: 'gold', padding: '8px', fontSize: '12px' }}>
-        HTML Preview — {content?.length || 0} characters loaded
-      </div>
       <iframe
         ref={iframeRef}
         srcDoc={content}
