@@ -110,15 +110,24 @@ export async function POST(req: NextRequest) {
         .eq('id', user.id)
         .single();
 
-      if (!profile || profile.credits < creditCost) {
+      if (!profile || profile.credits === null) {
+        // New or migrated user — upsert profile with default credits
+        await supabaseAdmin.from('profiles').upsert({
+          id: user.id,
+          credits: 7000,
+          tier: 'personal_basic'
+        });
+        profileCredits = 7000;
+      } else if (profile.credits < creditCost) {
         return NextResponse.json({
           error:            'insufficient_credits',
           message:          'Your Grid Energy is depleted, Architect. Recharge to continue building your empire.',
           creditsRequired:  creditCost,
-          creditsAvailable: profile?.credits || 0,
+          creditsAvailable: profile.credits,
         }, { status: 402 });
+      } else {
+        profileCredits = profile.credits;
       }
-      profileCredits = profile.credits;
     }
 
     // 4. Build system prompt from agent skill
