@@ -115,7 +115,7 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
   const { messages: rawMessages, input, handleInputChange, handleSubmit, setMessages, isLoading, append } = useChat({
     api: "/api/chat",
     body: { hero: heroParam, agent: agentParam, threadId },
-    onFinish: (message) => {
+    onFinish: () => {
       trackMessage();
       window.dispatchEvent(new CustomEvent('credits-updated'));
     },
