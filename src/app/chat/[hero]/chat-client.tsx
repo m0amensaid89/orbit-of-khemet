@@ -6,6 +6,7 @@ import { ArrowLeft, Send, Loader2, Zap } from "lucide-react";
 import Image from "next/image";
 import { heroAgents } from "@/lib/agents";
 import { getHero } from "@/lib/heroes";
+import { createClient } from "@/lib/supabase/client";
 import { agentSkills } from "@/lib/agent-skills";
 import { getCustomAgentById } from "@/lib/custom-agents";
 import { trackMessage, getEnergyCost } from "@/lib/energy";
@@ -61,6 +62,17 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
   const heroParam = (heroSlug || searchParams.get("hero") || "MASTER").toLowerCase();
   const agentParam = searchParams.get("agent") || "";
   const isMaster = heroParam === "master";
+  const [user, setUser] = useState<{ email?: string; user_metadata?: { full_name?: string } } | null>(null);
+  useEffect(() => {
+    const fetchUser = async () => {
+      const supabase = createClient();
+      const { data } = await supabase.auth.getUser();
+      setUser(data.user);
+    };
+    fetchUser();
+  }, []);
+
+
 
   const agents = heroAgents[heroParam] || [];
   const customAgent = agentParam.startsWith("custom_") ? getCustomAgentById(agentParam) : null;
@@ -341,6 +353,24 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // Opening message — fires when agent chat first loads
+  useEffect(() => {
+    if (messages.length === 0 && agentParam && heroParam) {
+      const skillKey = `${heroParam.toLowerCase()}-${agentParam}`
+      const skill = agentSkills[skillKey]
+      if (skill) {
+        const username = user?.user_metadata?.full_name
+          || user?.email?.split('@')[0]
+          || 'Commander'
+        const openingContent = skill.openingMessage(username)
+        append({
+          role: 'assistant',
+          content: openingContent,
+        })
+      }
+    }
+  }, [agentParam, heroParam, messages.length, user?.email, user?.user_metadata?.full_name, append])
 
   useEffect(() => {
     const taskParam = searchParams.get('task');
