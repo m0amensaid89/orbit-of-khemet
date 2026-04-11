@@ -68,6 +68,20 @@ export function Sidebar() {
 
     fetchSessionAndEnergy();
 
+    const handleCreditsUpdate = async () => {
+      try {
+        const res = await fetch('/api/credits');
+        const data = await res.json();
+        if (data && data.credits !== undefined) {
+          setEnergy(data.credits);
+        }
+      } catch (err) {
+        console.error("Failed to fetch updated credits:", err);
+      }
+    };
+
+    window.addEventListener('credits-updated', handleCreditsUpdate);
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         setUser(session?.user || null);
@@ -99,6 +113,7 @@ export function Sidebar() {
     );
 
     return () => {
+      window.removeEventListener('credits-updated', handleCreditsUpdate);
       subscription.unsubscribe();
     };
   }, [supabase]);

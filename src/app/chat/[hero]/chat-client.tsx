@@ -115,7 +115,10 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
   const { messages: rawMessages, input, handleInputChange, handleSubmit, setMessages, isLoading, append } = useChat({
     api: "/api/chat",
     body: { hero: heroParam, agent: agentParam, threadId },
-    onFinish: (message) => trackMessage(),
+    onFinish: (message) => {
+      trackMessage();
+      window.dispatchEvent(new CustomEvent('credits-updated'));
+    },
     onError: (err) => {
       if (err.message.includes("ENERGY DEPLETED")) {
         setMessages(prev => [...prev, {
@@ -327,17 +330,6 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
         .catch(err => console.error("Failed to load chat history:", err));
     }
   }, [threadId, setMessages]);
-
-  // Agent speaks first: onboarding message
-  useEffect(() => {
-    if (messages.length === 0 && !threadId) {
-      if (isMaster) {
-        setMessages([{ id: "onboarding", role: "assistant", content: `The Empire Engine is online. All 85 agents are standing by. What directive shall I execute?` }]);
-      } else {
-        setMessages([{ id: "onboarding", role: "assistant", content: `Welcome I am ${agentName} How can I help you Today` }]);
-      }
-    }
-  }, [agentParam, heroParam, agentName, isMaster, messages.length, setMessages, threadId]);
 
   const autoprompt = searchParams.get('autoprompt');
 
