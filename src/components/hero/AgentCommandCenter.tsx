@@ -84,7 +84,7 @@ export function AgentCommandCenter({ slug, accentColor }: Props) {
           <button
             key={cat}
             onClick={() => setSelectedCategory(cat)}
-            className="font-[Orbitron] text-[8px] tracking-[2px] uppercase px-3 py-1.5 transition-all"
+              className="font-[Orbitron] text-empire-xs uppercase px-3 py-1.5 transition-all"
             style={{
               background: selectedCategory === cat ? heroColor : 'transparent',
               color: selectedCategory === cat ? '#0A0A0A' : heroColor,
@@ -126,7 +126,7 @@ export function AgentCommandCenter({ slug, accentColor }: Props) {
 
               {/* Category badge */}
               <div className="mb-3">
-                <span className="font-[Orbitron] text-[7px] tracking-[2px] uppercase px-2 py-0.5"
+                <span className="font-[Orbitron] text-empire-xs uppercase px-2 py-0.5"
                   style={{
                     background: `${heroColor}12`,
                     color: heroColor,
@@ -137,18 +137,18 @@ export function AgentCommandCenter({ slug, accentColor }: Props) {
               </div>
 
               {/* Agent name */}
-              <h3 className="font-[Orbitron] text-sm font-bold mb-1 group-hover:text-[#D4AF37] transition-colors"
+              <h3 className="font-[Orbitron] text-empire-lg font-bold mb-1 group-hover:text-[#D4AF37] transition-colors"
                 style={{ color: '#ffffff' }}>
                 {agent.name}
               </h3>
 
               {/* Role */}
-              <p className="font-[Rajdhani] text-sm mb-3" style={{ color: 'rgba(212,175,55,0.7)' }}>
+              <p className="font-[Rajdhani] text-empire-xs mb-3" style={{ color: 'rgba(212,175,55,0.7)' }}>
                 {agent.role_summary}
               </p>
 
               {/* Description */}
-              <p className="font-[Rajdhani] text-xs leading-relaxed mb-4"
+              <p className="font-[Rajdhani] text-empire-sm leading-relaxed mb-4"
                 style={{ color: '#d0c5af', opacity: 0.7 }}>
                 {agent.description}
               </p>

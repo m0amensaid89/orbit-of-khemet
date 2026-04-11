@@ -115,7 +115,10 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
   const { messages: rawMessages, input, handleInputChange, handleSubmit, setMessages, isLoading, append } = useChat({
     api: "/api/chat",
     body: { hero: heroParam, agent: agentParam, threadId },
-    onFinish: (message) => trackMessage(),
+    onFinish: (message) => {
+      trackMessage();
+      window.dispatchEvent(new CustomEvent('credits-updated'));
+    },
     onError: (err) => {
       if (err.message.includes("ENERGY DEPLETED")) {
         setMessages(prev => [...prev, {
@@ -328,17 +331,6 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
     }
   }, [threadId, setMessages]);
 
-  // Agent speaks first: onboarding message
-  useEffect(() => {
-    if (messages.length === 0 && !threadId) {
-      if (isMaster) {
-        setMessages([{ id: "onboarding", role: "assistant", content: `The Empire Engine is online. All 85 agents are standing by. What directive shall I execute?` }]);
-      } else {
-        setMessages([{ id: "onboarding", role: "assistant", content: `Welcome I am ${agentName} How can I help you Today` }]);
-      }
-    }
-  }, [agentParam, heroParam, agentName, isMaster, messages.length, setMessages, threadId]);
-
   const autoprompt = searchParams.get('autoprompt');
 
   useEffect(() => {
@@ -448,7 +440,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
         </div>
 
           {/* Messages — flex-1, scrolls internally */}
-          <div className="flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-6"
+          <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3"
             style={{ background: bgDeep }}>
             {messages.map((m) => {
               // Extract model badge if present
@@ -472,13 +464,13 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
 
                     {/* Header (Agent Name) */}
                     {m.role === "assistant" && (
-                      <span className="font-[Orbitron] text-[10px] tracking-widest uppercase mb-1.5 ml-1" style={{ color: primaryColor }}>
+                      <span className="font-[Orbitron] text-empire-xs tracking-widest uppercase mb-1.5 ml-1" style={{ color: primaryColor }}>
                         {agentName}
                       </span>
                     )}
 
                     {/* Bubble */}
-                    <div className={`px-5 py-3.5 text-sm leading-relaxed shadow-md font-[Rajdhani] max-w-3xl ${m.role === "user" ? "rounded-2xl rounded-br-sm" : "rounded-2xl rounded-tl-sm"}`}
+                    <div className={`px-5 py-3.5 text-empire-base leading-relaxed shadow-md font-[Rajdhani] max-w-3xl ${m.role === "user" ? "rounded-2xl rounded-br-sm" : "rounded-2xl rounded-tl-sm"}`}
                       style={m.role === "user"
                         ? { background: "linear-gradient(135deg, #1A1A1A, #0A0A0A)", border: "1px solid #D4AF37", color: "#F5D38C" }
                         : { background: bgMid, border: `1px solid ${cardBorder}`, color: "rgba(255,255,255,0.9)", borderLeftColor: accentColor, borderLeftWidth: "3px" }}>
@@ -612,7 +604,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                     )}
 
 {m.role === 'assistant' && (m as Message & { creditsUsed?: number, platformLabel?: string, creditsRemaining?: number }).creditsUsed !== undefined && (m as Message & { creditsUsed?: number, platformLabel?: string, creditsRemaining?: number }).creditsUsed! > 0 && (
-  <div style={{ opacity: 0.45, fontSize: '10px', fontFamily: 'monospace', letterSpacing: '0.08em', marginTop: '4px', paddingLeft: '4px', display: 'flex', gap: '12px' }}>
+  <div className="text-empire-xs" style={{ opacity: 0.45, fontFamily: 'monospace', marginTop: '4px', paddingLeft: '4px', display: 'flex', gap: '12px' }}>
     <span style={{ color: accentColor }}>{(m as Message & { creditsUsed?: number, platformLabel?: string, creditsRemaining?: number }).platformLabel}</span>
     <span>·</span>
     <span>{(m as Message & { creditsUsed?: number, platformLabel?: string, creditsRemaining?: number }).creditsUsed} credits deployed</span>
@@ -727,7 +719,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
               )}
               <div className="relative flex items-center w-full">
                 <input
-                  className={`w-full pl-5 ${voiceSupported ? 'pr-24' : 'pr-16'} py-4 rounded-xl text-base outline-none transition-all shadow-inner placeholder:text-white/20 font-[Rajdhani]`}
+                  className={`w-full pl-5 ${voiceSupported ? 'pr-24' : 'pr-16'} py-4 rounded-xl text-empire-base outline-none transition-all shadow-inner placeholder:text-white/20 font-[Rajdhani]`}
                   style={{ background: "#0A0A0A", border: `1px solid ${cardBorder}`, color: "white" }}
                   value={input}
                   placeholder={`Message ${agentName}...`}
@@ -770,7 +762,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
 
               {voiceSupported && !isListening && (
                 <div className="text-center mt-1">
-                  <span className="font-[Orbitron] text-[7px] tracking-[2px] uppercase"
+                  <span className="font-[Orbitron] text-empire-xs tracking-[2px] uppercase"
                     style={{ color: 'rgba(255,255,255,0.15)' }}>
                     Win + Ctrl to record • Double to lock
                   </span>
