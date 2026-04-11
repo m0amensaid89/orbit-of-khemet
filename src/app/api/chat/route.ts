@@ -103,30 +103,36 @@ export async function POST(req: NextRequest) {
 
     let profileCredits = 0;
     if (user) {
-      // 3. Check user credit balance
-      const { data: profile } = await supabaseAdmin
-        .from('profiles')
-        .select('credits, tier')
-        .eq('id', user.id)
-        .single();
+      try {
+        // 3. Check user credit balance
+        const { data: profile } = await supabaseAdmin
+          .from('profiles')
+          .select('credits, tier')
+          .eq('id', user.id)
+          .single();
 
-      if (!profile || profile.credits === null) {
-        // New or migrated user — upsert profile with default credits
-        await supabaseAdmin.from('profiles').upsert({
-          id: user.id,
-          credits: 7000,
-          tier: 'personal_basic'
-        });
+        if (!profile || profile.credits === null) {
+          try {
+            await supabaseAdmin.from('profiles').upsert({
+              id: user.id,
+              credits: 7000,
+              tier: 'personal_basic'
+            });
+          } catch { /* proceed anyway */ }
+          profileCredits = 7000;
+        } else if (profile.credits < creditCost) {
+          return NextResponse.json({
+            error:            'insufficient_credits',
+            message:          'Your Grid Energy is depleted, Architect. Recharge to continue building your empire.',
+            creditsRequired:  creditCost,
+            creditsAvailable: profile.credits,
+          }, { status: 402 });
+        } else {
+          profileCredits = profile.credits;
+        }
+      } catch (creditsError) {
+        console.error('Credits check failed, proceeding with default:', creditsError);
         profileCredits = 7000;
-      } else if (profile.credits < creditCost) {
-        return NextResponse.json({
-          error:            'insufficient_credits',
-          message:          'Your Grid Energy is depleted, Architect. Recharge to continue building your empire.',
-          creditsRequired:  creditCost,
-          creditsAvailable: profile.credits,
-        }, { status: 402 });
-      } else {
-        profileCredits = profile.credits;
       }
     }
 

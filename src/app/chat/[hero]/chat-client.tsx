@@ -113,8 +113,8 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
 
   type CustomMessage = Message & { rendered_output?: RenderedOutput };
   const { messages: rawMessages, input, handleInputChange, handleSubmit, setMessages, isLoading, append } = useChat({
-    api: "/api/autopilot",
-    body: { heroId: heroParam, agentId: agentParam, threadId },
+    api: "/api/chat",
+    body: { hero: heroParam, agent: agentParam, threadId },
     onFinish: (message) => trackMessage(),
     onError: (err) => {
       if (err.message.includes("ENERGY DEPLETED")) {
