@@ -111,15 +111,15 @@ function HubPageContent() {
 
       {/* Onboarding header */}
       <div className="w-full px-6 md:px-12 pt-12 pb-6 text-center">
-        <p className="font-[Orbitron] text-[9px] tracking-[5px] uppercase mb-3"
+        <p className="font-[Orbitron] text-empire-xs tracking-[5px] uppercase mb-3"
           style={{ color: 'rgba(212,175,55,0.5)' }}>
           EMPIRE ENGINE
         </p>
-        <h1 className="font-[Orbitron] text-4xl md:text-5xl font-black tracking-tighter mb-4"
+        <h1 className="font-[Orbitron] text-empire-xl font-black tracking-tighter mb-4"
           style={{ color: '#ffffff', textShadow: '0 0 30px rgba(212,175,55,0.2)' }}>
           HERO HUB
         </h1>
-        <p className="font-[Rajdhani] text-lg mb-2" style={{ color: '#d0c5af' }}>
+        <p className="font-[Rajdhani] text-empire-sm mb-2" style={{ color: '#d0c5af' }}>
           Pick an AI specialist by goal: strategy, writing, analysis, growth, operations, sales, or learning.
         </p>
       </div>
@@ -147,11 +147,11 @@ function HubPageContent() {
 
         {/* Department chips */}
         <div className="flex flex-wrap gap-2 justify-center">
-          <span className="font-[Orbitron] text-[8px] tracking-[3px] uppercase self-center mr-2"
+          <span className="font-[Orbitron] text-empire-xs tracking-[3px] uppercase self-center mr-2"
             style={{ color: 'rgba(212,175,55,0.4)' }}>DEPT:</span>
           {DEPARTMENTS.map(d => (
             <button key={d} onClick={() => setDept(d)}
-              className="font-[Orbitron] text-[8px] tracking-[2px] uppercase px-3 py-1.5 transition-all"
+              className="font-[Orbitron] text-empire-xs tracking-[2px] uppercase px-3 py-1.5 transition-all"
               style={{
                 background: dept === d ? '#D4AF37' : 'transparent',
                 color: dept === d ? '#0A0A0A' : 'rgba(212,175,55,0.6)',
@@ -165,11 +165,11 @@ function HubPageContent() {
 
         {/* Outcome chips */}
         <div className="flex flex-wrap gap-2 justify-center">
-          <span className="font-[Orbitron] text-[8px] tracking-[3px] uppercase self-center mr-2"
+          <span className="font-[Orbitron] text-empire-xs tracking-[3px] uppercase self-center mr-2"
             style={{ color: 'rgba(212,175,55,0.4)' }}>OUTCOME:</span>
           {OUTCOMES.map(o => (
             <button key={o} onClick={() => setOutcome(o)}
-              className="font-[Orbitron] text-[8px] tracking-[2px] uppercase px-3 py-1.5 transition-all"
+              className="font-[Orbitron] text-empire-xs tracking-[2px] uppercase px-3 py-1.5 transition-all"
               style={{
                 background: outcome === o ? '#2563EB' : 'transparent',
                 color: outcome === o ? '#ffffff' : 'rgba(255,255,255,0.4)',
@@ -186,7 +186,7 @@ function HubPageContent() {
       <main className="flex-1 px-6 md:px-12">
         {(search.trim() || dept !== 'All' || outcome !== 'All') && searchResults.agentMatches.length > 0 && (
           <div className="mb-8 max-w-7xl mx-auto">
-            <p className="font-[Orbitron] text-[8px] tracking-[3px] uppercase mb-3"
+            <p className="font-[Orbitron] text-empire-xs tracking-[3px] uppercase mb-3"
               style={{ color: 'rgba(212,175,55,0.5)' }}>
               AGENT MATCHES ({searchResults.agentMatches.length})
             </p>
@@ -201,15 +201,15 @@ function HubPageContent() {
                   }}>
                   <div>
                     <div className="flex items-center gap-2 mb-0.5">
-                      <span className="font-[Orbitron] text-[7px] tracking-[2px] uppercase"
+                      <span className="font-[Orbitron] text-empire-xs tracking-[2px] uppercase"
                         style={{ color: match.heroColor }}>
                         {match.heroName}
                       </span>
                     </div>
-                    <p className="font-[Orbitron] text-xs font-bold" style={{ color: '#ffffff' }}>
+                    <p className="font-[Orbitron] text-empire-lg font-bold" style={{ color: '#ffffff' }}>
                       {match.agentName}
                     </p>
-                    <p className="font-[Rajdhani] text-xs" style={{ color: '#d0c5af', opacity: 0.7 }}>
+                    <p className="font-[Rajdhani] text-empire-sm" style={{ color: '#d0c5af', opacity: 0.7 }}>
                       {match.agentRole}
                     </p>
                   </div>
@@ -221,10 +221,10 @@ function HubPageContent() {
 
         {filtered.length === 0 ? (
           <div className="text-center py-24">
-            <p className="font-[Orbitron] text-xs tracking-widest uppercase"
+            <p className="font-[Orbitron] text-empire-xs tracking-widest uppercase"
               style={{ color: 'rgba(212,175,55,0.3)' }}>NO HEROES MATCH YOUR FILTERS</p>
             <button onClick={() => { setSearch(""); setDept("All"); setOutcome("All"); }}
-              className="mt-4 font-[Orbitron] text-[9px] tracking-[2px] uppercase px-4 py-2"
+              className="mt-4 font-[Orbitron] text-empire-xs tracking-[2px] uppercase px-4 py-2"
               style={{ border: '1px solid rgba(212,175,55,0.3)', color: 'rgba(212,175,55,0.6)' }}>
               CLEAR FILTERS
             </button>
@@ -268,7 +268,7 @@ function HubPageContent() {
 
                       {/* Hero name (Main title) */}
                       <div style={{ minHeight: '32px' }} className="flex flex-col justify-end">
-                        <h2 className="font-[Orbitron] text-[6px] sm:text-[8px] lg:text-[10px] 2xl:text-[12px] font-black tracking-tight uppercase leading-tight"
+                        <h2 className="font-[Orbitron] text-empire-lg font-black tracking-tight uppercase leading-tight"
                           style={{ color: meta?.color_signature || data.accentColor, wordBreak: 'break-word' }}>
                           {
                             slug === 'thoren' ? 'THOREN The Law' :
@@ -285,7 +285,7 @@ function HubPageContent() {
 
                       {/* Subtitle */}
                       <div style={{ minHeight: '28px' }}>
-                        <p className="font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[7px] 2xl:text-[8px] tracking-widest uppercase leading-tight mt-0.5"
+                        <p className="font-[Orbitron] text-empire-sm tracking-widest uppercase leading-tight mt-0.5"
                           style={{ color: '#ffffff', wordBreak: 'break-word' }}>
                           {
                             slug === 'thoren' ? 'Governance & Finance Strategist' :

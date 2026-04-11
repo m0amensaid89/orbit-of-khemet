@@ -135,17 +135,17 @@ export function Sidebar() {
         {/* WORKSPACE Section */}
         <div>
           <div className="px-6 mb-2">
-            <span className="font-orbitron text-[10px] tracking-[8px] text-[rgba(212,175,55,0.4)] uppercase">WORKSPACE</span>
+            <span className="font-orbitron text-empire-xs text-[rgba(212,175,55,0.4)] uppercase">WORKSPACE</span>
           </div>
           <div className="px-3 space-y-1">
             <Link href="/hub" className={navItemClass("/hub", true)}>
               <Compass className="w-4 h-4 z-10" />
-              <span className="font-medium text-[16px] z-10">New Mission</span>
+              <span className="font-medium text-empire-sm z-10">New Mission</span>
             </Link>
             {/*
             <Link href="/master-orbit" className={navItemClass("/master-orbit")}>
               <Hexagon className="w-4 h-4 z-10" />
-              <span className="font-medium text-[16px] z-10">Master Orbit</span>
+              <span className="font-medium text-empire-sm z-10">Master Orbit</span>
             </Link>
             */}
             {/* Codices (future feature — project management) removed until implemented */}
@@ -159,7 +159,7 @@ export function Sidebar() {
           <button
             onClick={() => setSuperSkillsOpen(prev => !prev)}
             className="w-full flex items-center justify-between px-6 py-3 transition-all hover:bg-[rgba(212,175,55,0.03)]">
-            <span className="font-orbitron text-[10px] tracking-[8px] uppercase"
+            <span className="font-orbitron text-empire-xs uppercase"
               style={{ color: 'rgba(212,175,55,0.4)' }}>SUPER SKILLS</span>
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
               stroke="rgba(212,175,55,0.4)" strokeWidth="2" strokeLinecap="round"
@@ -171,27 +171,27 @@ export function Sidebar() {
             <div className="flex flex-col px-3 space-y-1">
               <Link href="/forge" className={navItemClass("/forge")}>
                 <Hammer className="w-4 h-4 z-10" />
-                <span className="font-medium text-[16px] z-10">Agent Forge</span>
+                <span className="font-medium text-empire-sm z-10">Agent Forge</span>
               </Link>
               <Link href="/autopilot" className={navItemClass("/autopilot")}>
                 <Cpu className="w-4 h-4 z-10" />
-                <span className="font-medium text-[16px] z-10">Auto-Pilot</span>
+                <span className="font-medium text-empire-sm z-10">Auto-Pilot</span>
               </Link>
               <Link href="/ui-builder" className={navItemClass("/ui-builder")}>
                 <Wand2 className="w-4 h-4 z-10" />
-                <span className="font-medium text-[16px] z-10">UI Builder</span>
+                <span className="font-medium text-empire-sm z-10">UI Builder</span>
               </Link>
               <Link href="/sentinel" className={navItemClass("/sentinel")}>
                 <Shield className="w-4 h-4 z-10" />
-                <span className="font-medium text-[16px] z-10">Code Sentinel</span>
+                <span className="font-medium text-empire-sm z-10">Code Sentinel</span>
               </Link>
               <Link href="/browser" className={navItemClass("/browser")}>
                 <Globe className="w-4 h-4 z-10" />
-                <span className="font-medium text-[16px] z-10">Browser Control</span>
+                <span className="font-medium text-empire-sm z-10">Browser Control</span>
               </Link>
               <Link href="/artifacts" className={navItemClass("/artifacts")}>
                 <Gem className="w-4 h-4 z-10" />
-                <span className="font-medium text-[16px] z-10">Empire Relics</span>
+                <span className="font-medium text-empire-sm z-10">Empire Relics</span>
               </Link>
             </div>
           )}
@@ -206,7 +206,7 @@ export function Sidebar() {
                 onClick={() => setMissionLogOpen(prev => !prev)}
                 className="w-full flex items-center justify-between px-6 py-3 transition-all hover:bg-[rgba(212,175,55,0.03)] mb-1"
               >
-                <span className="font-orbitron text-[10px] tracking-[8px] uppercase text-[rgba(212,175,55,0.4)]">MISSION LOG</span>
+                <span className="font-orbitron text-empire-xs uppercase text-[rgba(212,175,55,0.4)]">MISSION LOG</span>
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
                   stroke="rgba(212,175,55,0.4)" strokeWidth="2" strokeLinecap="round"
                   strokeLinejoin="round"
@@ -354,15 +354,15 @@ export function Sidebar() {
       {/* ACCOUNT Section */}
       <div className="p-4 border-t border-[rgba(212,175,55,0.08)] bg-[#0A0A0A] flex flex-col gap-4 shrink-0">
         <div className="px-2 mb-[-8px]">
-          <span className="font-orbitron text-[10px] tracking-[8px] text-[rgba(212,175,55,0.4)] uppercase">ACCOUNT</span>
+          <span className="font-orbitron text-empire-xs text-[rgba(212,175,55,0.4)] uppercase">ACCOUNT</span>
         </div>
 
         <div className="bg-[#131313] rounded-md p-3 border border-[rgba(212,175,55,0.08)] relative overflow-hidden group">
           <div className="flex items-center gap-2 mb-2 relative z-10">
             <Zap className="w-3 h-3 text-[#D4AF37]" />
-            <span className="text-[10px] tracking-widest text-[#d0c5af] font-orbitron uppercase">GRID ENERGY</span>
+            <span className="text-empire-xs text-[#d0c5af] font-orbitron uppercase">GRID ENERGY</span>
           </div>
-          <div className="text-xl font-orbitron font-bold text-[#D4AF37] drop-shadow-[0_0_8px_rgba(212,175,55,0.2)] relative z-10">
+          <div className="text-empire-lg font-orbitron font-bold text-[#D4AF37] drop-shadow-[0_0_8px_rgba(212,175,55,0.2)] relative z-10">
             {energy.toLocaleString()}
           </div>
           <div className="w-full bg-[#0A0A0A] h-1 mt-2 rounded-full overflow-hidden relative z-10 border border-[rgba(212,175,55,0.08)]">
@@ -382,7 +382,7 @@ export function Sidebar() {
                 <User className="w-3 h-3 text-[#D4AF37]" />
               </div>
               <div className="truncate">
-                <div className="font-rajdhani text-[14px] text-[#d0c5af] font-medium truncate">
+                <div className="font-rajdhani text-empire-sm text-[#d0c5af] font-medium truncate">
                   {profile?.display_name || user.email?.split('@')[0]}
                 </div>
               </div>
