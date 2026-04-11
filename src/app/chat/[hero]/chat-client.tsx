@@ -6,6 +6,7 @@ import { ArrowLeft, Send, Loader2, Zap } from "lucide-react";
 import Image from "next/image";
 import { heroAgents } from "@/lib/agents";
 import { getHero } from "@/lib/heroes";
+import { agentSkills } from "@/lib/agent-skills";
 import { getCustomAgentById } from "@/lib/custom-agents";
 import { trackMessage, getEnergyCost } from "@/lib/energy";
 import { useChat, Message } from "@ai-sdk/react";
@@ -579,6 +580,16 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                         <Zap className="w-2.5 h-2.5" style={{ color: primaryColor }} /> {modelUsed}
                       </div>
                     )}
+
+{m.role === 'assistant' && (m as Message & { creditsUsed?: number, platformLabel?: string, creditsRemaining?: number }).creditsUsed !== undefined && (m as Message & { creditsUsed?: number, platformLabel?: string, creditsRemaining?: number }).creditsUsed! > 0 && (
+  <div style={{ opacity: 0.45, fontSize: '10px', fontFamily: 'monospace', letterSpacing: '0.08em', marginTop: '4px', paddingLeft: '4px', display: 'flex', gap: '12px' }}>
+    <span style={{ color: accentColor }}>{(m as Message & { creditsUsed?: number, platformLabel?: string, creditsRemaining?: number }).platformLabel}</span>
+    <span>·</span>
+    <span>{(m as Message & { creditsUsed?: number, platformLabel?: string, creditsRemaining?: number }).creditsUsed} credits deployed</span>
+    <span>·</span>
+    <span>{(m as Message & { creditsUsed?: number, platformLabel?: string, creditsRemaining?: number }).creditsRemaining?.toLocaleString()} remaining</span>
+  </div>
+)}
                   </div>
                 </div>
               );
