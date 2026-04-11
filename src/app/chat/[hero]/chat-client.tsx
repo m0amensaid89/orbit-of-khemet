@@ -6,6 +6,8 @@ import { ArrowLeft, Send, Loader2, Zap } from "lucide-react";
 import Image from "next/image";
 import { heroAgents } from "@/lib/agents";
 import { getHero } from "@/lib/heroes";
+import { createClient } from "@/lib/supabase/client";
+import { agentSkills } from "@/lib/agent-skills";
 import { getCustomAgentById } from "@/lib/custom-agents";
 import { trackMessage, getEnergyCost } from "@/lib/energy";
 import { useChat, Message } from "@ai-sdk/react";
@@ -60,6 +62,17 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
   const heroParam = (heroSlug || searchParams.get("hero") || "MASTER").toLowerCase();
   const agentParam = searchParams.get("agent") || "";
   const isMaster = heroParam === "master";
+  const [user, setUser] = useState<{ email?: string; user_metadata?: { full_name?: string } } | null>(null);
+  useEffect(() => {
+    const fetchUser = async () => {
+      const supabase = createClient();
+      const { data } = await supabase.auth.getUser();
+      setUser(data.user);
+    };
+    fetchUser();
+  }, []);
+
+
 
   const agents = heroAgents[heroParam] || [];
   const customAgent = agentParam.startsWith("custom_") ? getCustomAgentById(agentParam) : null;
@@ -341,6 +354,24 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Opening message — fires when agent chat first loads
+  useEffect(() => {
+    if (messages.length === 0 && agentParam && heroParam) {
+      const skillKey = `${heroParam.toLowerCase()}-${agentParam}`
+      const skill = agentSkills[skillKey]
+      if (skill) {
+        const username = user?.user_metadata?.full_name
+          || user?.email?.split('@')[0]
+          || 'Commander'
+        const openingContent = skill.openingMessage(username)
+        append({
+          role: 'assistant',
+          content: openingContent,
+        })
+      }
+    }
+  }, [agentParam, heroParam, messages.length, user?.email, user?.user_metadata?.full_name, append])
+
   useEffect(() => {
     const taskParam = searchParams.get('task');
     if (taskParam && !input && messages.length === 0) {
@@ -579,6 +610,16 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                         <Zap className="w-2.5 h-2.5" style={{ color: primaryColor }} /> {modelUsed}
                       </div>
                     )}
+
+{m.role === 'assistant' && (m as Message & { creditsUsed?: number, platformLabel?: string, creditsRemaining?: number }).creditsUsed !== undefined && (m as Message & { creditsUsed?: number, platformLabel?: string, creditsRemaining?: number }).creditsUsed! > 0 && (
+  <div style={{ opacity: 0.45, fontSize: '10px', fontFamily: 'monospace', letterSpacing: '0.08em', marginTop: '4px', paddingLeft: '4px', display: 'flex', gap: '12px' }}>
+    <span style={{ color: accentColor }}>{(m as Message & { creditsUsed?: number, platformLabel?: string, creditsRemaining?: number }).platformLabel}</span>
+    <span>·</span>
+    <span>{(m as Message & { creditsUsed?: number, platformLabel?: string, creditsRemaining?: number }).creditsUsed} credits deployed</span>
+    <span>·</span>
+    <span>{(m as Message & { creditsUsed?: number, platformLabel?: string, creditsRemaining?: number }).creditsRemaining?.toLocaleString()} remaining</span>
+  </div>
+)}
                   </div>
                 </div>
               );

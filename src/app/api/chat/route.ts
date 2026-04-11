@@ -1,8 +1,13 @@
-import { NextRequest } from 'next/server';
-import { heroMeta, heroAgents, masterSystemPrompt, getAgentModel } from '@/lib/agents';
+import { NextRequest, NextResponse } from 'next/server';
+import { classifyRequest } from '@/lib/classifier';
+import { CREDIT_COSTS, PLATFORM_LABELS, PLATFORM_MODEL_MAP } from '@/lib/credits';
+import { buildSystemPrompt } from '@/lib/buildSystemPrompt';
+import { agentSkills } from '@/lib/agent-skills';
+
+
 import { createClient as createSupabaseClient, SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/server';
-import { getHero } from '@/lib/heroes';
+
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { streamText, JSONValue } from 'ai';
 
@@ -13,163 +18,6 @@ function sanitizeForFetch(text: string): string {
     .replace(/\u2018/g, "'").replace(/\u2019/g, "'")
     .replace(/\u201C/g, '"').replace(/\u201D/g, '"')
     .replace(/\u2022/g, '*').replace(/\u00A0/g, ' ');
-}
-
-// ─── Image request detection ───────────────────────────────────────────────
-const IMAGE_TRIGGERS = ['draw','generate an image','create an image','make an image','illustrate','visualize','design a logo','create a logo','generate a logo','make a banner','create a poster','generate a visual','create artwork','paint','sketch me'];
-function isImageRequest(msg: string): boolean {
-  return IMAGE_TRIGGERS.some(t => msg.toLowerCase().includes(t));
-}
-
-function detectImageComplexity(msg: string): 'simple' | 'detailed' | 'complex' {
-  const lower = msg.toLowerCase();
-  const complexSignals = ['photorealistic','8k','hyper detailed','cinematic','full scene','landscape','architecture','product render','professional'];
-  const detailedSignals = ['character','portrait','logo','banner','poster','illustration','concept art'];
-  if (complexSignals.some(s => lower.includes(s))) return 'complex';
-  if (detailedSignals.some(s => lower.includes(s))) return 'detailed';
-  return 'simple';
-}
-
-function selectImageModel(complexity: 'simple' | 'detailed' | 'complex'): string {
-  if (complexity === 'simple') return 'google/gemini-2.5-flash-exp-image-generation';
-  if (complexity === 'detailed') return 'google/gemini-2.5-flash-exp-image-generation';
-  return 'openai/gpt-image-1';
-}
-
-// ─── Task type detection ───────────────────────────────────────────────────
-type TaskType = 'coding' | 'reasoning' | 'creative' | 'analysis' | 'vision' | 'tool_calling' | 'simple' | 'general';
-type Complexity = 'simple' | 'medium' | 'complex';
-
-interface TaskProfile {
-  taskType: TaskType;
-  complexity: Complexity;
-  model: string;
-  maxTokens: number;
-  providerSort: 'throughput' | 'price' | 'latency';
-  maxPrice?: { prompt: number; completion: number };
-}
-
-function detectTaskType(msg: string): TaskType {
-  const lower = msg.toLowerCase();
-  const codingSignals = ['code','debug','function','script','implement','refactor','api','component','typescript','python','javascript','sql','bug','error','fix this code'];
-  const reasoningSignals = ['analyze','reasoning','logic','prove','derive','mathematical','scientific','research','evaluate','assessment','due diligence'];
-  const creativeSignals = ['write','story','blog','email','caption','copy','headline','tagline','creative','marketing','social media post','newsletter'];
-  const analysisSignals = ['analyze','report','data','metrics','kpi','forecast','compare','strategy','business plan','proposal','audit','review'];
-  const simpleSignals = ['hi','hello','hey','thanks','ok','yes','no','what is','define','translate','calculate','convert','format','fix grammar'];
-
-  if (codingSignals.some(s => lower.includes(s))) return 'coding';
-  if (reasoningSignals.some(s => lower.includes(s))) return 'reasoning';
-  if (analysisSignals.some(s => lower.includes(s))) return 'analysis';
-  if (creativeSignals.some(s => lower.includes(s))) return 'creative';
-  if (simpleSignals.some(s => lower.includes(s) || lower === s)) return 'simple';
-  return 'general';
-}
-
-function detectComplexity(msg: string, convLen: number): Complexity {
-  const words = msg.split(/\s+/).length;
-  const complexSignals = ['comprehensive','detailed','full','enterprise','architecture','multi-step','advanced','complete','entire'];
-  if (words > 100 || complexSignals.some(s => msg.toLowerCase().includes(s))) return 'complex';
-  if (words > 30 || convLen > 10) return 'medium';
-  return 'simple';
-}
-
-function needsWebSearch(msg: string): boolean {
-  const lower = msg.toLowerCase();
-  const signals = [
-    'today','right now','currently','latest','recent','news','this week',
-    'this month','2025','2026','stock price','weather','exchange rate',
-    'live','real-time','search for','look up','find me','check',
-    'who is','what happened','when did','where is','research',
-    'find information','tell me about',
-  ];
-  return signals.some(s => lower.includes(s));
-}
-
-// ─── Model selection matrix ────────────────────────────────────────────────
-function selectModel(
-  taskType: TaskType,
-  complexity: Complexity,
-  heroSlug: string,
-  agentModel?: string,
-  webSearch?: boolean
-): { model: string; maxTokens: number; providerSort: 'throughput' | 'price' | 'latency'; maxPrice?: { prompt: number; completion: number } } {
-
-  const applyOnline = (m: string): string => {
-    if (!webSearch) return m;
-    if (m.startsWith('xiaomi/') || m.startsWith('openrouter/')) return m;
-    return m.includes(':') ? m : `${m}:online`;
-  };
-
-  // Agent has explicit model assignment — use it
-  if (agentModel && agentModel !== 'google/gemini-2.5-flash') {
-    return {
-      model: applyOnline(agentModel),
-      maxTokens: 6000,
-      providerSort: 'throughput',
-    };
-  }
-
-  // Simple tasks — fast + cheap
-  if (taskType === 'simple') {
-    return { model: applyOnline('google/gemini-2.5-flash'), maxTokens: 1000, providerSort: 'latency' };
-  }
-
-  // Coding tasks
-  if (taskType === 'coding') {
-    if (complexity === 'complex') {
-      return { model: applyOnline('anthropic/claude-sonnet-4-5'), maxTokens: 8000, providerSort: 'throughput' };
-    }
-    return { model: applyOnline('openai/gpt-4o'), maxTokens: 4000, providerSort: 'throughput' };
-  }
-
-  // Reasoning tasks — MiMo-V2
-  if (taskType === 'reasoning') {
-    return {
-      model: applyOnline(complexity === 'complex' ? 'xiaomi/mimo-v2-pro' : 'xiaomi/mimo-v2-flash'),
-      maxTokens: complexity === 'complex' ? 8000 : 4000,
-      providerSort: 'throughput',
-    };
-  }
-
-  // Vision tasks
-  if (taskType === 'vision') {
-    return { model: applyOnline('xiaomi/mimo-v2-omni'), maxTokens: 4000, providerSort: 'throughput' };
-  }
-
-  // Analysis tasks
-  if (taskType === 'analysis') {
-    return {
-      model: applyOnline(complexity === 'complex' ? 'anthropic/claude-sonnet-4-5' : 'openai/gpt-4o'),
-      maxTokens: complexity === 'complex' ? 8000 : 4000,
-      providerSort: 'throughput',
-    };
-  }
-
-  // Creative tasks
-  if (taskType === 'creative') {
-    return { model: applyOnline('google/gemini-2.5-flash'), maxTokens: 4000, providerSort: 'throughput' };
-  }
-
-  // Hero-based routing for general tasks
-  const heroRouting: Record<string, string> = {
-    thoren:  'anthropic/claude-sonnet-4-5',  // Legal, Finance
-    ramet:   'openai/gpt-4o',                // Operations
-    nexar:   'xiaomi/mimo-v2-pro',           // Transformation — deep reasoning
-    lyra:    'google/gemini-2.5-flash',      // Content — creative
-    kairo:   'google/gemini-2.5-flash',      // Social — fast
-    nefra:   'openai/gpt-4o',               // Experience
-    horusen: 'openai/gpt-4o',              // Revenue
-  };
-
-  if (heroSlug === 'master') {
-    return { model: applyOnline('openrouter/auto'), maxTokens: 6000, providerSort: 'throughput' };
-  }
-
-  return {
-    model: applyOnline(heroRouting[heroSlug] || 'openrouter/auto'),
-    maxTokens: complexity === 'complex' ? 4000 : 2000,
-    providerSort: 'throughput',
-  };
 }
 
 // ─── OpenRouter client ─────────────────────────────────────────────────────
@@ -231,83 +79,74 @@ export async function POST(req: NextRequest) {
 
     const heroSlug = (hero || 'master').toLowerCase();
     const lastMessage = messages[messages.length - 1]?.content || '';
-    const wantsImage = isImageRequest(lastMessage);
 
-    // Detect task profile
-    const taskType = detectTaskType(lastMessage);
-    const complexity = detectComplexity(lastMessage, messages.length);
-    const webSearch = needsWebSearch(lastMessage);
+    // Check if attachments exist
+    const hasImageAttachment = messages[messages.length - 1]?.role === 'user' && Array.isArray(messages[messages.length - 1]?.content) ? messages[messages.length - 1].content.some((c: { type: string }) => c.type === 'image') : false;
+    const hasVideoAttachment = messages[messages.length - 1]?.role === 'user' && Array.isArray(messages[messages.length - 1]?.content) ? messages[messages.length - 1].content.some((c: { type: string }) => c.type === 'video') : false;
 
-    // Get user
+    // 1. Classify the request
+    const requestType  = classifyRequest(typeof lastMessage === 'string' ? lastMessage : JSON.stringify(lastMessage), hasImageAttachment, hasVideoAttachment);
+    const creditCost   = CREDIT_COSTS[requestType];
+
+    // 2. Check agent routing override
+    const agentKey     = `${heroSlug}-${agent}`;
+    const agentSkill   = agentSkills[agentKey];
+    const modelToUse   = agentSkill?.routingOverride || PLATFORM_MODEL_MAP[requestType];
+
     const supabaseServer = await createClient();
     const { data: { user } } = await supabaseServer.auth.getUser();
 
-    // Get user plan from profile
-    let userPlan = 'explorer';
+    const supabaseAdmin = createSupabaseClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
+    let profileCredits = 0;
     if (user) {
-      try {
-        const supabaseAdmin = createSupabaseClient(
-          process.env.NEXT_PUBLIC_SUPABASE_URL!,
-          process.env.SUPABASE_SERVICE_ROLE_KEY!
-        );
-        const { data: profile } = await supabaseAdmin
-          .from('profiles')
-          .select('plan')
-          .eq('id', user.id)
-          .single();
-        if (profile?.plan) userPlan = profile.plan;
-      } catch { /* use default */ }
-    }
+      // 3. Check user credit balance
+      const { data: profile } = await supabaseAdmin
+        .from('profiles')
+        .select('credits, tier')
+        .eq('id', user.id)
+        .single();
 
-    // Get agent model if agent selected
-    let agentData = null;
-    let agentModel: string | undefined;
-    if (agent && !agent.startsWith('custom_')) {
-      const heroAgentList = heroAgents[heroSlug as keyof typeof heroAgents] || [];
-      agentData = heroAgentList.find((a) => a.id === agent) || null;
-      if (agentData) {
-        agentModel = getAgentModel(agentData);
+      if (!profile || profile.credits < creditCost) {
+        return NextResponse.json({
+          error:            'insufficient_credits',
+          message:          'Your Grid Energy is depleted, Architect. Recharge to continue building your empire.',
+          creditsRequired:  creditCost,
+          creditsAvailable: profile?.credits || 0,
+        }, { status: 402 });
       }
+      profileCredits = profile.credits;
     }
 
-    // Select model
-    let model: string;
-    let maxTokens: number;
-    let providerSort: 'throughput' | 'price' | 'latency';
-    let maxPrice: { prompt: number; completion: number } | undefined;
-    let modalities: string[] | undefined;
-    let imgComplexity = 'none';
-
-    if (wantsImage) {
-      const detectedImgComplexity = detectImageComplexity(lastMessage);
-      imgComplexity = detectedImgComplexity;
-      model = selectImageModel(detectedImgComplexity);
-      maxTokens = detectedImgComplexity === 'complex' ? 4000 : 2000;
-      providerSort = 'throughput';
-      modalities = ['image', 'text'];
-    } else {
-      const selected = selectModel(taskType, complexity, heroSlug, agentModel, webSearch);
-      model = selected.model;
-      maxTokens = selected.maxTokens;
-      providerSort = selected.providerSort;
-      maxPrice = selected.maxPrice;
-    }
-
-    // Build system prompt
-    const heroConfig = getHero(heroSlug);
-    const heroMetaData = heroMeta[heroSlug as keyof typeof heroMeta];
-    let systemPrompt = heroConfig?.systemPrompt || masterSystemPrompt;
-
-    // Inject agent-specific system prompt
-    if (agentData) {
-      if (agentData.prompt) {
-        systemPrompt = `${masterSystemPrompt}\n\n--- ACTIVE AGENT: ${agentData.name} ---\nRole: ${agentData.role_summary}\n${agentData.prompt}`;
-      } else {
-        systemPrompt = `${masterSystemPrompt}\n\n--- ACTIVE AGENT: ${agentData.name} ---\nRole: ${agentData.role_summary}\nCategory: ${agentData.category}\nDescription: ${agentData.description}\n\nYou are ${agentData.name}, a specialized agent. Respond strictly within your domain: ${agentData.role_summary}. Be precise, authoritative, and deliver immediately actionable outputs.`;
-      }
-    }
-
+    // 4. Build system prompt from agent skill
+    let systemPrompt = buildSystemPrompt(agent || '', heroSlug);
     systemPrompt = sanitizeForFetch(systemPrompt + ARTIFACT_SYSTEM_SUFFIX);
+
+    // 5. Route Perplexity requests to dedicated route
+    if (requestType === 'research' || requestType === 'website_analysis') {
+      const res  = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/chat/perplexity`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ messages, requestType }),
+      });
+      const data = await res.json();
+
+      if (user) {
+        await supabaseAdmin.from('profiles').update({ credits: profileCredits - creditCost }).eq('id', user.id);
+      }
+
+      return NextResponse.json({
+        ...data,
+        creditsUsed:      creditCost,
+        creditsRemaining: profileCredits - creditCost,
+        platformLabel:    PLATFORM_LABELS[requestType],
+      });
+    }
+
+    const model = modelToUse;
 
     // RAG knowledge injection
     if (user) {
@@ -351,17 +190,13 @@ export async function POST(req: NextRequest) {
     // Build provider options
     const isMiMo = model.startsWith('xiaomi/');
     const providerOptions: Record<string, JSONValue> = {
-      sort: providerSort,
+      sort: 'throughput',
       allow_fallbacks: true,
       data_collection: 'deny',
       zdr: true,
       order: ['anthropic', 'openai', 'google', 'deepseek', 'xiaomi'],
       ...(isMiMo ? { enable_thinking: true } : {}),
     };
-
-    if (maxPrice) {
-      providerOptions.max_price = maxPrice;
-    }
 
     // Stream response
     const modelMessages = messages.map((m: { role: string; content: string }) => ({
@@ -373,18 +208,19 @@ export async function POST(req: NextRequest) {
       model: openrouter(model),
       system: systemPrompt,
       messages: modelMessages,
-      maxTokens,
-      temperature: taskType === 'creative' ? 0.8 : 0.3,
+      maxTokens: 4000,
+      temperature: 0.3,
       experimental_providerMetadata: {
         openrouter: providerOptions,
       },
       onFinish: async ({ text }) => {
+        if (user) {
+          try {
+            await supabaseAdmin.from('profiles').update({ credits: profileCredits - creditCost }).eq('id', user.id);
+          } catch {}
+        }
         if (user && activeThreadId) {
           try {
-            const supabaseAdmin = createSupabaseClient(
-              process.env.NEXT_PUBLIC_SUPABASE_URL!,
-              process.env.SUPABASE_SERVICE_ROLE_KEY!
-            );
             await supabaseAdmin.from('chat_messages').insert({
               thread_id: activeThreadId,
               role: 'assistant',
@@ -403,10 +239,9 @@ export async function POST(req: NextRequest) {
       response.headers.set('X-Thread-Id', activeThreadId);
     }
     response.headers.set('X-Model-Used', model);
-    response.headers.set('X-Task-Type', taskType);
-    response.headers.set('X-Complexity', complexity);
-    response.headers.set('X-Web-Search', webSearch ? 'true' : 'false');
-    response.headers.set('X-Image-Complexity', wantsImage ? imgComplexity : 'none');
+    response.headers.set('X-Credits-Used', creditCost.toString());
+    response.headers.set('X-Credits-Remaining', (profileCredits - creditCost).toString());
+    response.headers.set('X-Platform-Label', PLATFORM_LABELS[requestType]);
 
     return response;
 
