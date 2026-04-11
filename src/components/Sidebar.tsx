@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Zap, Shield, Cpu, LogIn, LogOut, User, Wand2, Compass, Hammer, Gem, Globe } from "lucide-react";
-import { getEnergyRemainingAsync } from "@/lib/energy";
+
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
@@ -62,8 +62,13 @@ export function Sidebar() {
         }
       }
 
-      const currentEnergy = await getEnergyRemainingAsync();
-      setEnergy(currentEnergy);
+      if (session?.user) {
+        try {
+          const res = await fetch('/api/credits');
+          const data = await res.json();
+          if (typeof data.credits === 'number') setEnergy(data.credits);
+        } catch {}
+      }
     }
 
     fetchSessionAndEnergy();
@@ -107,8 +112,13 @@ export function Sidebar() {
           setProfile(null);
           setRecentThreads([]);
         }
-        const currentEnergy = await getEnergyRemainingAsync();
-        setEnergy(currentEnergy);
+        if (session?.user) {
+          try {
+            const res = await fetch('/api/credits');
+            const data = await res.json();
+            if (typeof data.credits === 'number') setEnergy(data.credits);
+          } catch {}
+        }
       }
     );
 
