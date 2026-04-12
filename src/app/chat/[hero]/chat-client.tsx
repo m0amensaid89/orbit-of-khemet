@@ -237,45 +237,88 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
   };
 
   const handleVideoQualitySelect = async (videoType: string) => {
-    const prompt = videoState?.type === 'selecting' || videoState?.type === 'generating' ? videoState.prompt : '';
+    const prompt = (videoState as { prompt?: string })?.prompt || ''
     const models: Record<string, string> = {
-      video_quick: 'Kling 3 Turbo',
-      video_standard: 'Kling 3 Pro',
+      video_quick:     'Kling 3 Turbo',
+      video_standard:  'Kling 3 Pro',
       video_cinematic: 'Veo 3.1',
-      video_edit: 'Runway Gen-4'
-    };
+      video_edit:      'Runway Gen-4',
+    }
 
-    setVideoState({ type: 'generating', model: models[videoType], prompt });
+    setVideoState({ type: 'generating', model: models[videoType], prompt })
 
     try {
-      const res = await fetch('/api/video', {
+      // STEP 1: Submit job (fast — < 1 second)
+      const submitRes = await fetch('/api/video/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt, videoType })
-      });
-      const data = await res.json();
+        body: JSON.stringify({ prompt, videoType }),
+      })
 
-      if (data.videoUrl) {
-        // Append video as a special assistant message
-        append({
-          role: 'assistant',
-          content: JSON.stringify({
-            type: 'video',
-            videoUrl: data.videoUrl,
-            platform: data.platformLabel,
-            creditsUsed: data.creditsUsed,
-            prompt
-          })
-        });
-        // Dispatch credits update
-        window.dispatchEvent(new CustomEvent('credits-updated'));
+      if (!submitRes.ok) {
+        const err = await submitRes.json()
+        append({ role: 'assistant', content: err.message || 'Video submission failed. Please try again.' })
+        setVideoState(null)
+        return
       }
-    } catch {
-      append({ role: 'assistant', content: 'Video generation failed. Please try again.' });
+
+      const { requestId, modelId, platformLabel, creditCost } = await submitRes.json()
+
+      // STEP 2: Poll for status every 5 seconds
+      let videoUrl: string | null = null
+      let attempts = 0
+      const maxAttempts = 60 // 60 × 5 seconds = 5 minutes max
+
+      while (attempts < maxAttempts) {
+        await new Promise(resolve => setTimeout(resolve, 5000))
+        attempts++
+
+        const statusRes = await fetch(
+          `/api/video/status?requestId=${requestId}&modelId=${encodeURIComponent(modelId)}`
+        )
+        const statusData = await statusRes.json()
+
+        if (statusData.status === 'COMPLETED' && statusData.videoUrl) {
+          videoUrl = statusData.videoUrl
+          break
+        }
+
+        if (statusData.status === 'FAILED') {
+          append({ role: 'assistant', content: 'Video generation failed. Credits were consumed. Please try again with a different prompt.' })
+          setVideoState(null)
+          return
+        }
+
+        // Still processing — continue polling
+      }
+
+      if (!videoUrl) {
+        append({ role: 'assistant', content: 'Video generation timed out. Credits were consumed. Please try again.' })
+        setVideoState(null)
+        return
+      }
+
+      // STEP 3: Append video as special message
+      append({
+        role: 'assistant',
+        content: JSON.stringify({
+          type: 'video',
+          videoUrl,
+          platform: platformLabel,
+          creditsUsed: creditCost,
+          prompt,
+        }),
+      })
+
+      window.dispatchEvent(new CustomEvent('credits-updated'))
+
+    } catch (err) {
+      console.error('Video generation error:', err)
+      append({ role: 'assistant', content: 'Connection error during video generation. Credits were consumed. Please try again with a different prompt.' })
     } finally {
-      setVideoState(null);
+      setVideoState(null)
     }
-  };
+  }
   const messages = rawMessages as CustomMessage[];
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
