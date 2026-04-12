@@ -163,22 +163,31 @@ export async function POST(req: NextRequest) {
           preset: 'fast-search',
           input: typeof lastMessage === 'string' ? lastMessage : JSON.stringify(lastMessage),
         }),
-      });
-      const perplexityData = await perplexityRes.json();
-      const content = perplexityData?.output?.find((b: { type: string }) => b.type === 'message')?.content?.[0]?.text || 'No response received.';
+      })
+      const perplexityData = await perplexityRes.json()
+      const content = perplexityData?.output?.find((b: { type: string }) => b.type === 'message')?.content?.[0]?.text || 'No research results found.'
 
       if (user) {
-        await supabaseAdmin.from('profiles').update({ credits: profileCredits - creditCost }).eq('id', user.id);
+        await supabaseAdmin.from('profiles').update({ credits: profileCredits - creditCost }).eq('id', user.id)
       }
 
-      return NextResponse.json({
-        content,
-        platform: requestType === 'website_analysis' ? 'Perplexity Web' : 'Perplexity Research',
-        requestType,
-        creditsUsed: creditCost,
-        creditsRemaining: profileCredits - creditCost,
-        platformLabel: PLATFORM_LABELS[requestType],
-      });
+      const encoder = new TextEncoder()
+      const stream = new ReadableStream({
+        start(controller) {
+          controller.enqueue(encoder.encode(content))
+          controller.close()
+        }
+      })
+
+      return new Response(stream, {
+        headers: {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'X-Platform-Label': PLATFORM_LABELS[requestType] || 'Perplexity',
+          'X-Credits-Used': String(creditCost),
+          'X-Credits-Remaining': String(profileCredits - creditCost),
+          'X-Request-Type': requestType,
+        }
+      })
     }
 
     const model = modelToUse;
