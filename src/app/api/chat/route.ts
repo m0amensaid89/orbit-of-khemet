@@ -150,24 +150,34 @@ export async function POST(req: NextRequest) {
     let systemPrompt = buildSystemPrompt(agent || '', heroSlug);
     systemPrompt = sanitizeForFetch(systemPrompt + ARTIFACT_SYSTEM_SUFFIX);
 
-    // 5. Route Perplexity requests to dedicated route
+    // 5. Route Perplexity requests directly to Perplexity API
     if (requestType === 'research' || requestType === 'website_analysis') {
-      const res  = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/chat/perplexity`, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ messages, requestType }),
+      // Inline Perplexity call — no sub-fetch needed
+      const perplexityRes = await fetch('https://api.perplexity.ai/v1/responses', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          preset: 'fast-search',
+          input: typeof lastMessage === 'string' ? lastMessage : JSON.stringify(lastMessage),
+        }),
       });
-      const data = await res.json();
+      const perplexityData = await perplexityRes.json();
+      const content = perplexityData?.output?.find((b: { type: string }) => b.type === 'message')?.content?.[0]?.text || 'No response received.';
 
       if (user) {
         await supabaseAdmin.from('profiles').update({ credits: profileCredits - creditCost }).eq('id', user.id);
       }
 
       return NextResponse.json({
-        ...data,
-        creditsUsed:      creditCost,
+        content,
+        platform: requestType === 'website_analysis' ? 'Perplexity Web' : 'Perplexity Research',
+        requestType,
+        creditsUsed: creditCost,
         creditsRemaining: profileCredits - creditCost,
-        platformLabel:    PLATFORM_LABELS[requestType],
+        platformLabel: PLATFORM_LABELS[requestType],
       });
     }
 

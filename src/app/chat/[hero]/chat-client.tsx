@@ -767,16 +767,22 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
 
                           const artifact = detectArtifact(m.content);
                           const finalContent = artifact ? stripCodeBlocks(cleanContent) : cleanContent;
-                          return (
-                            <RichOutput
-                              content={finalContent}
-                              requestType={(m as Message & { requestType?: string }).requestType}
-                              platformLabel={(m as Message & { platformLabel?: string }).platformLabel}
-                              creditsUsed={(m as Message & { creditsUsed?: number }).creditsUsed}
-                              creditsRemaining={(m as Message & { creditsRemaining?: number }).creditsRemaining}
-                              accentColor={accentColor}
-                            />
-                          );
+                          const isVideoMessage = m.content.includes('"type":"video"');
+
+                          if (m.role === 'assistant' && !isVideoMessage) {
+                            return (
+                              <RichOutput
+                                content={finalContent}
+                                requestType={(m as Message & { requestType?: string }).requestType}
+                                platformLabel={(m as Message & { platformLabel?: string }).platformLabel}
+                                creditsUsed={(m as Message & { creditsUsed?: number }).creditsUsed}
+                                creditsRemaining={(m as Message & { creditsRemaining?: number }).creditsRemaining}
+                                accentColor={accentColor}
+                              />
+                            );
+                          }
+
+                          return finalContent;
                         })()}
                       </div>
                       {(() => {
