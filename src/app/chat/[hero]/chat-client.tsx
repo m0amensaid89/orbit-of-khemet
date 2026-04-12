@@ -243,10 +243,10 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
   const handleVideoQualitySelect = async (videoType: string) => {
     const prompt = (videoState as { prompt?: string })?.prompt || ''
     const models: Record<string, string> = {
-      video_quick:     'Kling 3 Turbo',
-      video_standard:  'Kling 3 Pro',
-      video_cinematic: 'Veo 3.1',
-      video_edit:      'Runway Gen-4',
+      video_quick:     'Kling 1.0',
+      video_standard:  'Kling 1.6 Pro',
+      video_cinematic: 'MiniMax Video',
+      video_edit:      'MiniMax Video',
     }
 
     setVideoState({ type: 'generating', model: models[videoType], prompt })

@@ -7,17 +7,17 @@ import { fal } from '@fal-ai/client'
 fal.config({ credentials: process.env.FAL_AI_KEY })
 
 const VIDEO_MODELS: Record<string, string> = {
-  video_quick:     'fal-ai/kling-video/v2.1/standard/text-to-video',
-  video_standard:  'fal-ai/kling-video/v2.1/pro/text-to-video',
-  video_cinematic: 'fal-ai/veo3',
-  video_edit:      'fal-ai/runway-gen4-turbo/text-to-video',
+  video_quick:     'fal-ai/kling-video/v1/standard/text-to-video',
+  video_standard:  'fal-ai/kling-video/v1.6/pro/text-to-video',
+  video_cinematic: 'fal-ai/minimax-video/text-to-video',
+  video_edit:      'fal-ai/minimax-video/text-to-video',
 }
 
 const VIDEO_LABELS: Record<string, string> = {
-  video_quick:     'Kling 3 Turbo',
-  video_standard:  'Kling 3 Pro',
-  video_cinematic: 'Veo 3.1',
-  video_edit:      'Runway Gen-4',
+  video_quick:     'Kling 1.0',
+  video_standard:  'Kling 1.6 Pro',
+  video_cinematic: 'MiniMax Video',
+  video_edit:      'MiniMax Video',
 }
 
 export async function POST(req: NextRequest) {
