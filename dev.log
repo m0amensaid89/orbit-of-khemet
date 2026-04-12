@@ -1,0 +1,24 @@
+
+> temp-app@0.1.0 dev
+> next dev --turbopack
+
+   ▲ Next.js 15.5.14 (Turbopack)
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.0.2:3000
+
+ ✓ Starting...
+ ○ Compiling middleware ...
+ ✓ Compiled middleware in 857ms
+ ✓ Ready in 2.6s
+ ○ Compiling /pricing ...
+ ✓ Compiled /pricing in 7.6s
+ GET /pricing 200 in 9212ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1195ms
+ GET / 200 in 1646ms
+ GET / 200 in 325ms
+ GET / 200 in 362ms
+ GET / 200 in 381ms
+ ○ Compiling /hub ...
+ ✓ Compiled /hub in 1333ms
+ GET /hub 200 in 1800ms

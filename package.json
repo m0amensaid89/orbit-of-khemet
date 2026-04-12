@@ -17,6 +17,7 @@
     "@fontsource/rajdhani": "^5.2.7",
     "@octokit/rest": "^22.0.1",
     "@openrouter/ai-sdk-provider": "^0.2.1",
+    "@paddle/paddle-node-sdk": "^3.7.0",
     "@supabase/ssr": "^0.10.0",
     "@supabase/supabase-js": "^2.101.1",
     "@types/highlight.js": "^9.12.4",

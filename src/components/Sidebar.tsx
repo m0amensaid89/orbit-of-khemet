@@ -372,6 +372,24 @@ export function Sidebar() {
           <span className="font-orbitron text-empire-xs text-[rgba(212,175,55,0.4)] uppercase">ACCOUNT</span>
         </div>
 
+        <Link
+          href="/pricing"
+          style={{
+            display: 'block',
+            fontSize: '9px',
+            fontFamily: 'monospace',
+            letterSpacing: '0.12em',
+            color: '#D4AF37',
+            textDecoration: 'none',
+            padding: '6px 12px',
+            border: '1px solid rgba(212,175,55,0.3)',
+            textAlign: 'center',
+            marginBottom: '8px',
+          }}
+        >
+          UPGRADE TIER
+        </Link>
+
         <div className="bg-[#131313] rounded-md p-3 border border-[rgba(212,175,55,0.08)] relative overflow-hidden group">
           <div className="flex items-center gap-2 mb-2 relative z-10">
             <Zap className="w-3 h-3 text-[#D4AF37]" />
