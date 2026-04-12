@@ -271,7 +271,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
       // STEP 2: Poll for status every 5 seconds
       let videoUrl: string | null = null
       let attempts = 0
-      const maxAttempts = 60 // 60 × 5 seconds = 5 minutes max
+      const maxAttempts = 120 // 120 × 5 seconds = 10 minutes max
 
       while (attempts < maxAttempts) {
         await new Promise(resolve => setTimeout(resolve, 5000))
