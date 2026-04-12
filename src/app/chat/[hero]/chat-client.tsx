@@ -21,10 +21,6 @@ import { ArtifactRenderer } from '@/components/ArtifactRenderer';
 import { ExportToolbar } from '@/components/ExportToolbar';
 import RichOutput from '@/components/chat/RichOutput';
 
-const IMAGE_TRIGGERS = ['draw','generate an image','create an image','make an image','illustrate','visualize','design a logo','create a logo','generate a logo','make a banner','create a poster','generate a visual','create artwork','paint','sketch me'];
-function isImageRequest(msg: string): boolean {
-  return IMAGE_TRIGGERS.some(t => msg.toLowerCase().includes(t));
-}
 
 
 const VideoQualitySelector = ({ onSelect }: { prompt: string, onSelect: (type: string) => void }) => (
@@ -566,7 +562,13 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
     <>
       {/* Outer — true full height, no padding, no scroll */}
       <div className="h-full overflow-hidden flex flex-col w-full"
-        style={{ background: bgDeep }}>
+        style={{
+          background: bgDeep,
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100vh',
+          overflow: 'hidden'
+        }}>
 
         {/* Inner card — fills remaining space */}
         <div className="w-full h-full flex flex-col overflow-hidden"
@@ -632,7 +634,13 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
 
           {/* Messages — flex-1, scrolls internally */}
           <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3"
-            style={{ background: bgDeep }}>
+            style={{
+              background: bgDeep,
+              flex: 1,
+              overflowY: 'auto',
+              scrollbarWidth: 'thin',
+              scrollbarColor: '#D4AF37 #0A0A0A'
+            }}>
             {messages.map((m) => {
 
               if (m.role === 'assistant') {
@@ -838,59 +846,46 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
             })}
 
             {/* Typing Indicator */}
-            {isLoading && (() => {
-              const lastUserMsg = messages.filter(m => m.role === 'user').at(-1)?.content || '';
-              const isImgLoading = isImageRequest(lastUserMsg);
-              return (
-                <div className="flex gap-3 w-full flex-row">
-                  <div className="relative w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-[Orbitron] text-xs border mt-1 shadow-lg overflow-hidden"
-                    style={{ background: `rgba(${hero?.palette?.['primary-rgb'] || '192,192,192'},0.1)`, borderColor: accentColor, color: accentColor }}>
-                    {!isMaster ? <Image src={`/${heroParam}.png`} alt={agentName} fill className="object-cover" sizes="40px" /> : agentInitials}
-                  </div>
-                  <div className="flex flex-col items-start max-w-[80%]">
-                    <span className="font-[Orbitron] text-[10px] tracking-widest uppercase mb-1.5 ml-1" style={{ color: primaryColor }}>
-                      {agentName} <span className="text-white/30 lowercase tracking-normal">{isImgLoading ? 'generating image...' : 'is typing...'}</span>
-                    </span>
-                    {isImgLoading ? (
-                      // Glowing blur box — image generating
-                      <div className="rounded-2xl overflow-hidden" style={{ width: '320px', height: '240px', position: 'relative' }}>
-                        <div style={{
-                          width: '100%', height: '100%',
-                          background: 'linear-gradient(135deg, rgba(212,175,55,0.08), rgba(6,182,212,0.08), rgba(212,175,55,0.08))',
-                          backgroundSize: '400% 400%',
-                          animation: 'shimmer 3s ease-in-out infinite',
-                          border: `1px solid ${cardBorder}`,
-                          borderRadius: '16px',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '12px',
-                        }}>
-                          <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(212,175,55,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(212,175,55,0.8)" strokeWidth="1.5">
-                              <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
-                              <polyline points="21,15 16,10 5,21"/>
-                            </svg>
-                          </div>
-                          <span style={{ fontFamily: 'Orbitron', fontSize: '9px', letterSpacing: '3px', color: 'rgba(212,175,55,0.6)', textTransform: 'uppercase' }}>
-                            Generating...
-                          </span>
-                        </div>
-                      </div>
-                    ) : (
-                      // Normal typing dots
-                      <div className="px-5 py-4 rounded-2xl rounded-tl-sm flex items-center gap-2 shadow-md"
-                        style={{ background: bgMid, border: `1px solid ${cardBorder}`, borderLeftColor: accentColor, borderLeftWidth: '3px' }}>
-                        <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: accentColor, animationDelay: '0ms' }} />
-                        <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: accentColor, animationDelay: '150ms' }} />
-                        <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: accentColor, animationDelay: '300ms' }} />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })()}
+            {isLoading && messages[messages.length - 1]?.role === 'user' && (
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '12px 16px',
+                color: 'rgba(212,175,55,0.6)',
+                fontSize: '11px',
+                fontFamily: 'monospace',
+                letterSpacing: '0.1em',
+              }}>
+                <span style={{
+                  display: 'inline-block',
+                  width: '6px',
+                  height: '6px',
+                  borderRadius: '50%',
+                  background: '#D4AF37',
+                  animation: 'pulse 1s infinite',
+                  marginRight: '2px',
+                }} />
+                <span style={{
+                  display: 'inline-block',
+                  width: '6px',
+                  height: '6px',
+                  borderRadius: '50%',
+                  background: '#D4AF37',
+                  animation: 'pulse 1s infinite 0.2s',
+                  marginRight: '2px',
+                }} />
+                <span style={{
+                  display: 'inline-block',
+                  width: '6px',
+                  height: '6px',
+                  borderRadius: '50%',
+                  background: '#D4AF37',
+                  animation: 'pulse 1s infinite 0.4s',
+                }} />
+                <span style={{ marginLeft: '8px' }}>EMPIRE ENGINE PROCESSING...</span>
+              </div>
+            )}
 
             {/* Video UI — renders below messages, above input */}
             {videoState?.type === 'selecting' && (
