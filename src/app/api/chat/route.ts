@@ -136,19 +136,19 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 4. Build system prompt from agent skill
-    let systemPrompt = buildSystemPrompt(agent || '', heroSlug);
-    systemPrompt = sanitizeForFetch(systemPrompt + ARTIFACT_SYSTEM_SUFFIX);
-
-    // Route video requests to /api/video
+    // Route video requests BEFORE adding artifact suffix
     if (['video_quick', 'video_standard', 'video_cinematic', 'video_edit'].includes(requestType)) {
       return NextResponse.json({
         type: 'video_request',
         videoType: requestType,
         prompt: typeof lastMessage === 'string' ? lastMessage : '',
-        message: 'Video generation initiated. Select quality tier to proceed.',
-      });
+        message: 'Video generation initiated.',
+      })
     }
+
+    // Only add artifact suffix for non-video requests
+    let systemPrompt = buildSystemPrompt(agent || '', heroSlug)
+    systemPrompt = sanitizeForFetch(systemPrompt + ARTIFACT_SYSTEM_SUFFIX)
 
     // 5. Route Perplexity requests to dedicated route
     if (requestType === 'research' || requestType === 'website_analysis') {
