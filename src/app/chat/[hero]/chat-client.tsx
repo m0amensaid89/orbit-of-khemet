@@ -212,9 +212,16 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
     if (!messageText) return;
 
     // Check if this is a video request client-side using same keywords
-    const isVideoRequest = ['create video', 'make video', 'generate video',
-      'cinematic', '4k video', 'quick video', 'make a clip', 'animate']
-      .some(k => messageText.toLowerCase().includes(k));
+    const isVideoRequest = [
+      'create video', 'create a video', 'make video', 'make a video',
+      'generate video', 'generate a video', 'make me a video',
+      'create me a video', 'produce a video', 'build a video',
+      'cinematic video', '4k video', 'quick video',
+      'make a clip', 'make me a clip', 'create a clip',
+      'animate this', 'animate me', 'generate animation',
+      'video of', 'video about', 'video showing',
+      'short video', 'promo video', 'brand video',
+    ].some(k => messageText.toLowerCase().includes(k));
 
     if (isVideoRequest) {
       // Add user message to chat
