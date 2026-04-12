@@ -10,6 +10,9 @@ interface QuickActionsProps {
 }
 
 function QuickActions({ type, content, accentColor, onCopy, copied }: QuickActionsProps) {
+  // Only show quick actions for real content, not error messages
+  if (content.length < 50) return null
+
   const actions: Record<string, { label: string; prompt: string }[]> = {
     text: [
       { label: 'MAKE SHORTER', prompt: 'Make this shorter and more concise: ' },
