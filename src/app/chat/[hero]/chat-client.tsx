@@ -224,12 +224,16 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
     ].some(k => messageText.toLowerCase().includes(k));
 
     if (isVideoRequest) {
-      // Add user message to chat
-      append({ role: 'user', content: messageText });
-      // Set video state to selecting — skip useChat entirely
-      setVideoState({ type: 'selecting', prompt: messageText });
-      handleInputChange({ target: { value: '' } } as unknown as React.ChangeEvent<HTMLInputElement>);
-      return;
+      // Use setMessages NOT append — append() triggers useChat API call
+      setMessages(prev => [...prev, {
+        id: `user-video-${Date.now()}`,
+        role: 'user' as const,
+        content: messageText,
+        createdAt: new Date(),
+      }])
+      handleInputChange({ target: { value: '' } } as unknown as React.ChangeEvent<HTMLInputElement>)
+      setVideoState({ type: 'selecting', prompt: messageText })
+      return
     }
 
     // Normal message — use useChat handleSubmit
