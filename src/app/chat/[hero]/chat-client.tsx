@@ -19,6 +19,7 @@ import { RenderedOutput } from "@/lib/autopilot/transformer";
 import { detectArtifact, extractTitle, stripCodeBlocks } from '@/lib/artifacts';
 import { ArtifactRenderer } from '@/components/ArtifactRenderer';
 import { ExportToolbar } from '@/components/ExportToolbar';
+import RichOutput from '@/components/chat/RichOutput';
 
 const IMAGE_TRIGGERS = ['draw','generate an image','create an image','make an image','illustrate','visualize','design a logo','create a logo','generate a logo','make a banner','create a poster','generate a visual','create artwork','paint','sketch me'];
 function isImageRequest(msg: string): boolean {
@@ -765,7 +766,17 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                           }
 
                           const artifact = detectArtifact(m.content);
-                          return artifact ? stripCodeBlocks(cleanContent) : cleanContent;
+                          const finalContent = artifact ? stripCodeBlocks(cleanContent) : cleanContent;
+                          return (
+                            <RichOutput
+                              content={finalContent}
+                              requestType={(m as Message & { requestType?: string }).requestType}
+                              platformLabel={(m as Message & { platformLabel?: string }).platformLabel}
+                              creditsUsed={(m as Message & { creditsUsed?: number }).creditsUsed}
+                              creditsRemaining={(m as Message & { creditsRemaining?: number }).creditsRemaining}
+                              accentColor={accentColor}
+                            />
+                          );
                         })()}
                       </div>
                       {(() => {
@@ -802,13 +813,17 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                       </div>
                     )}
 
-{m.role === 'assistant' && (m as Message & { creditsUsed?: number, platformLabel?: string, creditsRemaining?: number }).creditsUsed !== undefined && (m as Message & { creditsUsed?: number, platformLabel?: string, creditsRemaining?: number }).creditsUsed! > 0 && (
-  <div className="text-empire-xs" style={{ opacity: 0.45, fontFamily: 'monospace', marginTop: '4px', paddingLeft: '4px', display: 'flex', gap: '12px' }}>
-    <span style={{ color: accentColor }}>{(m as Message & { creditsUsed?: number, platformLabel?: string, creditsRemaining?: number }).platformLabel}</span>
-    <span>·</span>
-    <span>{(m as Message & { creditsUsed?: number, platformLabel?: string, creditsRemaining?: number }).creditsUsed} credits deployed</span>
-    <span>·</span>
-    <span>{(m as Message & { creditsUsed?: number, platformLabel?: string, creditsRemaining?: number }).creditsRemaining?.toLocaleString()} remaining</span>
+{m.role === 'assistant' && (m as Message & { platformLabel?: string }).platformLabel && (
+  <div style={{ display: 'flex', gap: '8px', marginTop: '6px', alignItems: 'center', opacity: 0.45, fontSize: '10px', fontFamily: 'monospace', letterSpacing: '0.08em' }}>
+    <span style={{ color: accentColor }}>{(m as Message & { platformLabel?: string }).platformLabel}</span>
+    {((m as Message & { creditsUsed?: number }).creditsUsed || 0) > 0 && (
+      <>
+        <span style={{ color: 'rgba(255,255,255,0.3)' }}>·</span>
+        <span>{(m as Message & { creditsUsed?: number }).creditsUsed} credits</span>
+        <span style={{ color: 'rgba(255,255,255,0.3)' }}>·</span>
+        <span>{(m as Message & { creditsRemaining?: number }).creditsRemaining?.toLocaleString()} remaining</span>
+      </>
+    )}
   </div>
 )}
                   </div>
