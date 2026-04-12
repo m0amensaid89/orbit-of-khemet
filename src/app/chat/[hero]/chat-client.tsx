@@ -25,6 +25,72 @@ function isImageRequest(msg: string): boolean {
   return IMAGE_TRIGGERS.some(t => msg.toLowerCase().includes(t));
 }
 
+
+const VideoQualitySelector = ({ onSelect }: { prompt: string, onSelect: (type: string) => void }) => (
+  <div style={{
+    background: 'rgba(212,175,55,0.05)',
+    border: '1px solid rgba(212,175,55,0.2)',
+    borderRadius: '8px',
+    padding: '20px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px'
+  }}>
+    <div style={{ fontSize: '11px', letterSpacing: '0.1em', color: '#D4AF37', fontFamily: 'monospace' }}>
+      SELECT VIDEO QUALITY
+    </div>
+    {[
+      { type: 'video_quick',     label: 'QUICK',     model: 'Kling Turbo', credits: 100, desc: 'Fast draft' },
+      { type: 'video_standard',  label: 'PROFESSIONAL', model: 'Kling Pro', credits: 200, desc: 'Balanced quality' },
+      { type: 'video_cinematic', label: 'CINEMATIC 4K', model: 'Veo 3.1', credits: 400, desc: 'Maximum quality' },
+    ].map(opt => (
+      <button key={opt.type} onClick={() => onSelect(opt.type)} type="button"
+        style={{
+          background: 'transparent',
+          border: '1px solid rgba(212,175,55,0.3)',
+          borderRadius: '6px',
+          padding: '12px 16px',
+          color: '#D4AF37',
+          cursor: 'pointer',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          fontFamily: 'monospace',
+          fontSize: '11px',
+          letterSpacing: '0.08em',
+        }}>
+        <span>{opt.label} — {opt.model}</span>
+        <span style={{ opacity: 0.6 }}>{opt.credits} credits · {opt.desc}</span>
+      </button>
+    ))}
+  </div>
+);
+
+const VideoGenerating = ({ model }: { model: string }) => (
+  <div style={{ padding: '20px', textAlign: 'center', color: '#D4AF37', fontFamily: 'monospace', fontSize: '11px', letterSpacing: '0.1em' }}>
+    <div>GENERATING WITH {model.toUpperCase()}</div>
+    <div style={{ marginTop: '8px', opacity: 0.6 }}>This takes 30-90 seconds...</div>
+    <div style={{ marginTop: '12px' }}>
+      ████████░░░░░░░░ Rendering...
+    </div>
+  </div>
+);
+
+const VideoResult = ({ videoUrl, platform, creditsUsed }: { videoUrl: string, platform: string, creditsUsed: number }) => (
+  <div style={{ borderRadius: '8px', overflow: 'hidden', border: '1px solid rgba(212,175,55,0.2)' }}>
+    <video controls autoPlay style={{ width: '100%', maxHeight: '400px', background: '#000' }}>
+      <source src={videoUrl} type="video/mp4" />
+    </video>
+    <div style={{ padding: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(0,0,0,0.4)' }}>
+      <a href={videoUrl} download style={{ color: '#D4AF37', fontSize: '10px', fontFamily: 'monospace', letterSpacing: '0.08em', textDecoration: 'none' }}>
+        DOWNLOAD VIDEO
+      </a>
+      <span style={{ color: '#D4AF37', fontSize: '10px', fontFamily: 'monospace', opacity: 0.6 }}>
+        {platform} · {creditsUsed} credits
+      </span>
+    </div>
+  </div>
+);
 function VoiceWaveform({ audioLevel, isLocked }: { audioLevel: number; isLocked: boolean }) {
   const [bars, setBars] = useState<number[]>(Array(28).fill(3));
 
@@ -92,11 +158,17 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
 
   const threadId = searchParams.get("thread");
 
+  const [videoState, setVideoState] = useState<
+    null |
+    { type: 'selecting'; prompt: string } |
+    { type: 'generating'; model: string; prompt: string } |
+    { type: 'complete'; videoUrl: string; platform: string; creditsUsed: number }
+  >(null);
+
   const [isListening, setIsListening] = useState(false);
   const [isLocked, setIsLocked] = useState(false); // locked recording mode
   const [voiceSupported, setVoiceSupported] = useState(false);
   const [audioLevel, setAudioLevel] = useState(0); // 0-100 for waveform bar
-  const [generatingImage, setGeneratingImage] = useState(false);
   const [interimText, setInterimText] = useState(''); // live transcript
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -133,6 +205,70 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
       }
     }
   });
+
+  const handleSubmitWithVideoCheck = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const messageText = input.trim();
+    if (!messageText) return;
+
+    // Check if this is a video request client-side using same keywords
+    const isVideoRequest = ['create video', 'make video', 'generate video',
+      'cinematic', '4k video', 'quick video', 'make a clip', 'animate']
+      .some(k => messageText.toLowerCase().includes(k));
+
+    if (isVideoRequest) {
+      // Add user message to chat
+      append({ role: 'user', content: messageText });
+      // Set video state to selecting — skip useChat entirely
+      setVideoState({ type: 'selecting', prompt: messageText });
+      handleInputChange({ target: { value: '' } } as unknown as React.ChangeEvent<HTMLInputElement>);
+      return;
+    }
+
+    // Normal message — use useChat handleSubmit
+    handleSubmit(e);
+  };
+
+  const handleVideoQualitySelect = async (videoType: string) => {
+    const prompt = videoState?.type === 'selecting' || videoState?.type === 'generating' ? videoState.prompt : '';
+    const models: Record<string, string> = {
+      video_quick: 'Kling 3 Turbo',
+      video_standard: 'Kling 3 Pro',
+      video_cinematic: 'Veo 3.1',
+      video_edit: 'Runway Gen-4'
+    };
+
+    setVideoState({ type: 'generating', model: models[videoType], prompt });
+
+    try {
+      const res = await fetch('/api/video', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt, videoType })
+      });
+      const data = await res.json();
+
+      if (data.videoUrl) {
+        // Append video as a special assistant message
+        append({
+          role: 'assistant',
+          content: JSON.stringify({
+            type: 'video',
+            videoUrl: data.videoUrl,
+            platform: data.platformLabel,
+            creditsUsed: data.creditsUsed,
+            prompt
+          })
+        });
+        // Dispatch credits update
+        window.dispatchEvent(new CustomEvent('credits-updated'));
+      }
+    } catch {
+      append({ role: 'assistant', content: 'Video generation failed. Please try again.' });
+    } finally {
+      setVideoState(null);
+    }
+  };
   const messages = rawMessages as CustomMessage[];
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -443,6 +579,15 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
           <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3"
             style={{ background: bgDeep }}>
             {messages.map((m) => {
+
+              if (m.role === 'assistant') {
+                try {
+                  const parsed = JSON.parse(m.content);
+                  if (parsed.type === 'video') {
+                    return <VideoResult key={m.id} {...parsed} />;
+                  }
+                } catch { /* proceed to normal render */ }
+              }
               // Extract model badge if present
               const contentParts = m.content.split("\n\n---\n*Model:");
               const cleanContent = contentParts[0];
@@ -550,7 +695,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                                   );
                                }
 
-                            } catch(e) {
+                            } catch {
                                // normal text parse error fallback
                             }
                           }
@@ -671,12 +816,23 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                 </div>
               );
             })()}
+
+            {/* Video UI — renders below messages, above input */}
+            {videoState?.type === 'selecting' && (
+              <VideoQualitySelector
+                prompt={videoState.prompt}
+                onSelect={handleVideoQualitySelect}
+              />
+            )}
+            {videoState?.type === 'generating' && (
+              <VideoGenerating model={videoState.model} />
+            )}
             <div ref={messagesEndRef} />
             </div>
 
           {/* Input — shrink-0, never scrolls */}
           <div className="shrink-0 px-6 pb-6 pt-3 border-t w-full" style={{ borderColor: cardBorder, background: bgMid }}>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-2 max-w-4xl mx-auto w-full">
+            <form onSubmit={handleSubmitWithVideoCheck} className="flex flex-col gap-2 max-w-4xl mx-auto w-full">
               {/* Voice recording UI — WhatsApp style waveform bar */}
               {isListening && (
                 <div className="flex items-center gap-3 px-3 py-2 mb-1 rounded-lg"

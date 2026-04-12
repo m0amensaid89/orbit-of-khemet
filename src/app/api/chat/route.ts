@@ -140,6 +140,16 @@ export async function POST(req: NextRequest) {
     let systemPrompt = buildSystemPrompt(agent || '', heroSlug);
     systemPrompt = sanitizeForFetch(systemPrompt + ARTIFACT_SYSTEM_SUFFIX);
 
+    // Route video requests to /api/video
+    if (['video_quick', 'video_standard', 'video_cinematic', 'video_edit'].includes(requestType)) {
+      return NextResponse.json({
+        type: 'video_request',
+        videoType: requestType,
+        prompt: typeof lastMessage === 'string' ? lastMessage : '',
+        message: 'Video generation initiated. Select quality tier to proceed.',
+      });
+    }
+
     // 5. Route Perplexity requests to dedicated route
     if (requestType === 'research' || requestType === 'website_analysis') {
       const res  = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/chat/perplexity`, {
