@@ -19,16 +19,22 @@ export async function GET(req: NextRequest) {
     })
 
     if (status.status === 'COMPLETED') {
-      const result = await fal.queue.result(modelId, { requestId }) as {
-        video?: { url: string }
-        url?: string
-      }
-      const videoUrl = result?.video?.url || result?.url
+      const responseUrl = (status as any).response_url
+      let videoUrl: string | null = null
 
-      return NextResponse.json({
-        status: 'COMPLETED',
-        videoUrl,
-      })
+      if (responseUrl) {
+        try {
+          const resultRes = await fetch(responseUrl, {
+            headers: { 'Authorization': `Key ${process.env.FAL_AI_KEY}` }
+          })
+          const result = await resultRes.json() as { video?: { url: string }; url?: string }
+          videoUrl = result?.video?.url || result?.url || null
+        } catch {
+          videoUrl = null
+        }
+      }
+
+      return NextResponse.json({ status: 'COMPLETED', videoUrl })
     }
 
     if ((status.status as string) === 'FAILED') {
