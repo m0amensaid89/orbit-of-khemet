@@ -52,19 +52,39 @@ export async function POST(req: NextRequest) {
     // Generate video via fal.ai
     const modelId = VIDEO_MODELS[videoType] || VIDEO_MODELS.video_standard
 
-    const result = await fal.subscribe(modelId, {
+    const { request_id } = await fal.queue.submit(modelId, {
       input: {
         prompt,
         duration,
         aspect_ratio: '16:9',
       },
-      logs: true,
-    }) as { video?: { url: string }; url?: string }
+    })
 
-    const videoUrl = result?.video?.url || result?.url
+    // Poll until complete (max 4 minutes)
+    let videoUrl: string | null = null
+    const maxAttempts = 48 // 48 × 5 seconds = 4 minutes
+    for (let i = 0; i < maxAttempts; i++) {
+      await new Promise(resolve => setTimeout(resolve, 5000)) // wait 5 seconds
+      const status = await fal.queue.status(modelId, {
+        requestId: request_id,
+        logs: false,
+      }) as unknown as { status: string }
+
+      if (status.status === 'COMPLETED') {
+        const output = await fal.queue.result(modelId, {
+          requestId: request_id,
+        }) as { video?: { url: string }; url?: string }
+        videoUrl = output?.video?.url || output?.url || null
+        break
+      }
+
+      if (status.status === 'FAILED') {
+        return NextResponse.json({ error: 'Video generation failed' }, { status: 500 })
+      }
+    }
 
     if (!videoUrl) {
-      return NextResponse.json({ error: 'Video generation failed' }, { status: 500 })
+      return NextResponse.json({ error: 'Video generation timed out' }, { status: 504 })
     }
 
     // Deduct credits
