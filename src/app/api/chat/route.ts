@@ -152,7 +152,6 @@ export async function POST(req: NextRequest) {
 
     // 5. Route Perplexity requests directly to Perplexity API
     if (requestType === 'research' || requestType === 'website_analysis') {
-      // Inline Perplexity call — no sub-fetch needed
       const perplexityRes = await fetch('https://api.perplexity.ai/v1/responses', {
         method: 'POST',
         headers: {
@@ -171,23 +170,14 @@ export async function POST(req: NextRequest) {
         await supabaseAdmin.from('profiles').update({ credits: profileCredits - creditCost }).eq('id', user.id)
       }
 
-      const encoder = new TextEncoder()
-      const stream = new ReadableStream({
-        start(controller) {
-          controller.enqueue(encoder.encode(content))
-          controller.close()
-        }
+      const result = await streamText({
+        model: openrouter('anthropic/claude-3-haiku'),
+        system: 'Return ONLY the text provided to you in the user message. Do not add, remove, or change anything.',
+        messages: [{ role: 'user', content }],
+        maxTokens: 4000,
       })
 
-      return new Response(stream, {
-        headers: {
-          'Content-Type': 'text/plain; charset=utf-8',
-          'X-Platform-Label': PLATFORM_LABELS[requestType] || 'Perplexity',
-          'X-Credits-Used': String(creditCost),
-          'X-Credits-Remaining': String(profileCredits - creditCost),
-          'X-Request-Type': requestType,
-        }
-      })
+      return result.toDataStreamResponse()
     }
 
     const model = modelToUse;
