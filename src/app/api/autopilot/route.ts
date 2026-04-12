@@ -2,6 +2,8 @@ import { NextRequest } from 'next/server';
 import { classifyIntent } from '@/lib/autopilot/classifier';
 import { executeTask } from '@/lib/autopilot/router';
 import { transformOutput } from '@/lib/autopilot/transformer';
+import { createClient } from '@/lib/supabase/server';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 
 export const runtime = 'edge';
 
@@ -18,6 +20,27 @@ export async function POST(req: NextRequest) {
     if (classification.route === 'dalle_api') {
        const executionResult = await executeTask(classification, lastMessage);
        const rendered_output = transformOutput(executionResult);
+
+       const supabase = await createClient();
+       const { data: { user } } = await supabase.auth.getUser();
+       if (user) {
+         const supabaseAdmin = createSupabaseClient(
+           process.env.NEXT_PUBLIC_SUPABASE_URL!,
+           process.env.SUPABASE_SERVICE_ROLE_KEY!
+         );
+         const { data: profile } = await supabaseAdmin
+           .from('profiles')
+           .select('credits')
+           .eq('id', user.id)
+           .single();
+         if (profile) {
+           await supabaseAdmin
+             .from('profiles')
+             .update({ credits: Math.max(0, profile.credits - 26) })
+             .eq('id', user.id);
+         }
+       }
+
        return new Response(JSON.stringify({ classification, rendered_output }), {
          headers: { 'Content-Type': 'application/json' }
        });
@@ -115,6 +138,26 @@ export async function POST(req: NextRequest) {
           }
 
           await fetchStream(modelId);
+
+          const supabase = await createClient();
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            const supabaseAdmin = createSupabaseClient(
+              process.env.NEXT_PUBLIC_SUPABASE_URL!,
+              process.env.SUPABASE_SERVICE_ROLE_KEY!
+            );
+            const { data: profile } = await supabaseAdmin
+              .from('profiles')
+              .select('credits')
+              .eq('id', user.id)
+              .single();
+            if (profile) {
+              await supabaseAdmin
+                .from('profiles')
+                .update({ credits: Math.max(0, profile.credits - 26) })
+                .eq('id', user.id);
+            }
+          }
 
         } catch (error) {
            console.error('Streaming execution error:', error);

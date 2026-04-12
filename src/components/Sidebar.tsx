@@ -8,19 +8,10 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 
-const heroColors: Record<string, string> = {
-  thoren:  '#C0C0C0',
-  ramet:   '#4ECDC4',
-  nexar:   '#FF4444',
-  lyra:    '#2D6A4F',
-  kairo:   '#6C63FF',
-  nefra:   '#9B59B6',
-  horusen: '#3A6DD4',
-};
 
 export function Sidebar() {
   const pathname = usePathname();
-  const [energy, setEnergy] = useState<number>(100000);
+  const [energy, setEnergy] = useState<number | null>(null);
   const [user, setUser] = useState<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
   const [profile, setProfile] = useState<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
   const [recentThreads, setRecentThreads] = useState<any[]>([]); // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -396,12 +387,12 @@ export function Sidebar() {
             <span className="text-empire-xs text-[#d0c5af] font-orbitron uppercase">GRID ENERGY</span>
           </div>
           <div className="text-empire-lg font-orbitron font-bold text-[#D4AF37] drop-shadow-[0_0_8px_rgba(212,175,55,0.2)] relative z-10">
-            {energy.toLocaleString()}
+            {energy === null ? '...' : energy.toLocaleString()}
           </div>
           <div className="w-full bg-[#0A0A0A] h-1 mt-2 rounded-full overflow-hidden relative z-10 border border-[rgba(212,175,55,0.08)]">
             <motion.div
               initial={{ width: 0 }}
-              animate={{ width: `${Math.min(100, (energy / 100000) * 100)}%` }}
+              animate={{ width: `${Math.min(100, ((energy || 0) / 100000) * 100)}%` }}
               transition={{ duration: 1, ease: "easeOut" }}
               className="bg-gradient-to-r from-[#D4AF37] to-[#F5D38C] h-full"
             />
