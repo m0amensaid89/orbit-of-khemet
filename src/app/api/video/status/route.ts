@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
     })
 
     if (status.status === 'COMPLETED') {
-      const responseUrl = (status as any).response_url
+      const responseUrl = (status as { response_url?: string }).response_url
       let videoUrl: string | null = null
 
       if (responseUrl) {
