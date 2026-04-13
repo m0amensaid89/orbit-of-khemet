@@ -439,7 +439,7 @@ export function Sidebar() {
                           />
                         ) : (
                           <Link
-                            href={`/chat/${thread.hero_slug?.toLowerCase()}/${thread.hero_slug?.toLowerCase()}?thread=${thread.id}`}
+                            href={`/chat/${thread.hero_slug?.toLowerCase()}?thread=${thread.id}`}
                             className="flex-1 flex items-center gap-2 px-4 py-2 transition-all text-sm truncate"
                             style={{ color: 'rgba(208,197,175,0.6)' }}
                             onDoubleClick={(e) => {
@@ -561,7 +561,7 @@ export function Sidebar() {
                       />
                     ) : (
                       <Link
-                        href={`/chat/${thread.hero_slug?.toLowerCase()}/${thread.hero_slug?.toLowerCase()}?thread=${thread.id}`}
+                        href={`/chat/${thread.hero_slug?.toLowerCase()}?thread=${thread.id}`}
                         className="flex-1 flex items-center gap-2 px-4 py-2 transition-all text-sm truncate"
                         style={{ color: 'rgba(208,197,175,0.6)' }}
                         onDoubleClick={(e) => {

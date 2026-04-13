@@ -334,6 +334,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
   }
   // Detect clarification responses in messages
   useEffect(() => {
+    if (isLoading) return // Wait until streaming is complete
     const lastMsg = rawMessages[rawMessages.length - 1]
     if (lastMsg?.role === 'assistant' && lastMsg.content.startsWith('CLARIFICATION_OPTIONS:')) {
       const optionsStr = lastMsg.content.replace('CLARIFICATION_OPTIONS:', '')
@@ -343,7 +344,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
       // Remove the clarification message from display
       setMessages(rawMessages.slice(0, -1))
     }
-  }, [rawMessages])
+  }, [rawMessages, isLoading])
 
   const messages = rawMessages as CustomMessage[];
   const messagesEndRef = useRef<HTMLDivElement>(null);
