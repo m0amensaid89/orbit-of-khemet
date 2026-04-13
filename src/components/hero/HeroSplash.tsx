@@ -18,13 +18,22 @@ export default function HeroSplash({ slug }: { slug: string }) {
 
       {/* Left: Hero Image */}
       <div className="relative md:w-[380px] w-full min-h-[320px] shrink-0 overflow-hidden flex items-center justify-center">
-        <div style={{ position: 'relative', width: '120px', height: '120px', borderRadius: '50%', overflow: 'hidden', border: '2px solid rgba(212,175,55,0.4)' }}>
+        {/* Hero Image — full portrait */}
+        <div style={{
+          position: 'relative',
+          width: '280px',
+          height: '380px',
+          overflow: 'hidden',
+          border: '1px solid rgba(212,175,55,0.3)',
+          background: '#0A0A0A',
+        }}>
           <Image
             src={`/${slug}.png`}
-            alt={meta.name}
+            alt={meta.name || slug}
             fill
-            style={{ objectFit: 'cover' }}
-            sizes="120px"
+            style={{ objectFit: 'cover', objectPosition: 'top center' }}
+            sizes="280px"
+            priority
           />
         </div>
         <div className="absolute inset-0" style={{
