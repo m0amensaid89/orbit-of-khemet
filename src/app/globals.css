@@ -159,9 +159,11 @@ html {
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    font-family: var(--font-roboto), 'Roboto', sans-serif;
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-roboto), 'Roboto', sans-serif;
   }
   html {
     @apply font-sans;
@@ -316,9 +318,9 @@ h4 {
   line-height: 1.4;
 }
 
-/* Body text — Indie Flower */
+/* Body text — Roboto */
 p, li {
-  font-family: var(--font-indie-flower), 'Indie Flower', cursive;
+  font-family: var(--font-roboto), 'Roboto', sans-serif;
   font-weight: 400;
   font-size: clamp(0.9375rem, 1.5vw, 1.0625rem); /* 15px → 17px */
   line-height: 1.7;

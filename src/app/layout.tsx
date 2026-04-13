@@ -43,7 +43,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} ${cinzel.variable} ${cinzelDecorative.variable} ${inter.variable} ${indieFlower.variable} ${roboto.variable} antialiased khemet-pattern text-foreground`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${cinzel.variable} ${cinzelDecorative.variable} ${inter.variable} ${roboto.variable} antialiased khemet-pattern text-foreground`}>
         <LayoutShell>
           <PageTransition>
             <main className="flex-1 flex flex-col min-h-screen">
