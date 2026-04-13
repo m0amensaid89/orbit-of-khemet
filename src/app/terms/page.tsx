@@ -21,7 +21,7 @@ export default function TermsPage() {
       <div style={{ maxWidth: '820px', margin: '0 auto', padding: '60px 40px' }}>
 
         <Section title="1. ACCEPTANCE OF TERMS">
-          By accessing or using Orbit of Khemet ("the Platform"), operated by Khemet.AI, you agree to be bound by these Terms of Service. If you do not agree, do not use the Platform. These Terms apply to all users including free and paid subscribers.
+          By accessing or using Orbit of Khemet (&quot;the Platform&quot;), operated by Khemet.AI, you agree to be bound by these Terms of Service. If you do not agree, do not use the Platform. These Terms apply to all users including free and paid subscribers.
         </Section>
 
         <Section title="2. DESCRIPTION OF SERVICE">
@@ -49,7 +49,7 @@ export default function TermsPage() {
         </Section>
 
         <Section title="8. INTELLECTUAL PROPERTY">
-          You retain ownership of all content you submit to the Platform ("Input") and all AI-generated outputs you produce using the Platform ("Output"), subject to applicable copyright law. Purely AI-generated content may not qualify for copyright protection in all jurisdictions — consult local legal counsel. Khemet.AI retains all rights to the Platform itself, including its design, architecture, agent configurations, and brand identity. You may not reproduce, copy, or create derivative works of the Platform without written consent.
+          You retain ownership of all content you submit to the Platform (&quot;Input&quot;) and all AI-generated outputs you produce using the Platform (&quot;Output&quot;), subject to applicable copyright law. Purely AI-generated content may not qualify for copyright protection in all jurisdictions — consult local legal counsel. Khemet.AI retains all rights to the Platform itself, including its design, architecture, agent configurations, and brand identity. You may not reproduce, copy, or create derivative works of the Platform without written consent.
         </Section>
 
         <Section title="9. DATA AND PRIVACY">
@@ -61,7 +61,7 @@ export default function TermsPage() {
         </Section>
 
         <Section title="11. PAYMENTS AND SUBSCRIPTIONS">
-          Paid subscriptions are processed through Paddle, our authorized payment processor. Subscription fees are charged in advance on a monthly basis. By subscribing, you authorize recurring charges to your payment method. All payments are subject to our Refund Policy. We reserve the right to change pricing with 30 days' notice. Continued use after a price change constitutes acceptance.
+          Paid subscriptions are processed through Paddle, our authorized payment processor. Subscription fees are charged in advance on a monthly basis. By subscribing, you authorize recurring charges to your payment method. All payments are subject to our Refund Policy. We reserve the right to change pricing with 30 days&apos; notice. Continued use after a price change constitutes acceptance.
         </Section>
 
         <Section title="12. LIMITATION OF LIABILITY">
@@ -69,7 +69,7 @@ export default function TermsPage() {
         </Section>
 
         <Section title="13. DISCLAIMER OF WARRANTIES">
-          The Platform is provided "as is" and "as available" without warranties of any kind, express or implied. We do not guarantee uninterrupted access, error-free operation, or that the Platform will meet your specific requirements. AI model availability is subject to third-party provider uptime and policies.
+          The Platform is provided &quot;as is&quot; and &quot;as available&quot; without warranties of any kind, express or implied. We do not guarantee uninterrupted access, error-free operation, or that the Platform will meet your specific requirements. AI model availability is subject to third-party provider uptime and policies.
         </Section>
 
         <Section title="14. TERMINATION">

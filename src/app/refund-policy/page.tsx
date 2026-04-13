@@ -29,7 +29,7 @@ export default function RefundPolicyPage() {
         </Section>
 
         <Section title="4. FIRST PURCHASE — 7-DAY WINDOW">
-          If you are a new subscriber and the Platform is materially non-functional due to a technical fault on our side, you may request a full refund within 7 days of your first purchase. "Materially non-functional" means the core platform features are inaccessible due to an outage or error attributable to Khemet.AI — not third-party AI provider outages. Refunds under this clause are issued at our sole discretion after investigation.
+          If you are a new subscriber and the Platform is materially non-functional due to a technical fault on our side, you may request a full refund within 7 days of your first purchase. &quot;Materially non-functional&quot; means the core platform features are inaccessible due to an outage or error attributable to Khemet.AI — not third-party AI provider outages. Refunds under this clause are issued at our sole discretion after investigation.
         </Section>
 
         <Section title="5. SERVICE DISRUPTIONS">

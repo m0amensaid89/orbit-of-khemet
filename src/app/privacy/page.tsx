@@ -15,7 +15,7 @@ export default function PrivacyPage() {
       <div style={{ maxWidth: '820px', margin: '0 auto', padding: '60px 40px' }}>
 
         <Section title="1. INTRODUCTION">
-          Khemet.AI ("we", "us", "our") operates Orbit of Khemet at orbit.khemet.ai. This Privacy Policy explains how we collect, use, store, and protect your personal information when you use our Platform. By using the Platform, you consent to the practices described in this Policy.
+          Khemet.AI (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) operates Orbit of Khemet at orbit.khemet.ai. This Privacy Policy explains how we collect, use, store, and protect your personal information when you use our Platform. By using the Platform, you consent to the practices described in this Policy.
         </Section>
 
         <Section title="2. INFORMATION WE COLLECT">
@@ -39,7 +39,7 @@ export default function PrivacyPage() {
 
           Infrastructure: We use Supabase for database hosting and Vercel for platform deployment. Both operate secure, GDPR-compliant infrastructure.
 
-          Payment Processing: Subscription payments are processed by Paddle. Your payment data is governed by Paddle's Privacy Policy.
+          Payment Processing: Subscription payments are processed by Paddle. Your payment data is governed by Paddle&apos;s Privacy Policy.
         </Section>
 
         <Section title="5. AI MODEL PROCESSING">
@@ -47,11 +47,11 @@ export default function PrivacyPage() {
         </Section>
 
         <Section title="6. DATA RETENTION">
-          Account data is retained for the duration of your account. Chat history is retained until you delete it or close your account. Payment records are retained as required by law and by Paddle's policies. If you delete your account, we will delete your personal data within 30 days, except where retention is required by law.
+          Account data is retained for the duration of your account. Chat history is retained until you delete it or close your account. Payment records are retained as required by law and by Paddle&apos;s policies. If you delete your account, we will delete your personal data within 30 days, except where retention is required by law.
         </Section>
 
         <Section title="7. YOUR RIGHTS">
-          Depending on your location, you may have the following rights regarding your personal data: Right to access the data we hold about you. Right to correct inaccurate data. Right to delete your data ("right to be forgotten"). Right to portability of your data. Right to object to certain processing. To exercise any of these rights, contact us at privacy@khemet.ai. We will respond within 30 days.
+          Depending on your location, you may have the following rights regarding your personal data: Right to access the data we hold about you. Right to correct inaccurate data. Right to delete your data (&quot;right to be forgotten&quot;). Right to portability of your data. Right to object to certain processing. To exercise any of these rights, contact us at privacy@khemet.ai. We will respond within 30 days.
         </Section>
 
         <Section title="8. GDPR COMPLIANCE">
