@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
   if (!threadId) return NextResponse.json({ messages: [] })
 
   // Verify ownership of the thread first
-  const { data: thread } = await supabase
+  const { data: thread } = await supabaseAdmin
     .from('chat_threads')
     .select('id')
     .eq('id', threadId)

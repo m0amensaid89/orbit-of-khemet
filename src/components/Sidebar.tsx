@@ -279,9 +279,12 @@ export function Sidebar() {
 
           {/* Project list */}
           {projects.map(p => (
-            <div key={p.id}
+            <Link
+              key={p.id}
+              href={`/projects/${p.id}`}
               onClick={() => setSelectedProject(p.id)}
               style={{
+                display: 'block',
                 padding: '6px 8px',
                 marginBottom: '2px',
                 cursor: 'pointer',
@@ -298,7 +301,7 @@ export function Sidebar() {
               }}
             >
               ✦ {p.name}
-            </div>
+            </Link>
           ))}
 
           {/* New project modal */}
