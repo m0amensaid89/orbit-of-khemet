@@ -502,15 +502,10 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
   useEffect(() => {
   if (!threadId) return
   const loadMessages = async () => {
-    const supabase = createClient()
-    const { data: msgs } = await supabase
-      .from('chat_messages')
-      .select('*')
-      .eq('thread_id', threadId)
-      .order('created_at', { ascending: true })
-
-    if (msgs && msgs.length > 0) {
-      setMessages(msgs.map(m => ({
+    const res = await fetch(`/api/chat-history/messages?threadId=${threadId}`)
+    const data = await res.json()
+    if (data.messages && data.messages.length > 0) {
+      setMessages(data.messages.map((m: { id: string; role: string; content: string; model_used?: string }) => ({
         id: m.id,
         role: m.role as 'user' | 'assistant',
         content: m.content,
