@@ -2,7 +2,7 @@
 
 import { getHero } from "@/lib/heroes";
 import { heroAgents, heroMeta } from "@/lib/agents";
-import HeroImage from "./HeroImage";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function HeroSplash({ slug }: { slug: string }) {
@@ -17,8 +17,16 @@ export default function HeroSplash({ slug }: { slug: string }) {
       style={{ borderColor: 'rgba(212,175,55,0.1)', background: hero.palette['bg-deep'] }}>
 
       {/* Left: Hero Image */}
-      <div className="relative md:w-[380px] w-full min-h-[320px] shrink-0 overflow-hidden">
-        <HeroImage slug={slug} type="splash" className="w-full h-full object-cover" />
+      <div className="relative md:w-[380px] w-full min-h-[320px] shrink-0 overflow-hidden flex items-center justify-center">
+        <div style={{ position: 'relative', width: '120px', height: '120px', borderRadius: '50%', overflow: 'hidden', border: '2px solid rgba(212,175,55,0.4)' }}>
+          <Image
+            src={`/${slug}.png`}
+            alt={meta.name}
+            fill
+            style={{ objectFit: 'cover' }}
+            sizes="120px"
+          />
+        </div>
         <div className="absolute inset-0" style={{
           background: 'linear-gradient(to right, transparent 60%, ' + hero.palette['bg-deep'] + ')'
         }} />

@@ -129,13 +129,24 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
   const agentParam = searchParams.get("agent") || "";
   const isMaster = heroParam === "master";
   const [user, setUser] = useState<{ email?: string; user_metadata?: { full_name?: string } } | null>(null);
+  const [profile, setProfile] = useState<{ username?: string } | null>(null);
+
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchUserAndProfile = async () => {
       const supabase = createClient();
       const { data } = await supabase.auth.getUser();
       setUser(data.user);
+
+      if (data.user) {
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', data.user.id)
+          .single();
+        setProfile(profileData);
+      }
     };
-    fetchUser();
+    fetchUserAndProfile();
   }, []);
 
 
@@ -558,16 +569,31 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
 
   useEffect(() => {
     if (!agent || messages.length > 0) return
-    let openingContent = `${agent.name} ready. How can I help?`
+    const openingContent = `${agent.name} ready. How can I help?`
 
     if (agentParam && heroParam) {
       const skillKey = `${heroParam.toLowerCase()}-${agentParam}`
       const skill = agentSkills[skillKey]
       if (skill) {
-        const username = user?.user_metadata?.full_name
-          || user?.email?.split('@')[0]
-          || 'Commander'
-        openingContent = skill.openingMessage(username)
+        let i = 0
+        setTypewriterText('')
+        setTypewriterDone(false)
+        const interval = setInterval(() => {
+          // Resolve username at the time of execution
+          const username = profile?.username
+            || user?.email?.split('@')[0]
+            || 'Commander'
+          const resolvedOpeningContent = skill.openingMessage(username)
+
+          if (i < resolvedOpeningContent.length) {
+            setTypewriterText(resolvedOpeningContent.slice(0, i + 1))
+            i++
+          } else {
+            setTypewriterDone(true)
+            clearInterval(interval)
+          }
+        }, 18)
+        return () => clearInterval(interval)
       }
     }
 
@@ -584,7 +610,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
       }
     }, 18)
     return () => clearInterval(interval)
-  }, [agent?.id, agent?.name, agentParam, heroParam, messages.length, user?.email, user?.user_metadata?.full_name])
+  }, [agent?.id, agent?.name, agentParam, heroParam, messages.length, profile, user?.email, user?.user_metadata?.full_name])
 
   useEffect(() => {
     const taskParam = searchParams.get('task');
@@ -680,7 +706,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
               <div className="flex gap-3 w-full flex-row">
                 <div className="relative w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-[Orbitron] text-xs border shadow-lg overflow-hidden mt-1"
                   style={{ background: '#0A0A0A', borderColor: 'rgba(212,175,55,0.3)', color: '#D4AF37' }}>
-                  {heroParam.slice(0,2).toUpperCase()}
+                  {agentInitials}
                 </div>
                 <div className="flex flex-col max-w-[80%] items-start">
                   <div className="text-xs font-[Orbitron] mb-1" style={{ color: accentColor, letterSpacing: '0.1em' }}>
