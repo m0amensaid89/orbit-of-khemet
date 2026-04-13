@@ -173,22 +173,22 @@ export async function POST(req: NextRequest) {
 
       try {
         // Use xAI Grok Aurora directly — NOT through OpenRouter
-        const imageRes = await fetch('https://api.x.ai/v1/images/generations', {
+        const imageRes = await fetch('https://api.openai.com/v1/images/generations', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${process.env.XAI_API_KEY}`,
+            'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            model: 'grok-2-image-1212',
+            model: 'dall-e-3',
             prompt: prompt,
             n: 1,
+            size: '1024x1024',
             response_format: 'url',
           }),
         })
 
         const imageData = await imageRes.json()
-        console.log('xAI image response:', JSON.stringify(imageData).slice(0, 200))
         const imageUrl = imageData?.data?.[0]?.url || ''
 
         if (!imageUrl) {
