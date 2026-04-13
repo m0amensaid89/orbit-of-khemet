@@ -13,6 +13,7 @@ export async function GET(req: NextRequest) {
   if (!user) return NextResponse.json({ messages: [] })
 
   const threadId = req.nextUrl.searchParams.get('threadId')
+  console.log('Loading messages for threadId:', threadId)
   if (!threadId) return NextResponse.json({ messages: [] })
 
   // Verify ownership of the thread first
