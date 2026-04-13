@@ -123,6 +123,16 @@ export function Sidebar() {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        if (event === 'SIGNED_OUT' || !session) {
+          setUser(null);
+          setProfile(null);
+          setEnergy(null);
+          setRecentThreads([]);
+          setProjects([]);
+          setSelectedProject(null);
+          return;
+        }
+
         setUser(session?.user || null);
         if (session?.user) {
           const { data: profileData } = await supabase
