@@ -549,38 +549,42 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
   return () => clearTimeout(timer)
 }, [threadId])
 
-  const autoprompt = searchParams.get('autoprompt');
-
-  useEffect(() => {
-    if (autoprompt && messages.length === 1 && !isLoading) {
-      const decoded = decodeURIComponent(autoprompt);
-      setTimeout(() => {
-        append({ role: 'user', content: decoded });
-      }, 800);
-    }
-  }, [autoprompt, messages.length, isLoading, append]);
-
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Opening message — fires when agent chat first loads
+  const [typewriterText, setTypewriterText] = useState('')
+  const [typewriterDone, setTypewriterDone] = useState(false)
+
   useEffect(() => {
-    if (messages.length === 0 && agentParam && heroParam) {
+    if (!agent || messages.length > 0) return
+    let openingContent = `${agent.name} ready. How can I help?`
+
+    if (agentParam && heroParam) {
       const skillKey = `${heroParam.toLowerCase()}-${agentParam}`
       const skill = agentSkills[skillKey]
       if (skill) {
         const username = user?.user_metadata?.full_name
           || user?.email?.split('@')[0]
           || 'Commander'
-        const openingContent = skill.openingMessage(username)
-        append({
-          role: 'assistant',
-          content: openingContent,
-        })
+        openingContent = skill.openingMessage(username)
       }
     }
-  }, [agentParam, heroParam, messages.length, user?.email, user?.user_metadata?.full_name, append])
+
+    let i = 0
+    setTypewriterText('')
+    setTypewriterDone(false)
+    const interval = setInterval(() => {
+      if (i < openingContent.length) {
+        setTypewriterText(openingContent.slice(0, i + 1))
+        i++
+      } else {
+        setTypewriterDone(true)
+        clearInterval(interval)
+      }
+    }, 18)
+    return () => clearInterval(interval)
+  }, [agent?.id, agent?.name, agentParam, heroParam, messages.length, user?.email, user?.user_metadata?.full_name])
 
   useEffect(() => {
     const taskParam = searchParams.get('task');
@@ -672,6 +676,24 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
               scrollbarWidth: 'thin',
               scrollbarColor: '#D4AF37 #0A0A0A'
             }}>
+            {agent && messages.length === 0 && (
+              <div className="flex gap-3 w-full flex-row">
+                <div className="relative w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-[Orbitron] text-xs border shadow-lg overflow-hidden mt-1"
+                  style={{ background: '#0A0A0A', borderColor: 'rgba(212,175,55,0.3)', color: '#D4AF37' }}>
+                  {heroParam.slice(0,2).toUpperCase()}
+                </div>
+                <div className="flex flex-col max-w-[80%] items-start">
+                  <div className="text-xs font-[Orbitron] mb-1" style={{ color: accentColor, letterSpacing: '0.1em' }}>
+                    {agentName}
+                  </div>
+                  <div className="rounded-2xl px-4 py-3 text-sm"
+                    style={{ background: 'rgba(212,175,55,0.06)', border: '1px solid rgba(212,175,55,0.15)', color: '#d0c5af', minHeight: '48px' }}>
+                    {typewriterText}
+                    {!typewriterDone && <span style={{ opacity: 0.5 }}>|</span>}
+                  </div>
+                </div>
+              </div>
+            )}
             {historyMessages.length > 0 && historyMessages.map((m) => (
               <div key={m.id} className={`flex gap-3 w-full ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
                 <div className={`relative w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-[Orbitron] text-xs border shadow-lg overflow-hidden ${m.role === "user" ? "mt-auto" : "mt-1"}`}
