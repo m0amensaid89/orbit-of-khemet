@@ -730,6 +730,19 @@ export function Sidebar() {
           </Link>
         )}
       </div>
+
+      {/* Legal Footer */}
+      <div style={{ padding: '12px 16px', borderTop: '1px solid rgba(212,175,55,0.08)', display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
+        {[
+          { href: '/terms', label: 'Terms' },
+          { href: '/privacy', label: 'Privacy' },
+          { href: '/refund-policy', label: 'Refunds' },
+        ].map(link => (
+          <a key={link.href} href={link.href} style={{ fontSize: '9px', fontFamily: 'monospace', letterSpacing: '0.1em', color: 'rgba(208,197,175,0.3)', textDecoration: 'none' }}>
+            {link.label}
+          </a>
+        ))}
+      </div>
     </aside>
   );
 }
