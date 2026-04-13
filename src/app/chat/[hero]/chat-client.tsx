@@ -122,6 +122,8 @@ function VoiceWaveform({ audioLevel, isLocked }: { audioLevel: number; isLocked:
 export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const [clarificationOptions, setClarificationOptions] = useState<string[] | null>(null)
+  const [pendingMessage, setPendingMessage] = useState<string>('')
   const heroParam = (heroSlug || searchParams.get("hero") || "MASTER").toLowerCase();
   const agentParam = searchParams.get("agent") || "";
   const isMaster = heroParam === "master";
@@ -185,6 +187,15 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
     api: "/api/chat",
     body: { hero: heroParam, agent: agentParam, threadId },
     initialMessages: [],
+    onResponse: (response) => {
+      const cloned = response.clone();
+      cloned.json().then(data => {
+        if (data?.type === 'clarification' && data?.options) {
+          setClarificationOptions(data.options);
+          setPendingMessage(input || '');
+        }
+      }).catch(() => {});
+    },
     onFinish: () => {
       trackMessage();
       window.dispatchEvent(new CustomEvent('credits-updated'));
@@ -907,6 +918,50 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
             </div>
 
           {/* Input — shrink-0, never scrolls */}
+          {clarificationOptions && (
+            <div style={{
+              margin: '8px 16px',
+              padding: '16px',
+              border: '1px solid rgba(212,175,55,0.3)',
+              background: 'rgba(212,175,55,0.04)',
+            }}>
+              <p style={{
+                fontSize: '11px',
+                color: '#d0c5af',
+                marginBottom: '12px',
+                fontFamily: 'monospace',
+                letterSpacing: '0.08em',
+              }}>
+                What would you like me to do?
+              </p>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                {clarificationOptions.map(option => (
+                  <button
+                    key={option}
+                    onClick={() => {
+                      setClarificationOptions(null)
+                      append({
+                        role: 'user',
+                        content: `${pendingMessage} [Intent: ${option.replace(/^[^ ]+ /, '')}]`
+                      })
+                    }}
+                    style={{
+                      padding: '6px 14px',
+                      background: 'transparent',
+                      border: '1px solid rgba(212,175,55,0.4)',
+                      color: '#D4AF37',
+                      fontSize: '10px',
+                      fontFamily: 'monospace',
+                      letterSpacing: '0.08em',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="shrink-0 px-6 pb-6 pt-3 border-t w-full" style={{ borderColor: cardBorder, background: bgMid }}>
             <form onSubmit={handleSubmitWithVideoCheck} className="flex flex-col gap-2 max-w-4xl mx-auto w-full">
               {/* Voice recording UI — WhatsApp style waveform bar */}

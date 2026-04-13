@@ -51,18 +51,26 @@ export function Sidebar() {
     }
   }
 
+  const supabase = createClient();
+
+  const fetchThreads = async () => {
+    try {
+      const res = await fetch('/api/threads')
+      const data = await res.json()
+      if (data.threads) setRecentThreads(data.threads)
+    } catch (err) {
+      console.error('Failed to fetch threads:', err)
+    }
+  }
+
   const handleStarThread = async (threadId: string, starred: boolean) => {
     await fetch('/api/chat-history/star', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ threadId, starred }),
     })
-    setRecentThreads(prev =>
-      prev.map(t => t.id === threadId ? { ...t, starred } : t)
-    )
+    await fetchThreads()
   }
-
-  const supabase = createClient();
 
 
   const filteredThreads = recentThreads.filter(t =>
@@ -82,17 +90,7 @@ export function Sidebar() {
           .single();
         setProfile(profileData);
 
-        const { data: threads } = await supabase
-          .from('chat_threads')
-          .select('id, title, hero_slug, updated_at, starred')
-          .eq('user_id', session.user.id)
-          .or('archived.is.null,archived.eq.false')
-          .order('updated_at', { ascending: false })
-          .limit(10);
-
-        if (threads) {
-          setRecentThreads(threads);
-        }
+        await fetchThreads();
       }
 
       // Initial credits fetch
@@ -134,16 +132,7 @@ export function Sidebar() {
             .single();
           setProfile(profileData);
 
-          const { data: threads } = await supabase
-            .from('chat_threads')
-            .select('id, title, hero_slug, updated_at, starred')
-            .eq('user_id', session.user.id)
-            .or('archived.is.null,archived.eq.false')
-            .order('updated_at', { ascending: false })
-            .limit(10);
-          if (threads) {
-            setRecentThreads(threads);
-          }
+          await fetchThreads();
         } else {
           setProfile(null);
           setRecentThreads([]);
