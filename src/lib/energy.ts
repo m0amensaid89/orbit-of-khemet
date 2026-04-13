@@ -20,7 +20,6 @@ export const PLAN_DAILY_ENERGY: Record<string, number> = {
   free: 50,
   scout: 50,
   explorer: 200,
-  commander: 9999,
 };
 
 const ENERGY_KEY = "orbit_energy_v2";
@@ -47,7 +46,7 @@ function getTodayUTC(): string {
 
 function getPlan(): string {
   if (typeof window === "undefined") return "free";
-  return localStorage.getItem("orbit_plan") || "commander"; // default commander for demo
+  return localStorage.getItem("orbit_plan") || "free";
 }
 
 /**
@@ -57,7 +56,6 @@ function getPlan(): string {
 export function getEnergyRemaining(): number {
   if (typeof window === "undefined") return 50;
   const plan = getPlan();
-  if (plan === "commander") return 9999;
 
   const today = getTodayUTC();
   const storedDate = localStorage.getItem(ENERGY_DATE_KEY);
@@ -137,7 +135,6 @@ export async function consumeEnergyAsync(model: string): Promise<{ success: bool
 
   // Guest fallback
   const plan = getPlan();
-  if (plan === "commander") return { success: true, remaining: 9999, cost: 0 };
   const current = getEnergyRemaining();
 
   if (current < cost) {
@@ -154,7 +151,6 @@ export async function consumeEnergyAsync(model: string): Promise<{ success: bool
  */
 export function consumeEnergy(model: string): { success: boolean; remaining: number; cost: number } {
   const plan = getPlan();
-  if (plan === "commander") return { success: true, remaining: 9999, cost: 0 };
 
   const cost = ENERGY_COSTS[model] || ENERGY_COSTS["default"];
   const current = getEnergyRemaining();

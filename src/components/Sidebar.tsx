@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
+
+
 import { usePathname } from "next/navigation";
 import { Zap, Shield, Cpu, LogIn, LogOut, User, Wand2, Compass, Hammer, Gem, Globe } from "lucide-react";
-import { getEnergyRemainingAsync } from "@/lib/energy";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
@@ -50,6 +51,17 @@ export function Sidebar() {
     }
   }
 
+  const handleStarThread = async (threadId: string, starred: boolean) => {
+    await fetch('/api/chat-history/star', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ threadId, starred }),
+    })
+    setRecentThreads(prev =>
+      prev.map(t => t.id === threadId ? { ...t, starred } : t)
+    )
+  }
+
   const supabase = createClient();
 
 
@@ -72,7 +84,7 @@ export function Sidebar() {
 
         const { data: threads } = await supabase
           .from('chat_threads')
-          .select('id, title, hero_slug, updated_at')
+          .select('id, title, hero_slug, updated_at, starred')
           .eq('user_id', session.user.id)
           .or('archived.is.null,archived.eq.false')
           .order('updated_at', { ascending: false })
@@ -83,8 +95,16 @@ export function Sidebar() {
         }
       }
 
-      const currentEnergy = await getEnergyRemainingAsync();
-      setEnergy(currentEnergy);
+      // Initial credits fetch
+      try {
+        const res = await fetch('/api/credits');
+        const data = await res.json();
+        if (data && data.credits !== undefined) {
+          setEnergy(data.credits);
+        }
+      } catch (err) {
+        console.error("Failed to fetch updated credits:", err);
+      }
     }
 
     fetchSessionAndEnergy();
@@ -116,7 +136,7 @@ export function Sidebar() {
 
           const { data: threads } = await supabase
             .from('chat_threads')
-            .select('id, title, hero_slug, updated_at')
+            .select('id, title, hero_slug, updated_at, starred')
             .eq('user_id', session.user.id)
             .or('archived.is.null,archived.eq.false')
             .order('updated_at', { ascending: false })
@@ -128,8 +148,15 @@ export function Sidebar() {
           setProfile(null);
           setRecentThreads([]);
         }
-        const currentEnergy = await getEnergyRemainingAsync();
-        setEnergy(currentEnergy);
+        try {
+          const res = await fetch('/api/credits');
+          const data = await res.json();
+          if (data && data.credits !== undefined) {
+            setEnergy(data.credits);
+          }
+        } catch (err) {
+          console.error("Failed to fetch updated credits:", err);
+        }
       }
     );
 
@@ -378,6 +405,132 @@ export function Sidebar() {
                     />
                   </div>
                   <div className="px-3 space-y-1">
+                {recentThreads.filter(t => t.starred).length > 0 && (
+                  <div style={{ marginBottom: '8px' }}>
+                    <div style={{ fontSize: '9px', letterSpacing: '0.12em', color: 'rgba(212,175,55,0.4)', padding: '0 0 4px 0', fontFamily: 'monospace' }}>
+                      ★ STARRED
+                    </div>
+                    {recentThreads.filter(t => t.starred).map(thread => (
+                      <div key={thread.id} className="group relative flex items-center">
+                        {renamingId === thread.id ? (
+                          <input
+                            autoFocus
+                            value={renameValue}
+                            onChange={e => setRenameValue(e.target.value)}
+                            onBlur={async () => {
+                              if (isRenaming) return;
+                              setIsRenaming(true);
+                              if (renameValue.trim() && renameValue.trim() !== thread.title) {
+                                await fetch(`/api/chat-threads/${thread.id}`, {
+                                  method: 'PATCH',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ title: renameValue.trim() }),
+                                });
+                                setRecentThreads(prev =>
+                                  prev.map(t => t.id === thread.id ? { ...t, title: renameValue.trim() } : t)
+                                );
+                              }
+                              setRenamingId(null);
+                              setIsRenaming(false);
+                            }}
+                            onKeyDown={e => {
+                              if (e.key === 'Enter') {
+                                (e.target as HTMLInputElement).blur();
+                              }
+                              if (e.key === 'Escape') {
+                                setRenamingId(null);
+                                setIsRenaming(false);
+                              }
+                            }}
+                            className="flex-1 px-4 py-2 text-xs font-[Rajdhani] bg-transparent outline-none"
+                            style={{
+                              border: '1px solid rgba(212,175,55,0.3)',
+                              color: '#D4AF37',
+                            }}
+                          />
+                        ) : (
+                          <Link
+                            href={`/chat/${thread.hero_slug}?thread=${thread.id}`}
+                            className="flex-1 flex items-center gap-2 px-4 py-2 transition-all text-sm truncate"
+                            style={{ color: 'rgba(208,197,175,0.6)' }}
+                            onDoubleClick={(e) => {
+                              e.preventDefault();
+                              setRenamingId(thread.id);
+                              setRenameValue(thread.title || 'New Mission');
+                              setIsRenaming(false);
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation()
+                                  handleStarThread(thread.id, !thread.starred)
+                                }}
+                                style={{
+                                  background: 'transparent',
+                                  border: 'none',
+                                  cursor: 'pointer',
+                                  color: thread.starred ? '#D4AF37' : 'rgba(255,255,255,0.2)',
+                                  fontSize: '12px',
+                                  padding: '0 2px',
+                                  flexShrink: 0,
+                                }}
+                              >★</button>
+                              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {thread.title || 'Untitled Mission'}
+                              </span>
+                            </div>
+                          </Link>
+                        )}
+                        {renamingId !== thread.id && (
+                          <div className="absolute right-2 hidden group-hover:flex items-center gap-1"
+                            style={{ background: '#0A0A0A' }}>
+                          <button
+                            onClick={async (e) => {
+                              e.preventDefault();
+                              await fetch(`/api/chat-threads/${thread.id}`, {
+                                method: 'PATCH',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ archived: true }),
+                              });
+                              setRecentThreads(prev => prev.filter(t => t.id !== thread.id));
+                            }}
+                            className="p-1 rounded transition-all hover:opacity-80"
+                            title="Archive mission"
+                            style={{ color: 'rgba(212,175,55,0.4)' }}
+                          >
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                              stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                              <rect x="3" y="8" width="18" height="10" rx="5"/>
+                              <line x1="8" y1="8" x2="8" y2="6"/>
+                              <line x1="12" y1="8" x2="12" y2="4"/>
+                              <line x1="16" y1="8" x2="16" y2="6"/>
+                            </svg>
+                          </button>
+                            <button
+                              onClick={async (e) => {
+                                e.preventDefault();
+                                if (!confirm('Delete this mission permanently?')) return;
+                                await fetch(`/api/chat-threads/${thread.id}`, { method: 'DELETE' });
+                                setRecentThreads(prev => prev.filter(t => t.id !== thread.id));
+                              }}
+                              className="p-1 rounded transition-all hover:opacity-80"
+                              title="Delete mission"
+                              style={{ color: 'rgba(255,68,68,0.5)' }}
+                            >
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                <line x1="6" y1="6" x2="18" y2="18"/>
+                              </svg>
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
                 {filteredThreads.map((thread) => (
                   <div key={thread.id} className="group relative flex items-center">
                     {renamingId === thread.id ? (
@@ -429,10 +582,27 @@ export function Sidebar() {
                           setIsRenaming(false);
                         }}
                       >
-                        <span style={{ color: 'rgba(212,175,55,0.4)', fontSize: '10px' }}>✦</span>
-                        <span className="font-[Rajdhani] truncate text-sm">
-                          {thread.title || 'New Mission'}
-                        </span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation()
+                              handleStarThread(thread.id, !thread.starred)
+                            }}
+                            style={{
+                              background: 'transparent',
+                              border: 'none',
+                              cursor: 'pointer',
+                              color: thread.starred ? '#D4AF37' : 'rgba(255,255,255,0.2)',
+                              fontSize: '12px',
+                              padding: '0 2px',
+                              flexShrink: 0,
+                            }}
+                          >★</button>
+                          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {thread.title || 'Untitled Mission'}
+                          </span>
+                        </div>
                       </Link>
                     )}
 
