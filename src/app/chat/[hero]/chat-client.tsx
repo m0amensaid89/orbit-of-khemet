@@ -500,23 +500,26 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
   }, [voiceSupported, isListening, isLocked, startListening, stopListening]);
 
   useEffect(() => {
-    if (threadId) {
-      fetch(`/api/chat-history?threadId=${threadId}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.messages && data.messages.length > 0) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            setMessages(data.messages.map((m: any) => ({
-              id: m.id,
-              role: m.role,
-              content: m.content,
-              modelUsed: m.model_used
-            })));
-          }
-        })
-        .catch(err => console.error("Failed to load chat history:", err));
+  if (!threadId) return
+  const loadMessages = async () => {
+    const supabase = createClient()
+    const { data: msgs } = await supabase
+      .from('chat_messages')
+      .select('*')
+      .eq('thread_id', threadId)
+      .order('created_at', { ascending: true })
+
+    if (msgs && msgs.length > 0) {
+      setMessages(msgs.map(m => ({
+        id: m.id,
+        role: m.role as 'user' | 'assistant',
+        content: m.content,
+        modelUsed: m.model_used
+      })))
     }
-  }, [threadId, setMessages]);
+  }
+  loadMessages()
+}, [threadId, setMessages])
 
   const autoprompt = searchParams.get('autoprompt');
 
