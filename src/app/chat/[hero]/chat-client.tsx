@@ -332,6 +332,19 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
       setVideoState(null)
     }
   }
+  // Detect clarification responses in messages
+  useEffect(() => {
+    const lastMsg = rawMessages[rawMessages.length - 1]
+    if (lastMsg?.role === 'assistant' && lastMsg.content.startsWith('CLARIFICATION_OPTIONS:')) {
+      const optionsStr = lastMsg.content.replace('CLARIFICATION_OPTIONS:', '')
+      const options = optionsStr.split('|').filter(Boolean)
+      setClarificationOptions(options)
+      setPendingMessage(rawMessages[rawMessages.length - 2]?.content || '')
+      // Remove the clarification message from display
+      setMessages(rawMessages.slice(0, -1))
+    }
+  }, [rawMessages])
+
   const messages = rawMessages as CustomMessage[];
   const messagesEndRef = useRef<HTMLDivElement>(null);
 

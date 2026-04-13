@@ -94,11 +94,14 @@ export async function POST(req: NextRequest) {
 
     // If ambiguous — return clarification options instead of processing
     if (classification.needsClarification && classification.clarificationOptions) {
-      return NextResponse.json({
-        type: 'clarification',
-        message: 'What would you like me to do?',
-        options: classification.clarificationOptions,
+      const clarificationText = `CLARIFICATION_OPTIONS:${classification.clarificationOptions.join('|')}`
+      const result = await streamText({
+        model: openrouter('anthropic/claude-3-haiku'),
+        system: 'Return ONLY the exact text provided to you. Do not change anything.',
+        messages: [{ role: 'user', content: clarificationText }],
+        maxTokens: 100,
       })
+      return result.toDataStreamResponse()
     }
     const creditCost   = CREDIT_COSTS[requestType];
 
@@ -166,45 +169,62 @@ export async function POST(req: NextRequest) {
 
     // Route Image generation
     if (requestType === 'image_generation') {
-      const prompt = typeof lastMessage === 'string' ? lastMessage : JSON.stringify(lastMessage);
+      const prompt = typeof lastMessage === 'string' ? lastMessage : JSON.stringify(lastMessage)
 
-      const imageRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-          'Content-Type': 'application/json',
-          'HTTP-Referer': 'https://orbit-of-khemet.vercel.app',
-          'X-Title': 'Orbit of Khemet -- Empire Engine',
-        },
-        body: JSON.stringify({
-          model: 'google/gemini-2.5-flash-image',
-          messages: [{ role: 'user', content: prompt }]
-        })
-      });
-
-      const imageData = await imageRes.json();
-      let imageUrl = '';
       try {
-         // OpenRouter extracts the image url
-         imageUrl = imageData.choices[0].message.images[0].image_url.url;
-      } catch (e) {
-         imageUrl = imageData.choices?.[0]?.message?.content?.match(/https?:\/\/[^\s\)]+/)?.[0] || '';
+        // Use xAI Grok Aurora directly — NOT through OpenRouter
+        const imageRes = await fetch('https://api.x.ai/v1/images/generations', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${process.env.XAI_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'grok-2-image',
+            prompt: prompt,
+            n: 1,
+            response_format: 'url',
+          }),
+        })
+
+        const imageData = await imageRes.json()
+        const imageUrl = imageData?.data?.[0]?.url || ''
+
+        if (!imageUrl) {
+          const errorResult = await streamText({
+            model: openrouter('anthropic/claude-3-haiku'),
+            system: 'You are a helpful assistant.',
+            messages: [{ role: 'user', content: 'Say exactly: Image generation failed. Please try again.' }],
+            maxTokens: 50,
+          })
+          return errorResult.toDataStreamResponse()
+        }
+
+        if (user) {
+          await supabaseAdmin.from('profiles').update({ credits: profileCredits - creditCost }).eq('id', user.id)
+        }
+
+        const imageMarkdown = `![Generated Image](${imageUrl})\n\n*Generated with Grok Aurora — ${prompt.slice(0, 60)}*`
+
+        const result = await streamText({
+          model: openrouter('anthropic/claude-3-haiku'),
+          system: 'Return ONLY the exact text provided to you. Do not change, add, or remove anything.',
+          messages: [{ role: 'user', content: imageMarkdown }],
+          maxTokens: 500,
+        })
+
+        return result.toDataStreamResponse()
+
+      } catch (error) {
+        console.error('Image generation error:', error)
+        const result = await streamText({
+          model: openrouter('anthropic/claude-3-haiku'),
+          system: 'You are a helpful assistant.',
+          messages: [{ role: 'user', content: 'Say exactly: Image generation encountered an error. Please try again.' }],
+          maxTokens: 50,
+        })
+        return result.toDataStreamResponse()
       }
-
-      if (user && profileCredits >= creditCost) {
-        await supabaseAdmin.from('profiles').update({ credits: profileCredits - creditCost }).eq('id', user.id);
-      }
-
-      const imageMarkdown = `![Generated Image](${imageUrl})\n\n*Generated with Grok Aurora*`;
-
-      const result = await streamText({
-        model: openrouter('anthropic/claude-3-haiku'),
-        system: 'Return ONLY the text provided to you in the user message. Do not add, remove, or change anything.',
-        messages: [{ role: 'user', content: imageMarkdown }],
-        maxTokens: 500,
-      });
-
-      return result.toDataStreamResponse();
     }
 
     // 5. Route Perplexity requests directly to Perplexity API
