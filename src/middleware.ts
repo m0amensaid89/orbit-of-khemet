@@ -1,52 +1,38 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import { updateSession } from './lib/supabase/middleware';
-
-const validHeroSlugs = ['thoren','ramet','nexar','lyra','kairo','nefra','horusen'];
+import { NextRequest, NextResponse } from 'next/server'
+import { createServerClient } from '@supabase/ssr'
 
 export async function middleware(request: NextRequest) {
-  // Update session handles supabase auth and cookies
-  // It will automatically redirect to /auth if accessing protected routes without auth
-  const response = await updateSession(request);
+  const { pathname } = request.nextUrl
+  const protectedPaths = ['/chat', '/projects', '/hub']
+  const isProtected = protectedPaths.some(p => pathname.startsWith(p))
+  if (!isProtected) return NextResponse.next()
 
-  // If the updateSession already redirected us, just return it
-  if (response.headers.get('location')) {
-    return response;
-  }
-
-  const { pathname, searchParams } = request.nextUrl;
-
-  // Handle existing route rules
-  if (pathname === '/chat') {
-    const agent = searchParams.get('agent');
-    const hero = searchParams.get('hero');
-    if (!agent && !hero) {
-      return NextResponse.redirect(new URL('/', request.url));
+  const response = NextResponse.next()
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() { return request.cookies.getAll() },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            request.cookies.set(name, value)
+            response.cookies.set(name, value, options)
+          })
+        },
+      },
     }
-    if (hero && !agent && hero !== 'MASTER') {
-      const slug = hero.toLowerCase();
-      if (validHeroSlugs.includes(slug)) {
-        return NextResponse.redirect(new URL(`/heroes/${slug}`, request.url));
-      }
-    }
-  }
+  )
 
-  if (pathname === '/heroes') {
-    return NextResponse.redirect(new URL('/', request.url));
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) {
+    const loginUrl = new URL('/login', request.url)
+    loginUrl.searchParams.set('redirectTo', pathname)
+    return NextResponse.redirect(loginUrl)
   }
-
-  return response;
+  return response
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * Feel free to modify this pattern to include more paths.
-     */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-  ],
-};
+  matcher: ['/chat/:path*', '/projects/:path*', '/hub/:path*'],
+}
