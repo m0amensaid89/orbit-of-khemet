@@ -184,6 +184,7 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
   const { messages: rawMessages, input, handleInputChange, handleSubmit, setMessages, isLoading, append } = useChat({
     api: "/api/chat",
     body: { hero: heroParam, agent: agentParam, threadId },
+    initialMessages: [],
     onFinish: () => {
       trackMessage();
       window.dispatchEvent(new CustomEvent('credits-updated'));
@@ -501,20 +502,27 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
 
   useEffect(() => {
   if (!threadId) return
-  const loadMessages = async () => {
-    const res = await fetch(`/api/chat-history/messages?threadId=${threadId}`)
-    const data = await res.json()
-    if (data.messages && data.messages.length > 0) {
-      setMessages(data.messages.map((m: { id: string; role: string; content: string; model_used?: string }) => ({
-        id: m.id,
-        role: m.role as 'user' | 'assistant',
-        content: m.content,
-        modelUsed: m.model_used
-      })))
+
+  // Small delay to allow useChat to finish initializing
+  const timer = setTimeout(async () => {
+    try {
+      const res = await fetch(`/api/chat-history/messages?threadId=${threadId}`)
+      const data = await res.json()
+      if (data.messages && data.messages.length > 0) {
+        setMessages(data.messages.map((m: { id: string; role: string; content: string; model_used?: string }) => ({
+          id: m.id,
+          role: m.role as 'user' | 'assistant',
+          content: m.content,
+          modelUsed: m.model_used
+        })))
+      }
+    } catch (err) {
+      console.error('Failed to load messages:', err)
     }
-  }
-  loadMessages()
-}, [threadId, setMessages])
+  }, 100)
+
+  return () => clearTimeout(timer)
+}, [threadId])
 
   const autoprompt = searchParams.get('autoprompt');
 

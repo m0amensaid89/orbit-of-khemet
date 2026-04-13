@@ -99,7 +99,7 @@ export function Sidebar() {
       try {
         const res = await fetch('/api/credits');
         const data = await res.json();
-        if (data && data.credits !== undefined) {
+        if (data && typeof data.credits === 'number') {
           setEnergy(data.credits);
         }
       } catch (err) {
@@ -113,7 +113,7 @@ export function Sidebar() {
       try {
         const res = await fetch('/api/credits');
         const data = await res.json();
-        if (data && data.credits !== undefined) {
+        if (data && typeof data.credits === 'number') {
           setEnergy(data.credits);
         }
       } catch (err) {
@@ -151,7 +151,7 @@ export function Sidebar() {
         try {
           const res = await fetch('/api/credits');
           const data = await res.json();
-          if (data && data.credits !== undefined) {
+          if (data && typeof data.credits === 'number') {
             setEnergy(data.credits);
           }
         } catch (err) {
