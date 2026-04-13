@@ -180,7 +180,7 @@ export async function POST(req: NextRequest) {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            model: 'grok-2-image',
+            model: 'grok-2-image-1212',
             prompt: prompt,
             n: 1,
             response_format: 'url',
@@ -188,6 +188,7 @@ export async function POST(req: NextRequest) {
         })
 
         const imageData = await imageRes.json()
+        console.log('xAI image response:', JSON.stringify(imageData).slice(0, 200))
         const imageUrl = imageData?.data?.[0]?.url || ''
 
         if (!imageUrl) {
