@@ -85,7 +85,21 @@ export async function POST(req: NextRequest) {
     const hasVideoAttachment = messages[messages.length - 1]?.role === 'user' && Array.isArray(messages[messages.length - 1]?.content) ? messages[messages.length - 1].content.some((c: { type: string }) => c.type === 'video') : false;
 
     // 1. Classify the request
-    const requestType  = classifyRequest(typeof lastMessage === 'string' ? lastMessage : JSON.stringify(lastMessage), hasImageAttachment, hasVideoAttachment);
+    const classification = classifyRequest(
+      typeof lastMessage === 'string' ? lastMessage : JSON.stringify(lastMessage),
+      hasImageAttachment,
+      hasVideoAttachment
+    )
+    const requestType = classification.requestType
+
+    // If ambiguous — return clarification options instead of processing
+    if (classification.needsClarification && classification.clarificationOptions) {
+      return NextResponse.json({
+        type: 'clarification',
+        message: 'What would you like me to do?',
+        options: classification.clarificationOptions,
+      })
+    }
     const creditCost   = CREDIT_COSTS[requestType];
 
     // 2. Check agent routing override
