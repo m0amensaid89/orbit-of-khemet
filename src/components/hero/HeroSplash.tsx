@@ -16,25 +16,16 @@ export default function HeroSplash({ slug }: { slug: string }) {
     <section className="relative w-full min-h-[60vh] flex flex-col md:flex-row overflow-hidden border-b"
       style={{ borderColor: 'rgba(212,175,55,0.1)', background: hero.palette['bg-deep'] }}>
 
-      {/* Left: Hero Image */}
-      <div className="relative w-full min-h-[320px] shrink-0 overflow-hidden flex items-center justify-center flex-1">
-        {/* Hero Image — full column width */}
-        <div style={{
-          position: 'relative',
-          width: '100%',
-          height: '500px',
-          overflow: 'hidden',
-          background: '#0A0A0A',
-        }}>
-          <Image
-            src={`/${slug}.png`}
-            alt={meta.name || slug}
-            fill
-            style={{ objectFit: 'cover', objectPosition: 'top center' }}
-            sizes="(max-width: 768px) 100vw, 400px"
-            priority
-          />
-        </div>
+      {/* Left: Hero Image — full bleed */}
+      <div className="relative md:w-2/5 w-full self-stretch shrink-0 overflow-hidden min-h-[500px] md:min-h-0">
+        <Image
+          src={`/${slug}.png`}
+          alt={hero?.name || slug}
+          fill
+          style={{ objectFit: 'cover', objectPosition: 'top center' }}
+          sizes="(max-width: 768px) 100vw, 40vw"
+          priority
+        />
         <div className="absolute inset-0" style={{
           background: 'linear-gradient(to right, transparent 60%, ' + hero.palette['bg-deep'] + ')'
         }} />
