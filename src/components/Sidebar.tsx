@@ -204,6 +204,10 @@ export function Sidebar() {
               <Compass className="w-4 h-4 z-10" />
               <span className="font-medium text-empire-sm z-10">New Mission</span>
             </Link>
+            <Link href="/brain" className={navItemClass("/brain")}>
+              <span style={{ fontSize: '14px' }}>🧠</span>
+              <span>Khemet Brain</span>
+            </Link>
             {/*
             <Link href="/master-orbit" className={navItemClass("/master-orbit")}>
               <Hexagon className="w-4 h-4 z-10" />

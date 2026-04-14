@@ -3,7 +3,7 @@ import { classifyRequest } from '@/lib/classifier';
 import { CREDIT_COSTS, PLATFORM_LABELS, PLATFORM_MODEL_MAP } from '@/lib/credits';
 import { buildSystemPrompt } from '@/lib/buildSystemPrompt';
 import { agentSkills } from '@/lib/agent-skills';
-
+import { getBrainContext } from '@/lib/brain/context';
 
 import { createClient as createSupabaseClient, SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/server';
@@ -166,6 +166,14 @@ export async function POST(req: NextRequest) {
     // 4. Build system prompt from agent skill
     let systemPrompt = buildSystemPrompt(agent || '', heroSlug);
     systemPrompt = sanitizeForFetch(systemPrompt + ARTIFACT_SYSTEM_SUFFIX);
+
+    // Inject Khemet Brain context
+    if (user) {
+      const brainContext = await getBrainContext(user.id)
+      if (brainContext) {
+        systemPrompt = (systemPrompt || '') + brainContext
+      }
+    }
 
     // Route Image generation
     if (requestType === 'image_generation') {

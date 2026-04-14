@@ -1,354 +1,178 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import { Loader2, Database, Trash2, FileText, Globe, PlusCircle } from "lucide-react";
+'use client'
+import { useState, useEffect, useRef } from 'react'
 
 interface KnowledgeSource {
-  id: string;
-  title: string;
-  source_type: string;
-  chunk_count: number;
-  created_at: string;
+  id: string
+  name: string
+  type: string
+  file_size: number
+  status: string
+  created_at: string
 }
 
 export default function BrainPage() {
-  const [activeTab, setActiveTab] = useState<"text" | "url">("text");
+  const [sources, setSources] = useState<KnowledgeSource[]>([])
+  const [uploading, setUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState('')
+  const [error, setError] = useState('')
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
-  // Text Form
-  const [textTitle, setTextTitle] = useState("");
-  const [textContent, setTextContent] = useState("");
+  const loadSources = async () => {
+    const res = await fetch('/api/brain/sources')
+    const data = await res.json()
+    setSources(data.sources || [])
+  }
 
-  // URL Form
-  const [urlTitle, setUrlTitle] = useState("");
-  const [urlInput, setUrlInput] = useState("");
+  useEffect(() => { loadSources() }, [])
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [isFetchingUrl, setIsFetchingUrl] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-  const [sources, setSources] = useState<KnowledgeSource[]>([]);
-  const [isLoadingSources, setIsLoadingSources] = useState(true);
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+    setUploading(true)
+    setError('')
 
-  useEffect(() => {
-    fetchSources();
-  }, []);
-
-  const fetchSources = async () => {
-    setIsLoadingSources(true);
-    try {
-      const res = await fetch("/api/knowledge/sources");
-      const data = await res.json();
-      if (res.ok) {
-        setSources(data.sources);
-      } else {
-        console.error("Failed to load sources:", data.error);
+    for (const file of Array.from(files)) {
+      setUploadProgress(`Processing ${file.name}...`)
+      const formData = new FormData()
+      formData.append('file', file)
+      try {
+        const res = await fetch('/api/brain/upload', { method: 'POST', body: formData })
+        const data = await res.json()
+        if (!res.ok) setError(data.error || 'Upload failed')
+      } catch {
+        setError(`Failed to upload ${file.name}`)
       }
-    } catch (_err: unknown) {
-      console.error("Error fetching sources:", _err);
-    } finally {
-      setIsLoadingSources(false);
     }
-  };
+    setUploading(false)
+    setUploadProgress('')
+    await loadSources()
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }
 
-  const handleUploadText = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!textTitle.trim() || !textContent.trim()) {
-      setError("Title and content are required.");
-      return;
-    }
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Delete "${name}" from your Brain?`)) return
+    await fetch('/api/brain/sources', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    })
+    await loadSources()
+  }
 
-    setIsLoading(true);
-    setError(null);
-    setSuccess(null);
+  const formatSize = (bytes: number) => {
+    if (!bytes) return '—'
+    if (bytes < 1024) return `${bytes} B`
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+  }
 
-    try {
-      const res = await fetch("/api/knowledge/embed", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: textTitle,
-          content: textContent,
-          source_type: "text"
-        }),
-      });
+  const formatDate = (iso: string) => new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
 
-      const data = await res.json();
-      if (res.ok) {
-        setSuccess(`Successfully embedded ${data.chunks_embedded} chunks.`);
-        setTextTitle("");
-        setTextContent("");
-        fetchSources();
-      } else {
-        setError(data.error || "Failed to upload to brain.");
-      }
-    } catch (_err: unknown) {
-      setError("An unexpected error occurred.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleUploadUrl = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!urlInput.trim()) {
-      setError("URL is required.");
-      return;
-    }
-
-    setIsFetchingUrl(true);
-    setError(null);
-    setSuccess(null);
-
-    try {
-      // 1. Fetch content from URL
-      const fetchRes = await fetch("/api/knowledge/fetch-url", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: urlInput }),
-      });
-
-      const fetchData = await fetchRes.json();
-      if (!fetchRes.ok) {
-        throw new Error(fetchData.error || "Failed to fetch URL content.");
-      }
-
-      const finalTitle = urlTitle.trim() || fetchData.title || urlInput;
-
-      setIsFetchingUrl(false);
-      setIsLoading(true);
-
-      // 2. Embed the content
-      const embedRes = await fetch("/api/knowledge/embed", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: finalTitle,
-          content: fetchData.content,
-          source_type: "url",
-          file_url: urlInput
-        }),
-      });
-
-      const embedData = await embedRes.json();
-      if (embedRes.ok) {
-        setSuccess(`Successfully fetched and embedded ${embedData.chunks_embedded} chunks.`);
-        setUrlTitle("");
-        setUrlInput("");
-        fetchSources();
-      } else {
-        setError(embedData.error || "Failed to embed URL content.");
-      }
-    } catch (_err: unknown) {
-      setError(_err instanceof Error ? _err.message : "An unexpected error occurred.");
-      setIsFetchingUrl(false);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleDeleteSource = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this knowledge source?")) return;
-
-    try {
-      const res = await fetch("/api/knowledge/sources", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
-      });
-
-      if (res.ok) {
-        setSources(sources.filter(s => s.id !== id));
-      } else {
-        const data = await res.json();
-        alert(data.error || "Failed to delete source.");
-      }
-    } catch (_err: unknown) {
-      alert("An error occurred while deleting.");
-    }
-  };
+  const typeIcon: Record<string, string> = {
+    pdf: '📄', image: '🖼️', video: '🎬', pptx: '📊',
+    docx: '📝', xlsx: '📈', txt: '📋', default: '📁'
+  }
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#0A0A0A] text-[#d0c5af] p-8 lg:p-12 relative">
-      <div className="absolute inset-0 bg-[url('/bg-pattern.png')] opacity-5 pointer-events-none mix-blend-overlay"></div>
+    <div style={{ minHeight: '100vh', background: '#0A0A0A', color: '#d0c5af', fontFamily: 'Roboto, sans-serif', padding: '48px 40px' }}>
 
-      <div className="max-w-4xl mx-auto relative z-10">
-        <header className="mb-10 text-center lg:text-left flex flex-col lg:flex-row items-center justify-between">
-          <div>
-            <h1 className="font-[Orbitron] text-4xl lg:text-5xl font-bold text-[#D4AF37] tracking-widest uppercase drop-shadow-[0_0_15px_rgba(212,175,55,0.4)] flex items-center gap-4">
-              <Database className="w-10 h-10" /> KHEMET BRAIN
-            </h1>
-            <p className="font-[Rajdhani] text-xl text-white/60 mt-2 uppercase tracking-widest">
-              YOUR KNOWLEDGE VAULT
-            </p>
-          </div>
-        </header>
-
-        {error && (
-          <div className="mb-6 p-4 bg-red-950/50 border border-red-500/50 rounded-lg text-red-200 font-[Rajdhani]">
-            {error}
-          </div>
-        )}
-
-        {success && (
-          <div className="mb-6 p-4 bg-green-950/50 border border-green-500/50 rounded-lg text-green-200 font-[Rajdhani]">
-            {success}
-          </div>
-        )}
-
-        {/* Upload Section */}
-        <div className="bg-[#131313] border border-[rgba(212,175,55,0.08)] rounded-none p-6 shadow-xl mb-12">
-
-          <div className="flex border-b border-white/10 mb-6">
-            <button
-              className={`flex-1 py-4 font-[Orbitron] uppercase text-sm tracking-widest transition-colors flex justify-center items-center gap-2 ${
-                activeTab === "text"
-                  ? "text-[#D4AF37] border-b-2 border-[#D4AF37] bg-white/5"
-                  : "text-white/40 hover:text-white/70"
-              }`}
-              onClick={() => setActiveTab("text")}
-            >
-              <FileText className="w-4 h-4" /> Paste Text
-            </button>
-            <button
-              className={`flex-1 py-4 font-[Orbitron] uppercase text-sm tracking-widest transition-colors flex justify-center items-center gap-2 ${
-                activeTab === "url"
-                  ? "text-[#D4AF37] border-b-2 border-[#D4AF37] bg-white/5"
-                  : "text-white/40 hover:text-white/70"
-              }`}
-              onClick={() => setActiveTab("url")}
-            >
-              <Globe className="w-4 h-4" /> Enter URL
-            </button>
-          </div>
-
-          {activeTab === "text" && (
-            <form onSubmit={handleUploadText} className="space-y-4">
-              <div>
-                <label className="block font-[Orbitron] text-xs text-[#D4AF37] mb-2 uppercase tracking-widest">
-                  Document Title
-                </label>
-                <input
-                  type="text"
-                  value={textTitle}
-                  onChange={(e) => setTextTitle(e.target.value)}
-                  placeholder="e.g., Project Specifications"
-                  className="w-full bg-black/50 border border-[rgba(212,175,55,0.2)] p-3 text-lg focus:outline-none focus:border-[#D4AF37] transition-colors placeholder:text-gray-700"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block font-[Orbitron] text-xs text-[#D4AF37] mb-2 uppercase tracking-widest">
-                  Content to Embed
-                </label>
-                <textarea
-                  value={textContent}
-                  onChange={(e) => setTextContent(e.target.value)}
-                  placeholder="Paste your text here..."
-                  className="w-full bg-black/50 border border-[rgba(212,175,55,0.2)] p-3 h-48 text-lg focus:outline-none focus:border-[#D4AF37] transition-colors placeholder:text-gray-700 resize-y"
-                  required
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full mt-4 flex items-center justify-center gap-2 bg-gradient-to-r from-[#f2ca50] to-[#D4AF37] text-black font-[Orbitron] text-sm font-bold tracking-widest uppercase py-4 hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <PlusCircle className="w-5 h-5" />}
-                {isLoading ? "EMBEDDING..." : "UPLOAD TO BRAIN"}
-              </button>
-            </form>
-          )}
-
-          {activeTab === "url" && (
-            <form onSubmit={handleUploadUrl} className="space-y-4">
-              <div>
-                <label className="block font-[Orbitron] text-xs text-[#D4AF37] mb-2 uppercase tracking-widest">
-                  Document Title (Optional)
-                </label>
-                <input
-                  type="text"
-                  value={urlTitle}
-                  onChange={(e) => setUrlTitle(e.target.value)}
-                  placeholder="Auto-detected if left blank"
-                  className="w-full bg-black/50 border border-[rgba(212,175,55,0.2)] p-3 text-lg focus:outline-none focus:border-[#D4AF37] transition-colors placeholder:text-gray-700"
-                />
-              </div>
-              <div>
-                <label className="block font-[Orbitron] text-xs text-[#D4AF37] mb-2 uppercase tracking-widest">
-                  Target URL
-                </label>
-                <input
-                  type="url"
-                  value={urlInput}
-                  onChange={(e) => setUrlInput(e.target.value)}
-                  placeholder="https://example.com/article"
-                  className="w-full bg-black/50 border border-[rgba(212,175,55,0.2)] p-3 text-lg focus:outline-none focus:border-[#D4AF37] transition-colors placeholder:text-gray-700"
-                  required
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={isLoading || isFetchingUrl}
-                className="w-full mt-4 flex items-center justify-center gap-2 bg-gradient-to-r from-[#f2ca50] to-[#D4AF37] text-black font-[Orbitron] text-sm font-bold tracking-widest uppercase py-4 hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isLoading || isFetchingUrl ? <Loader2 className="w-5 h-5 animate-spin" /> : <Globe className="w-5 h-5" />}
-                {isFetchingUrl ? "FETCHING CONTENT..." : isLoading ? "EMBEDDING..." : "FETCH & UPLOAD"}
-              </button>
-            </form>
-          )}
-
-        </div>
-
-        {/* Sources List */}
-        <div>
-          <h2 className="font-[Orbitron] text-2xl font-bold text-[#D4AF37] tracking-widest uppercase mb-6 flex items-center gap-3">
-             UPLOADED SOURCES
-          </h2>
-
-          {isLoadingSources ? (
-            <div className="flex justify-center p-12">
-              <Loader2 className="w-8 h-8 text-[#D4AF37] animate-spin" />
-            </div>
-          ) : sources.length === 0 ? (
-            <div className="bg-[#131313] border border-[rgba(212,175,55,0.08)] p-12 text-center rounded-none shadow-md">
-              <Database className="w-12 h-12 text-white/10 mx-auto mb-4" />
-              <h3 className="font-[Orbitron] text-xl text-white/60 tracking-widest uppercase mb-2">NO KNOWLEDGE UPLOADED YET</h3>
-              <p className="font-[Rajdhani] text-white/40">Upload text or URLs above to start building your personal knowledge vault.</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {sources.map(source => (
-                <div key={source.id} className="bg-[#131313] border border-[rgba(212,175,55,0.08)] p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all hover:border-[rgba(212,175,55,0.3)]">
-                  <div className="flex items-center gap-4">
-                    <div className="bg-black/50 p-3 rounded-full border border-white/5">
-                      {source.source_type === 'url' ? <Globe className="w-6 h-6 text-[#D4AF37]" /> : <FileText className="w-6 h-6 text-[#D4AF37]" />}
-                    </div>
-                    <div>
-                      <h4 className="font-[Orbitron] text-lg font-semibold text-white tracking-wider">{source.title}</h4>
-                      <div className="flex items-center gap-3 mt-1 font-[Rajdhani] text-sm text-white/50">
-                        <span className="uppercase text-xs tracking-widest bg-white/5 px-2 py-0.5 rounded text-[#D4AF37]">
-                          {source.source_type}
-                        </span>
-                        <span>{source.chunk_count} chunks</span>
-                        <span>•</span>
-                        <span>{new Date(source.created_at).toLocaleDateString()}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => handleDeleteSource(source.id)}
-                    className="p-2 text-white/40 hover:text-red-500 hover:bg-red-500/10 transition-colors border border-transparent rounded"
-                    title="Delete Source"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
+      {/* Header */}
+      <div style={{ borderBottom: '1px solid rgba(212,175,55,0.2)', paddingBottom: '28px', marginBottom: '40px' }}>
+        <div style={{ fontSize: '9px', letterSpacing: '0.2em', color: 'rgba(212,175,55,0.5)', marginBottom: '10px' }}>KHEMET.AI</div>
+        <h1 style={{ fontFamily: 'Cinzel Decorative, serif', fontSize: '28px', color: '#D4AF37', letterSpacing: '0.08em', margin: '0 0 8px' }}>
+          KHEMET BRAIN
+        </h1>
+        <p style={{ fontSize: '13px', color: 'rgba(208,197,175,0.5)', margin: 0 }}>
+          Your global knowledge vault. Every agent reads this before responding.
+        </p>
       </div>
+
+      {/* Upload Zone */}
+      <div
+        onClick={() => !uploading && fileInputRef.current?.click()}
+        style={{
+          border: '1px dashed rgba(212,175,55,0.3)',
+          padding: '40px',
+          textAlign: 'center',
+          cursor: uploading ? 'not-allowed' : 'pointer',
+          marginBottom: '40px',
+          background: 'rgba(212,175,55,0.02)',
+          transition: 'border-color 0.2s',
+        }}
+      >
+        <div style={{ fontSize: '32px', marginBottom: '12px' }}>⬆</div>
+        <div style={{ fontFamily: 'monospace', fontSize: '11px', letterSpacing: '0.12em', color: '#D4AF37', marginBottom: '8px' }}>
+          {uploading ? uploadProgress : 'UPLOAD TO BRAIN'}
+        </div>
+        <div style={{ fontSize: '11px', color: 'rgba(208,197,175,0.4)' }}>
+          PDF · DOCX · XLSX · PPT · TXT · Images · Video
+        </div>
+        <input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          accept=".pdf,.docx,.xlsx,.pptx,.txt,.png,.jpg,.jpeg,.gif,.webp,.mp4,.mov,.avi"
+          onChange={handleUpload}
+          style={{ display: 'none' }}
+        />
+      </div>
+
+      {error && (
+        <div style={{ background: 'rgba(255,80,80,0.1)', border: '1px solid rgba(255,80,80,0.3)', padding: '12px 16px', marginBottom: '24px', fontSize: '12px', color: 'rgba(255,120,120,0.9)' }}>
+          {error}
+        </div>
+      )}
+
+      {/* Sources List */}
+      <div style={{ marginBottom: '16px', fontSize: '9px', letterSpacing: '0.14em', color: 'rgba(212,175,55,0.5)' }}>
+        KNOWLEDGE SOURCES ({sources.length})
+      </div>
+
+      {sources.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '60px 0', color: 'rgba(208,197,175,0.25)', fontSize: '12px' }}>
+          Brain is empty. Upload your first document to begin.
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          {sources.map(source => (
+            <div key={source.id} style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '14px 16px',
+              border: '1px solid rgba(212,175,55,0.12)',
+              background: 'rgba(212,175,55,0.02)',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: 0 }}>
+                <span style={{ fontSize: '20px' }}>{typeIcon[source.type] || typeIcon.default}</span>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontSize: '13px', color: '#d0c5af', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {source.name}
+                  </div>
+                  <div style={{ fontSize: '10px', color: 'rgba(208,197,175,0.4)', marginTop: '2px', letterSpacing: '0.06em' }}>
+                    {source.type.toUpperCase()} · {formatSize(source.file_size)} · {formatDate(source.created_at)}
+                  </div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexShrink: 0 }}>
+                <span style={{
+                  fontSize: '9px', letterSpacing: '0.1em',
+                  color: source.status === 'ready' ? 'rgba(100,220,100,0.7)' : 'rgba(212,175,55,0.5)',
+                  fontFamily: 'monospace',
+                }}>
+                  {source.status.toUpperCase()}
+                </span>
+                <button
+                  onClick={() => handleDelete(source.id, source.name)}
+                  style={{ background: 'none', border: 'none', color: 'rgba(255,80,80,0.5)', cursor: 'pointer', fontSize: '16px', padding: '4px' }}
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
-  );
+  )
 }
