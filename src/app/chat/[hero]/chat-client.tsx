@@ -575,39 +575,18 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
       const skillKey = `${heroParam.toLowerCase()}-${agentParam}`
       const skill = agentSkills[skillKey]
       if (skill) {
-        // Wait for real username — retry once after 600ms if profile not loaded
-        const resolveAndStart = () => {
+        const timer = setTimeout(() => {
           const username = profile?.username
             || user?.email?.split('@')[0]
-            || null
+            || 'Commander'
 
-          if (!username) {
-            // Profile not loaded yet — wait and retry
-            setTimeout(() => {
-              const retryUsername = profile?.username
-                || user?.email?.split('@')[0]
-                || 'Commander'
-              const opening = skill.openingMessage(retryUsername)
-              let i = 0
-              setTypewriterText('')
-              setTypewriterDone(false)
-              const interval = setInterval(() => {
-                if (i < opening.length) {
-                  setTypewriterText(opening.slice(0, i + 1))
-                  i++
-                } else {
-                  setTypewriterDone(true)
-                  clearInterval(interval)
-                }
-              }, 18)
-            }, 600)
-            return
-          }
+          if (!skill?.openingMessage) return
 
           const opening = skill.openingMessage(username)
           let i = 0
           setTypewriterText('')
           setTypewriterDone(false)
+
           const interval = setInterval(() => {
             if (i < opening.length) {
               setTypewriterText(opening.slice(0, i + 1))
@@ -617,10 +596,11 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
               clearInterval(interval)
             }
           }, 18)
-        }
 
-        resolveAndStart()
-        return
+          return () => clearInterval(interval)
+        }, 800)
+
+        return () => clearTimeout(timer)
       }
     }
 
@@ -637,7 +617,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
       }
     }, 18)
     return () => clearInterval(interval)
-  }, [agent?.id, agent?.name, agentParam, heroParam, messages.length, profile, user?.email])
+  }, [agent?.id, agent?.name, agentParam, heroParam, messages.length])
 
   useEffect(() => {
     const taskParam = searchParams.get('task');
