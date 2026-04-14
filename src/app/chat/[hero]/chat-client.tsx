@@ -129,13 +129,17 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
   const agentParam = searchParams.get("agent") || "";
   const isMaster = heroParam === "master";
   const [user, setUser] = useState<{ email?: string; user_metadata?: { full_name?: string } } | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const userRef = useRef<any>(null);
   const [profile, setProfile] = useState<{ username?: string } | null>(null);
+  const profileRef = useRef<{ username?: string } | null>(null);
 
   useEffect(() => {
     const fetchUserAndProfile = async () => {
       const supabase = createClient();
       const { data } = await supabase.auth.getUser();
       setUser(data.user);
+      userRef.current = data.user;
 
       if (data.user) {
         const { data: profileData } = await supabase
@@ -144,6 +148,7 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
           .eq('id', data.user.id)
           .single();
         setProfile(profileData);
+        profileRef.current = profileData;
       }
     };
     fetchUserAndProfile();
@@ -576,8 +581,8 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
       const skill = agentSkills[skillKey]
       if (skill) {
         const timer = setTimeout(() => {
-          const username = profile?.username
-            || user?.email?.split('@')[0]
+          const username = profileRef.current?.username
+            || userRef.current?.email?.split('@')[0]
             || 'Commander'
 
           if (!skill?.openingMessage) return
