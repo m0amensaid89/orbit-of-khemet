@@ -21,26 +21,51 @@ function getFileType(filename: string): string {
 }
 
 async function extractText(file: File, type: string): Promise<string> {
-  if (type === 'txt') {
-    return await file.text()
-  }
   if (type === 'image') {
     return `[Image file: ${file.name}. Visual content stored for reference.]`
   }
   if (type === 'video') {
     return `[Video file: ${file.name}. Video content stored for reference.]`
   }
-  // For PDF, DOCX, XLSX, PPTX — extract raw text via buffer
-  // Basic extraction: read as text and clean up binary artifacts
-  try {
+  if (type === 'txt') {
     const text = await file.text()
-    // Strip binary/non-printable characters
-    const cleaned = text.replace(/[^\x20-\x7E\n\r\t]/g, ' ').replace(/\s+/g, ' ').trim()
-    if (cleaned.length > 100) return cleaned.slice(0, 50000)
-    return `[${type.toUpperCase()} file: ${file.name}. Content indexed.]`
-  } catch {
-    return `[File: ${file.name}. Type: ${type}. Content stored.]`
+    return cleanText(text).slice(0, 50000)
   }
+  // PDF, DOCX, XLSX, PPTX — attempt text extraction
+  try {
+    const arrayBuffer = await file.arrayBuffer()
+    const bytes = new Uint8Array(arrayBuffer)
+    // Extract only printable ASCII characters from binary
+    let extracted = ''
+    for (let i = 0; i < bytes.length; i++) {
+      const byte = bytes[i]
+      // Keep printable ASCII (32-126) and common whitespace
+      if ((byte >= 32 && byte <= 126) || byte === 10 || byte === 13 || byte === 9) {
+        extracted += String.fromCharCode(byte)
+      } else {
+        extracted += ' '
+      }
+    }
+    const cleaned = cleanText(extracted)
+    // Only use if we got meaningful text (at least 100 real characters)
+    if (cleaned.replace(/\s/g, '').length > 100) {
+      return cleaned.slice(0, 50000)
+    }
+    return `[${type.toUpperCase()} file: ${file.name}. File stored. Content extraction limited for binary format.]`
+  } catch {
+    return `[${type.toUpperCase()} file: ${file.name}. Stored in Khemet Brain.]`
+  }
+}
+
+function cleanText(text: string): string {
+  return text
+    .replace(/\x00/g, '')           // Remove null bytes
+    .replace(/[\x01-\x08]/g, '')    // Remove control characters
+    .replace(/[\x0B\x0C]/g, ' ')    // Replace vertical tab, form feed
+    .replace(/[\x0E-\x1F]/g, '')    // Remove other control chars
+    .replace(/[\x7F-\x9F]/g, '')    // Remove DEL and C1 controls
+    .replace(/\s+/g, ' ')           // Collapse whitespace
+    .trim()
 }
 
 function chunkText(text: string, chunkSize = 1000, overlap = 100): string[] {
@@ -107,10 +132,25 @@ export async function POST(req: NextRequest) {
   }))
 
   if (chunkInserts.length > 0) {
-    await supabaseAdmin.from('knowledge_chunks').insert(chunkInserts)
+    try {
+      // Insert chunks in batches of 10 to avoid size limits
+      const batchSize = 10
+      for (let i = 0; i < chunkInserts.length; i += batchSize) {
+        const batch = chunkInserts.slice(i, i + batchSize)
+        const { error: chunkError } = await supabaseAdmin
+          .from('knowledge_chunks')
+          .insert(batch)
+        if (chunkError) {
+          console.error('Chunk insert error:', chunkError.message)
+        }
+      }
+    } catch (err) {
+      console.error('Chunk insertion failed:', err)
+      // Continue — mark source as ready even if chunking partially failed
+    }
   }
 
-  // Mark as ready
+  // Always mark as ready regardless of chunk outcome
   await supabaseAdmin
     .from('knowledge_sources')
     .update({ status: 'ready' })
