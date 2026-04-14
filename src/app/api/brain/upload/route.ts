@@ -3,6 +3,8 @@ export const runtime = 'nodejs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createSupabaseAdmin } from '@supabase/supabase-js'
+import mammoth from 'mammoth'
+import pdfParse from 'pdf-parse'
 
 const supabaseAdmin = createSupabaseAdmin(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -30,16 +32,60 @@ function sanitizeFilename(name: string): string {
 async function extractText(file: File, type: string): Promise<string> {
   if (type === 'image') return `[Image: ${file.name}]`
   if (type === 'video') return `[Video: ${file.name}]`
-  if (type === 'txt' || type === 'md') {
+
+  if (type === 'txt') {
+    const text = await file.text()
+    return text.replace(/\x00/g, '').slice(0, 50000)
+  }
+
+  const arrayBuffer = await file.arrayBuffer()
+  const buffer = Buffer.from(arrayBuffer)
+
+  if (type === 'pdf') {
     try {
-      const text = await file.text()
-      return text.replace(/\x00/g, '').slice(0, 30000)
-    } catch {
-      return `[TXT: ${file.name}]`
+      const data = await pdfParse(buffer, { max: 0 })
+      const text = data.text?.replace(/\x00/g, '').trim() || ''
+      if (text.length > 50) return text.slice(0, 50000)
+      return `[PDF: ${file.name} — ${data.numpages || 0} pages stored in Khemet Brain]`
+    } catch (err) {
+      console.error('PDF parse error:', err)
+      return `[PDF: ${file.name} — stored in Khemet Brain]`
     }
   }
+
+  if (type === 'docx') {
+    try {
+      const result = await mammoth.extractRawText({ buffer })
+      const text = result.value?.replace(/\x00/g, '').trim() || ''
+      if (text.length > 50) return text.slice(0, 50000)
+      return `[DOCX: ${file.name} — stored in Khemet Brain]`
+    } catch (err) {
+      console.error('DOCX parse error:', err)
+      return `[DOCX: ${file.name} — stored in Khemet Brain]`
+    }
+  }
+
+  if (type === 'xlsx') {
+    try {
+      const XLSX = await import('xlsx')
+      const workbook = XLSX.read(buffer, { type: 'buffer' })
+      const lines: string[] = []
+      for (const sheetName of workbook.SheetNames) {
+        const sheet = workbook.Sheets[sheetName]
+        const csv = XLSX.utils.sheet_to_csv(sheet)
+        lines.push(`=== Sheet: ${sheetName} ===\n${csv}`)
+      }
+      const text = lines.join('\n\n').replace(/\x00/g, '').trim()
+      if (text.length > 50) return text.slice(0, 50000)
+      return `[XLSX: ${file.name} — stored in Khemet Brain]`
+    } catch (err) {
+      console.error('XLSX parse error:', err)
+      return `[XLSX: ${file.name} — stored in Khemet Brain]`
+    }
+  }
+
+  // PPTX and other binary formats — best-effort ASCII extraction
   try {
-    const arrayBuffer = await file.arrayBuffer()
     const uint8 = new Uint8Array(arrayBuffer)
     const chars: string[] = []
     const limit = Math.min(uint8.length, 150000)
@@ -52,7 +98,8 @@ async function extractText(file: File, type: string): Promise<string> {
     const extracted = chars.join('').replace(/\s{4,}/g, '   ').trim().slice(0, 30000)
     if (extracted.replace(/\s/g, '').length > 80) return extracted
   } catch { }
-  return `[${type.toUpperCase()}: ${file.name} stored in Khemet Brain]`
+
+  return `[${type.toUpperCase()}: ${file.name} — stored in Khemet Brain]`
 }
 
 function chunkText(text: string, size = 1500): string[] {
@@ -94,7 +141,12 @@ export async function POST(req: NextRequest) {
     const text = await extractText(file, fileType)
     const chunks = chunkText(text)
     for (let i = 0; i < chunks.length; i += 5) {
-      const batch = chunks.slice(i, i + 5).map((content, idx) => ({ source_id: source.id, user_id: user.id, content, chunk_index: i + idx }))
+      const batch = chunks.slice(i, i + 5).map((content, idx) => ({
+        source_id: source.id,
+        user_id: user.id,
+        content,
+        chunk_index: i + idx,
+      }))
       try {
         await supabaseAdmin.from('knowledge_chunks').insert(batch)
       } catch { }
