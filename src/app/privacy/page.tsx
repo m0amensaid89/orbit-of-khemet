@@ -51,7 +51,7 @@ export default function PrivacyPage() {
         </Section>
 
         <Section title="7. YOUR RIGHTS">
-          Depending on your location, you may have the following rights regarding your personal data: Right to access the data we hold about you. Right to correct inaccurate data. Right to delete your data (&quot;right to be forgotten&quot;). Right to portability of your data. Right to object to certain processing. To exercise any of these rights, contact us at privacy@khemet.ai. We will respond within 30 days.
+          Depending on your location, you may have the following rights regarding your personal data: Right to access the data we hold about you. Right to correct inaccurate data. Right to delete your data (&quot;right to be forgotten&quot;). Right to portability of your data. Right to object to certain processing. To exercise any of these rights, contact us at Moamen@khemet.ai. We will respond within 30 days.
         </Section>
 
         <Section title="8. GDPR COMPLIANCE">
@@ -63,7 +63,7 @@ export default function PrivacyPage() {
         </Section>
 
         <Section title="10. SECURITY">
-          We implement industry-standard security measures to protect your data including encrypted data transmission (HTTPS), secure database hosting via Supabase, authentication via established OAuth providers, and row-level security policies on all database tables. No method of transmission or storage is 100% secure. If you become aware of any security issue, please contact security@khemet.ai.
+          We implement industry-standard security measures to protect your data including encrypted data transmission (HTTPS), secure database hosting via Supabase, authentication via established OAuth providers, and row-level security policies on all database tables. No method of transmission or storage is 100% secure. If you become aware of any security issue, please contact Moamen@khemet.ai.
         </Section>
 
         <Section title="11. CHILDREN'S PRIVACY">
@@ -75,7 +75,7 @@ export default function PrivacyPage() {
         </Section>
 
         <Section title="13. CONTACT">
-          For privacy-related questions or to exercise your rights: privacy@khemet.ai
+          For privacy-related questions or to exercise your rights: Moamen@khemet.ai
         </Section>
 
       </div>

@@ -230,109 +230,69 @@ function HubPageContent() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-7 gap-2 md:gap-3 w-full mx-auto" style={{ maxWidth: '1920px' }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+            gap: '16px',
+            padding: '32px',
+          }}>
             {filtered.map(({ slug, data, meta }, i) => (
               <motion.div key={slug}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: i * 0.07 }}>
                 <Link href={`/heroes/${slug}`} className="group block h-full">
-                  <div className="h-full flex flex-col transition-all duration-300"
+                  {/* Hero Card */}
+                  <div
                     style={{
-                      background: '#111111',
-                      border: '1px solid rgba(212,175,55,0.08)',
-                      borderTop: `3px solid ${meta?.color_signature || data.accentColor}`,
+                      position: 'relative',
+                      width: '100%',
+                      aspectRatio: '3/4',
+                      overflow: 'hidden',
+                      cursor: 'pointer',
+                      border: '1px solid rgba(212,175,55,0.2)',
+                      background: '#0A0A0A',
                     }}
-                    onMouseEnter={e => {
-                      (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 30px ${meta?.color_signature}20`;
-                    }}
-                    onMouseLeave={e => {
-                      (e.currentTarget as HTMLDivElement).style.boxShadow = 'none';
+                  >
+                    <Image
+                      src={`/${slug}.png`}
+                      alt={data.name}
+                      fill
+                      style={{ objectFit: 'cover', objectPosition: 'top center' }}
+                      sizes="(max-width: 768px) 50vw, 25vw"
+                    />
+                    {/* Gradient overlay at bottom */}
+                    <div style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      padding: '20px 16px 16px',
+                      background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%)',
                     }}>
-
-                    {/* Hero image — full width, flexible aspect ratio */}
-                    <div className="relative w-full overflow-hidden aspect-[3/4] max-h-[300px]">
-                      <Image
-                        src={`/${slug}.png`}
-                        alt={data.name}
-                        fill
-                        className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
-
-                      />
-                      <div className="absolute inset-0"
-                        style={{ background: 'linear-gradient(to top, #111111 0%, transparent 60%)' }} />
-                    </div>
-
-                    {/* Content */}
-                    <div className="p-2 sm:p-3 lg:p-5 flex flex-col gap-2 lg:gap-3 flex-1 overflow-hidden">
-
-                      {/* Hero name (Main title) */}
-                      <div style={{ minHeight: '32px' }} className="flex flex-col justify-end">
-                        <h2 className="font-[Orbitron] text-empire-lg font-black tracking-tight uppercase leading-tight"
-                          style={{ color: meta?.color_signature || data.accentColor, wordBreak: 'break-word' }}>
-                          {
-                            slug === 'thoren' ? 'THOREN The Law' :
-                            slug === 'ramet' ? 'RAMET The Stabilizer' :
-                            slug === 'nexar' ? 'NEXAR The Destabilizer' :
-                            slug === 'lyra' ? 'LYRA The Signal' :
-                            slug === 'kairo' ? 'KAIRO The Gridwalker' :
-                            slug === 'nefra' ? 'NEFRA The Keeper' :
-                            slug === 'horusen' ? 'HORUSEN The Closer' :
-                            data.name
-                          }
-                        </h2>
+                      <div style={{ fontFamily: 'Cinzel Decorative, serif', fontSize: '14px', color: '#D4AF37', letterSpacing: '0.08em' }}>
+                        {
+                          slug === 'thoren' ? 'THOREN The Law' :
+                          slug === 'ramet' ? 'RAMET The Stabilizer' :
+                          slug === 'nexar' ? 'NEXAR The Destabilizer' :
+                          slug === 'lyra' ? 'LYRA The Signal' :
+                          slug === 'kairo' ? 'KAIRO The Gridwalker' :
+                          slug === 'nefra' ? 'NEFRA The Keeper' :
+                          slug === 'horusen' ? 'HORUSEN The Closer' :
+                          data.name
+                        }
                       </div>
-
-                      {/* Subtitle */}
-                      <div style={{ minHeight: '28px' }}>
-                        <p className="font-[Orbitron] text-empire-sm tracking-widest uppercase leading-tight mt-0.5"
-                          style={{ color: '#ffffff', wordBreak: 'break-word' }}>
-                          {
-                            slug === 'thoren' ? 'Governance & Finance Strategist' :
-                            slug === 'ramet' ? 'Operations & Execution Lead' :
-                            slug === 'nexar' ? 'Transformation Architect' :
-                            slug === 'lyra' ? 'Growth Content & Virality Engine' :
-                            slug === 'kairo' ? 'Social & Creator Systems Director' :
-                            slug === 'nefra' ? 'Experience & Relationship Guardian' :
-                            slug === 'horusen' ? 'Revenue, Offers & Deals Strategist' :
-                            meta?.archetype || data.role
-                          }
-                        </p>
-                      </div>
-
-                      {/* Agent count */}
-                      <div className="flex items-center gap-1.5 mt-auto pt-1">
-                        <span className="font-[Orbitron] text-sm lg:text-lg font-bold" style={{ color: '#D4AF37' }}>
-                          {heroAgents[slug as keyof typeof heroAgents]?.length || 0}
-                        </span>
-                        <span className="font-[Orbitron] text-[6px] sm:text-[7px] lg:text-[8px] tracking-[2px] uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>
-                          AGENTS
-                        </span>
-                      </div>
-
-                      {/* Two action buttons side-by-side */}
-                      <div className="flex flex-row gap-1.5 pt-2"
-                        style={{ borderTop: `1px solid ${meta?.color_signature || '#D4AF37'}15` }}>
-                        <Link href={`/chat/${slug}`} className="flex-1 min-w-0 flex" onClick={e => e.stopPropagation()}>
-                          <button className="w-full flex-1 font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[7px] 2xl:text-[9px] tracking-widest uppercase py-1.5 transition-all overflow-hidden whitespace-nowrap text-center rounded-full"
-                            style={{
-                              background: `linear-gradient(135deg, ${meta?.color_signature}, ${meta?.color_signature}cc)`,
-                              color: '#0A0A0A',
-                              fontWeight: 700,
-                            }}>
-                            ENTER
-                          </button>
-                        </Link>
-                        <Link href={`/heroes/${slug}`} className="flex-1 min-w-0 flex" onClick={e => e.stopPropagation()}>
-                          <button className="w-full flex-1 font-[Orbitron] text-[5px] sm:text-[6px] lg:text-[7px] 2xl:text-[9px] tracking-widest uppercase py-1.5 transition-all overflow-hidden whitespace-nowrap text-center rounded-full"
-                            style={{
-                              background: 'transparent',
-                              border: `1px solid ${meta?.color_signature}40`,
-                              color: meta?.color_signature,
-                            }}>
-                            DETAILS
-                          </button>
-                        </Link>
+                      <div style={{ fontFamily: 'monospace', fontSize: '9px', color: 'rgba(208,197,175,0.5)', letterSpacing: '0.12em', marginTop: '4px' }}>
+                        {
+                          slug === 'thoren' ? 'Governance & Finance Strategist' :
+                          slug === 'ramet' ? 'Operations & Execution Lead' :
+                          slug === 'nexar' ? 'Transformation Architect' :
+                          slug === 'lyra' ? 'Growth Content & Virality Engine' :
+                          slug === 'kairo' ? 'Social & Creator Systems Director' :
+                          slug === 'nefra' ? 'Experience & Relationship Guardian' :
+                          slug === 'horusen' ? 'Revenue, Offers & Deals Strategist' :
+                          meta?.archetype || data.role
+                        }
                       </div>
                     </div>
                   </div>
