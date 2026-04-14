@@ -4,8 +4,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createSupabaseAdmin } from '@supabase/supabase-js'
 import mammoth from 'mammoth'
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const pdfParse = require('pdf-parse')
 
 const supabaseAdmin = createSupabaseAdmin(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -30,6 +28,45 @@ function sanitizeFilename(name: string): string {
   return name.replace(/[^a-zA-Z0-9._-]/g, '_').replace(/_+/g, '_')
 }
 
+async function extractTextFromPDF(buffer: Buffer): Promise<string> {
+  // Extract readable text from PDF by scanning for text streams
+  // PDF text is stored between BT and ET markers in streams
+  const content = buffer.toString('latin1')
+  const textParts: string[] = []
+
+  // Extract text between parentheses in PDF streams (Tj and TJ operators)
+  const tjRegex = /\(([^)]{1,500})\)\s*Tj/g
+  const tjArrayRegex = /\[([^\]]{1,2000})\]\s*TJ/g
+
+  let match
+  while ((match = tjRegex.exec(content)) !== null) {
+    const text = match[1]
+      .replace(/\\n/g, '\n')
+      .replace(/\\r/g, '')
+      .replace(/\\t/g, '\t')
+      .replace(/\\\\/g, '\\')
+      .replace(/\\\(/g, '(')
+      .replace(/\\\)/g, ')')
+      .replace(/[^\x20-\x7E\n\t]/g, ' ')
+      .trim()
+    if (text.length > 2) textParts.push(text)
+  }
+
+  while ((match = tjArrayRegex.exec(content)) !== null) {
+    const inner = match[1]
+    const innerMatches = inner.match(/\(([^)]{1,200})\)/g) || []
+    for (const m of innerMatches) {
+      const text = m.slice(1, -1)
+        .replace(/[^\x20-\x7E\n\t]/g, ' ')
+        .trim()
+      if (text.length > 2) textParts.push(text)
+    }
+  }
+
+  const result = textParts.join(' ').replace(/\s{3,}/g, '  ').trim()
+  return result.length > 50 ? result.slice(0, 50000) : `[PDF: stored in Khemet Brain]`
+}
+
 async function extractText(file: File, type: string): Promise<string> {
   if (type === 'image') return `[Image: ${file.name}]`
   if (type === 'video') return `[Video: ${file.name}]`
@@ -44,12 +81,10 @@ async function extractText(file: File, type: string): Promise<string> {
 
   if (type === 'pdf') {
     try {
-      const data = await pdfParse(buffer, { max: 0 })
-      const text = data.text?.replace(/\x00/g, '').trim() || ''
-      if (text.length > 50) return text.slice(0, 50000)
-      return `[PDF: ${file.name} — ${data.numpages || 0} pages stored in Khemet Brain]`
-    } catch (err) {
-      console.error('PDF parse error:', err)
+      const result = await extractTextFromPDF(buffer)
+      if (result && result !== `[PDF: stored in Khemet Brain]`) return result;
+      return `[PDF: ${file.name} — stored in Khemet Brain]`
+    } catch {
       return `[PDF: ${file.name} — stored in Khemet Brain]`
     }
   }
@@ -57,11 +92,10 @@ async function extractText(file: File, type: string): Promise<string> {
   if (type === 'docx') {
     try {
       const result = await mammoth.extractRawText({ buffer })
-      const text = result.value?.replace(/\x00/g, '').trim() || ''
+      const text = (result.value || '').replace(/\x00/g, '').trim()
       if (text.length > 50) return text.slice(0, 50000)
       return `[DOCX: ${file.name} — stored in Khemet Brain]`
-    } catch (err) {
-      console.error('DOCX parse error:', err)
+    } catch {
       return `[DOCX: ${file.name} — stored in Khemet Brain]`
     }
   }
@@ -79,13 +113,12 @@ async function extractText(file: File, type: string): Promise<string> {
       const text = lines.join('\n\n').replace(/\x00/g, '').trim()
       if (text.length > 50) return text.slice(0, 50000)
       return `[XLSX: ${file.name} — stored in Khemet Brain]`
-    } catch (err) {
-      console.error('XLSX parse error:', err)
+    } catch {
       return `[XLSX: ${file.name} — stored in Khemet Brain]`
     }
   }
 
-  // PPTX and other binary formats — best-effort ASCII extraction
+  // PPTX and other binary
   try {
     const uint8 = new Uint8Array(arrayBuffer)
     const chars: string[] = []
