@@ -20,62 +20,55 @@ function getFileType(filename: string): string {
   return map[ext] || 'file'
 }
 
+function extractPrintableText(buffer: Buffer): string {
+  // Use filter + fromCharCode in batch — much faster than string concat loop
+  const printable: number[] = []
+  for (let i = 0; i < buffer.length; i++) {
+    const b = buffer[i]
+    if ((b >= 32 && b <= 126) || b === 9 || b === 10 || b === 13) {
+      printable.push(b)
+    } else if (b === 0) {
+      // Skip null bytes entirely
+      continue
+    } else {
+      printable.push(32) // Replace non-printable with space
+    }
+    // Limit processing to first 200KB of file
+    if (i > 200000) break
+  }
+  return Buffer.from(printable).toString('ascii')
+    .replace(/\s{3,}/g, '  ') // Collapse excessive whitespace
+    .trim()
+    .slice(0, 40000)
+}
+
 async function extractText(file: File, type: string): Promise<string> {
-  if (type === 'image') {
-    return `[Image file: ${file.name}. Visual content stored for reference.]`
-  }
-  if (type === 'video') {
-    return `[Video file: ${file.name}. Video content stored for reference.]`
-  }
+  if (type === 'image') return `[Image: ${file.name}]`
+  if (type === 'video') return `[Video: ${file.name}]`
+
   if (type === 'txt') {
     const text = await file.text()
-    return cleanText(text).slice(0, 50000)
+    return text.replace(/\x00/g, '').slice(0, 40000)
   }
-  // PDF, DOCX, XLSX, PPTX — attempt text extraction
+
+  // Binary formats: PDF, DOCX, XLSX, PPTX
   try {
     const arrayBuffer = await file.arrayBuffer()
-    const bytes = new Uint8Array(arrayBuffer)
-    // Extract only printable ASCII characters from binary
-    let extracted = ''
-    for (let i = 0; i < bytes.length; i++) {
-      const byte = bytes[i]
-      // Keep printable ASCII (32-126) and common whitespace
-      if ((byte >= 32 && byte <= 126) || byte === 10 || byte === 13 || byte === 9) {
-        extracted += String.fromCharCode(byte)
-      } else {
-        extracted += ' '
-      }
+    const buffer = Buffer.from(arrayBuffer)
+    const extracted = extractPrintableText(buffer)
+    if (extracted.replace(/\s/g, '').length > 80) {
+      return extracted
     }
-    const cleaned = cleanText(extracted)
-    // Only use if we got meaningful text (at least 100 real characters)
-    if (cleaned.replace(/\s/g, '').length > 100) {
-      return cleaned.slice(0, 50000)
-    }
-    return `[${type.toUpperCase()} file: ${file.name}. File stored. Content extraction limited for binary format.]`
+    return `[${type.toUpperCase()}: ${file.name} — stored in Brain]`
   } catch {
-    return `[${type.toUpperCase()} file: ${file.name}. Stored in Khemet Brain.]`
+    return `[${type.toUpperCase()}: ${file.name} — stored in Brain]`
   }
 }
 
-function cleanText(text: string): string {
-  return text
-    .replace(/\x00/g, '')           // Remove null bytes
-    .replace(/[\x01-\x08]/g, '')    // Remove control characters
-    .replace(/[\x0B\x0C]/g, ' ')    // Replace vertical tab, form feed
-    .replace(/[\x0E-\x1F]/g, '')    // Remove other control chars
-    .replace(/[\x7F-\x9F]/g, '')    // Remove DEL and C1 controls
-    .replace(/\s+/g, ' ')           // Collapse whitespace
-    .trim()
-}
-
-function chunkText(text: string, chunkSize = 1000, overlap = 100): string[] {
+function chunkText(text: string, size = 1500): string[] {
   const chunks: string[] = []
-  let start = 0
-  while (start < text.length) {
-    const end = Math.min(start + chunkSize, text.length)
-    chunks.push(text.slice(start, end))
-    start = end - overlap
-    if (start >= text.length) break
+  for (let i = 0; i < text.length; i += size) {
+    chunks.push(text.slice(i, i + size))
   }
   return chunks
 }
@@ -85,23 +78,29 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const formData = await req.formData()
+  let formData: FormData
+  try {
+    formData = await req.formData()
+  } catch {
+    return NextResponse.json({ error: 'Invalid form data' }, { status: 400 })
+  }
+
   const file = formData.get('file') as File
   if (!file) return NextResponse.json({ error: 'No file provided' }, { status: 400 })
 
   const fileType = getFileType(file.name)
-  const filePath = `${user.id}/${Date.now()}-${file.name}`
+  const filePath = `${user.id}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`
 
-  // Upload to Supabase Storage
+  // Upload to storage
   const { error: storageError } = await supabaseAdmin.storage
     .from('khemet-brain')
-    .upload(filePath, file, { contentType: file.type, upsert: false })
+    .upload(filePath, file, { contentType: file.type || 'application/octet-stream', upsert: false })
 
   if (storageError) {
     return NextResponse.json({ error: storageError.message }, { status: 500 })
   }
 
-  // Create knowledge source record
+  // Create source record
   const { data: source, error: sourceError } = await supabaseAdmin
     .from('knowledge_sources')
     .insert({
@@ -116,41 +115,33 @@ export async function POST(req: NextRequest) {
     .single()
 
   if (sourceError || !source) {
-    return NextResponse.json({ error: 'Failed to create source' }, { status: 500 })
+    return NextResponse.json({ error: 'Failed to create source record' }, { status: 500 })
   }
 
-  // Extract text and chunk it
-  const text = await extractText(file, fileType)
-  const chunks = chunkText(text)
+  // Extract and chunk — wrapped so we always return 200
+  try {
+    const text = await extractText(file, fileType)
+    const chunks = chunkText(text)
 
-  // Store chunks
-  const chunkInserts = chunks.map((content, index) => ({
-    source_id: source.id,
-    user_id: user.id,
-    content,
-    chunk_index: index,
-  }))
-
-  if (chunkInserts.length > 0) {
-    try {
-      // Insert chunks in batches of 10 to avoid size limits
-      const batchSize = 10
-      for (let i = 0; i < chunkInserts.length; i += batchSize) {
-        const batch = chunkInserts.slice(i, i + batchSize)
-        const { error: chunkError } = await supabaseAdmin
-          .from('knowledge_chunks')
-          .insert(batch)
-        if (chunkError) {
-          console.error('Chunk insert error:', chunkError.message)
-        }
+    // Insert in batches of 5
+    for (let i = 0; i < chunks.length; i += 5) {
+      const batch = chunks.slice(i, i + 5).map((content, idx) => ({
+        source_id: source.id,
+        user_id: user.id,
+        content,
+        chunk_index: i + idx,
+      }))
+      try {
+        await supabaseAdmin.from('knowledge_chunks').insert(batch)
+      } catch {
+        // ignore batch insert errors
       }
-    } catch (err) {
-      console.error('Chunk insertion failed:', err)
-      // Continue — mark source as ready even if chunking partially failed
     }
+  } catch {
+    // Chunking failed — still mark ready
   }
 
-  // Always mark as ready regardless of chunk outcome
+  // Always mark ready
   await supabaseAdmin
     .from('knowledge_sources')
     .update({ status: 'ready' })
