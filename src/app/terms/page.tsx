@@ -85,7 +85,7 @@ export default function TermsPage() {
         </Section>
 
         <Section title="17. CONTACT">
-          For questions about these Terms, contact us at: legal@khemet.ai
+          For questions about these Terms, contact us at: Moamen@khemet.ai
         </Section>
 
       </div>

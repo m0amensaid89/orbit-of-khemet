@@ -41,7 +41,7 @@ export default function RefundPolicyPage() {
         </Section>
 
         <Section title="7. HOW TO REQUEST A REFUND">
-          To request a refund under the eligible conditions above: email refunds@khemet.ai with your account email and reason for the refund request. We will review and respond within 5 business days. Approved refunds are processed through Paddle and typically appear on your statement within 5 to 10 business days, depending on your bank or card issuer.
+          To request a refund under the eligible conditions above: email Moamen@khemet.ai with your account email and reason for the refund request. We will review and respond within 5 business days. Approved refunds are processed through Paddle and typically appear on your statement within 5 to 10 business days, depending on your bank or card issuer.
         </Section>
 
         <Section title="8. MANDATORY LOCAL LAWS">
@@ -53,7 +53,7 @@ export default function RefundPolicyPage() {
         </Section>
 
         <Section title="10. CONTACT">
-          For refund requests or questions: refunds@khemet.ai
+          For refund requests or questions: Moamen@khemet.ai
         </Section>
 
       </div>
