@@ -17,14 +17,13 @@ export default function HeroSplash({ slug }: { slug: string }) {
       style={{ borderColor: 'rgba(212,175,55,0.1)', background: hero.palette['bg-deep'] }}>
 
       {/* Left: Hero Image */}
-      <div className="relative md:w-[380px] w-full min-h-[320px] shrink-0 overflow-hidden flex items-center justify-center">
-        {/* Hero Image — full portrait */}
+      <div className="relative w-full min-h-[320px] shrink-0 overflow-hidden flex items-center justify-center flex-1">
+        {/* Hero Image — full column width */}
         <div style={{
           position: 'relative',
-          width: '280px',
-          height: '380px',
+          width: '100%',
+          height: '500px',
           overflow: 'hidden',
-          border: '1px solid rgba(212,175,55,0.3)',
           background: '#0A0A0A',
         }}>
           <Image
@@ -32,7 +31,7 @@ export default function HeroSplash({ slug }: { slug: string }) {
             alt={meta.name || slug}
             fill
             style={{ objectFit: 'cover', objectPosition: 'top center' }}
-            sizes="280px"
+            sizes="(max-width: 768px) 100vw, 400px"
             priority
           />
         </div>

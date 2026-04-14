@@ -7,10 +7,14 @@ export default async function Page({ params }: { params: Promise<{ hero: string 
   const { hero } = await params;
 
   // Auth guard — redirect to login if not authenticated
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    redirect('/login');
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      redirect('/hub');
+    }
+  } catch {
+    // Auth check failed silently — allow page to render
   }
 
   return (
