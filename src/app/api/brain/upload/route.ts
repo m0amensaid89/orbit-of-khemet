@@ -29,42 +29,59 @@ function sanitizeFilename(name: string): string {
 }
 
 async function extractTextFromPDF(buffer: Buffer): Promise<string> {
-  // Extract readable text from PDF by scanning for text streams
-  // PDF text is stored between BT and ET markers in streams
-  const content = buffer.toString('latin1')
-  const textParts: string[] = []
-
-  // Extract text between parentheses in PDF streams (Tj and TJ operators)
-  const tjRegex = /\(([^)]{1,500})\)\s*Tj/g
-  const tjArrayRegex = /\[([^\]]{1,2000})\]\s*TJ/g
-
-  let match
-  while ((match = tjRegex.exec(content)) !== null) {
-    const text = match[1]
-      .replace(/\\n/g, '\n')
-      .replace(/\\r/g, '')
-      .replace(/\\t/g, '\t')
-      .replace(/\\\\/g, '\\')
-      .replace(/\\\(/g, '(')
-      .replace(/\\\)/g, ')')
-      .replace(/[^\x20-\x7E\n\t]/g, ' ')
-      .trim()
-    if (text.length > 2) textParts.push(text)
-  }
-
-  while ((match = tjArrayRegex.exec(content)) !== null) {
-    const inner = match[1]
-    const innerMatches = inner.match(/\(([^)]{1,200})\)/g) || []
-    for (const m of innerMatches) {
-      const text = m.slice(1, -1)
-        .replace(/[^\x20-\x7E\n\t]/g, ' ')
-        .trim()
-      if (text.length > 2) textParts.push(text)
+  try {
+    // Use direct lib path to avoid pdf-parse loading test files at build time
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const pdfParse = require('pdf-parse/lib/pdf-parse.js')
+    const data = await pdfParse(buffer)
+    const text = (data.text || '').replace(/\x00/g, '').trim()
+    if (text.length > 50) return text.slice(0, 50000)
+    return '[PDF: stored in Khemet Brain]'
+  } catch {
+    // Fallback to regex extraction if pdf-parse fails
+    try {
+      const content = buffer.toString('latin1')
+      const textParts: string[] = []
+      const tjRegex = /\(([^)]{1,500})\)\s*Tj/g
+      let match
+      while ((match = tjRegex.exec(content)) !== null) {
+        const text = match[1].replace(/[^\x20-\x7E]/g, ' ').trim()
+        if (text.length > 2) textParts.push(text)
+      }
+      const result = textParts.join(' ').replace(/\s{3,}/g, '  ').trim()
+      return result.length > 50 ? result.slice(0, 50000) : '[PDF: stored in Khemet Brain]'
+    } catch {
+      return '[PDF: stored in Khemet Brain]'
     }
   }
+}
 
-  const result = textParts.join(' ').replace(/\s{3,}/g, '  ').trim()
-  return result.length > 50 ? result.slice(0, 50000) : `[PDF: stored in Khemet Brain]`
+async function extractTextFromPPTX(buffer: Buffer): Promise<string> {
+  try {
+    const JSZip = (await import('jszip')).default
+    const zip = await JSZip.loadAsync(buffer)
+    const textParts: string[] = []
+
+    // PPTX slides are in ppt/slides/slide*.xml
+    const slideFiles = Object.keys(zip.files).filter(
+      name => name.startsWith('ppt/slides/slide') && name.endsWith('.xml')
+    ).sort()
+
+    for (const slideFile of slideFiles) {
+      const content = await zip.files[slideFile].async('string')
+      // Extract text from XML <a:t> tags
+      const matches = content.match(/<a:t[^>]*>([^<]+)<\/a:t>/g) || []
+      for (const match of matches) {
+        const text = match.replace(/<[^>]+>/g, '').trim()
+        if (text.length > 0) textParts.push(text)
+      }
+    }
+
+    const result = textParts.join(' ').replace(/\s{3,}/g, '  ').trim()
+    return result.length > 50 ? result.slice(0, 50000) : '[PPTX: stored in Khemet Brain]'
+  } catch {
+    return '[PPTX: stored in Khemet Brain]'
+  }
 }
 
 async function extractText(file: File, type: string): Promise<string> {
@@ -118,7 +135,11 @@ async function extractText(file: File, type: string): Promise<string> {
     }
   }
 
-  // PPTX and other binary
+  if (type === 'pptx') {
+    return await extractTextFromPPTX(buffer)
+  }
+
+  // Other binary formats fallback
   try {
     const uint8 = new Uint8Array(arrayBuffer)
     const chars: string[] = []
