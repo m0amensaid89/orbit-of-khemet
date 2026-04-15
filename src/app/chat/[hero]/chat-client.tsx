@@ -376,23 +376,6 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
     nefra:   "xiaomi/mimo-7b",
     horusen: "openai/gpt-4o:online",
   };
-
-  const MODEL_LABELS: Record<string, string> = {
-    "anthropic/claude-sonnet-4-5": "Claude Sonnet",
-    "anthropic/claude-sonnet-4-5:online": "Claude Sonnet",
-    "anthropic/claude-sonnet-4-6": "Claude Sonnet",
-    "openai/gpt-4o:online": "GPT-4o",
-    "openai/gpt-4o": "GPT-4o",
-    "openai/o3-mini:online": "o3 Mini",
-    "google/gemini-2.5-flash": "Gemini Flash",
-    "google/gemini-2.5-flash:online": "Gemini Flash",
-    "deepseek/deepseek-v3": "DeepSeek V3",
-    "deepseek/deepseek-r1:free": "DeepSeek R1",
-    "meta-llama/llama-3.3-70b-instruct:free": "Llama 3.3",
-    "xiaomi/mimo-7b": "MiMo 7B",
-    "x-ai/grok-3": "Grok 3",
-    "openrouter/auto": "Auto Router",
-  };
   const currentModel = heroModelMap[heroParam] || "google/gemini-2.5-flash";
   const energyCost = getEnergyCost(currentModel);
 
@@ -1171,7 +1154,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                         Responses are generated using AI and may contain mistakes.
                       </span>
                       <span className="font-[Orbitron] text-[8px] tracking-[2px] uppercase text-white/20">
-                        Powered by {MODEL_LABELS[currentModel] || 'Empire Engine'}
+                        Powered by Empire Engine
                       </span>
                     </div>
                   </div>
