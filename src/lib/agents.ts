@@ -712,7 +712,7 @@ export const heroMeta: Record<string, HeroMeta> = {
   thoren: {
     name: 'THOREN',
     class_title: 'The Law',
-    archetype: "Social & Creator Systems Director",
+    archetype: "The Law: Governance & Finance Strategist",
     origin_line: 'Born from the axioms of order',
     bio: 'Thoren is the constitutional layer of the Empire. He turns chaos into clear rules, builds financial and legal foundations, and protects the empire you are trying to scale.',
     quote: 'I do not enforce the rules. I am the reason rules exist.',

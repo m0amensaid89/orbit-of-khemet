@@ -17,8 +17,15 @@ export const ENERGY_COSTS: Record<string, number> = {
 };
 
 export const PLAN_DAILY_ENERGY: Record<string, number> = {
-  free: 50,
-  scout: 50,
+  free: 100,
+  free_scout: 100,
+  scout: 100,
+  personal_basic: 350,
+  personal_explorer: 560,
+  personal_starter: 1120,
+  business_pro: 1925,
+  business_standard: 21000,
+  business_enterprise: 42000,
   explorer: 200,
 };
 

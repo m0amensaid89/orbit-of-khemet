@@ -115,6 +115,12 @@ export default function LandingPage() {
           >
             7 Elite Heroes  ✦  85 Named Agents
           </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.25 }}
+            className="font-[family-name:var(--font-roboto)] mt-2 text-sm text-[#D4AF37] opacity-60 tracking-wider"
+          >
+            English · Arabic (العربية) · French -- All agents. All languages.
+          </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}
@@ -289,6 +295,38 @@ export default function LandingPage() {
               </FadeInSection>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* 4.5 BUILT FOR THE MENA REGION (Arabic Capability) */}
+      <section className="w-full bg-[#1A1814] border-y border-[rgba(212,175,55,0.2)] py-16 px-6 md:px-12 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#D4AF37]/5 to-transparent pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 relative z-10">
+          <FadeInSection className="lg:w-1/2">
+            <h3 className="font-[family-name:var(--font-cinzel)] text-[#D4AF37] font-bold tracking-widest text-sm mb-3">
+              BUILT FOR THE MENA REGION
+            </h3>
+            <h2 className="font-[family-name:var(--font-cinzel)] text-white text-3xl md:text-4xl font-black mb-6">
+              Arabic Output. Native. One Click.
+            </h2>
+            <p className="font-[family-name:var(--font-roboto)] text-[#d0c5af] text-lg leading-relaxed opacity-90">
+              Every agent responds in Arabic on demand -- strategy documents, marketing copy, sales scripts, and analysis. Full RTL formatting. No extra cost. Built into every plan including Free.
+            </p>
+          </FadeInSection>
+
+          <FadeInSection delay={0.2} className="lg:w-1/2 flex flex-col gap-4 w-full sm:w-auto">
+            {[
+              "Arabic Input support",
+              "In-chat Translate button",
+              "Native RTL formatting"
+            ].map((feature, i) => (
+              <div key={i} className="flex items-center gap-4 bg-[#0A0A0A] border border-[rgba(212,175,55,0.3)] rounded-lg p-5 hover:border-[#D4AF37] transition-colors">
+                <div className="text-[#D4AF37] font-[family-name:var(--font-orbitron)]">✦</div>
+                <div className="font-[family-name:var(--font-orbitron)] text-[#d0c5af] tracking-wide text-sm font-medium">{feature}</div>
+              </div>
+            ))}
+          </FadeInSection>
         </div>
       </section>
 
