@@ -5,6 +5,18 @@ import { createClient } from '@/lib/supabase/server'
 import { createClient as createSupabaseAdmin } from '@supabase/supabase-js'
 import mammoth from 'mammoth'
 
+const STORAGE_LIMITS_MB: Record<string, number> = {
+  personal_basic: 100, personal_explorer: 250, personal_starter: 500,
+  business_pro: 1024, business_standard: 5120, business_enterprise: 15360, free: 50,
+}
+function getStorageLimitBytes(tier: string | null): number {
+  return (STORAGE_LIMITS_MB[tier || "free"] ?? 50) * 1024 * 1024
+}
+function formatBytes(bytes: number): string {
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
+
 const supabaseAdmin = createSupabaseAdmin(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -85,8 +97,33 @@ async function extractTextFromPPTX(buffer: Buffer): Promise<string> {
 }
 
 async function extractText(file: File, type: string): Promise<string> {
-  if (type === 'image') return `[Image: ${file.name}]`
-  if (type === 'video') return `[Video: ${file.name}]`
+  if (type === "image") {
+    try {
+      const arrayBuffer = await file.arrayBuffer()
+      const base64 = Buffer.from(arrayBuffer).toString("base64")
+      const mimeType = file.type || "image/jpeg"
+      const geminiRes = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GOOGLE_AI_STUDIO_API_KEY}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [
+              { inline_data: { mime_type: mimeType, data: base64 } },
+              { text: "Describe this image in detail. Include all visible text, data, charts, diagrams, people, objects, colors, and any other relevant content. Be thorough and specific. This description will be used to answer questions about the image." }
+            ]}]
+          })
+        }
+      )
+      if (geminiRes.ok) {
+        const geminiData = await geminiRes.json()
+        const description = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || ""
+        if (description.length > 20) return `[Image: ${file.name}]\n\n${description}`
+      }
+    } catch { }
+    return `[Image: ${file.name} — stored in Khemet Brain]`
+  }
+  if (type === "video") return `[Video: ${file.name} — stored in Khemet Brain]`
 
   if (type === 'txt') {
     const text = await file.text()
@@ -179,6 +216,15 @@ export async function POST(req: NextRequest) {
   const safeName = sanitizeFilename(file.name)
   const randomSuffix = Math.random().toString(36).substring(2, 8)
   const filePath = `${user.id}/${Date.now()}_${randomSuffix}_${safeName}`
+
+  const { data: profile } = await supabaseAdmin.from("profiles").select("tier").eq("id", user.id).single()
+  const userTier = profile?.tier || "free"
+  const limitBytes = getStorageLimitBytes(userTier)
+  const { data: usageData } = await supabaseAdmin.from("knowledge_sources").select("file_size").eq("user_id", user.id)
+  const currentUsageBytes = (usageData || []).reduce((sum: number, row: { file_size: number }) => sum + (row.file_size || 0), 0)
+  if (currentUsageBytes + file.size > limitBytes) {
+    return NextResponse.json({ error: `Storage limit reached. Your ${userTier.replace("_", " ")} plan allows ${formatBytes(limitBytes)}. Currently using ${formatBytes(currentUsageBytes)}. Delete some files or upgrade your plan.` }, { status: 403 })
+  }
 
   const { error: storageError } = await supabaseAdmin.storage
     .from('khemet-brain')
