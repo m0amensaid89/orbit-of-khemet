@@ -22,7 +22,7 @@ const departmentMap: Record<string, string[]> = {
 };
 
 const outcomeMap: Record<string, string[]> = {
-  thoren:  ["Analyze", "Optimize"],
+  thoren:  ["Analyze", "Optimize", "Generate"],
   ramet:   ["Automate", "Optimize"],
   nexar:   ["Generate", "Automate"],
   lyra:    ["Generate"],
