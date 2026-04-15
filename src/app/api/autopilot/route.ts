@@ -30,13 +30,21 @@ export async function POST(req: NextRequest) {
          );
          const { data: profile } = await supabaseAdmin
            .from('profiles')
-           .select('credits')
+           .select('credits, tier')
            .eq('id', user.id)
            .single();
+
+         if (profile?.tier === 'free_scout') {
+           return new Response(JSON.stringify({
+             error: 'upgrade_required',
+             message: 'Image generation requires a paid plan. Upgrade from $9/month to unlock.'
+           }), { status: 403, headers: { 'Content-Type': 'application/json' } })
+         }
+
          if (profile) {
            await supabaseAdmin
              .from('profiles')
-             .update({ credits: Math.max(0, profile.credits - 26) })
+             .update({ credits: Math.max(0, profile.credits - 200) })
              .eq('id', user.id);
          }
        }
@@ -154,7 +162,7 @@ export async function POST(req: NextRequest) {
             if (profile) {
               await supabaseAdmin
                 .from('profiles')
-                .update({ credits: Math.max(0, profile.credits - 26) })
+                .update({ credits: Math.max(0, profile.credits - 200) })
                 .eq('id', user.id);
             }
           }

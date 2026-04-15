@@ -58,7 +58,7 @@ Model selection:
 - website → model_id: "anthropic/claude-sonnet-4-6", credit_cost: 40
 - document → model_id: "anthropic/claude-sonnet-4-6", credit_cost: 25
 - code → model_id: "qwen/qwen3-coder-480b-a35b:free", credit_cost: 15
-- image → model_id: "dall-e-3", route: "dalle_api", credit_cost: 60
+- image → model_id: "dall-e-3", route: "dalle_api", credit_cost: 200
 - text → model_id: "deepseek/deepseek-v3", credit_cost: 8`,
           },
           {

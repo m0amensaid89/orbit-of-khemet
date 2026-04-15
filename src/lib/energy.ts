@@ -7,7 +7,7 @@ export const ENERGY_COSTS: Record<string, number> = {
   "meta-llama/llama-3.3-70b-instruct:free": 1,
   "openrouter/auto": 3,
   "google/gemini-2.5-flash": 2,
-  "google/gemini-2.5-flash-exp-image-generation": 4,
+  "google/gemini-2.5-flash-exp-image-generation": 8,
   "anthropic/claude-sonnet-4-5": 5,
   "openai/gpt-4o:online": 4,
   "anthropic/claude-sonnet-4-5:online": 6,

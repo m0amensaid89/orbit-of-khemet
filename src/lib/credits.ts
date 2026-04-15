@@ -19,11 +19,11 @@ export const CREDIT_COSTS: Record<RequestType, number> = {
   research:         15,
   image_analysis:    2,
   deep_analysis:    26,
-  image_generation: 100,
-  video_quick:      100,
-  video_standard:   200,
-  video_cinematic:  400,
-  video_edit:       250,
+  image_generation: 200,
+  video_quick:      300,
+  video_standard:   500,
+  video_cinematic:  1000,
+  video_edit:       700,
   website_analysis: 15,
 }
 
@@ -64,6 +64,7 @@ export const TIER_CREDITS: Record<string, number> = {
   business_pro:        38500,
   business_standard:   420000,
   business_enterprise: 840000,
+  free_scout:          100,
 }
 
 export const UPGRADE_THRESHOLD = 0.15
