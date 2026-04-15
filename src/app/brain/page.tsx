@@ -16,6 +16,9 @@ export default function BrainPage() {
   const [uploadProgress, setUploadProgress] = useState('')
   const [error, setError] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [storageUsed, setStorageUsed] = useState(0)
+  const [storageLimit, setStorageLimit] = useState(0)
+  const [userTier, setUserTier] = useState("")
 
   const loadSources = async () => {
     const res = await fetch('/api/brain/sources')
@@ -23,7 +26,17 @@ export default function BrainPage() {
     setSources(data.sources || [])
   }
 
-  useEffect(() => { loadSources() }, [])
+  const loadStorageInfo = async () => {
+    const res = await fetch("/api/brain/storage")
+    if (res.ok) {
+      const data = await res.json()
+      setStorageUsed(data.used_bytes || 0)
+      setStorageLimit(data.limit_bytes || 0)
+      setUserTier(data.tier || "free")
+    }
+  }
+
+  useEffect(() => { loadSources(); loadStorageInfo() }, [])
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -89,6 +102,21 @@ export default function BrainPage() {
           Your global knowledge vault. Every agent reads this before responding.
         </p>
       </div>
+
+      {storageLimit > 0 && (
+        <div style={{ marginBottom: "32px", padding: "20px 24px", background: "rgba(212,175,55,0.04)", border: "1px solid rgba(212,175,55,0.12)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+            <span style={{ fontFamily: "monospace", fontSize: "10px", letterSpacing: "0.12em", color: "rgba(212,175,55,0.7)" }}>STORAGE USAGE</span>
+            <span style={{ fontFamily: "Roboto, sans-serif", fontSize: "11px", color: "rgba(208,197,175,0.6)" }}>
+              {storageUsed < 1024*1024 ? `${(storageUsed/1024).toFixed(1)} KB` : `${(storageUsed/(1024*1024)).toFixed(1)} MB`} / {storageLimit < 1024*1024*1024 ? `${(storageLimit/(1024*1024)).toFixed(0)} MB` : `${(storageLimit/(1024*1024*1024)).toFixed(0)} GB`}
+            </span>
+          </div>
+          <div style={{ height: "4px", background: "rgba(212,175,55,0.08)", position: "relative" }}>
+            <div style={{ height: "100%", width: `${Math.min((storageUsed/storageLimit)*100,100).toFixed(1)}%`, background: storageUsed/storageLimit > 0.9 ? "#ef4444" : storageUsed/storageLimit > 0.7 ? "#f59e0b" : "#D4AF37", transition: "width 0.4s ease" }} />
+          </div>
+          <div style={{ marginTop: "6px", fontSize: "10px", color: "rgba(208,197,175,0.35)", fontFamily: "monospace" }}>{userTier.replace(/_/g, " ").toUpperCase()} PLAN</div>
+        </div>
+      )}
 
       {/* Upload Zone */}
       <div
