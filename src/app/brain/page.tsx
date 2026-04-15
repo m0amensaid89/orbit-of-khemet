@@ -31,8 +31,11 @@ export default function BrainPage() {
     setUploading(true)
     setError('')
 
+    const totalFiles = Array.from(files).length
+    let fileIndex = 0
     for (const file of Array.from(files)) {
-      setUploadProgress(`Processing ${file.name}...`)
+      fileIndex++
+      setUploadProgress(`Uploading ${fileIndex} of ${totalFiles}: ${file.name}`)
       const formData = new FormData()
       formData.append('file', file)
       try {
@@ -105,13 +108,13 @@ export default function BrainPage() {
           {uploading ? uploadProgress : 'UPLOAD TO BRAIN'}
         </div>
         <div style={{ fontSize: '11px', color: 'rgba(208,197,175,0.4)' }}>
-          PDF · DOCX · XLSX · PPT · TXT · Images · Video
+          PDF · DOCX · XLSX · PPT · TXT · Images · Video · Select multiple files at once
         </div>
         <input
           ref={fileInputRef}
           type="file"
           multiple
-          accept=".pdf,.docx,.xlsx,.pptx,.txt,.png,.jpg,.jpeg,.gif,.webp,.mp4,.mov,.avi"
+          accept=".pdf,.docx,.doc,.xlsx,.xls,.pptx,.ppt,.txt,.md,.png,.jpg,.jpeg,.gif,.webp,.mp4,.mov,.avi"
           onChange={handleUpload}
           style={{ display: 'none' }}
         />
