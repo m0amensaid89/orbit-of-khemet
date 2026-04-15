@@ -177,7 +177,8 @@ export async function POST(req: NextRequest) {
 
   const fileType = getFileType(file.name)
   const safeName = sanitizeFilename(file.name)
-  const filePath = `${user.id}/${Date.now()}_${safeName}`
+  const randomSuffix = Math.random().toString(36).substring(2, 8)
+  const filePath = `${user.id}/${Date.now()}_${randomSuffix}_${safeName}`
 
   const { error: storageError } = await supabaseAdmin.storage
     .from('khemet-brain')
