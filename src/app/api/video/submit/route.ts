@@ -35,7 +35,11 @@ export async function POST(req: NextRequest) {
         process.env.SUPABASE_SERVICE_ROLE_KEY!
       )
       const { data: profile } = await supabaseAdmin
-        .from('profiles').select('credits').eq('id', user.id).single()
+        .from('profiles').select('credits, tier').eq('id', user.id).single()
+
+      if (profile?.tier === 'free_scout' || !user) {
+        return NextResponse.json({ error: 'upgrade_required', message: 'Video generation requires a paid plan. Upgrade to unlock.' }, { status: 403 })
+      }
 
       if (!profile || (profile.credits !== null && profile.credits < creditCost)) {
         return NextResponse.json({

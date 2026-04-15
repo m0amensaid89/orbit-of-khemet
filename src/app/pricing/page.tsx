@@ -29,7 +29,15 @@ const TIERS: Tier[] = [
     price: { usd: 9, egp: 450 },
     credits: 7000,
     description: 'For individuals exploring the empire',
-    features: ['7,000 Grid Energy/month', 'All 85 agents', 'Text, code, research', 'Standard routing'],
+    features: [
+      '7,000 Grid Energy / month',
+      'All 7 Heroes + 85 Agents',
+      'Text, strategy, research, code',
+      'Image + video generation',
+      'Website + app generation',
+      'Arabic output — native RTL',
+      'Export: PDF, Word, Excel, PowerPoint',
+    ],
   },
   {
     id: 'personal_explorer',
@@ -37,7 +45,15 @@ const TIERS: Tier[] = [
     price: { usd: 15, egp: 750 },
     credits: 11200,
     description: 'For power users building daily',
-    features: ['11,200 Grid Energy/month', 'All 85 agents', 'Image generation included', 'Priority routing'],
+    features: [
+      '11,200 Grid Energy / month',
+      'All 7 Heroes + 85 Agents',
+      'Text, strategy, research, code',
+      'Image + video generation',
+      'Website + app generation',
+      'Arabic output — native RTL',
+      'Export: PDF, Word, Excel, PowerPoint',
+    ],
   },
   {
     id: 'personal_starter',
@@ -45,7 +61,15 @@ const TIERS: Tier[] = [
     price: { usd: 29, egp: 1450 },
     credits: 22400,
     description: 'For creators and professionals',
-    features: ['22,400 Grid Energy/month', 'All 85 agents', 'Video generation included', 'Smart routing'],
+    features: [
+      '22,400 Grid Energy / month',
+      'All 7 Heroes + 85 Agents',
+      'Text, strategy, research, code',
+      'Image + video generation',
+      'Website + app generation',
+      'Arabic output — native RTL',
+      'Export: PDF, Word, Excel, PowerPoint',
+    ],
   },
   {
     id: 'business_pro',
@@ -53,7 +77,16 @@ const TIERS: Tier[] = [
     price: { usd: 49, egp: 2450 },
     credits: 38500,
     description: 'For teams and agencies',
-    features: ['38,500 Grid Energy/month', 'All 85 agents', 'Full video + image suite', 'Priority support'],
+    features: [
+      '38,500 Grid Energy / month',
+      'All 7 Heroes + 85 Agents',
+      'Text, strategy, research, code',
+      'Image + video generation',
+      'Website + app generation',
+      'Arabic output — native RTL',
+      'Export: PDF, Word, Excel, PowerPoint',
+      'Priority routing + support',
+    ],
   },
   {
     id: 'business_standard',
@@ -61,7 +94,17 @@ const TIERS: Tier[] = [
     price: { usd: 149, egp: 7450 },
     credits: 420000,
     description: 'For growing enterprises',
-    features: ['420,000 Grid Energy/month', 'All 85 agents', 'Unlimited video generation', 'Dedicated routing'],
+    features: [
+      '420,000 Grid Energy / month',
+      'All 7 Heroes + 85 Agents',
+      'Text, strategy, research, code',
+      'Image + video generation',
+      'Website + app generation',
+      'Arabic output — native RTL',
+      'Export: PDF, Word, Excel, PowerPoint',
+      'Priority routing + dedicated support',
+      'Fair Use Policy applies above 40% monthly utilization',
+    ],
   },
   {
     id: 'business_enterprise',
@@ -69,7 +112,17 @@ const TIERS: Tier[] = [
     price: { usd: 299, egp: 14950 },
     credits: 840000,
     description: 'For large organizations',
-    features: ['840,000 Grid Energy/month', 'All 85 agents', 'Custom integrations', 'White-glove support'],
+    features: [
+      '840,000 Grid Energy / month',
+      'All 7 Heroes + 85 Agents',
+      'Text, strategy, research, code',
+      'Image + video generation',
+      'Website + app generation',
+      'Arabic output — native RTL',
+      'Export: PDF, Word, Excel, PowerPoint',
+      'Custom integrations + white-glove support',
+      'Fair Use Policy applies above 40% monthly utilization',
+    ],
   },
 ]
 
@@ -165,10 +218,16 @@ export default function PricingPage() {
               <span style={{ color: '#D4AF37', marginRight: '8px', fontFamily: 'Orbitron, sans-serif' }}>✦</span> Text message (Claude/GPT-4): ~5-6 Grid Energy
             </li>
             <li style={{ marginBottom: '12px', display: 'flex', alignItems: 'center' }}>
-              <span style={{ color: '#D4AF37', marginRight: '8px', fontFamily: 'Orbitron, sans-serif' }}>✦</span> Image generation: ~20-30 Grid Energy
+              <span style={{ color: '#D4AF37', marginRight: '8px', fontFamily: 'Orbitron, sans-serif' }}>✦</span> Image generation: ~200 Grid Energy per image
+            </li>
+            <li style={{ marginBottom: '12px', display: 'flex', alignItems: 'center' }}>
+              <span style={{ color: '#D4AF37', marginRight: '8px', fontFamily: 'Orbitron, sans-serif' }}>✦</span> Video generation: 300-1,000 Grid Energy per video
             </li>
           </ul>
           <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
+            <li style={{ marginBottom: '12px', display: 'flex', alignItems: 'center' }}>
+              <span style={{ color: '#D4AF37', marginRight: '8px', fontFamily: 'Orbitron, sans-serif' }}>✦</span> Website or app generation: ~40 Grid Energy
+            </li>
             <li style={{ marginBottom: '12px', display: 'flex', alignItems: 'center' }}>
               <span style={{ color: '#D4AF37', marginRight: '8px', fontFamily: 'Orbitron, sans-serif' }}>✦</span> Document export: ~10 Grid Energy
             </li>
@@ -288,6 +347,36 @@ export default function PricingPage() {
             </button>
           </div>
         ))}
+      </div>
+
+      {/* Fair Use Policy */}
+      <div style={{
+        maxWidth: '600px',
+        margin: '48px auto 0',
+        padding: '16px',
+        border: '1px solid rgba(212,175,55,0.3)',
+        background: 'rgba(10,10,10,0.6)',
+        borderRadius: '6px',
+        textAlign: 'center',
+      }}>
+        <div style={{
+          fontFamily: 'Orbitron, sans-serif',
+          color: '#D4AF37',
+          fontSize: '11px',
+          letterSpacing: '0.1em',
+          marginBottom: '8px',
+        }}>
+          FAIR USE POLICY
+        </div>
+        <p style={{
+          fontFamily: 'Roboto, sans-serif',
+          color: 'rgba(208,197,175,0.6)',
+          fontSize: '11px',
+          lineHeight: '1.6',
+          margin: 0,
+        }}>
+          Business Standard and Enterprise plans include a Fair Use Policy. Accounts consistently using more than 40% of their monthly Grid Energy allocation with high-cost generation tasks (video, image) may be contacted to discuss a custom arrangement. This policy ensures platform quality for all users.
+        </p>
       </div>
 
       {/* Footer note */}
