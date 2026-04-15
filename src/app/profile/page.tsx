@@ -10,25 +10,13 @@ import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 import { Star, Shield, Zap, History, TrendingUp } from "lucide-react";
 
-const FAVORITE_HEROES = [
-  { slug: "nexar", name: "NEXAR", role: "The Destabilizer", interactions: 142 },
-  { slug: "lyra", name: "LYRA", role: "Visionary Architect", interactions: 89 },
-  { slug: "horusen", name: "HORUSEN", role: "Script Guardian", interactions: 45 },
-];
-
-const ACTIVITY_TIMELINE = [
-  { id: 1, action: "Deployed Agent", target: "KHEPRIS (Custom)", time: "2 hours ago", type: "forge", hero: "thoren" },
-  { id: 2, action: "Completed Analysis", target: "Market Trend 2024", time: "5 hours ago", type: "chat", hero: "nexar" },
-  { id: 3, action: "Achieved Milestone", target: "Level 2: Scout", time: "1 day ago", type: "achievement", hero: "master" },
-  { id: 4, action: "Energy Replenished", target: "+10,000 Grid Energy", time: "2 days ago", type: "system", hero: "ramet" },
-];
-
 export default function ProfilePage() {
   const [stats, setStats] = useState({ totalEnergyUsed: 0, level: 1, currentXp: 0, nextLevelXp: 100 });
   const [userPlan, setUserPlan] = useState("explorer");
   const [customAgents, setCustomAgents] = useState<CustomAgent[]>([]);
   const [userData, setUserData] = useState<{ email?: string; name?: string; initials: string; energyBalance: number; messagesSent: number; threadsCount: number }>({ initials: "GO", energyBalance: 50, messagesSent: 0, threadsCount: 0 });
-
+  const [frequentOrbits, setFrequentOrbits] = useState<Array<{ slug: string; name: string; role: string; interactions: number }>>([]);
+  const [activityLog, setActivityLog] = useState<Array<{ id: string; title: string; hero_slug: string; updated_at: string }>>([]);
 
   useEffect(() => {
     const liveStats = getStats();
@@ -70,6 +58,53 @@ export default function ProfilePage() {
           nextLevelXp,
         });
 
+        // Frequent Orbits: count threads per hero_slug, top 3
+        const { data: threadsByHero } = await supabase
+          .from("chat_threads")
+          .select("hero_slug")
+          .eq("user_id", session.user.id)
+          .eq("archived", false);
+
+        if (threadsByHero) {
+          const countMap: Record<string, number> = {};
+          for (const t of threadsByHero) {
+            countMap[t.hero_slug] = (countMap[t.hero_slug] || 0) + 1;
+          }
+          const sorted = Object.entries(countMap)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 3);
+
+          const HERO_META: Record<string, { name: string; role: string }> = {
+            thoren:  { name: "THOREN",  role: "Governance & Finance" },
+            ramet:   { name: "RAMET",   role: "Operations & Execution" },
+            nexar:   { name: "NEXAR",   role: "Transformation Architect" },
+            lyra:    { name: "LYRA",    role: "Growth Content & Virality" },
+            kairo:   { name: "KAIRO",   role: "Social & Creator Systems" },
+            nefra:   { name: "NEFRA",   role: "Experience & Relationships" },
+            horusen: { name: "HORUSEN", role: "Revenue, Offers & Deals" },
+          };
+
+          setFrequentOrbits(sorted.map(([slug, count]) => ({
+            slug,
+            name: HERO_META[slug]?.name || slug.toUpperCase(),
+            role: HERO_META[slug]?.role || "",
+            interactions: count,
+          })));
+        }
+
+        // Activity Log: 5 most recently updated threads
+        const { data: recentThreads } = await supabase
+          .from("chat_threads")
+          .select("id, title, hero_slug, updated_at")
+          .eq("user_id", session.user.id)
+          .eq("archived", false)
+          .order("updated_at", { ascending: false })
+          .limit(5);
+
+        if (recentThreads) {
+          setActivityLog(recentThreads);
+        }
+
       } else {
         setUserData(prev => ({ ...prev, energyBalance: getEnergyRemaining(), messagesSent: liveStats.messages, threadsCount: 0 }));
         setStats({
@@ -88,6 +123,15 @@ export default function ProfilePage() {
   const planInfo = PLANS.find((p) => p.id === userPlan) || PLANS[0];
 
   const xpPercentage = Math.min(100, (stats.currentXp / stats.nextLevelXp) * 100);
+
+  const timeAgo = (iso: string) => {
+    const diff = Date.now() - new Date(iso).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h ago`;
+    return `${Math.floor(hrs / 24)}d ago`;
+  };
 
   return (
     <main className="container mx-auto px-4 py-16 flex flex-col items-center bg-[#0A0A0A] min-h-screen text-white overflow-hidden">
@@ -337,23 +381,30 @@ export default function ProfilePage() {
               </h2>
 
               <div className="flex flex-col gap-3">
-                {FAVORITE_HEROES.map((hero) => (
-                  <Link key={hero.slug} href={`/heroes/${hero.slug}`}>
-                    <div className="flex items-center gap-4 p-3 rounded-xl border border-white/5 bg-[#1A1A1A] hover:bg-white/5 transition-colors group cursor-pointer">
-                      <div className="relative w-12 h-12 rounded-full border border-white/10 overflow-hidden bg-black group-hover:border-[#D4AF37]/50 transition-colors">
-                        <Image src={`/${hero.slug}.png`} alt={hero.name} fill className="object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                {frequentOrbits.length === 0 ? (
+                  <div className="text-center py-8">
+                    <p className="font-[Orbitron] text-xs tracking-widest" style={{ color: "rgba(212,175,55,0.4)" }}>NO ORBITS YET</p>
+                    <p className="font-[Rajdhani] text-sm mt-1" style={{ color: "rgba(208,197,175,0.4)" }}>Start chatting with any hero.</p>
+                  </div>
+                ) : (
+                  frequentOrbits.map((hero) => (
+                    <Link key={hero.slug} href={`/heroes/${hero.slug}`}>
+                      <div className="flex items-center gap-4 p-3 rounded-xl border border-white/5 bg-[#1A1A1A] hover:bg-white/5 transition-colors group cursor-pointer">
+                        <div className="relative w-12 h-12 rounded-full border border-white/10 overflow-hidden bg-black group-hover:border-[#D4AF37]/50 transition-colors">
+                          <Image src={`/${hero.slug}.png`} alt={hero.name} fill className="object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-[Orbitron] text-sm font-bold text-white group-hover:text-[#D4AF37] transition-colors">{hero.name}</h3>
+                          <p className="font-[Rajdhani] text-xs text-white/50">{hero.role}</p>
+                        </div>
+                        <div className="text-right">
+                          <span className="font-[Orbitron] text-lg font-bold text-white/80">{hero.interactions}</span>
+                          <p className="font-mono text-[8px] uppercase tracking-widest text-white/30">Threads</p>
+                        </div>
                       </div>
-                      <div className="flex-1">
-                        <h3 className="font-[Orbitron] text-sm font-bold text-white group-hover:text-[#D4AF37] transition-colors">{hero.name}</h3>
-                        <p className="font-[Rajdhani] text-xs text-white/50">{hero.role}</p>
-                      </div>
-                      <div className="text-right">
-                        <span className="font-[Orbitron] text-lg font-bold text-white/80">{hero.interactions}</span>
-                        <p className="font-mono text-[8px] uppercase tracking-widest text-white/30">Calls</p>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
+                    </Link>
+                  ))
+                )}
               </div>
             </motion.div>
 
@@ -366,20 +417,29 @@ export default function ProfilePage() {
                 <History className="w-4 h-4 text-[#D4AF37]" /> ACTIVITY LOG
               </h2>
 
-              <div className="relative border-l-2 border-white/10 ml-3 flex flex-col gap-8 pb-4">
-                {ACTIVITY_TIMELINE.map((item) => (
-                  <div key={item.id} className="relative pl-6">
-                    <div className="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-[#131313] border-2 border-[#D4AF37] flex items-center justify-center">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]" />
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <span className="font-mono text-[9px] tracking-widest text-[#D4AF37]/80">{item.time}</span>
-                      <span className="font-[Orbitron] text-xs font-bold text-white">{item.action}</span>
-                      <span className="font-[Rajdhani] text-sm text-white/60">{item.target}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              {activityLog.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="font-[Orbitron] text-xs tracking-widest" style={{ color: "rgba(212,175,55,0.4)" }}>NO ACTIVITY YET</p>
+                  <p className="font-[Rajdhani] text-sm mt-1" style={{ color: "rgba(208,197,175,0.4)" }}>Your mission log will appear here.</p>
+                </div>
+              ) : (
+                <div className="relative border-l-2 border-white/10 ml-3 flex flex-col gap-8 pb-4">
+                  {activityLog.map((thread) => (
+                    <Link key={thread.id} href={`/chat/${thread.hero_slug}?thread=${thread.id}`}>
+                      <div className="relative pl-6 cursor-pointer group">
+                        <div className="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-[#131313] border-2 border-[#D4AF37] flex items-center justify-center">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]" />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <span className="font-mono text-[9px] tracking-widest text-[#D4AF37]/80">{timeAgo(thread.updated_at)}</span>
+                          <span className="font-[Orbitron] text-xs font-bold text-white group-hover:text-[#D4AF37] transition-colors truncate max-w-[180px]">{thread.title || "Untitled Mission"}</span>
+                          <span className="font-[Rajdhani] text-sm text-white/60 uppercase tracking-wide">{thread.hero_slug?.toUpperCase()}</span>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
             </motion.div>
 
           </div>
