@@ -3,7 +3,26 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-const TIERS = [
+interface Tier {
+  id: string;
+  name: string;
+  price: { usd: number; egp: number };
+  credits: number;
+  dailyReset?: boolean;
+  description: string;
+  features: string[];
+}
+
+const TIERS: Tier[] = [
+  {
+    id: 'free_scout',
+    name: 'FREE SCOUT',
+    price: { usd: 0, egp: 0 },
+    credits: 100,
+    dailyReset: true,
+    description: 'Try the empire. No credit card needed.',
+    features: ['100 Grid Energy / day', 'Resets daily at midnight UTC', 'All 7 Heroes + 85 Agents', 'Free AI models only'],
+  },
   {
     id: 'personal_basic',
     name: 'PERSONAL BASIC',
@@ -103,7 +122,63 @@ export default function PricingPage() {
         </p>
       </div>
 
-      {/* Grid */}
+      {/* Grid Energy Explanation */}
+      <div style={{
+        maxWidth: '800px',
+        margin: '0 auto 60px auto',
+        border: '1px solid #D4AF37',
+        background: 'rgba(10,10,10,0.8)',
+        padding: '32px',
+        borderRadius: '8px',
+      }}>
+        <h2 style={{
+          fontFamily: 'Cinzel Decorative, serif',
+          color: '#D4AF37',
+          fontSize: '20px',
+          marginBottom: '16px',
+          letterSpacing: '0.1em',
+        }}>
+          WHAT IS GRID ENERGY?
+        </h2>
+        <p style={{
+          color: '#d0c5af',
+          fontSize: '14px',
+          fontFamily: 'Roboto, sans-serif',
+          marginBottom: '24px',
+          lineHeight: '1.6',
+        }}>
+          Grid Energy is your allocation for all AI tasks. Every message, image, or document costs a small amount depending on the AI model used.
+        </p>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          gap: '16px',
+          fontFamily: 'Roboto, sans-serif',
+          fontSize: '13px',
+          color: '#fff',
+        }}>
+          <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
+            <li style={{ marginBottom: '12px', display: 'flex', alignItems: 'center' }}>
+              <span style={{ color: '#D4AF37', marginRight: '8px', fontFamily: 'Orbitron, sans-serif' }}>✦</span> Text message (standard): ~2 Grid Energy
+            </li>
+            <li style={{ marginBottom: '12px', display: 'flex', alignItems: 'center' }}>
+              <span style={{ color: '#D4AF37', marginRight: '8px', fontFamily: 'Orbitron, sans-serif' }}>✦</span> Text message (Claude/GPT-4): ~5-6 Grid Energy
+            </li>
+            <li style={{ marginBottom: '12px', display: 'flex', alignItems: 'center' }}>
+              <span style={{ color: '#D4AF37', marginRight: '8px', fontFamily: 'Orbitron, sans-serif' }}>✦</span> Image generation: ~20-30 Grid Energy
+            </li>
+          </ul>
+          <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
+            <li style={{ marginBottom: '12px', display: 'flex', alignItems: 'center' }}>
+              <span style={{ color: '#D4AF37', marginRight: '8px', fontFamily: 'Orbitron, sans-serif' }}>✦</span> Document export: ~10 Grid Energy
+            </li>
+            <li style={{ marginBottom: '12px', display: 'flex', alignItems: 'center' }}>
+              <span style={{ color: '#D4AF37', marginRight: '8px', fontFamily: 'Orbitron, sans-serif' }}>✦</span> Arabic translation: Included in message cost
+            </li>
+          </ul>
+        </div>
+      </div>
+
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
@@ -127,11 +202,28 @@ export default function PricingPage() {
             }}>{tier.name}</div>
 
             {/* Price */}
-            <div style={{ marginBottom: '8px' }}>
-              <span style={{ fontSize: '36px', color: '#fff', fontWeight: 700 }}>
-                ${tier.price.usd}
-              </span>
-              <span style={{ color: '#d0c5af', fontSize: '12px' }}>/month</span>
+            <div style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              {tier.id === 'free_scout' ? (
+                <>
+                  <span style={{ fontSize: '36px', color: '#fff', fontWeight: 700 }}>FREE</span>
+                  <span style={{
+                    background: 'rgba(212,175,55,0.1)',
+                    color: '#D4AF37',
+                    border: '1px solid rgba(212,175,55,0.5)',
+                    padding: '4px 8px',
+                    fontSize: '10px',
+                    borderRadius: '4px',
+                    letterSpacing: '0.05em',
+                  }}>RESETS DAILY</span>
+                </>
+              ) : (
+                <>
+                  <span style={{ fontSize: '36px', color: '#fff', fontWeight: 700 }}>
+                    ${tier.price.usd}
+                  </span>
+                  <span style={{ color: '#d0c5af', fontSize: '12px' }}>/month</span>
+                </>
+              )}
             </div>
 
             {/* Credits */}
@@ -141,7 +233,7 @@ export default function PricingPage() {
               color: '#06B6D4',
               marginBottom: '16px',
             }}>
-              ⚡ {tier.credits.toLocaleString()} GRID ENERGY
+              ⚡ {tier.credits.toLocaleString()} {tier.id === 'free_scout' ? '/ day' : 'GRID ENERGY'}
             </div>
 
             {/* Description */}
@@ -169,7 +261,13 @@ export default function PricingPage() {
 
             {/* CTA */}
             <button
-              onClick={() => handleSubscribe(tier.id)}
+              onClick={() => {
+                if (tier.id === 'free_scout') {
+                  router.push('/auth');
+                } else {
+                  handleSubscribe(tier.id);
+                }
+              }}
               disabled={loading === tier.id}
               style={{
                 width: '100%',
@@ -186,7 +284,7 @@ export default function PricingPage() {
                 transition: 'all 0.2s',
               }}
             >
-              {loading === tier.id ? 'LOADING...' : 'ACTIVATE TIER'}
+              {loading === tier.id ? 'LOADING...' : tier.id === 'free_scout' ? 'START FREE' : 'ACTIVATE TIER'}
             </button>
           </div>
         ))}
