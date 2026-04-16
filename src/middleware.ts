@@ -1,11 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
+import { jwtVerify } from 'jose'
 
 const PUBLIC_PATHS = ['/', '/login', '/terms', '/privacy', '/refund-policy', '/auth']
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
+  // --- ADMIN PANEL PROTECTION ---
+  if (pathname.startsWith('/admin')) {
+    if (pathname === '/admin/login') {
+      return NextResponse.next()
+    }
+
+    const adminToken = request.cookies.get('admin_token')?.value
+
+    if (!adminToken) {
+      return NextResponse.redirect(new URL('/admin/login', request.url))
+    }
+
+    try {
+      const secret = new TextEncoder().encode(process.env.ADMIN_JWT_SECRET || 'orbit-admin-jwt-2026-khemet')
+      await jwtVerify(adminToken, secret)
+      return NextResponse.next()
+    } catch (error) {
+      const response = NextResponse.redirect(new URL('/admin/login', request.url))
+      response.cookies.delete('admin_token')
+      return response
+    }
+  }
+
+  // --- MAIN APP AUTH ---
 
   // Redirect /login -> /auth
   if (pathname === '/login') {

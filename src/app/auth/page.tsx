@@ -1,16 +1,19 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
-import { Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Suspense } from "react";
 
 function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
+  const [isResetMode, setIsResetMode] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -29,6 +32,25 @@ function AuthForm() {
     });
     if (error) {
       setError(error.message);
+      setLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setMessage(null);
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/reset`,
+      });
+      if (error) throw error;
+      setMessage("TRANSMISSION SENT. Check your email.");
+    } catch (err: unknown) {
+      setError((err as Error).message || "Failed to send reset link.");
+    } finally {
       setLoading(false);
     }
   };
@@ -70,10 +92,10 @@ function AuthForm() {
     } catch (err: unknown) {
       if (err instanceof Error) {
         // If the error message is something cryptic like "Failed to fetch", provide a clearer one
-        if (err.message.toLowerCase().includes("failed to fetch") || err.message.includes("NetworkError")) {
+        if ((err as Error).message.toLowerCase().includes("failed to fetch") || (err as Error).message.includes("NetworkError")) {
           setError("Network error. Please check your connection to the Empire Engine.");
         } else {
-          setError(err.message);
+          setError((err as Error).message);
         }
       } else {
         setError("An error occurred during authentication. Please try again.");
@@ -117,6 +139,40 @@ function AuthForm() {
           </div>
         )}
 
+        {isResetMode ? (
+          <form onSubmit={handleResetPassword} className="space-y-5">
+            <div>
+              <label className="block font-[Orbitron] text-[10px] tracking-widest text-[#D4AF37] mb-2 uppercase">
+                Email
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white font-[Rajdhani] focus:outline-none focus:border-[#D4AF37]/50 focus:ring-1 focus:ring-[#D4AF37]/50 transition-all placeholder:text-white/20"
+                placeholder="commander@khemet.com"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full mt-6 flex items-center justify-center gap-2 bg-gradient-to-r from-[#D4AF37] to-[#FFD700] text-black font-[Orbitron] text-[12px] font-bold tracking-[3px] uppercase py-4 rounded-lg hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "SEND RESET LINK"}
+            </button>
+            <div className="mt-4 text-center">
+              <button
+                type="button"
+                onClick={() => setIsResetMode(false)}
+                className="font-[Rajdhani] text-white/50 hover:text-[#D4AF37] transition-colors text-sm"
+              >
+                Back to Login
+              </button>
+            </div>
+          </form>
+        ) : (
+          <>
         {/* Social login section */}
         <div className="flex flex-col gap-3 mb-6">
           <p className="font-[Orbitron] text-[8px] tracking-[3px] uppercase text-center"
@@ -174,15 +230,35 @@ function AuthForm() {
             <label className="block font-[Orbitron] text-[10px] tracking-widest text-[#D4AF37] mb-2 uppercase">
               Password
             </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white font-[Rajdhani] focus:outline-none focus:border-[#D4AF37]/50 focus:ring-1 focus:ring-[#D4AF37]/50 transition-all placeholder:text-white/20"
-              placeholder="••••••••"
-              required
-              minLength={6}
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white font-[Rajdhani] focus:outline-none focus:border-[#D4AF37]/50 focus:ring-1 focus:ring-[#D4AF37]/50 transition-all placeholder:text-white/20 pr-12"
+                placeholder="••••••••"
+                required
+                minLength={6}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-[#D4AF37] transition-colors"
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+            {isLogin && (
+              <div className="mt-2 text-right">
+                <button
+                  type="button"
+                  onClick={() => setIsResetMode(true)}
+                  className="font-[Rajdhani] text-xs text-white/40 hover:text-[#D4AF37] transition-colors"
+                >
+                  Forgot your access key?
+                </button>
+              </div>
+            )}
           </div>
 
           <button
@@ -212,6 +288,8 @@ function AuthForm() {
               : "Already a commander? Sign in."}
           </button>
         </div>
+          </>
+        )}
       </div>
     </div>
   );
