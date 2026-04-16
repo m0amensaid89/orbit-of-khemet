@@ -4,11 +4,14 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Loader2 } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Suspense } from "react";
 
 function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -40,6 +43,14 @@ function AuthForm() {
     setMessage(null);
 
     try {
+      if (isForgotPassword) {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/auth/reset`
+        });
+        if (error) throw error;
+        setMessage('TRANSMISSION SENT. Check your email for the reset link.');
+        return;
+      }
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -170,20 +181,42 @@ function AuthForm() {
               required
             />
           </div>
-          <div>
-            <label className="block font-[Orbitron] text-[10px] tracking-widest text-[#D4AF37] mb-2 uppercase">
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white font-[Rajdhani] focus:outline-none focus:border-[#D4AF37]/50 focus:ring-1 focus:ring-[#D4AF37]/50 transition-all placeholder:text-white/20"
-              placeholder="••••••••"
-              required
-              minLength={6}
-            />
-          </div>
+          {!isForgotPassword && (
+            <div>
+              <label className="block font-[Orbitron] text-[10px] tracking-widest text-[#D4AF37] mb-2 uppercase">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white font-[Rajdhani] focus:outline-none focus:border-[#D4AF37]/50 focus:ring-1 focus:ring-[#D4AF37]/50 transition-all placeholder:text-white/20 pr-12"
+                  placeholder="••••••••"
+                  required
+                  minLength={6}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[rgba(212,175,55,0.4)] hover:text-[#D4AF37] transition-colors focus:outline-none"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+              {isLogin && (
+                <div className="mt-2 text-right">
+                  <button
+                    type="button"
+                    onClick={() => { setIsForgotPassword(true); setError(null); setMessage(null); }}
+                    className="font-[Rajdhani] text-sm text-[#D4AF37]/70 hover:text-[#D4AF37] transition-colors"
+                  >
+                    Forgot your access key?
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
 
           <button
             type="submit"
@@ -193,7 +226,7 @@ function AuthForm() {
             {loading ? (
               <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
-              isLogin ? "Deploy" : "Initialize Node"
+              isForgotPassword ? "SEND RESET LINK" : isLogin ? "Deploy" : "Initialize Node"
             )}
           </button>
         </form>
@@ -201,15 +234,21 @@ function AuthForm() {
         <div className="mt-8 text-center border-t border-white/5 pt-6">
           <button
             onClick={() => {
-              setIsLogin(!isLogin);
+              if (isForgotPassword) {
+                setIsForgotPassword(false);
+              } else {
+                setIsLogin(!isLogin);
+              }
               setError(null);
               setMessage(null);
             }}
             className="font-[Rajdhani] text-white/50 hover:text-[#D4AF37] transition-colors text-sm"
           >
-            {isLogin
-              ? "Don't have an access code? Sign up."
-              : "Already a commander? Sign in."}
+            {isForgotPassword
+              ? "Back to login"
+              : isLogin
+                ? "Don't have an access code? Sign up."
+                : "Already a commander? Sign in."}
           </button>
         </div>
       </div>
