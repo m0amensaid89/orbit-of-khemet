@@ -206,10 +206,10 @@ function HubPageContent() {
                         {match.heroName}
                       </span>
                     </div>
-                    <p className="font-[Orbitron] text-empire-lg font-bold" style={{ color: '#ffffff' }}>
+                    <p className="font-[Orbitron] text-lg font-bold" style={{ color: '#ffffff' }}>
                       {match.agentName}
                     </p>
-                    <p className="font-[Rajdhani] text-empire-sm" style={{ color: '#d0c5af', opacity: 0.7 }}>
+                    <p className="font-[Rajdhani] text-sm" style={{ color: '#d0c5af', opacity: 0.7 }}>
                       {match.agentRole}
                     </p>
                   </div>
@@ -267,10 +267,10 @@ function HubPageContent() {
                       bottom: 0,
                       left: 0,
                       right: 0,
-                      padding: '20px 16px 16px',
+                      padding: '16px',
                       background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%)',
                     }}>
-                      <div style={{ fontFamily: 'Cinzel Decorative, serif', fontSize: '14px', color: '#D4AF37', letterSpacing: '0.08em' }}>
+                      <div style={{ fontFamily: 'Cinzel Decorative, serif', fontSize: '13px', color: '#D4AF37', letterSpacing: '0.08em' }}>
                         {
                           slug === 'thoren' ? 'THOREN The Law' :
                           slug === 'ramet' ? 'RAMET The Stabilizer' :
