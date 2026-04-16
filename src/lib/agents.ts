@@ -6,6 +6,7 @@ export type Agent = {
   description: string;
   prompt?: string;
   model?: string;
+  preferredModel?: string;
   linked_tool?: "autopilot" | "ui-builder" | "sentinel" | "brain" | null;
 };
 
@@ -134,6 +135,7 @@ export const heroAgents: Record<string, Agent[]> = {
       role_summary: "Invoice Specialist",
       category: "Finance & Operations",
       description: "Automates invoice creation and management for businesses.",
+      preferredModel: "openai/gpt-4o",
     },
     {
       id: "agent_46",
@@ -141,6 +143,7 @@ export const heroAgents: Record<string, Agent[]> = {
       role_summary: "Excel Specialist",
       category: "Jobseekers",
       description: "Offers a comprehensive Excel guide for all skill levels.",
+      preferredModel: "anthropic/claude-3.5-sonnet",
     },
     {
       id: "agent_52",
@@ -148,6 +151,7 @@ export const heroAgents: Record<string, Agent[]> = {
       role_summary: "Ad Copy Specialist",
       category: "Marketing",
       description: "Enhances ad copy for clarity and impact.",
+      preferredModel: "google/gemini-2.0-flash-001",
     },
     {
       id: "agent_55",
@@ -155,6 +159,7 @@ export const heroAgents: Record<string, Agent[]> = {
       role_summary: "Copy Strategist",
       category: "Marketing",
       description: "Enhances and refines copy, providing expert guidance.",
+      preferredModel: "anthropic/claude-3.5-sonnet",
     },
     {
       id: "agent_59",
@@ -260,6 +265,7 @@ export const heroAgents: Record<string, Agent[]> = {
       role_summary: "CV Specialist",
       category: "Jobseekers",
       description: "Provides guidance for crafting standout CVs.",
+      preferredModel: "anthropic/claude-3.5-sonnet",
     },
     {
       id: "agent_47",
@@ -267,6 +273,7 @@ export const heroAgents: Record<string, Agent[]> = {
       role_summary: "Interview Coach",
       category: "Jobseekers",
       description: "Provides expert coaching for mock interviews and feedback.",
+      preferredModel: "openai/gpt-4o",
     },
     {
       id: "agent_53",

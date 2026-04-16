@@ -2,7 +2,7 @@ export type RenderedOutput =
   | { type: 'html'; html: string }
   | { type: 'document'; markdown: string }
   | { type: 'code'; code: string; language: string }
-  | { type: 'image'; url: string }
+  | { type: 'image'; urls: string[] }
   | { type: 'text'; content: string };
 
 export function transformOutput(result: { output_format: string; content: string }): RenderedOutput {
@@ -37,8 +37,23 @@ export function transformOutput(result: { output_format: string; content: string
 
       return { type: 'code', code: code.trim(), language };
     }
-    case 'image_card':
-      return { type: 'image', url: content };
+    case 'image_card': {
+      try {
+        const parsed = JSON.parse(content);
+        if (Array.isArray(parsed)) {
+          return { type: 'image', urls: parsed };
+        }
+      } catch (e) {
+        // Fallback to single string or regex parsing if it's markdown
+      }
+
+      const imgMatches = Array.from(content.matchAll(/!\[.*?\]\((https?:\/\/[^)]+|data:image\/[^)]+)\)/g));
+      if (imgMatches.length > 0) {
+        return { type: 'image', urls: imgMatches.map(m => m[1]) };
+      }
+
+      return { type: 'image', urls: [content] };
+    }
     case 'text_message':
     default:
       return { type: 'text', content };
