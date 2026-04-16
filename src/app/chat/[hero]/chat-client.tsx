@@ -287,7 +287,12 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
 
       if (!submitRes.ok) {
         const err = await submitRes.json()
-        append({ role: 'assistant', content: err.message || 'Video submission failed. Please try again.' })
+        setMessages(prev => [...prev, {
+          id: 'video-err-' + Date.now(),
+          role: 'assistant',
+          content: err.message || 'Video submission failed. Please try again.',
+          createdAt: new Date(),
+        }])
         setVideoState(null)
         return
       }
@@ -314,7 +319,12 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
         }
 
         if (statusData.status === 'FAILED') {
-          append({ role: 'assistant', content: 'Video generation failed. Credits were consumed. Please try again with a different prompt.' })
+          setMessages(prev => [...prev, {
+            id: 'video-err-' + Date.now(),
+            role: 'assistant',
+            content: 'Video generation failed. Credits were consumed. Please try again with a different prompt.',
+            createdAt: new Date(),
+          }])
           setVideoState(null)
           return
         }
@@ -323,13 +333,19 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
       }
 
       if (!videoUrl) {
-        append({ role: 'assistant', content: 'Video generation timed out. Credits were consumed. Please try again.' })
+        setMessages(prev => [...prev, {
+          id: 'video-err-' + Date.now(),
+          role: 'assistant',
+          content: 'Video generation timed out. Credits were consumed. Please try again.',
+          createdAt: new Date(),
+        }])
         setVideoState(null)
         return
       }
 
       // STEP 3: Append video as special message
-      append({
+      setMessages(prev => [...prev, {
+        id: 'video-msg-' + Date.now(),
         role: 'assistant',
         content: JSON.stringify({
           type: 'video',
@@ -338,14 +354,21 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
           creditsUsed: creditCost,
           prompt,
         }),
-      })
+        createdAt: new Date(),
+      }])
+
+      setVideoState({ type: 'complete', videoUrl, platform: platformLabel, creditsUsed: creditCost })
 
       window.dispatchEvent(new CustomEvent('credits-updated'))
 
     } catch (err) {
       console.error('Video generation error:', err)
-      append({ role: 'assistant', content: 'Connection error during video generation. Credits were consumed. Please try again with a different prompt.' })
-    } finally {
+      setMessages(prev => [...prev, {
+        id: 'video-err-' + Date.now(),
+        role: 'assistant',
+        content: 'Connection error during video generation. Credits were consumed. Please try again with a different prompt.',
+        createdAt: new Date(),
+      }])
       setVideoState(null)
     }
   }

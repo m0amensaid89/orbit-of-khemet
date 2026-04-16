@@ -28,16 +28,40 @@ export async function updateSession(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   const { pathname } = request.nextUrl
   // Protect routes — AUDIT MODE disabled temporarily
-  // if (
-  //   !user &&
-  //   (pathname.startsWith('/brain') || pathname.startsWith('/artifacts') || pathname.startsWith('/profile') || pathname.startsWith('/master-orbit') || pathname.startsWith('/autopilot') || pathname.startsWith('/ui-builder') || pathname.startsWith('/sentinel') || pathname.startsWith('/departments') || pathname.startsWith('/browser'))
-  // ) {
-  //   if (!pathname.startsWith('/api')) {
-  //     const url = request.nextUrl.clone()
-  //     url.pathname = '/auth'
-  //     url.searchParams.set('redirect', request.nextUrl.pathname + request.nextUrl.search)
-  //     return NextResponse.redirect(url)
-  //   }
-  // }
+  if (
+    !user &&
+    (
+      pathname.startsWith('/brain') ||
+      pathname.startsWith('/artifacts') ||
+      pathname.startsWith('/profile') ||
+      pathname.startsWith('/hub') ||
+      pathname.startsWith('/chat') ||
+      pathname.startsWith('/heroes') ||
+      pathname.startsWith('/autopilot') ||
+      pathname.startsWith('/forge') ||
+      pathname.startsWith('/ui-builder') ||
+      pathname.startsWith('/sentinel') ||
+      pathname.startsWith('/departments') ||
+      pathname.startsWith('/projects') ||
+      pathname.startsWith('/browser')
+    )
+  ) {
+    if (!pathname.startsWith('/api')) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/auth'
+      url.searchParams.set('redirect', request.nextUrl.pathname + request.nextUrl.search)
+      return NextResponse.redirect(url)
+    }
+  }
+
+  if (
+    user &&
+    (pathname === '/auth' || pathname === '/login')
+  ) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/hub'
+    return NextResponse.redirect(url)
+  }
+
   return supabaseResponse
 }
