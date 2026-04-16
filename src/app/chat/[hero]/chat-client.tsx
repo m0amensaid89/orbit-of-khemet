@@ -605,19 +605,20 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
 
   useEffect(() => {
     if (!agent || messages.length > 0) return
-    const openingContent = `${agent.name} ready. How can I help?`
+
+    const username = profileRef.current?.display_name
+      || profileRef.current?.full_name
+      || profileRef.current?.username
+      || userRef.current?.email?.split('@')[0]
+      || 'Commander'
+
+    const openingContent = `Hello ${username} I am ${agent.name} How can I help.`
 
     if (agentParam && heroParam) {
       const skillKey = `${heroParam.toLowerCase()}-${agentParam}`
       const skill = agentSkills[skillKey]
       if (skill) {
         const timer = setTimeout(() => {
-          const username = profileRef.current?.display_name
-            || profileRef.current?.full_name
-            || profileRef.current?.username
-            || userRef.current?.email?.split('@')[0]
-            || 'Commander'
-
           if (!skill?.openingMessage) return
 
           const opening = skill.openingMessage(username)
@@ -642,19 +643,23 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
       }
     }
 
-    let i = 0
-    setTypewriterText('')
-    setTypewriterDone(false)
-    const interval = setInterval(() => {
-      if (i < openingContent.length) {
-        setTypewriterText(openingContent.slice(0, i + 1))
-        i++
-      } else {
-        setTypewriterDone(true)
-        clearInterval(interval)
-      }
-    }, 18)
-    return () => clearInterval(interval)
+    const timer = setTimeout(() => {
+      let i = 0
+      setTypewriterText('')
+      setTypewriterDone(false)
+      const interval = setInterval(() => {
+        if (i < openingContent.length) {
+          setTypewriterText(openingContent.slice(0, i + 1))
+          i++
+        } else {
+          setTypewriterDone(true)
+          clearInterval(interval)
+        }
+      }, 18)
+      return () => clearInterval(interval)
+    }, 1800)
+
+    return () => clearTimeout(timer)
   }, [agent?.id, agent?.name, agentParam, heroParam, messages.length])
 
   useEffect(() => {
