@@ -697,23 +697,53 @@ export function Sidebar() {
           UPGRADE TIER
         </Link>
 
-        <div className="bg-[#131313] rounded-md p-3 border border-[rgba(212,175,55,0.08)] relative overflow-hidden group">
-          <div className="flex items-center gap-2 mb-2 relative z-10">
-            <Zap className="w-3 h-3 text-[#D4AF37]" />
-            <span className="text-empire-xs text-[#d0c5af] font-orbitron uppercase">GRID ENERGY</span>
+        {energy !== null && ((energy / 100000) * 100) <= 0 ? (
+          <div className="rounded-[4px] p-4 border border-[#D4AF37] bg-[#0A0A0A] relative text-center">
+            <div className="text-[#d0c5af] font-rajdhani text-sm mb-3">
+              Your Grid Energy is depleted. Upgrade to continue your missions.
+            </div>
+            <Link
+              href="/pricing"
+              className="inline-block px-4 py-2 bg-[#D4AF37] text-[#0A0A0A] font-orbitron text-xs font-bold uppercase rounded-[4px]"
+              style={{ letterSpacing: '0.1em' }}
+            >
+              UPGRADE
+            </Link>
           </div>
-          <div className="text-empire-lg font-orbitron font-bold text-[#D4AF37] drop-shadow-[0_0_8px_rgba(212,175,55,0.2)] relative z-10">
-            {energy !== null ? energy.toLocaleString() : <span className="animate-pulse" style={{color: 'rgba(212,175,55,0.3)'}}>...</span>}
+        ) : (
+          <div className="bg-[#131313] rounded-[4px] p-3 border border-[rgba(212,175,55,0.08)] relative overflow-hidden group">
+            <div className="flex items-center gap-2 mb-2 relative z-10">
+              <Zap className="w-3 h-3 text-[#D4AF37]" />
+              <span className="text-empire-xs text-[#d0c5af] font-orbitron uppercase">GRID ENERGY</span>
+            </div>
+            <div className="text-empire-lg font-orbitron font-bold text-[#D4AF37] drop-shadow-[0_0_8px_rgba(212,175,55,0.2)] relative z-10">
+              {energy !== null ? energy.toLocaleString() : <span className="animate-pulse" style={{color: 'rgba(212,175,55,0.3)'}}>...</span>}
+            </div>
+            <div className={`w-full bg-[#0A0A0A] h-1 mt-2 rounded-[4px] overflow-hidden relative z-10 border border-[rgba(212,175,55,0.08)] ${energy !== null && ((energy / 100000) * 100) < 15 ? 'shadow-[0_0_8px_#F59E0B]' : ''}`}>
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${Math.min(100, ((energy || 0) / 100000) * 100)}%` }}
+                transition={{ duration: 1, ease: "easeOut" }}
+                className={`h-full ${energy !== null && ((energy / 100000) * 100) < 15 ? 'bg-[#F59E0B]' : 'bg-gradient-to-r from-[#D4AF37] to-[#F5D38C]'}`}
+              />
+            </div>
+            {energy !== null && ((energy / 100000) * 100) < 15 && (
+              <div className="mt-2 text-[#F59E0B] font-rajdhani text-xs animate-pulse">
+                Low energy: upgrade to continue
+              </div>
+            )}
+            {energy !== null && ((energy / 100000) * 100) >= 15 && ((energy / 100000) * 100) < 50 && (
+              <div className="mt-2 text-right">
+                <Link
+                  href="/pricing"
+                  className="text-[#D4AF37] font-orbitron text-[9px] uppercase tracking-wider hover:underline"
+                >
+                  UPGRADE
+                </Link>
+              </div>
+            )}
           </div>
-          <div className="w-full bg-[#0A0A0A] h-1 mt-2 rounded-full overflow-hidden relative z-10 border border-[rgba(212,175,55,0.08)]">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${Math.min(100, ((energy || 0) / 100000) * 100)}%` }}
-              transition={{ duration: 1, ease: "easeOut" }}
-              className="bg-gradient-to-r from-[#D4AF37] to-[#F5D38C] h-full"
-            />
-          </div>
-        </div>
+        )}
 
         {user ? (
           <div className="flex items-center justify-between px-2 py-1">

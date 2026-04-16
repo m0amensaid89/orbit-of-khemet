@@ -20,9 +20,9 @@ export const CREDIT_COSTS: Record<RequestType, number> = {
   image_analysis:    2,
   deep_analysis:    26,
   image_generation: 200,
-  video_quick:      300,
-  video_standard:   500,
-  video_cinematic:  1000,
+  video_quick:      2,
+  video_standard:   5,
+  video_cinematic:  12,
   video_edit:       700,
   website_analysis: 15,
 }
