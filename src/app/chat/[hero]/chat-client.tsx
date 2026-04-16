@@ -131,8 +131,8 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
   const [user, setUser] = useState<{ email?: string; user_metadata?: { full_name?: string } } | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const userRef = useRef<any>(null);
-  const [profile, setProfile] = useState<{ username?: string } | null>(null);
-  const profileRef = useRef<{ username?: string } | null>(null);
+  const [profile, setProfile] = useState<{ username?: string; display_name?: string; full_name?: string } | null>(null);
+  const profileRef = useRef<{ username?: string; display_name?: string; full_name?: string } | null>(null);
 
   useEffect(() => {
     const fetchUserAndProfile = async () => {
@@ -169,7 +169,7 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
 
   const agentName = agent?.name || (isMaster ? "Master Orbit" : (hero?.name || heroParam.toUpperCase()));
   const agentRole = agent?.role_summary || (isMaster ? "Full Council of 85 Agents" : hero?.class_title || "");
-  const agentInitials = agentName.substring(0, 2).toUpperCase();
+  const agentInitials = agentName ? agentName[0].toUpperCase() : 'A';
   const heroName = hero?.name || heroParam.toUpperCase();
 
   const threadId = searchParams.get("thread");
@@ -604,7 +604,9 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
       const skill = agentSkills[skillKey]
       if (skill) {
         const timer = setTimeout(() => {
-          const username = profileRef.current?.username
+          const username = profileRef.current?.display_name
+            || profileRef.current?.full_name
+            || profileRef.current?.username
             || userRef.current?.email?.split('@')[0]
             || 'Commander'
 
@@ -626,7 +628,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
           }, 18)
 
           return () => clearInterval(interval)
-        }, 800)
+        }, 1800)
 
         return () => clearTimeout(timer)
       }
@@ -748,7 +750,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                     {agentName}
                   </div>
                   <div className="rounded-2xl px-4 py-3 text-sm"
-                    style={{ background: 'rgba(212,175,55,0.06)', border: '1px solid rgba(212,175,55,0.15)', color: '#d0c5af', minHeight: '48px' }}>
+                    style={{ background: 'rgba(212,175,55,0.06)', border: '1px solid rgba(212,175,55,0.15)', color: '#d0c5af', minHeight: '48px', whiteSpace: 'pre-wrap', lineHeight: '1.75' }}>
                     {typewriterText}
                     {!typewriterDone && <span style={{ opacity: 0.5 }}>|</span>}
                   </div>
@@ -763,7 +765,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                 </div>
                 <div className={`flex flex-col max-w-[80%] ${m.role === "user" ? "items-end" : "items-start"}`}>
                   <div className="rounded-2xl px-4 py-3 text-sm"
-                    style={{ background: m.role === "user" ? 'rgba(37,99,235,0.15)' : 'rgba(212,175,55,0.06)', border: m.role === "user" ? '1px solid rgba(37,99,235,0.3)' : '1px solid rgba(212,175,55,0.15)', color: '#d0c5af' }}>
+                    style={{ background: m.role === "user" ? 'rgba(37,99,235,0.15)' : 'rgba(212,175,55,0.06)', border: m.role === "user" ? '1px solid rgba(37,99,235,0.3)' : '1px solid rgba(212,175,55,0.15)', color: '#d0c5af', whiteSpace: 'pre-wrap', lineHeight: '1.75' }}>
                     {m.content}
                   </div>
                 </div>
