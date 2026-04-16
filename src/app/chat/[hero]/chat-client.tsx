@@ -170,8 +170,8 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
 
   const agentName = agent?.name || (isMaster ? "Master Orbit" : (hero?.name || heroParam.toUpperCase()));
   const agentRole = agent?.role_summary || (isMaster ? "Full Council of 85 Agents" : hero?.class_title || "");
-  const agentInitials = agentName ? agentName[0].toUpperCase() : 'A';
   const heroName = hero?.name || heroParam.toUpperCase();
+  const agentInitials = agentName ? (agentName === heroName ? agentName[0].toUpperCase() : (agentName[0] + (heroName?.[0] || '')).toUpperCase()) : 'A';
 
   const threadId = searchParams.get("thread");
 
@@ -695,8 +695,8 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
           {/* Agent avatar */}
           <div className="relative w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-[Orbitron] font-bold text-sm border-2 overflow-hidden"
             style={{ background: `rgba(${hero?.palette?.["primary-rgb"] || "192,192,192"},0.15)`, borderColor: accentColor, color: accentColor }}>
-            {!isMaster ? (
-              <Image src={`/${heroParam}.png`} alt={agentName} fill className="object-cover" sizes="40px" />
+            {(!isMaster && agentName === heroName) || isMaster ? (
+              <Image src={`/${heroParam}.png`} alt={agentName === heroName ? heroName : agentName} fill className="object-cover" sizes="40px" />
             ) : (
               agentInitials
             )}
@@ -756,7 +756,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
               <div className="flex gap-3 w-full flex-row">
                 <div className="relative w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-[Orbitron] text-xs border shadow-lg overflow-hidden mt-1"
                   style={{ background: '#0A0A0A', borderColor: 'rgba(212,175,55,0.3)', color: '#D4AF37' }}>
-                  {agentInitials}
+                  {agentName === heroName || isMaster ? <Image src={`/${heroParam}.png`} alt={heroName} fill className="object-cover" sizes="40px" /> : agentInitials}
                 </div>
                 <div className="flex flex-col max-w-[80%] items-start">
                   <div className="text-xs font-[Orbitron] mb-1" style={{ color: accentColor, letterSpacing: '0.1em' }}>
@@ -794,7 +794,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                     style={m.role === "user"
                       ? { background: "#1A1A1A", borderColor: "#D4AF37", color: "#D4AF37" }
                       : { background: `rgba(${hero?.palette?.["primary-rgb"] || "192,192,192"},0.1)`, borderColor: accentColor, color: accentColor }}>
-                    {m.role === "user" ? "YOU" : (!isMaster ? <Image src={`/${heroParam}.png`} alt={agentName} fill className="object-cover" sizes="40px" /> : agentInitials)}
+                    {m.role === "user" ? "YOU" : (agentName === heroName || isMaster ? <Image src={`/${heroParam}.png`} alt={agentName} fill className="object-cover" sizes="40px" /> : agentInitials)}
                   </div>
 
                   {/* Bubble Container */}

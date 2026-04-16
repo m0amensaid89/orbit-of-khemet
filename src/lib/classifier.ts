@@ -11,7 +11,7 @@ export interface ClassificationResult {
   clarificationOptions?: string[]
 }
 
-const OBVIOUS_VIDEO = ['create video','make video','generate video','make a clip','animate this','make me a video','create a video','video of','film of','movie of','shoot a video']
+const OBVIOUS_VIDEO = ['create video','make video','generate video','make a clip','animate this','make me a video','create a video','video of','film of','movie of','shoot a video', 'quick video', 'professional video', 'cinematic video', '4k video']
 const OBVIOUS_IMAGE = ['generate image','create image','create an image','make image','make an image','draw','illustrate','design image','create a picture','make a picture','generate a picture','paint','create artwork','generate artwork','image of','picture of','photo of','artwork of','create a visual','make a visual','visualize','render a','create a rendering','make a rendering','show me a picture','show me an image']
 const OBVIOUS_CODE = ['write code','write a function','create a function','build a','debug this','fix this code','write a script','create a component','implement this','write a class','write a program','code that','function that','create an app','build an app']
 const OBVIOUS_RESEARCH = ['research','find information','search for','what are the latest','current news','recent developments','look up','find out about','tell me the latest','what happened with','news about']
