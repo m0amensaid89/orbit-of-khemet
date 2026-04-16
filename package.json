@@ -22,6 +22,7 @@
     "@supabase/supabase-js": "^2.101.1",
     "@types/highlight.js": "^9.12.4",
     "ai": "^4.3.19",
+    "bcryptjs": "^3.0.3",
     "canvas": "^3.2.2",
     "cheerio": "^1.2.0",
     "class-variance-authority": "^0.7.1",
@@ -31,6 +32,7 @@
     "framer-motion": "^12.38.0",
     "highlight.js": "^11.11.1",
     "html2pdf.js": "^0.14.0",
+    "jose": "^6.2.2",
     "jspdf": "^4.2.1",
     "jszip": "^3.10.1",
     "lucide-react": "^1.8.0",
@@ -50,6 +52,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
     "@tailwindcss/postcss": "^4",
+    "@types/bcryptjs": "^2.4.6",
     "@types/cheerio": "^0.22.35",
     "@types/dom-speech-recognition": "^0.0.9",
     "@types/jszip": "^3.4.0",
