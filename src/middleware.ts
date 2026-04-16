@@ -6,6 +6,14 @@ const PUBLIC_PATHS = ['/', '/login', '/terms', '/privacy', '/refund-policy', '/a
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
+
+  // Redirect /login -> /auth
+  if (pathname === '/login') {
+    const authUrl = request.nextUrl.clone()
+    authUrl.pathname = '/auth'
+    return NextResponse.redirect(authUrl)
+  }
+
   // Allow all public paths
   const isPublic = PUBLIC_PATHS.some(path =>
     pathname === path || pathname.startsWith(path + '/')
@@ -33,7 +41,7 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
-    const loginUrl = new URL('/login', request.url)
+    const loginUrl = new URL('/auth', request.url)
     loginUrl.searchParams.set('from', pathname)
     return NextResponse.redirect(loginUrl)
   }

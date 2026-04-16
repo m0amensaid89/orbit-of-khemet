@@ -124,6 +124,7 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
   const router = useRouter();
   const [clarificationOptions, setClarificationOptions] = useState<string[] | null>(null)
   const [historyMessages, setHistoryMessages] = useState<Array<{id: string, role: 'user' | 'assistant', content: string}>>([])
+
   const [pendingMessage, setPendingMessage] = useState<string>('')
   const heroParam = (heroSlug || searchParams.get("hero") || "MASTER").toLowerCase();
   const agentParam = searchParams.get("agent") || "";
@@ -387,6 +388,13 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
   }, [rawMessages, isLoading])
 
   const messages = rawMessages as CustomMessage[];
+
+  const displayMessages: CustomMessage[] = historyMessages.length > 0 && messages.length === 0
+    ? historyMessages as unknown as CustomMessage[]
+    : messages.length > 0
+    ? [...(historyMessages as unknown as CustomMessage[]), ...messages]
+    : messages;
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const heroModelMap: Record<string, string> = {
@@ -757,21 +765,8 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                 </div>
               </div>
             )}
-            {historyMessages.length > 0 && historyMessages.map((m) => (
-              <div key={m.id} className={`flex gap-3 w-full ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
-                <div className={`relative w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-[Orbitron] text-xs border shadow-lg overflow-hidden ${m.role === "user" ? "mt-auto" : "mt-1"}`}
-                  style={m.role === "user" ? { background: '#2563EB', borderColor: 'rgba(37,99,235,0.5)', color: '#fff' } : { background: '#0A0A0A', borderColor: 'rgba(212,175,55,0.3)', color: '#D4AF37' }}>
-                  {m.role === "user" ? "YOU" : heroParam.slice(0,2).toUpperCase()}
-                </div>
-                <div className={`flex flex-col max-w-[80%] ${m.role === "user" ? "items-end" : "items-start"}`}>
-                  <div className="rounded-2xl px-4 py-3 text-sm"
-                    style={{ background: m.role === "user" ? 'rgba(37,99,235,0.15)' : 'rgba(212,175,55,0.06)', border: m.role === "user" ? '1px solid rgba(37,99,235,0.3)' : '1px solid rgba(212,175,55,0.15)', color: '#d0c5af', whiteSpace: 'pre-wrap', lineHeight: '1.75' }}>
-                    {m.content}
-                  </div>
-                </div>
-              </div>
-            ))}
-            {messages.map((m) => {
+
+            {displayMessages.map((m) => {
 
               if (m.role === 'assistant') {
                 try {
