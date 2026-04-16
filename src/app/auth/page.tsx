@@ -46,7 +46,7 @@ function AuthForm() {
           password,
         });
         if (error) throw error;
-        const redirectUrl = searchParams.get("redirect") || "/master-orbit";
+        const redirectUrl = searchParams.get("redirect") || "/hub";
         router.push(redirectUrl);
         router.refresh();
       } else {
@@ -62,8 +62,8 @@ function AuthForm() {
         if (error) throw error;
         // In Supabase, if auto-confirm is enabled, it logs them in directly.
         // Even if not, it's safe to redirect or show a message.
-        // Let's redirect them to /master-orbit automatically or show a success message if email verification is required.
-        const redirectUrl = searchParams.get("redirect") || "/master-orbit";
+        // Let's redirect them to /hub automatically or show a success message if email verification is required.
+        const redirectUrl = searchParams.get("redirect") || "/hub";
         router.push(redirectUrl);
         router.refresh();
       }

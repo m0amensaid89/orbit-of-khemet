@@ -4,7 +4,7 @@ import Link from "next/link";
 
 
 import { usePathname } from "next/navigation";
-import { Zap, Shield, Cpu, LogIn, LogOut, User, Wand2, Compass, Hammer, Gem, Globe } from "lucide-react";
+import { Zap, Shield, Cpu, LogIn, LogOut, User, Wand2, Compass, Hammer, Gem, Globe, Brain } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
@@ -182,7 +182,7 @@ export function Sidebar() {
   return (
     <aside className="w-[260px] h-screen bg-[#0A0A0A] hidden md:flex flex-col sticky top-0 shrink-0 text-[#d0c5af] font-rajdhani">
       {/* Top Logo Area */}
-      <Link href="/" className="h-16 border-b border-[#D4AF37]/20 flex items-center px-6 gap-3 shrink-0">
+      <Link href="/hub" className="h-16 border-b border-[#D4AF37]/20 flex items-center px-6 gap-3 shrink-0">
         <img
           src="/khemet-logo.png"
           alt="Khemet AI"
@@ -205,8 +205,8 @@ export function Sidebar() {
               <span className="font-medium text-empire-sm z-10">New Mission</span>
             </Link>
             <Link href="/brain" className={navItemClass("/brain")}>
-              <span style={{ fontSize: '14px' }}>🧠</span>
-              <span>Khemet Brain</span>
+              <Brain className="w-4 h-4 z-10" />
+              <span className="font-medium text-empire-sm z-10">KHEMET BRAIN</span>
             </Link>
             {/*
             <Link href="/master-orbit" className={navItemClass("/master-orbit")}>
@@ -703,7 +703,7 @@ export function Sidebar() {
             <span className="text-empire-xs text-[#d0c5af] font-orbitron uppercase">GRID ENERGY</span>
           </div>
           <div className="text-empire-lg font-orbitron font-bold text-[#D4AF37] drop-shadow-[0_0_8px_rgba(212,175,55,0.2)] relative z-10">
-            {energy === null ? '...' : energy.toLocaleString()}
+            {energy !== null ? energy.toLocaleString() : <span className="animate-pulse" style={{color: 'rgba(212,175,55,0.3)'}}>...</span>}
           </div>
           <div className="w-full bg-[#0A0A0A] h-1 mt-2 rounded-full overflow-hidden relative z-10 border border-[rgba(212,175,55,0.08)]">
             <motion.div

@@ -55,7 +55,6 @@ export function GlobalNav() {
           {isLandingPage ? (
             <>
               <Link href="#heroes" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">HEROES</Link>
-              <Link href="#agents" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">AGENTS</Link>
               <Link href="#how-it-works" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">HOW IT WORKS</Link>
               <Link href="/pricing" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">PRICING</Link>
               <Link href="/hub" className="ml-2">
@@ -121,7 +120,6 @@ export function GlobalNav() {
           {isLandingPage ? (
             <>
               <Link href="#heroes" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">HEROES</Link>
-              <Link href="#agents" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">AGENTS</Link>
               <Link href="#how-it-works" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">HOW IT WORKS</Link>
               <Link href="/pricing" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">PRICING</Link>
               <Link href="/hub" onClick={() => setMobileOpen(false)} className="mt-2">
