@@ -14,7 +14,7 @@ import { useChat, Message } from "@ai-sdk/react";
 import { HTMLPreviewCard } from "@/components/chat/output-cards/HTMLPreviewCard";
 import { DocumentViewCard } from "@/components/chat/output-cards/DocumentViewCard";
 import { CodeBlockCard } from "@/components/chat/output-cards/CodeBlockCard";
-import { ImageCard } from "@/components/chat/output-cards/ImageCard";
+import { ImageOutput } from "@/components/chat/ImageOutput";
 import { RenderedOutput } from "@/lib/autopilot/transformer";
 import { detectArtifact, extractTitle, stripCodeBlocks } from '@/lib/artifacts';
 import { ArtifactRenderer } from '@/components/ArtifactRenderer';
@@ -201,7 +201,7 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
   }, []);
 
   type CustomMessage = Message & { rendered_output?: RenderedOutput };
-  const { messages: rawMessages, input, handleInputChange, handleSubmit, setMessages, isLoading, append } = useChat({
+  const { messages: rawMessages, input, setInput, handleInputChange, handleSubmit, setMessages, isLoading, append } = useChat({
     api: "/api/chat",
     body: { hero: heroParam, agent: agentParam, threadId },
     initialMessages: [],
@@ -696,7 +696,17 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
           <div className="relative w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-[Orbitron] font-bold text-sm border-2 overflow-hidden"
             style={{ background: `rgba(${hero?.palette?.["primary-rgb"] || "192,192,192"},0.15)`, borderColor: accentColor, color: accentColor }}>
             {(!isMaster && agentName === heroName) || isMaster ? (
-              <Image src={`/${heroParam}.png`} alt={agentName === heroName ? heroName : agentName} fill className="object-cover" sizes="40px" />
+              <>
+                {agentInitials}
+                <Image
+                  src={`/${heroParam}.png`}
+                  alt={agentName === heroName ? heroName : agentName}
+                  fill
+                  className="object-cover"
+                  sizes="40px"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                />
+              </>
             ) : (
               agentInitials
             )}
@@ -756,7 +766,19 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
               <div className="flex gap-3 w-full flex-row">
                 <div className="relative w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-[Orbitron] text-xs border shadow-lg overflow-hidden mt-1"
                   style={{ background: '#0A0A0A', borderColor: 'rgba(212,175,55,0.3)', color: '#D4AF37' }}>
-                  {agentName === heroName || isMaster ? <Image src={`/${heroParam}.png`} alt={heroName} fill className="object-cover" sizes="40px" /> : agentInitials}
+                  {agentName === heroName || isMaster ? (
+                    <>
+                      {agentInitials}
+                      <Image
+                        src={`/${heroParam}.png`}
+                        alt={heroName}
+                        fill
+                        className="object-cover"
+                        sizes="40px"
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                      />
+                    </>
+                  ) : agentInitials}
                 </div>
                 <div className="flex flex-col max-w-[80%] items-start">
                   <div className="text-xs font-[Orbitron] mb-1" style={{ color: accentColor, letterSpacing: '0.1em' }}>
@@ -794,7 +816,19 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                     style={m.role === "user"
                       ? { background: "#1A1A1A", borderColor: "#D4AF37", color: "#D4AF37" }
                       : { background: `rgba(${hero?.palette?.["primary-rgb"] || "192,192,192"},0.1)`, borderColor: accentColor, color: accentColor }}>
-                    {m.role === "user" ? "YOU" : (agentName === heroName || isMaster ? <Image src={`/${heroParam}.png`} alt={agentName} fill className="object-cover" sizes="40px" /> : agentInitials)}
+                    {m.role === "user" ? "YOU" : (agentName === heroName || isMaster ? (
+                      <>
+                        {agentInitials}
+                        <Image
+                          src={`/${heroParam}.png`}
+                          alt={agentName}
+                          fill
+                          className="object-cover"
+                          sizes="40px"
+                          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                        />
+                      </>
+                    ) : agentInitials)}
                   </div>
 
                   {/* Bubble Container */}
@@ -825,7 +859,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                                case 'code':
                                  return <CodeBlockCard code={output.code} language={output.language} />;
                                case 'image':
-                                 return <ImageCard url={output.url} onRegenerate={() => {
+                                 return <ImageOutput urls={output.urls} onRegenerate={() => {
                                      // Optional regenerate logic implementation
                                  }} />;
                                case 'text':
@@ -846,7 +880,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                                      case 'html': return <HTMLPreviewCard html={output.html} />;
                                      case 'document': return <DocumentViewCard markdown={output.markdown} />;
                                      case 'code': return <CodeBlockCard code={output.code} language={output.language} />;
-                                     case 'image': return <ImageCard url={output.url} onRegenerate={() => {}} />;
+                                     case 'image': return <ImageOutput urls={output.urls} onRegenerate={() => {}} onRefine={(url) => setInput(`Refine this image: ${url}`)} onUseAsReference={(url) => setInput(`Use this image as reference: ${url}`)} />;
                                      case 'text': return output.content;
                                    }
                                }
@@ -860,7 +894,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                                           case 'html': return <HTMLPreviewCard html={output.html} />;
                                           case 'document': return <DocumentViewCard markdown={output.markdown} />;
                                           case 'code': return <CodeBlockCard code={output.code} language={output.language} />;
-                                          case 'image': return <ImageCard url={output.url} onRegenerate={() => {}} />;
+                                          case 'image': return <ImageOutput urls={output.urls} onRegenerate={() => {}} onRefine={(url) => setInput(`Refine this image: ${url}`)} onUseAsReference={(url) => setInput(`Use this image as reference: ${url}`)} />;
                                           case 'text': return output.content;
                                        }
                                    }
@@ -871,7 +905,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                                if (classMatch) {
                                   const classData = JSON.parse(classMatch[1]);
                                   if (classData.task_type === 'image') {
-                                       return <ImageCard isLoading={true} />;
+                                       return <ImageOutput isLoading={true} />;
                                   }
 
                                   // Extract pure text delta removing all custom events and clean it up
@@ -895,11 +929,11 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
 
                           // Support raw image text urls during stream before final render (legacy fallback)
                           if (m.role === 'assistant') {
-                            const imgMatch = m.content.match(/!\[.*?\]\((data:image\/[^)]+)\)/);
-                            const urlMatch = m.content.match(/!\[.*?\]\((https?:\/\/[^)]+)\)/);
-                            const imageUrl = imgMatch?.[1] || urlMatch?.[1];
-                            if (imageUrl) {
-                              return <ImageCard url={imageUrl} />;
+                            const imgMatches = Array.from(m.content.matchAll(/!\[.*?\]\((data:image\/[^)]+)\)/g));
+                            const urlMatches = Array.from(m.content.matchAll(/!\[.*?\]\((https?:\/\/[^)]+)\)/g));
+                            const urls = [...imgMatches, ...urlMatches].map(match => match[1]);
+                            if (urls.length > 0) {
+                              return <ImageOutput urls={urls} onRefine={(url) => setInput(`Refine this image: ${url}`)} onUseAsReference={(url) => setInput(`Use this image as reference: ${url}`)} />;
                             }
                           }
 

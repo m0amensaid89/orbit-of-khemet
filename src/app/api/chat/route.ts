@@ -4,6 +4,7 @@ import { CREDIT_COSTS, PLATFORM_LABELS, PLATFORM_MODEL_MAP } from '@/lib/credits
 import { buildSystemPrompt } from '@/lib/buildSystemPrompt';
 import { agentSkills } from '@/lib/agent-skills';
 import { getBrainContext } from '@/lib/brain/context';
+import { heroAgents } from '@/lib/agents';
 
 import { createClient as createSupabaseClient, SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/server';
@@ -106,9 +107,11 @@ export async function POST(req: NextRequest) {
     const creditCost   = CREDIT_COSTS[requestType];
 
     // 2. Check agent routing override
+    const heroAgentsList = heroAgents[heroSlug as keyof typeof heroAgents] || [];
+    const agentDef = heroAgentsList.find(a => a.id === agent || a.name.toLowerCase() === agent.toLowerCase());
     const agentKey     = `${heroSlug}-${agent}`;
     const agentSkill   = agentSkills[agentKey];
-    const modelToUse   = agentSkill?.routingOverride || PLATFORM_MODEL_MAP[requestType];
+    const modelToUse   = agentDef?.preferredModel || agentSkill?.routingOverride || PLATFORM_MODEL_MAP[requestType];
 
     const supabaseServer = await createClient();
     const { data: { user } } = await supabaseServer.auth.getUser();
