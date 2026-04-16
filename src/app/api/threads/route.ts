@@ -30,3 +30,37 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({ threads: threads || [] })
 }
+
+export async function POST(req: NextRequest) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const body = await req.json()
+  const { heroSlug, agentId, projectId, title } = body
+
+  if (!heroSlug) {
+    return NextResponse.json({ error: 'heroSlug is required' }, { status: 400 })
+  }
+
+  const threadData: Record<string, string> = {
+    user_id: user.id,
+    hero_slug: heroSlug,
+    title: title || 'New Mission'
+  }
+
+  if (agentId) threadData.agent_slug = agentId
+  if (projectId) threadData.project_id = projectId
+
+  const { data: thread, error } = await supabaseAdmin
+    .from('chat_threads')
+    .insert(threadData)
+    .select()
+    .single()
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
+
+  return NextResponse.json({ thread })
+}
