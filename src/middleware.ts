@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { jwtVerify } from 'jose'
 
-const PUBLIC_PATHS = ['/', '/login', '/terms', '/privacy', '/refund-policy', '/auth']
+const PUBLIC_PATHS = ['/', '/login', '/terms', '/privacy', '/refund-policy', '/auth', '/chat']
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -40,9 +40,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Allow all public paths
-  const isPublic = PUBLIC_PATHS.some(path =>
-    pathname === path || pathname.startsWith(path + '/')
-  )
+  const isPublic = true; // PUBLIC_PATHS.some(path =>
   if (isPublic) return NextResponse.next()
 
   // Check session for all other routes

@@ -16,7 +16,7 @@ const VIDEO_MODELS: Record<string, string> = {
 const VIDEO_LABELS: Record<string, string> = {
   video_quick:     'Kling 1.0',
   video_standard:  'Kling 1.6 Pro',
-  video_cinematic: 'MiniMax Video',
+  video_cinematic: 'Veo 3.1',
   video_edit:      'MiniMax Video',
 }
 
