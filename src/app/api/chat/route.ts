@@ -366,6 +366,20 @@ export async function POST(req: NextRequest) {
     response.headers.set('X-Credits-Remaining', (profileCredits - creditCost).toString());
     response.headers.set('X-Platform-Label', PLATFORM_LABELS[requestType]);
 
+
+    // Fire-and-forget memory extraction (non-blocking)
+    if (user && messages.length >= 2) {
+      const memoryMessages = messages.slice(-6).map((m: { role: string; content: unknown }) => ({
+        role: m.role,
+        content: typeof m.content === 'string' ? m.content : JSON.stringify(m.content),
+      }))
+      fetch('https://orbit-of-khemet.vercel.app/api/brain/extract-memory', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: memoryMessages, userId: user.id }),
+      }).catch(() => {})
+    }
+
     return response;
 
   } catch (error) {
