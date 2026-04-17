@@ -112,6 +112,7 @@ export interface AgentSkill {
   capabilities: string[];
   routingHints: string[];
   outputTypes: string[];
+  routingOverride?: string;
 }
 
 export const skillsRegistry: Record<string, AgentSkill> = {
