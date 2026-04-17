@@ -112,6 +112,8 @@ export interface AgentSkill {
   capabilities: string[];
   routingHints: string[];
   outputTypes: string[];
+  routingOverride?: string;
+  openingMessage?: (username: string) => string;
 }
 
 export const skillsRegistry: Record<string, AgentSkill> = {
@@ -233,3 +235,5 @@ export function getSkillsByCapability(capability: string): AgentSkill[] {
     skill.capabilities.some(cap => cap.toLowerCase().includes(capability.toLowerCase()))
   );
 }
+
+export const agentSkills = skillsRegistry;
