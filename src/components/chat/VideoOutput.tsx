@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { VideoGenerationLoader } from "@/components/ui/VideoGenerationLoader";
 
 export const VideoQualitySelector = ({ prompt, onSelect }: { prompt: string, onSelect: (type: string) => void }) => {
   const [selectedType, setSelectedType] = useState<string>("video_standard");
@@ -88,10 +89,7 @@ export const VideoQualitySelector = ({ prompt, onSelect }: { prompt: string, onS
 export const VideoGenerating = ({ model }: { model: string }) => (
   <div style={{ padding: '20px', textAlign: 'center', color: '#D4AF37', fontFamily: 'monospace', fontSize: '11px', letterSpacing: '0.1em' }}>
     <div>GENERATING WITH {model.toUpperCase()}</div>
-    <div style={{ marginTop: '8px', opacity: 0.6 }}>This takes 30-90 seconds...</div>
-    <div style={{ marginTop: '12px' }}>
-      ████████░░░░░░░░ Rendering...
-    </div>
+    <VideoGenerationLoader />
   </div>
 );
 

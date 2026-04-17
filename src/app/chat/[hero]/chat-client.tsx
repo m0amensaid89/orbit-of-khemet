@@ -550,7 +550,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
     if (agent && agentParam) {
       greeting = agent.description || agent.role_summary || `I am ${agent.name}.`;
     } else if (hero) {
-      greeting = hero.welcomeMessage || `I am ${hero.name}.`;
+      greeting = hero.welcomeMessage ? `${hero.welcomeMessage} ${hero.bio}` : `I am ${hero.name}. ${hero.bio}`;
     }
 
     const openingContent = `Welcome back, ${username}. ${greeting}`;
@@ -703,13 +703,13 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
               scrollbarWidth: 'thin',
               scrollbarColor: '#D4AF37 #0A0A0A'
             }}>
-            {agent && messages.length === 0 && (
+            {messages.length === 0 && (
               <div className="flex gap-3 w-full flex-row">
                 <div className="relative w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-[Orbitron] text-xs border shadow-lg overflow-hidden mt-1"
                   style={{ background: '#0A0A0A', borderColor: 'rgba(212,175,55,0.3)', color: '#D4AF37' }}>
-                  {agentName === heroName || isMaster ? (
+                  {!agent || agentName === heroName || isMaster ? (
                     <>
-                      {agentInitials}
+                      {hero?.name.substring(0, 2).toUpperCase()}
                       <Image
                         src={`/${heroParam}.png`}
                         alt={heroName}
@@ -723,7 +723,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                 </div>
                 <div className="flex flex-col max-w-[80%] items-start">
                   <div className="text-xs font-[Orbitron] mb-1" style={{ color: accentColor, letterSpacing: '0.1em' }}>
-                    {agentName}
+                    {!agent ? heroName : agentName}
                   </div>
                   <div className="rounded-2xl px-4 py-3 text-sm"
                     style={{ background: 'rgba(212,175,55,0.06)', border: '1px solid rgba(212,175,55,0.15)', color: '#d0c5af', minHeight: '48px', whiteSpace: 'pre-wrap', lineHeight: '1.75' }}>
