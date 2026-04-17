@@ -1,21 +1,15 @@
 import { agentSkills } from './agent-skills'
 
-export interface AgentSkill {
-  agentId:             string
-  agentTitle:          string
-  heroName:            string
-  heroTitle:           string
-  routingOverride?:    string
-  persona:             string
-  openingMessage:      (username: string) => string
-  taskSpecializations: string[]
-  constraints:         string[]
-}
-
 export function buildSystemPrompt(agentId: string, heroName: string): string {
   const key    = `${heroName.toLowerCase()}-${agentId}`
-  const skill  = agentSkills[key]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const skill  = agentSkills[key] as any
   if (!skill) return getDefaultSystemPrompt(heroName)
+
+  // Use new systemPrompt property if it exists, otherwise fall back to old format
+  if (skill.systemPrompt) {
+    return skill.systemPrompt;
+  }
 
   return `
 IDENTITY
@@ -25,10 +19,10 @@ PERSONA
 ${skill.persona}
 
 YOUR SPECIALIZATIONS
-${skill.taskSpecializations.map((t, i) => `${i + 1}. ${t}`).join('\n')}
+${skill.taskSpecializations?.map((t: string, i: number) => `${i + 1}. ${t}`).join('\n') || ''}
 
 YOUR CONSTRAINTS
-${skill.constraints.map(c => `- ${c}`).join('\n')}
+${skill.constraints?.map((c: string) => `- ${c}`).join('\n') || ''}
 
 PLATFORM RULES
 - No em-dashes anywhere in your output. Use colons, periods, or line breaks instead.
