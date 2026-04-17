@@ -111,7 +111,7 @@ export async function POST(req: NextRequest) {
     const agentDef = heroAgentsList.find(a => a.id === agent || a.name.toLowerCase() === agent.toLowerCase());
     const agentKey     = `${heroSlug}-${agent}`;
     const agentSkill   = agentSkills[agentKey];
-    const modelToUse   = agentDef?.preferredModel || (agentSkill as any)?.routingOverride || PLATFORM_MODEL_MAP[requestType];
+    const modelToUse   = agentDef?.preferredModel || (agentSkill as { routingOverride?: string } | undefined)?.routingOverride || PLATFORM_MODEL_MAP[requestType];
 
     const supabaseServer = await createClient();
     const { data: { user } } = await supabaseServer.auth.getUser();
