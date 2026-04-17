@@ -233,3 +233,5 @@ export function getSkillsByCapability(capability: string): AgentSkill[] {
     skill.capabilities.some(cap => cap.toLowerCase().includes(capability.toLowerCase()))
   );
 }
+
+export const agentSkills = skillsRegistry;
