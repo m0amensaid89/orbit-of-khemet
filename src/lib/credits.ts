@@ -68,3 +68,40 @@ export const TIER_CREDITS: Record<string, number> = {
 }
 
 export const UPGRADE_THRESHOLD = 0.15
+
+export interface UserCredits {
+  balance: number;
+  totalAllocation: number;
+  tier: 'FREE' | 'STARTER' | 'PRO' | 'EMPIRE';
+  resetDate: string;
+  usageHistory: { date: string; amount: number; type: string }[];
+}
+
+export const TIER_LIMITS = {
+  FREE: 100,
+  STARTER: 500,
+  PRO: 1000,
+  EMPIRE: 5000,
+};
+
+export const TIER_COLORS = {
+  FREE: 'rgba(212,175,55,0.4)',
+  STARTER: '#D4AF37',
+  PRO: '#06B6D4',
+  EMPIRE: '#2563EB',
+};
+
+export function getUsagePercentage(balance: number, total: number): number {
+  if (total === 0) return 0;
+  return Math.min(100, Math.max(0, (balance / total) * 100));
+}
+
+export function getWarningLevel(percentage: number): 'normal' | 'warning' | 'critical' {
+  if (percentage < 5) return 'critical';
+  if (percentage < 15) return 'warning';
+  return 'normal';
+}
+
+export function formatCredits(amount: number): string {
+  return amount.toLocaleString();
+}
