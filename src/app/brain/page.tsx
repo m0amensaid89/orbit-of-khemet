@@ -421,9 +421,7 @@ export default function BrainPage() {
             </p>
             <textarea
               rows={10}
-              placeholder={"You: I'm building an AI startup in Egypt...
-Assistant: That sounds fascinating. Tell me more about...
-You: We're focused on gamification and enterprise AI..."}
+              placeholder="You: message&#10;Assistant: response&#10;You: next message..."
               value={importText}
               onChange={e => { setImportText(e.target.value); setImportError(''); setImportResult(null); }}
               style={{
