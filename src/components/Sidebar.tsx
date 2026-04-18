@@ -28,6 +28,9 @@ export function Sidebar() {
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
   const [showNewProject, setShowNewProject] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
+  const [pinnedThreads, setPinnedThreads] = useState<string[]>([]);
+  const [tabSessions, setTabSessions] = useState<Array<{id: string; heroSlug: string; agentName: string; label: string}>>([]);
+
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -108,6 +111,14 @@ export function Sidebar() {
     }
 
     fetchSessionAndEnergy();
+    // Load pinned threads and tab sessions from localStorage
+    try {
+      const pinned = JSON.parse(localStorage.getItem('orbit_pinned_threads') || '[]');
+      setPinnedThreads(pinned);
+      const tabs = JSON.parse(localStorage.getItem('orbit_tabs') || '[]');
+      setTabSessions(tabs);
+    } catch {}
+
 
     const handleCreditsUpdate = async () => {
       try {
@@ -180,6 +191,28 @@ export function Sidebar() {
         : "text-[#d0c5af] hover:text-[#d0c5af] hover:bg-[rgba(212,175,55,0.06)] border-l-[2px] border-transparent hover:border-[#D4AF37]"
     }`;
   };
+
+
+  const togglePin = (threadId: string) => {
+    setPinnedThreads(prev => {
+      const next = prev.includes(threadId)
+        ? prev.filter(id => id !== threadId)
+        : prev.length >= 5 ? prev : [...prev, threadId];
+      localStorage.setItem('orbit_pinned_threads', JSON.stringify(next));
+      return next;
+    });
+  };
+
+  const closeTab = (tabId: string) => {
+    setTabSessions(prev => {
+      const next = prev.filter(t => t.id !== tabId);
+      localStorage.setItem('orbit_tabs', JSON.stringify(next));
+      return next;
+    });
+  };
+
+  const pinnedList = filteredThreads.filter(t => pinnedThreads.includes(t.id));
+  const unpinnedList = filteredThreads.filter(t => !pinnedThreads.includes(t.id));
 
   return (
     <aside className="w-[260px] h-screen bg-[#0A0A0A] hidden md:flex flex-col sticky top-0 shrink-0 text-[#d0c5af] font-rajdhani">
@@ -378,6 +411,30 @@ export function Sidebar() {
           )}
         </div>
 
+        {/* ACTIVE SESSIONS — multi-session tabs */}
+        {tabSessions.length > 0 && user && (
+          <>
+            <div className="h-[1px] bg-[rgba(212,175,55,0.08)] mx-3" />
+            <div className="px-4 py-2">
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-orbitron text-empire-xs uppercase text-[rgba(212,175,55,0.4)]">ACTIVE SESSIONS</span>
+                <a href="/hub" style={{ fontSize: '9px', fontFamily: 'monospace', letterSpacing: '0.1em', color: 'rgba(212,175,55,0.4)', textDecoration: 'none' }}>+ NEW</a>
+              </div>
+              {tabSessions.slice(0, 5).map(tab => (
+                <div key={tab.id} className="group flex items-center gap-2 mb-1 px-2 py-1 rounded-sm transition-all hover:bg-[rgba(212,175,55,0.04)]"
+                  style={{ border: '1px solid rgba(212,175,55,0.08)' }}>
+                  <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px', fontFamily: 'monospace', color: '#D4AF37', flexShrink: 0 }}>
+                    {tab.heroSlug.slice(0, 2).toUpperCase()}
+                  </div>
+                  <span style={{ flex: 1, fontSize: '11px', color: 'rgba(208,197,175,0.7)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>{tab.label}</span>
+                  <button onClick={() => closeTab(tab.id)} style={{ opacity: 0, background: 'none', border: 'none', color: 'rgba(208,197,175,0.4)', cursor: 'pointer', fontSize: '12px', padding: '0 2px', flexShrink: 0 }}
+                    className="group-hover:!opacity-100 transition-opacity">×</button>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
         {/* MISSION LOG Section */}
         {user && recentThreads.length > 0 && (
           <>
@@ -539,7 +596,27 @@ export function Sidebar() {
                     ))}
                   </div>
                 )}
-                {filteredThreads.map((thread) => (
+                {/* Pinned threads first */}
+                {pinnedList.length > 0 && (
+                  <>
+                    {pinnedList.map((thread) => (
+                      <div key={`pin-${thread.id}`} className="group relative flex items-center" style={{ borderLeft: '2px solid rgba(212,175,55,0.35)' }}>
+                        <button
+                          onClick={() => togglePin(thread.id)}
+                          title="Unpin"
+                          style={{ position: 'absolute', left: '-2px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#D4AF37', fontSize: '8px', paddingLeft: '4px', zIndex: 1 }}>
+                          ●
+                        </button>
+                        <a href={`/chat/${thread.hero_slug?.toLowerCase()}?thread=${thread.id}`}
+                          style={{ flex: 1, padding: '6px 8px 6px 20px', fontSize: '12px', color: 'rgba(208,197,175,0.7)', textDecoration: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}>
+                          {thread.title || 'Untitled Mission'}
+                        </a>
+                      </div>
+                    ))}
+                    <div style={{ height: '1px', background: 'rgba(212,175,55,0.1)', margin: '4px 8px' }} />
+                  </>
+                )}
+                {unpinnedList.map((thread) => (
                   <div key={thread.id} className="group relative flex items-center">
                     {renamingId === thread.id ? (
                       // Rename input mode
@@ -619,6 +696,23 @@ export function Sidebar() {
                       <div className="absolute right-2 hidden group-hover:flex items-center gap-1"
                         style={{ background: '#0A0A0A' }}>
 
+                        {/* Pin button */}
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          togglePin(thread.id);
+                        }}
+                        className="p-1 rounded transition-all hover:opacity-80"
+                        title={pinnedThreads.includes(thread.id) ? 'Unpin' : 'Pin thread'}
+                        style={{ color: pinnedThreads.includes(thread.id) ? '#D4AF37' : 'rgba(212,175,55,0.35)' }}
+                      >
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill={pinnedThreads.includes(thread.id) ? 'currentColor' : 'none'}
+                          stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                          <path d="M12 2L12 12M12 12L8 16M12 12L16 16M8 4L16 4"/>
+                          <circle cx="12" cy="20" r="2" fill="currentColor"/>
+                        </svg>
+                      </button>
                         {/* Archive button */}
                       <button
                         onClick={async (e) => {
