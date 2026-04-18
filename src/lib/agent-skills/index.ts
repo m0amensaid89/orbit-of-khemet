@@ -113,6 +113,7 @@ export interface AgentSkill {
   routingHints: string[];
   outputTypes: string[];
   routingOverride?: string;
+  openingMessage?: (username: string) => string;
 }
 
 export const skillsRegistry: Record<string, AgentSkill> = {
