@@ -59,7 +59,7 @@ export default function ForgePage() {
           max_tokens: 800,
           messages: [{
             role: 'system',
-            content: 'You are an expert AI agent designer. Generate a professional system prompt for an AI agent based on the user's description. The system prompt should: define the agent's role clearly, specify its expertise and capabilities, set its communication style, mention it operates within Orbit of Khemet (an Egyptian-themed AI platform). Keep it under 300 words. Output ONLY the system prompt text, no explanation, no markdown.',
+            content: `You are an expert AI agent designer. Generate a professional system prompt for an AI agent based on the user's description. The system prompt should: define the agent's role clearly, specify its expertise and capabilities, set its communication style, mention it operates within Orbit of Khemet (an Egyptian-themed AI platform). Keep it under 300 words. Output ONLY the system prompt text, no explanation, no markdown.`,
           }, {
             role: 'user',
             content: `Create a system prompt for an AI agent that: ${nlPrompt}`,
