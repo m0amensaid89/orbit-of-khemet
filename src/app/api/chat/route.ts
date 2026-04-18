@@ -170,20 +170,24 @@ export async function POST(req: NextRequest) {
     // Route browser_control requests to orbit-browser-service
     if (requestType === 'browser_control') {
       const browserServiceUrl = process.env.BROWSER_SERVICE_URL || 'https://orbit-browser.up.railway.app';
-      const browserApiKey = process.env.BROWSER_SERVICE_KEY || '';
+      const browserApiKey = process.env.BROWSER_SERVICE_SECRET || '';
       const instruction = typeof lastMessage === 'string' ? lastMessage : JSON.stringify(lastMessage);
 
       try {
+        // Extract URL from instruction if present
+        const urlMatch = instruction.match(/https?:\/\/[^\s]+/);
+        const extractedUrl = urlMatch ? urlMatch[0] : null;
+
         const browserRes = await fetch(`${browserServiceUrl}/execute`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-API-Key': browserApiKey,
+            'x-api-secret': browserApiKey,
           },
           body: JSON.stringify({
-            instruction,
-            session_id: heroSlug || 'default',
-            timeout: 25000,
+            task: instruction,
+            url: extractedUrl,
+            steps: [],
           }),
           signal: AbortSignal.timeout(28000),
         });
@@ -193,6 +197,9 @@ export async function POST(req: NextRequest) {
         }
 
         const browserData = await browserRes.json();
+        const lastScreenshot = browserData.screenshots?.length
+          ? browserData.screenshots[browserData.screenshots.length - 1]
+          : null;
 
         // Deduct credits
         if (user) {
@@ -209,11 +216,13 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({
           type: 'browser_result',
           success: browserData.success ?? true,
-          screenshot: browserData.screenshot || null,
-          url: browserData.current_url || browserData.url || null,
-          action: browserData.action_taken || instruction,
-          result: browserData.result || browserData.output || 'Action completed.',
-          steps: browserData.steps || [],
+          screenshot: lastScreenshot,
+          url: browserData.finalUrl || extractedUrl || null,
+          action: instruction,
+          result: browserData.finalTitle
+            ? `Page loaded: ${browserData.finalTitle}`
+            : 'Browser action completed.',
+          steps: browserData.log || [],
         });
 
       } catch (browserErr) {
