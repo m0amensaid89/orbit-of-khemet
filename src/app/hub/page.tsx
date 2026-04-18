@@ -245,27 +245,26 @@ function HubPageContent() {
               CLEAR FILTERS
             </button>
           </div>
-
-        {/* FAVORITE HEROES SECTION */}
-        {favorites.length > 0 && (
-          <div style={{ marginBottom: '36px' }}>
-            <div style={{ fontFamily: 'Orbitron, monospace', fontSize: '9px', letterSpacing: '0.16em', color: 'rgba(212,175,55,0.4)', marginBottom: '16px', paddingBottom: '8px', borderBottom: '1px solid rgba(212,175,55,0.08)' }}>
-              PINNED HEROES
-            </div>
-            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-              {heroes.filter(h => favorites.includes(h.slug)).map(({ slug, data }) => (
-                <Link key={slug} href={`/heroes/${slug}`} style={{ textDecoration: 'none' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 14px', border: '1px solid rgba(212,175,55,0.25)', background: 'rgba(212,175,55,0.04)', borderRadius: '4px', cursor: 'pointer' }}>
-                    <div style={{ fontFamily: 'Cinzel Decorative, serif', fontSize: '12px', color: '#D4AF37', letterSpacing: '0.06em' }}>{data.name.toUpperCase()}</div>
-                    <button onClick={e => { e.preventDefault(); e.stopPropagation(); toggleFavorite(slug); }}
-                      style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(212,175,55,0.5)', fontSize: '12px', padding: '0 2px' }}>x</button>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
         ) : (
+          <>
+          {favorites.length > 0 && (
+            <div style={{ marginBottom: '28px' }}>
+              <div style={{ fontFamily: 'Orbitron, monospace', fontSize: '9px', letterSpacing: '0.16em', color: 'rgba(212,175,55,0.4)', marginBottom: '12px', paddingBottom: '6px', borderBottom: '1px solid rgba(212,175,55,0.08)' }}>
+                PINNED HEROES
+              </div>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                {heroes.filter(h => favorites.includes(h.slug)).map(({ slug, data }) => (
+                  <Link key={slug} href={`/heroes/${slug}`} style={{ textDecoration: 'none' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '7px 12px', border: '1px solid rgba(212,175,55,0.25)', background: 'rgba(212,175,55,0.04)', borderRadius: '4px', cursor: 'pointer' }}>
+                      <div style={{ fontFamily: 'Cinzel Decorative, serif', fontSize: '11px', color: '#D4AF37', letterSpacing: '0.06em' }}>{data.name.toUpperCase()}</div>
+                      <button onClick={e => { e.preventDefault(); e.stopPropagation(); toggleFavorite(slug); }}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(212,175,55,0.4)', fontSize: '11px', padding: '0 2px', lineHeight: 1 }}>x</button>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
