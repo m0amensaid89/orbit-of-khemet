@@ -20,10 +20,10 @@ export const CREDIT_COSTS: Record<RequestType, number> = {
   image_analysis:    2,
   deep_analysis:    26,
   image_generation: 200,
-  video_quick:      2,
-  video_standard:   5,
-  video_cinematic:  12,
-  video_edit:       700,
+  video_quick:      80,   // Sprint 36: corrected from 2 — break-even is 62 at $9 tier
+  video_standard:   400,  // Sprint 36: corrected from 5 — break-even is 311 at $9 tier
+  video_cinematic:  800,  // Sprint 36: corrected from 12 — break-even is 622 at $9 tier
+  video_edit:       4000, // Sprint 36: corrected from 700 — break-even is 3111 at $9 tier
   website_analysis: 15,
 }
 
