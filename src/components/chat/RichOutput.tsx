@@ -390,7 +390,7 @@ function BrowserOutput({ content, accentColor }: { content: string, accentColor:
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
       {/* Status bar */}
-      <div style={{ display: 'flex', align: 'center', gap: '8px', padding: '8px 12px', background: success ? 'rgba(100,180,60,0.08)' : 'rgba(220,80,60,0.08)', border: `1px solid ${success ? 'rgba(100,180,60,0.25)' : 'rgba(220,80,60,0.25)'}`, borderRadius: '4px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', background: success ? 'rgba(100,180,60,0.08)' : 'rgba(220,80,60,0.08)', border: `1px solid ${success ? 'rgba(100,180,60,0.25)' : 'rgba(220,80,60,0.25)'}`, borderRadius: '4px' }}>
         <span style={{ fontSize: '10px', fontFamily: 'monospace', letterSpacing: '0.08em', color: success ? 'rgba(100,200,60,0.8)' : 'rgba(220,100,80,0.8)' }}>
           {success ? '✦ BROWSER ACTION COMPLETE' : '⚠ BROWSER AGENT PENDING'}
         </span>
