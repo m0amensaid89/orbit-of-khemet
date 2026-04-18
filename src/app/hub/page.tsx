@@ -35,6 +35,22 @@ function HubPageContent() {
   const [search, setSearch] = useState("");
   const [dept, setDept] = useState("All");
   const [outcome, setOutcome] = useState("All");
+  const [favorites, setFavorites] = useState<string[]>([]);
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('orbit_favorite_heroes') || '[]');
+      setFavorites(saved);
+    } catch {}
+  }, []);
+
+  const toggleFavorite = (slug: string) => {
+    setFavorites(prev => {
+      const next = prev.includes(slug) ? prev.filter(s => s !== slug) : [...prev, slug];
+      localStorage.setItem('orbit_favorite_heroes', JSON.stringify(next));
+      return next;
+    });
+  };
   const searchParams = useSearchParams();
   const focusSearch = searchParams.get('focus') === 'search';
   const searchRef = useRef<HTMLInputElement>(null);
@@ -229,6 +245,26 @@ function HubPageContent() {
               CLEAR FILTERS
             </button>
           </div>
+
+        {/* FAVORITE HEROES SECTION */}
+        {favorites.length > 0 && (
+          <div style={{ marginBottom: '36px' }}>
+            <div style={{ fontFamily: 'Orbitron, monospace', fontSize: '9px', letterSpacing: '0.16em', color: 'rgba(212,175,55,0.4)', marginBottom: '16px', paddingBottom: '8px', borderBottom: '1px solid rgba(212,175,55,0.08)' }}>
+              PINNED HEROES
+            </div>
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+              {heroes.filter(h => favorites.includes(h.slug)).map(({ slug, data }) => (
+                <Link key={slug} href={`/heroes/${slug}`} style={{ textDecoration: 'none' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 14px', border: '1px solid rgba(212,175,55,0.25)', background: 'rgba(212,175,55,0.04)', borderRadius: '4px', cursor: 'pointer' }}>
+                    <div style={{ fontFamily: 'Cinzel Decorative, serif', fontSize: '12px', color: '#D4AF37', letterSpacing: '0.06em' }}>{data.name.toUpperCase()}</div>
+                    <button onClick={e => { e.preventDefault(); e.stopPropagation(); toggleFavorite(slug); }}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(212,175,55,0.5)', fontSize: '12px', padding: '0 2px' }}>x</button>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
         ) : (
           <div style={{
             display: 'grid',
@@ -241,6 +277,18 @@ function HubPageContent() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: i * 0.07 }}>
+                <div style={{ position: 'relative' }}>
+                  <button
+                    onClick={e => { e.preventDefault(); e.stopPropagation(); toggleFavorite(slug); }}
+                    title={favorites.includes(slug) ? 'Remove from favorites' : 'Add to favorites'}
+                    style={{
+                      position: 'absolute', top: '8px', right: '8px', zIndex: 10,
+                      background: favorites.includes(slug) ? 'rgba(212,175,55,0.2)' : 'rgba(0,0,0,0.5)',
+                      border: `1px solid ${favorites.includes(slug) ? 'rgba(212,175,55,0.5)' : 'rgba(255,255,255,0.1)'}`,
+                      color: favorites.includes(slug) ? '#D4AF37' : 'rgba(255,255,255,0.4)',
+                      width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      cursor: 'pointer', fontSize: '14px', borderRadius: '4px', transition: 'all 0.2s',
+                    }}>★</button>
                 <Link href={`/heroes/${slug}`} className="group block h-full">
                   {/* Hero Card */}
                   <div
@@ -297,6 +345,7 @@ function HubPageContent() {
                     </div>
                   </div>
                 </Link>
+                </div>
               </motion.div>
             ))}
           </div>
