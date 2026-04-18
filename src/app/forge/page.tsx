@@ -32,6 +32,9 @@ export default function ForgePage() {
   const [agentPhoto, setAgentPhoto] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [nlPrompt, setNlPrompt] = useState('');
+  const [showNlInput, setShowNlInput] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const update = (field: string, value: string) => {
@@ -39,6 +42,41 @@ export default function ForgePage() {
     if (error && (!form.name || !form.role_summary || !form.systemPrompt)) {
        setError("");
     }
+  };
+
+  const handleGenerate = async () => {
+    if (!nlPrompt.trim()) return;
+    setGenerating(true);
+    try {
+      const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENROUTER_KEY || ''}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'openai/gpt-4o-mini',
+          max_tokens: 800,
+          messages: [{
+            role: 'system',
+            content: 'You are an expert AI agent designer. Generate a professional system prompt for an AI agent based on the user's description. The system prompt should: define the agent's role clearly, specify its expertise and capabilities, set its communication style, mention it operates within Orbit of Khemet (an Egyptian-themed AI platform). Keep it under 300 words. Output ONLY the system prompt text, no explanation, no markdown.',
+          }, {
+            role: 'user',
+            content: `Create a system prompt for an AI agent that: ${nlPrompt}`,
+          }],
+        }),
+      });
+      const data = await res.json();
+      const generated = data.choices?.[0]?.message?.content?.trim();
+      if (generated) {
+        update('systemPrompt', generated);
+        setShowNlInput(false);
+        setNlPrompt('');
+      }
+    } catch {
+      // silent fail — user can still type manually
+    }
+    setGenerating(false);
   };
 
   const handleForge = () => {
@@ -235,6 +273,32 @@ export default function ForgePage() {
               maxLength={120}
             />
 
+            {/* System Prompt — AI Generate */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '8px' }}>
+              <button
+                onClick={() => setShowNlInput(prev => !prev)}
+                style={{ fontFamily: 'Orbitron, monospace', fontSize: '9px', letterSpacing: '0.1em', color: '#D4AF37', background: 'rgba(212,175,55,0.08)', border: '1px solid rgba(212,175,55,0.2)', padding: '4px 10px', cursor: 'pointer', borderRadius: '3px' }}>
+                {showNlInput ? 'WRITE MANUALLY' : '⚡ AI GENERATE'}
+              </button>
+            </div>
+            {showNlInput && (
+              <div style={{ marginBottom: '12px', padding: '14px', background: 'rgba(212,175,55,0.03)', border: '1px solid rgba(212,175,55,0.15)', borderRadius: '4px' }}>
+                <p style={{ fontSize: '11px', color: 'rgba(208,197,175,0.5)', marginBottom: '10px' }}>Describe what you want this agent to do:</p>
+                <textarea
+                  rows={3}
+                  placeholder="e.g. Review legal contracts, identify risks, summarize key terms in plain English..."
+                  value={nlPrompt}
+                  onChange={e => setNlPrompt(e.target.value)}
+                  style={{ width: '100%', background: 'rgba(10,10,10,0.5)', border: '1px solid rgba(212,175,55,0.2)', color: '#d0c5af', fontFamily: 'Roboto, sans-serif', fontSize: '12px', padding: '10px', borderRadius: '3px', resize: 'vertical', outline: 'none', display: 'block', marginBottom: '10px' }}
+                />
+                <button
+                  onClick={handleGenerate}
+                  disabled={generating || !nlPrompt.trim()}
+                  style={{ fontFamily: 'Orbitron, monospace', fontSize: '9px', letterSpacing: '0.1em', color: '#0A0A0A', background: generating || !nlPrompt.trim() ? 'rgba(212,175,55,0.4)' : '#D4AF37', border: 'none', padding: '8px 16px', cursor: generating || !nlPrompt.trim() ? 'not-allowed' : 'pointer', borderRadius: '3px' }}>
+                  {generating ? 'GENERATING...' : 'GENERATE PROMPT'}
+                </button>
+              </div>
+            )}
             {/* System Prompt */}
             <div className="relative mb-6">
               <div

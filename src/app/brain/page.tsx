@@ -19,7 +19,7 @@ interface Memory {
 }
 
 export default function BrainPage() {
-  const [activeTab, setActiveTab] = useState<'knowledge' | 'memory'>('knowledge')
+  const [activeTab, setActiveTab] = useState<'knowledge' | 'memory' | 'import'>('knowledge')
   const [sources, setSources] = useState<KnowledgeSource[]>([])
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState('')
@@ -32,6 +32,10 @@ export default function BrainPage() {
   const [newMemoryText, setNewMemoryText] = useState('')
   const [newMemoryCategory, setNewMemoryCategory] = useState('general')
   const [memoryLoading, setMemoryLoading] = useState(false)
+  const [importText, setImportText] = useState('')
+  const [importing, setImporting] = useState(false)
+  const [importResult, setImportResult] = useState<{extracted: number} | null>(null)
+  const [importError, setImportError] = useState('')
 
   const loadSources = async () => {
     const res = await fetch('/api/brain/sources')
@@ -148,6 +152,54 @@ export default function BrainPage() {
     boxSizing: 'border-box' as const,
   }
 
+
+  const handleImport = async () => {
+    if (!importText.trim()) return
+    setImporting(true)
+    setImportError('')
+    setImportResult(null)
+    try {
+      // Convert pasted conversation to messages array
+      const lines = importText.trim().split('\n').filter(l => l.trim())
+      const messages = lines.map(line => {
+        const lower = line.toLowerCase()
+        if (lower.startsWith('you:') || lower.startsWith('user:') || lower.startsWith('human:')) {
+          return { role: 'user', content: line.replace(/^(you|user|human):/i, '').trim() }
+        }
+        if (lower.startsWith('assistant:') || lower.startsWith('chatgpt:') || lower.startsWith('claude:') || lower.startsWith('ai:') || lower.startsWith('gemini:')) {
+          return { role: 'assistant', content: line.replace(/^(assistant|chatgpt|claude|ai|gemini):/i, '').trim() }
+        }
+        return { role: 'user', content: line }
+      }).filter(m => m.content.length > 10)
+
+      if (messages.length === 0) {
+        setImportError('Could not parse any conversation turns. Format each line as "You: ..." or "Assistant: ..."')
+        setImporting(false)
+        return
+      }
+
+      // Get current user ID from session
+      const sessionRes = await fetch('/api/credits')
+      const sessionData = await sessionRes.json()
+      const userId = sessionData?.userId
+
+      const res = await fetch('/api/brain/extract-memory', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: messages.slice(-20), userId }),
+      })
+      const data = await res.json()
+      setImportResult({ extracted: data.extracted || 0 })
+      if (data.extracted > 0) {
+        await loadMemories()
+        setActiveTab('memory')
+      }
+    } catch {
+      setImportError('Import failed. Please try again.')
+    }
+    setImporting(false)
+  }
+
   return (
     <div style={{ minHeight: '100vh', background: '#0A0A0A', color: '#d0c5af', fontFamily: 'Roboto, sans-serif', padding: '48px 40px' }}>
 
@@ -164,7 +216,7 @@ export default function BrainPage() {
 
       {/* Tab Switcher */}
       <div style={{ display: 'flex', marginBottom: '32px', borderBottom: '1px solid rgba(212,175,55,0.1)' }}>
-        {(['knowledge', 'memory'] as const).map(tab => (
+        {(['knowledge', 'memory', 'import'] as const).map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -355,6 +407,67 @@ export default function BrainPage() {
               ))}
             </div>
           )}
+        </>
+      )}
+
+      {/* IMPORT TAB */}
+      {activeTab === 'import' && (
+        <>
+          <div style={{ marginBottom: '24px', padding: '20px', background: 'rgba(212,175,55,0.03)', border: '1px solid rgba(212,175,55,0.1)' }}>
+            <div style={{ fontSize: '9px', letterSpacing: '0.14em', color: 'rgba(212,175,55,0.5)', marginBottom: '12px' }}>IMPORT CONVERSATION</div>
+            <p style={{ fontSize: '12px', color: 'rgba(208,197,175,0.5)', marginBottom: '14px', lineHeight: '1.6' }}>
+              Paste exported conversation history from ChatGPT, Claude, or Gemini. Format each line as:
+              <br /><strong style={{ color: 'rgba(212,175,55,0.6)' }}>You: your message</strong> or <strong style={{ color: 'rgba(212,175,55,0.6)' }}>Assistant: response</strong>
+            </p>
+            <textarea
+              rows={10}
+              placeholder={"You: I'm building an AI startup in Egypt...
+Assistant: That sounds fascinating. Tell me more about...
+You: We're focused on gamification and enterprise AI..."}
+              value={importText}
+              onChange={e => { setImportText(e.target.value); setImportError(''); setImportResult(null); }}
+              style={{
+                width: '100%', background: 'rgba(212,175,55,0.03)', border: '1px solid rgba(212,175,55,0.15)',
+                color: '#d0c5af', fontFamily: 'Roboto, sans-serif', fontSize: '12px', padding: '12px',
+                borderRadius: '4px', resize: 'vertical', outline: 'none', marginBottom: '12px', display: 'block',
+              }}
+            />
+            {importError && (
+              <div style={{ background: 'rgba(255,80,80,0.08)', border: '1px solid rgba(255,80,80,0.2)', padding: '10px 14px', fontSize: '12px', color: 'rgba(255,120,120,0.8)', marginBottom: '12px' }}>
+                {importError}
+              </div>
+            )}
+            {importResult && (
+              <div style={{ background: 'rgba(100,220,100,0.06)', border: '1px solid rgba(100,220,100,0.2)', padding: '10px 14px', fontSize: '12px', color: 'rgba(100,220,100,0.8)', marginBottom: '12px' }}>
+                {importResult.extracted > 0
+                  ? `${importResult.extracted} memor${importResult.extracted === 1 ? 'y' : 'ies'} extracted and saved. Switching to Memory tab...`
+                  : 'No memorable facts found in this conversation. Try a longer export with more personal context.'}
+              </div>
+            )}
+            <button
+              onClick={handleImport}
+              disabled={importing || !importText.trim()}
+              style={{
+                background: importing || !importText.trim() ? 'rgba(212,175,55,0.3)' : '#D4AF37',
+                color: '#0A0A0A', fontFamily: 'Orbitron, sans-serif', fontSize: '10px',
+                letterSpacing: '0.1em', padding: '12px 24px', border: 'none', cursor: importing || !importText.trim() ? 'not-allowed' : 'pointer', borderRadius: '4px',
+              }}
+            >
+              {importing ? 'EXTRACTING MEMORIES...' : 'EXTRACT MEMORIES FROM IMPORT'}
+            </button>
+          </div>
+
+          <div style={{ fontSize: '9px', letterSpacing: '0.14em', color: 'rgba(212,175,55,0.4)', marginBottom: '12px' }}>HOW TO EXPORT</div>
+          {[
+            { platform: 'ChatGPT', steps: 'Settings → Data Controls → Export Data → Download → Open conversations.json and copy relevant chat text' },
+            { platform: 'Claude', steps: 'Open a conversation → Copy all text from the thread → Paste here with You: / Assistant: format' },
+            { platform: 'Gemini', steps: 'Google Takeout → Select Gemini → Export → Copy conversation text here' },
+          ].map(item => (
+            <div key={item.platform} style={{ marginBottom: '10px', padding: '12px 14px', background: 'rgba(212,175,55,0.02)', border: '1px solid rgba(212,175,55,0.08)', borderRadius: '4px' }}>
+              <div style={{ fontSize: '11px', fontFamily: 'Orbitron, sans-serif', letterSpacing: '0.08em', color: 'rgba(212,175,55,0.6)', marginBottom: '4px' }}>{item.platform}</div>
+              <div style={{ fontSize: '11px', color: 'rgba(208,197,175,0.5)', lineHeight: '1.5' }}>{item.steps}</div>
+            </div>
+          ))}
         </>
       )}
     </div>
