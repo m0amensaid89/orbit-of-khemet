@@ -11,6 +11,7 @@ export type RequestType =
   | 'video_cinematic'
   | 'video_edit'
   | 'website_analysis'
+  | 'browser_control'
 
 export const CREDIT_COSTS: Record<RequestType, number> = {
   text:              6,
@@ -25,6 +26,7 @@ export const CREDIT_COSTS: Record<RequestType, number> = {
   video_cinematic:  800,  // Sprint 36: corrected from 12 — break-even is 622 at $9 tier
   video_edit:       4000, // Sprint 36: corrected from 700 — break-even is 3111 at $9 tier
   website_analysis: 15,
+  browser_control: 25,  // per action — Playwright session on Railway
 }
 
 export const PLATFORM_MODEL_MAP: Record<RequestType, string> = {
@@ -40,6 +42,7 @@ export const PLATFORM_MODEL_MAP: Record<RequestType, string> = {
   video_cinematic:  'fal-ai/veo3',
   video_edit:       'fal-ai/runway-gen4',
   website_analysis: 'perplexity-agent',
+  browser_control: 'orbit-browser-service',
 }
 
 export const PLATFORM_LABELS: Record<RequestType, string> = {
@@ -55,6 +58,7 @@ export const PLATFORM_LABELS: Record<RequestType, string> = {
   video_cinematic:  'Veo 3.1',
   video_edit:       'Runway Gen-4',
   website_analysis: 'Perplexity Web',
+  browser_control: 'Browser Agent',
 }
 
 export const TIER_CREDITS: Record<string, number> = {
@@ -200,6 +204,12 @@ const SMART_MODEL_MAP: Record<RequestType, {
     standard: 'perplexity-agent',
     complex:  'perplexity-agent',
     free:     'perplexity-agent',
+  },
+  browser_control: {
+    simple:   'orbit-browser-service',
+    standard: 'orbit-browser-service',
+    complex:  'orbit-browser-service',
+    free:     'orbit-browser-service',
   },
 }
 

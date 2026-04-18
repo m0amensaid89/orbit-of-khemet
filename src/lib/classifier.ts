@@ -2,7 +2,7 @@ export type RequestType =
   | 'text' | 'code' | 'research' | 'image_generation'
   | 'image_analysis' | 'video_quick' | 'video_standard'
   | 'video_cinematic' | 'video_edit' | 'deep_analysis'
-  | 'website_analysis' | 'realtime'
+  | 'website_analysis' | 'realtime' | 'browser_control'
 
 export interface ClassificationResult {
   requestType: RequestType
@@ -16,6 +16,7 @@ const OBVIOUS_IMAGE = ['generate image','create image','create an image','make i
 const OBVIOUS_CODE = ['write code','write a function','create a function','build a','debug this','fix this code','write a script','create a component','implement this','write a class','write a program','code that','function that','create an app','build an app']
 const OBVIOUS_RESEARCH = ['research','find information','search for','what are the latest','current news','recent developments','look up','find out about','tell me the latest','what happened with','news about']
 const OBVIOUS_WEBSITE = ['analyze this website','check this url','visit this site','scrape','summarize this page','what is on this page']
+const OBVIOUS_BROWSER = ['go to website','open website','navigate to','browse to','click the button','click on the','fill in the form','fill out form','take a screenshot of','interact with','scroll down on','open url','open tab','web automation','browser control','automate browser','use playwright','use selenium','open browser','launch browser','open the page','click accept','dismiss popup','fill the form']
 
 export function classifyRequest(
   message: string,
@@ -48,6 +49,10 @@ export function classifyRequest(
 
   if (OBVIOUS_RESEARCH.some(k => lower.includes(k))) {
     return { requestType: 'research', confidence: 0.9, needsClarification: false }
+  }
+
+  if (OBVIOUS_BROWSER.some(k => lower.includes(k))) {
+    return { requestType: 'browser_control', confidence: 0.95, needsClarification: false }
   }
 
   if (OBVIOUS_WEBSITE.some(k => lower.includes(k))) {

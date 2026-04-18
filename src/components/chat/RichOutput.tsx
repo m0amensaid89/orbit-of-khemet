@@ -367,6 +367,87 @@ interface RichOutputProps {
   accentColor?: string
 }
 
+function BrowserOutput({ content, accentColor }: { content: string, accentColor: string }) {
+  const [imgError, setImgError] = useState(false)
+
+  let data: {
+    success?: boolean
+    screenshot?: string | null
+    url?: string | null
+    action?: string
+    result?: string
+    steps?: string[]
+  } = {}
+  
+  try {
+    data = JSON.parse(content)
+  } catch {
+    data = { result: content, success: false }
+  }
+
+  const { success, screenshot, url, action, result, steps } = data
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      {/* Status bar */}
+      <div style={{ display: 'flex', align: 'center', gap: '8px', padding: '8px 12px', background: success ? 'rgba(100,180,60,0.08)' : 'rgba(220,80,60,0.08)', border: `1px solid ${success ? 'rgba(100,180,60,0.25)' : 'rgba(220,80,60,0.25)'}`, borderRadius: '4px' }}>
+        <span style={{ fontSize: '10px', fontFamily: 'monospace', letterSpacing: '0.08em', color: success ? 'rgba(100,200,60,0.8)' : 'rgba(220,100,80,0.8)' }}>
+          {success ? '✦ BROWSER ACTION COMPLETE' : '⚠ BROWSER AGENT PENDING'}
+        </span>
+        {url && (
+          <span style={{ fontSize: '11px', color: 'rgba(208,197,175,0.5)', marginLeft: '8px', fontFamily: 'monospace', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {url}
+          </span>
+        )}
+      </div>
+
+      {/* Screenshot */}
+      {screenshot && !imgError && (
+        <div style={{ border: '1px solid rgba(212,175,55,0.15)', borderRadius: '4px', overflow: 'hidden' }}>
+          <div style={{ padding: '6px 12px', background: 'rgba(212,175,55,0.06)', borderBottom: '1px solid rgba(212,175,55,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: '9px', fontFamily: 'monospace', letterSpacing: '0.1em', color: accentColor }}>SCREENSHOT</span>
+            {url && <span style={{ fontSize: '10px', color: 'rgba(208,197,175,0.4)', fontFamily: 'monospace' }}>{url.slice(0, 50)}</span>}
+          </div>
+          <img
+            src={screenshot.startsWith('data:') ? screenshot : `data:image/png;base64,${screenshot}`}
+            alt="Browser screenshot"
+            onError={() => setImgError(true)}
+            style={{ width: '100%', display: 'block', maxHeight: '400px', objectFit: 'contain', background: '#fff' }}
+          />
+        </div>
+      )}
+
+      {/* Action taken */}
+      {action && (
+        <div style={{ fontSize: '12px', color: 'rgba(208,197,175,0.6)', fontFamily: 'monospace', padding: '8px 12px', background: 'rgba(212,175,55,0.03)', border: '1px solid rgba(212,175,55,0.08)', borderRadius: '4px' }}>
+          <span style={{ color: 'rgba(212,175,55,0.4)', fontSize: '9px', letterSpacing: '0.1em', display: 'block', marginBottom: '4px' }}>INSTRUCTION</span>
+          {action}
+        </div>
+      )}
+
+      {/* Result text */}
+      {result && (
+        <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.85)', lineHeight: '1.6' }}>
+          {result}
+        </div>
+      )}
+
+      {/* Steps taken */}
+      {steps && steps.length > 0 && (
+        <div style={{ borderTop: '1px solid rgba(212,175,55,0.08)', paddingTop: '10px' }}>
+          <div style={{ fontSize: '9px', fontFamily: 'monospace', letterSpacing: '0.12em', color: 'rgba(212,175,55,0.4)', marginBottom: '8px' }}>STEPS EXECUTED</div>
+          {steps.map((step, i) => (
+            <div key={i} style={{ fontSize: '11px', color: 'rgba(208,197,175,0.6)', padding: '3px 0 3px 12px', borderLeft: '2px solid rgba(212,175,55,0.2)', marginBottom: '4px', fontFamily: 'monospace' }}>
+              {i + 1}. {step}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+
 export default function RichOutput({
   content, requestType, platformLabel, creditsUsed, creditsRemaining, accentColor = '#D4AF37'
 }: RichOutputProps) {
@@ -379,6 +460,10 @@ export default function RichOutput({
 
   if (requestType === 'research' || requestType === 'website_analysis') {
     return <ResearchOutput content={content} accentColor={accentColor} />
+  }
+
+  if (requestType === 'browser_control' || requestType === 'browser_result') {
+    return <BrowserOutput content={content} accentColor={accentColor} />
   }
 
   return <TextOutput content={content} accentColor={accentColor} />

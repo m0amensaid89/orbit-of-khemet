@@ -167,6 +167,72 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // Route browser_control requests to orbit-browser-service
+    if (requestType === 'browser_control') {
+      const browserServiceUrl = process.env.BROWSER_SERVICE_URL || 'https://orbit-browser.up.railway.app';
+      const browserApiKey = process.env.BROWSER_SERVICE_KEY || '';
+      const instruction = typeof lastMessage === 'string' ? lastMessage : JSON.stringify(lastMessage);
+
+      try {
+        const browserRes = await fetch(`${browserServiceUrl}/execute`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-API-Key': browserApiKey,
+          },
+          body: JSON.stringify({
+            instruction,
+            session_id: heroSlug || 'default',
+            timeout: 25000,
+          }),
+          signal: AbortSignal.timeout(28000),
+        });
+
+        if (!browserRes.ok) {
+          throw new Error(`Browser service returned ${browserRes.status}`);
+        }
+
+        const browserData = await browserRes.json();
+
+        // Deduct credits
+        if (user) {
+          const supabaseAdmin = createSupabaseClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.SUPABASE_SERVICE_ROLE_KEY!
+          );
+          await supabaseAdmin
+            .from('profiles')
+            .update({ credits: Math.max(0, profileCredits - 25) })
+            .eq('id', user.id);
+        }
+
+        return NextResponse.json({
+          type: 'browser_result',
+          success: browserData.success ?? true,
+          screenshot: browserData.screenshot || null,
+          url: browserData.current_url || browserData.url || null,
+          action: browserData.action_taken || instruction,
+          result: browserData.result || browserData.output || 'Action completed.',
+          steps: browserData.steps || [],
+        });
+
+      } catch (browserErr) {
+        // Service not yet deployed — return a pending state
+        const isParked = !process.env.BROWSER_SERVICE_URL;
+        return NextResponse.json({
+          type: 'browser_result',
+          success: false,
+          screenshot: null,
+          url: null,
+          action: instruction,
+          result: isParked
+            ? 'Browser Agent is not yet deployed. Railway deployment pending — set BROWSER_SERVICE_URL env var to activate.'
+            : `Browser service error: ${String(browserErr)}`,
+          steps: [],
+        });
+      }
+    }
+
     // 4. Build system prompt from agent skill
     let systemPrompt = buildSystemPrompt(agent || '', heroSlug);
     systemPrompt = sanitizeForFetch(systemPrompt + ARTIFACT_SYSTEM_SUFFIX);
