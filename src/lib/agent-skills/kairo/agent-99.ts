@@ -1,4 +1,4 @@
-export const agent_99 = {
+export const agent99 = {
   name: "Nephthys",
   slug: "agent-99",
   hero: "KAIRO",

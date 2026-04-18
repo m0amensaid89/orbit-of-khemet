@@ -15,6 +15,10 @@ import { agent_81 } from "./thoren/agent_81";
 import { agent86 } from "./thoren/agent-86";
 import { agent87 } from "./thoren/agent-87";
 import { agent88 } from "./thoren/agent-88";
+import { agent_new_corporate_secretary } from "./thoren/agent_new_corporate_secretary";
+import { agent_new_ifrs_gaap } from "./thoren/agent_new_ifrs_gaap";
+import { agent_new_insurance_risk } from "./thoren/agent_new_insurance_risk";
+import { agent_new_esg } from "./thoren/agent_new_esg";
 import { agent_39 } from "./ramet/agent_39";
 import { agent_45 } from "./ramet/agent_45";
 import { agent_47 } from "./ramet/agent_47";
@@ -30,6 +34,8 @@ import { agent_85 } from "./ramet/agent_85";
 import { agent89 } from "./ramet/agent-89";
 import { agent90 } from "./ramet/agent-90";
 import { agent91 } from "./ramet/agent-91";
+import { agent_new_inventory } from "./ramet/agent_new_inventory";
+import { agent_new_hse } from "./ramet/agent_new_hse";
 import { agent_34 } from "./nexar/agent_34";
 import { agent_42 } from "./nexar/agent_42";
 import { agent_43 } from "./nexar/agent_43";
@@ -45,6 +51,8 @@ import { agent_84 } from "./nexar/agent_84";
 import { agent92 } from "./nexar/agent-92";
 import { agent93 } from "./nexar/agent-93";
 import { agent94 } from "./nexar/agent-94";
+import { agent_new_legacy } from "./nexar/agent_new_legacy";
+import { agent_new_ai_readiness } from "./nexar/agent_new_ai_readiness";
 import { agent_1 } from "./lyra/agent_1";
 import { agent_4 } from "./lyra/agent_4";
 import { agent_5 } from "./lyra/agent_5";
@@ -61,6 +69,9 @@ import { agent_33 } from "./lyra/agent_33";
 import { agent95 } from "./lyra/agent-95";
 import { agent96 } from "./lyra/agent-96";
 import { agent97 } from "./lyra/agent-97";
+import { agent_new_pr } from "./lyra/agent_new_pr";
+import { agent_new_youtube } from "./lyra/agent_new_youtube";
+import { agent_new_community } from "./lyra/agent_new_community";
 import { agent_2 } from "./kairo/agent_2";
 import { agent_3 } from "./kairo/agent_3";
 import { agent_9 } from "./kairo/agent_9";
@@ -75,6 +86,8 @@ import { agent_30 } from "./kairo/agent_30";
 import { agent_31 } from "./kairo/agent_31";
 import { agent98 } from "./kairo/agent-98";
 import { agent99 } from "./kairo/agent-99";
+import { agent_new_shorts } from "./kairo/agent_new_shorts";
+import { agent_new_crisis } from "./kairo/agent_new_crisis";
 import { agent_28 } from "./nefra/agent_28";
 import { agent_32 } from "./nefra/agent_32";
 import { agent_35 } from "./nefra/agent_35";
@@ -89,6 +102,8 @@ import { agent_71 } from "./nefra/agent_71";
 import { agent_72 } from "./nefra/agent_72";
 import { agent100 } from "./nefra/agent-100";
 import { agent101 } from "./nefra/agent-101";
+import { agent_new_employee_exp } from "./nefra/agent_new_employee_exp";
+import { agent_new_partnership } from "./nefra/agent_new_partnership";
 import { agent_7 } from "./horusen/agent_7";
 import { agent_19 } from "./horusen/agent_19";
 import { agent_20 } from "./horusen/agent_20";
@@ -103,6 +118,8 @@ import { agent_74 } from "./horusen/agent_74";
 import { agent_78 } from "./horusen/agent_78";
 import { agent102 } from "./horusen/agent-102";
 import { agent103 } from "./horusen/agent-103";
+import { agent_new_channel } from "./horusen/agent_new_channel";
+import { agent_new_tender } from "./horusen/agent_new_tender";
 
 export interface AgentSkill {
   name: string;
@@ -132,6 +149,10 @@ export const skillsRegistry: Record<string, AgentSkill> = {
   "agent-86": agent86,
   "agent-87": agent87,
   "agent-88": agent88,
+  "agent_new_corporate_secretary": agent_new_corporate_secretary,
+  "agent_new_ifrs_gaap": agent_new_ifrs_gaap,
+  "agent_new_insurance_risk": agent_new_insurance_risk,
+  "agent_new_esg": agent_new_esg,
   "agent_39": agent_39,
   "agent_45": agent_45,
   "agent_47": agent_47,
@@ -147,6 +168,8 @@ export const skillsRegistry: Record<string, AgentSkill> = {
   "agent-89": agent89,
   "agent-90": agent90,
   "agent-91": agent91,
+  "agent_new_inventory": agent_new_inventory,
+  "agent_new_hse": agent_new_hse,
   "agent_34": agent_34,
   "agent_42": agent_42,
   "agent_43": agent_43,
@@ -162,6 +185,8 @@ export const skillsRegistry: Record<string, AgentSkill> = {
   "agent-92": agent92,
   "agent-93": agent93,
   "agent-94": agent94,
+  "agent_new_legacy": agent_new_legacy,
+  "agent_new_ai_readiness": agent_new_ai_readiness,
   "agent_1": agent_1,
   "agent_4": agent_4,
   "agent_5": agent_5,
@@ -178,6 +203,9 @@ export const skillsRegistry: Record<string, AgentSkill> = {
   "agent-95": agent95,
   "agent-96": agent96,
   "agent-97": agent97,
+  "agent_new_pr": agent_new_pr,
+  "agent_new_youtube": agent_new_youtube,
+  "agent_new_community": agent_new_community,
   "agent_2": agent_2,
   "agent_3": agent_3,
   "agent_9": agent_9,
@@ -192,6 +220,8 @@ export const skillsRegistry: Record<string, AgentSkill> = {
   "agent_31": agent_31,
   "agent-98": agent98,
   "agent-99": agent99,
+  "agent_new_shorts": agent_new_shorts,
+  "agent_new_crisis": agent_new_crisis,
   "agent_28": agent_28,
   "agent_32": agent_32,
   "agent_35": agent_35,
@@ -206,6 +236,8 @@ export const skillsRegistry: Record<string, AgentSkill> = {
   "agent_72": agent_72,
   "agent-100": agent100,
   "agent-101": agent101,
+  "agent_new_employee_exp": agent_new_employee_exp,
+  "agent_new_partnership": agent_new_partnership,
   "agent_7": agent_7,
   "agent_19": agent_19,
   "agent_20": agent_20,
@@ -220,6 +252,8 @@ export const skillsRegistry: Record<string, AgentSkill> = {
   "agent_78": agent_78,
   "agent-102": agent102,
   "agent-103": agent103,
+  "agent_new_channel": agent_new_channel,
+  "agent_new_tender": agent_new_tender,
 };
 
 export function getSkillBySlug(slug: string): AgentSkill | undefined {
