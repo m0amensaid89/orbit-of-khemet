@@ -348,6 +348,7 @@ function HubPageContent() {
               </motion.div>
             ))}
           </div>
+          </>
         )}
       </main>
     </div>
