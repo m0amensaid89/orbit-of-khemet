@@ -10,6 +10,7 @@ import { CreditMeter } from "./CreditMeter";
 import { CreditMeterSkeleton } from "./CreditMeterSkeleton";
 import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
+import { useLanguage } from "@/hooks/useLanguage";
 
 
 export function Sidebar() {
@@ -30,6 +31,7 @@ export function Sidebar() {
   const [newProjectName, setNewProjectName] = useState('');
   const [pinnedThreads, setPinnedThreads] = useState<string[]>([]);
   const [tabSessions, setTabSessions] = useState<Array<{id: string; heroSlug: string; agentName: string; label: string}>>([]);
+  const [lang, setLang] = useLanguage();
 
 
   useEffect(() => {
@@ -835,6 +837,27 @@ export function Sidebar() {
             </button>
           </Link>
         )}
+      </div>
+
+      {/* Language Toggle */}
+      <div style={{ padding: '10px 16px', borderTop: '1px solid rgba(212,175,55,0.06)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+        <span style={{ fontSize: '8px', fontFamily: 'Orbitron, monospace', letterSpacing: '2px', color: 'rgba(212,175,55,0.3)', marginRight: '4px' }}>LANG</span>
+        {(['en', 'ar'] as const).map(l => (
+          <button
+            key={l}
+            onClick={() => setLang(l)}
+            style={{
+              fontSize: '8px', fontFamily: 'Orbitron, monospace', letterSpacing: '2px',
+              padding: '3px 10px', borderRadius: '4px', cursor: 'pointer',
+              border: lang === l ? '1px solid #D4AF37' : '1px solid rgba(212,175,55,0.15)',
+              background: lang === l ? 'rgba(212,175,55,0.12)' : 'transparent',
+              color: lang === l ? '#D4AF37' : 'rgba(212,175,55,0.35)',
+              textTransform: 'uppercase',
+            }}
+          >
+            {l}
+          </button>
+        ))}
       </div>
 
       {/* Legal Footer */}

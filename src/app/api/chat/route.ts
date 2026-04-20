@@ -246,6 +246,14 @@ export async function POST(req: NextRequest) {
     let systemPrompt = buildSystemPrompt(agent || '', heroSlug);
     systemPrompt = sanitizeForFetch(systemPrompt + ARTIFACT_SYSTEM_SUFFIX);
 
+    // Arabic language detection -- auto-respond in Arabic when user writes in Arabic
+    const lastUserMsg = messages.filter((m: { role: string; content: unknown }) => m.role === 'user').slice(-1)[0]?.content || ''
+    const arabicRegex = /[؀-ۿ]/
+    const isArabicMsg = arabicRegex.test(typeof lastUserMsg === 'string' ? lastUserMsg : '')
+    if (isArabicMsg) {
+      systemPrompt = 'You MUST respond in Arabic (Modern Standard Arabic - Fusha). The user is communicating in Arabic. Always reply in Arabic regardless of the language of your training data or agent instructions.\n\n' + systemPrompt
+    }
+
     // Inject Khemet Brain context
     if (user) {
       const brainContext = await getBrainContext(user.id)

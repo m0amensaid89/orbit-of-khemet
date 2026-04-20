@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { heroData, heroOrder } from "@/lib/heroes";
 import { heroAgents, heroMeta } from "@/lib/agents";
 import { skillsRegistry } from "@/lib/agent-skills";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const HERO_PILLS = ["ALL", "KAIRO", "LYRA", "NEFRA", "NEXAR", "RAMET", "THOREN", "HORUSEN"];
 
@@ -15,6 +16,7 @@ function HubPageContent() {
   const [search, setSearch] = useState("");
   const [heroFilter, setHeroFilter] = useState("ALL");
   const [favorites, setFavorites] = useState<string[]>([]);
+  const [lang] = useLanguage();
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -83,7 +85,7 @@ function HubPageContent() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#0A0A0A] text-white pb-24">
+    <div className="flex flex-col min-h-screen bg-[#0A0A0A] text-white pb-24" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
 
       {/* Header */}
       <div className="w-full px-6 md:px-12 pt-12 pb-6 text-center">
@@ -110,7 +112,7 @@ function HubPageContent() {
             type="text"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="Search 120 agents by name, skill, or task..."
+            placeholder={lang === 'ar' ? 'ابحث عن وكيل بالاسم أو المهارة...' : 'Search 120 agents by name, skill, or task...'}
             className="w-full py-3 pl-4 pr-10 text-sm transition-all"
             style={{
               background: '#111111',
@@ -138,7 +140,7 @@ function HubPageContent() {
         <div className="flex flex-wrap gap-2 justify-center">
           {HERO_PILLS.map(hero => (
             <button
-              key={hero}
+              key={hero === 'ALL' ? (lang === 'ar' ? 'الكل' : 'ALL') : hero}
               onClick={() => setHeroFilter(hero)}
               style={{
                 fontFamily: 'Orbitron, monospace',
@@ -169,7 +171,7 @@ function HubPageContent() {
               letterSpacing: '3px', textTransform: 'uppercase',
               color: 'rgba(212,175,55,0.5)', marginBottom: '16px',
             }}>
-              Showing {agentResults.length} of {allAgents.length} agents
+              {lang === 'ar' ? `عرض ${agentResults.length} من أصل ${allAgents.length} وكيل` : `Showing ${agentResults.length} of ${allAgents.length} agents`}
             </p>
 
             {agentResults.length === 0 ? (
@@ -179,7 +181,7 @@ function HubPageContent() {
                   letterSpacing: '3px', textTransform: 'uppercase',
                   color: 'rgba(212,175,55,0.3)',
                 }}>
-                  No agents found for your search
+                  {lang === 'ar' ? 'لا يوجد وكلاء مطابقون لبحثك' : 'No agents found for your search'}
                 </p>
                 <button
                   onClick={() => { setSearch(""); setHeroFilter("ALL"); }}
