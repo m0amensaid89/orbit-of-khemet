@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 
 interface QuickActionsProps {
   type: 'text' | 'code' | 'research' | 'video'
@@ -183,52 +183,160 @@ function CsvTable({ csv, accentColor }: { csv: string; accentColor: string }) {
   )
 }
 
-// HTML artifact with PREVIEW / CODE toggle
+// Chart artifact — renders JSON chart blocks using Chart.js via CDN
+function ChartArtifact({ code, accentColor }: { code: string; accentColor: string }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const chartRef = useRef<any>(null)
+  const [copied, setCopied] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const renderChart = useCallback(() => {
+    if (!canvasRef.current) return
+    try {
+      const data = JSON.parse(code)
+      const Chart = (window as any).Chart
+      if (!Chart) { setError('Chart.js loading...'); return }
+      if (chartRef.current) chartRef.current.destroy()
+      const COLORS = [accentColor, '#22d3ee', '#a78bfa', '#fb923c', '#4ade80']
+      const datasets = (data.datasets || []).map((ds: any, i: number) => ({
+        ...ds,
+        backgroundColor: ds.backgroundColor || (data.type === 'line' ? 'transparent' : COLORS[i % COLORS.length] + '99'),
+        borderColor: ds.borderColor || COLORS[i % COLORS.length],
+        borderWidth: 2,
+        pointBackgroundColor: COLORS[i % COLORS.length],
+      }))
+      chartRef.current = new Chart(canvasRef.current, {
+        type: data.type || 'bar',
+        data: { labels: data.labels || [], datasets },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#d0c5af', font: { family: 'monospace', size: 11 } } } },
+          scales: data.type === 'pie' || data.type === 'doughnut' ? {} : {
+            x: { ticks: { color: '#d0c5af' }, grid: { color: 'rgba(212,175,55,0.08)' } },
+            y: { ticks: { color: '#d0c5af' }, grid: { color: 'rgba(212,175,55,0.08)' } },
+          },
+        }
+      })
+      setError(null)
+    } catch (e) {
+      setError('Invalid chart JSON')
+    }
+  }, [code, accentColor])
+
+  useEffect(() => {
+    const load = () => {
+      if ((window as any).Chart) { renderChart(); return }
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/chart.js'
+      script.onload = renderChart
+      document.head.appendChild(script)
+    }
+    load()
+    return () => { if (chartRef.current) chartRef.current.destroy() }
+  }, [renderChart])
+
+  return (
+    <div style={{ border: '1px solid rgba(212,175,55,0.2)', borderRadius: '4px', overflow: 'hidden' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 12px', background: 'rgba(212,175,55,0.06)', borderBottom: '1px solid rgba(212,175,55,0.1)' }}>
+        <span style={{ fontSize: '9px', fontFamily: 'Orbitron, monospace', letterSpacing: '2px', color: accentColor }}>CHART</span>
+        <button
+          onClick={() => { navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 2000) }}
+          style={{ fontSize: '9px', fontFamily: 'monospace', color: copied ? '#4ade80' : accentColor, background: 'transparent', border: 'none', cursor: 'pointer' }}
+        >
+          {copied ? 'COPIED' : 'COPY DATA'}
+        </button>
+      </div>
+      <div style={{ padding: '16px', background: '#111111', height: '280px', position: 'relative' }}>
+        {error && <div style={{ color: 'rgba(212,175,55,0.5)', fontSize: '12px', fontFamily: 'monospace', textAlign: 'center', paddingTop: '100px' }}>{error}</div>}
+        <canvas ref={canvasRef} style={{ display: error ? 'none' : 'block' }} />
+      </div>
+    </div>
+  )
+}
+
+// HTML artifact with PREVIEW / CODE toggle + EDIT + device frame
 function HtmlArtifact({ code, accentColor }: { code: string; accentColor: string }) {
   const [mode, setMode] = useState<'preview' | 'code'>('preview')
+  const [editing, setEditing] = useState(false)
+  const [editedCode, setEditedCode] = useState(code)
+  const [liveCode, setLiveCode] = useState(code)
+  const [device, setDevice] = useState<'desktop' | 'mobile'>('desktop')
   const [copied, setCopied] = useState(false)
+  const isMockup = code.includes('class="mockup"') || code.includes('data-mockup')
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(code)
+    navigator.clipboard.writeText(liveCode)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
 
   return (
-    <div style={{ border: `1px solid rgba(212,175,55,0.2)`, borderRadius: '4px', overflow: 'hidden' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 12px', background: 'rgba(212,175,55,0.06)', borderBottom: `1px solid rgba(212,175,55,0.1)` }}>
+    <div style={{ border: '1px solid rgba(212,175,55,0.2)', borderRadius: '4px', overflow: 'hidden' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 12px', background: 'rgba(212,175,55,0.06)', borderBottom: '1px solid rgba(212,175,55,0.1)', flexWrap: 'wrap', gap: '6px' }}>
         <div style={{ display: 'flex', gap: '0' }}>
           {(['preview', 'code'] as const).map(m => (
-            <button
-              key={m}
-              onClick={() => setMode(m)}
-              style={{
-                fontSize: '9px', fontFamily: 'Orbitron, monospace', letterSpacing: '0.1em',
-                padding: '4px 12px', border: '1px solid rgba(212,175,55,0.3)', cursor: 'pointer',
-                background: mode === m ? `rgba(212,175,55,0.12)` : 'transparent',
-                color: mode === m ? accentColor : 'rgba(208,197,175,0.4)',
-                borderRadius: m === 'preview' ? '3px 0 0 3px' : '0 3px 3px 0',
-                borderRight: m === 'preview' ? 'none' : undefined,
-              }}
-            >
+            <button key={m} onClick={() => { setMode(m); setEditing(false) }}
+              style={{ fontSize: '9px', fontFamily: 'Orbitron, monospace', letterSpacing: '0.1em', padding: '4px 12px', border: '1px solid rgba(212,175,55,0.3)', cursor: 'pointer', background: mode === m ? 'rgba(212,175,55,0.12)' : 'transparent', color: mode === m ? accentColor : 'rgba(208,197,175,0.4)', borderRadius: m === 'preview' ? '3px 0 0 3px' : '0 3px 3px 0', borderRight: m === 'preview' ? 'none' : undefined }}>
               {m.toUpperCase()}
             </button>
           ))}
         </div>
-        <button onClick={handleCopy} style={{ fontSize: '9px', fontFamily: 'monospace', color: copied ? '#4ade80' : accentColor, background: 'transparent', border: 'none', cursor: 'pointer', letterSpacing: '0.06em' }}>
-          {copied ? 'COPIED' : 'COPY HTML'}
-        </button>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          {isMockup && mode === 'preview' && (
+            <div style={{ display: 'flex', gap: '0' }}>
+              {(['desktop', 'mobile'] as const).map(d => (
+                <button key={d} onClick={() => setDevice(d)}
+                  style={{ fontSize: '8px', fontFamily: 'Orbitron, monospace', letterSpacing: '1px', padding: '3px 8px', border: '1px solid rgba(212,175,55,0.2)', cursor: 'pointer', background: device === d ? 'rgba(212,175,55,0.1)' : 'transparent', color: device === d ? accentColor : 'rgba(208,197,175,0.35)', borderRadius: d === 'desktop' ? '3px 0 0 3px' : '0 3px 3px 0', borderRight: d === 'desktop' ? 'none' : undefined }}>
+                  {d.toUpperCase()}
+                </button>
+              ))}
+            </div>
+          )}
+          {mode === 'preview' && !editing && (
+            <button onClick={() => setEditing(true)}
+              style={{ fontSize: '9px', fontFamily: 'Orbitron, monospace', letterSpacing: '1px', color: accentColor, background: 'transparent', border: 'none', cursor: 'pointer' }}>
+              EDIT
+            </button>
+          )}
+          <button onClick={handleCopy} style={{ fontSize: '9px', fontFamily: 'monospace', color: copied ? '#4ade80' : accentColor, background: 'transparent', border: 'none', cursor: 'pointer' }}>
+            {copied ? 'COPIED' : 'COPY HTML'}
+          </button>
+        </div>
       </div>
-      {mode === 'preview' ? (
-        <iframe
-          srcDoc={code}
-          sandbox="allow-scripts"
-          style={{ width: '100%', height: '360px', border: 'none', background: '#fff', display: 'block' }}
-          title="HTML preview"
-        />
+      {editing ? (
+        <div style={{ background: '#0d0d0d', padding: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <textarea
+            value={editedCode}
+            onChange={e => setEditedCode(e.target.value)}
+            style={{ width: '100%', minHeight: '200px', background: '#0d0d0d', color: '#d0c5af', fontFamily: 'monospace', fontSize: '12px', border: '1px solid rgba(212,175,55,0.2)', borderRadius: '4px', padding: '12px', resize: 'vertical', outline: 'none', boxSizing: 'border-box' }}
+          />
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button onClick={() => { setLiveCode(editedCode); setEditing(false) }}
+              style={{ fontSize: '9px', fontFamily: 'Orbitron, monospace', letterSpacing: '2px', padding: '6px 16px', background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.4)', color: accentColor, cursor: 'pointer', borderRadius: '4px' }}>
+              RENDER
+            </button>
+            <button onClick={() => { setEditedCode(liveCode); setEditing(false) }}
+              style={{ fontSize: '9px', fontFamily: 'Orbitron, monospace', letterSpacing: '2px', padding: '6px 16px', background: 'transparent', border: '1px solid rgba(212,175,55,0.15)', color: 'rgba(208,197,175,0.4)', cursor: 'pointer', borderRadius: '4px' }}>
+              CANCEL
+            </button>
+          </div>
+        </div>
+      ) : mode === 'preview' ? (
+        <div style={{ background: '#111', display: 'flex', justifyContent: device === 'mobile' ? 'center' : 'stretch', padding: device === 'mobile' ? '16px' : '0' }}>
+          <iframe
+            srcDoc={liveCode}
+            sandbox="allow-scripts"
+            style={{
+              width: device === 'mobile' ? '375px' : '100%',
+              height: '360px', border: 'none', background: '#fff', display: 'block',
+              ...(device === 'mobile' ? { border: '8px solid #222', borderRadius: '20px', boxShadow: '0 0 0 2px rgba(212,175,55,0.2)' } : {})
+            }}
+            title="HTML preview"
+          />
+        </div>
       ) : (
         <pre style={{ margin: 0, padding: '16px', overflowX: 'auto', fontSize: '12px', lineHeight: '1.5', color: 'rgba(255,255,255,0.85)', background: '#0A0A0A', fontFamily: 'monospace', maxHeight: '360px' }}>
-          <code>{code}</code>
+          <code>{liveCode}</code>
         </pre>
       )}
     </div>
@@ -254,7 +362,12 @@ function CodeOutput({ content, accentColor }: { content: string, accentColor: st
           const lang = (codeMatch[1] || 'code').toLowerCase()
           const code = codeMatch[2].trim()
 
-          // HTML — render with preview toggle
+          // Chart — render as Chart.js visualization
+          if (lang === 'chart') {
+            return <ChartArtifact key={i} code={code} accentColor={accentColor} />
+          }
+
+          // HTML — render with preview toggle + edit + device frame
           if (lang === 'html') {
             return <HtmlArtifact key={i} code={code} accentColor={accentColor} />
           }
