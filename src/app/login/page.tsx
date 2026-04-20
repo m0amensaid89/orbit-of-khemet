@@ -18,6 +18,16 @@ export default function LoginPage() {
     })
   }
 
+  const signInWithMicrosoft = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: 'azure',
+      options: {
+        scopes: 'email profile',
+        redirectTo: `${window.location.origin}/auth/callback`
+      }
+    })
+  }
+
   return (
     <div style={{
       minHeight: '100vh',
@@ -83,6 +93,44 @@ export default function LoginPage() {
           }}
         >
           CONTINUE WITH GITHUB
+        </button>
+
+        {/* Divider */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '4px 0' }}>
+          <div style={{ flex: 1, height: '1px', background: 'rgba(212,175,55,0.1)' }} />
+          <span style={{ fontSize: '8px', letterSpacing: '0.2em', color: 'rgba(212,175,55,0.3)', fontFamily: 'Orbitron, monospace' }}>OR</span>
+          <div style={{ flex: 1, height: '1px', background: 'rgba(212,175,55,0.1)' }} />
+        </div>
+
+        {/* Microsoft button */}
+        <button
+          onClick={signInWithMicrosoft}
+          style={{
+            width: '100%',
+            padding: '14px',
+            background: '#1a1a1a',
+            border: '1px solid rgba(212,175,55,0.2)',
+            color: '#d0c5af',
+            fontSize: '11px',
+            letterSpacing: '0.1em',
+            cursor: 'pointer',
+            fontFamily: 'monospace',
+            transition: 'all 0.2s',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '10px',
+            borderRadius: '4px',
+          }}
+        >
+          {/* Microsoft 4-square logo */}
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <rect x="0" y="0" width="7" height="7" fill="#F25022"/>
+            <rect x="9" y="0" width="7" height="7" fill="#7FBA00"/>
+            <rect x="0" y="9" width="7" height="7" fill="#00A4EF"/>
+            <rect x="9" y="9" width="7" height="7" fill="#FFB900"/>
+          </svg>
+          CONTINUE WITH MICROSOFT
         </button>
       </div>
 
