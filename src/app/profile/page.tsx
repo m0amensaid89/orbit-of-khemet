@@ -209,7 +209,7 @@ export default function ProfilePage() {
                 <Link href="/pricing" className="block w-full mt-4">
                   <button className="w-full font-[Orbitron] text-[10px] tracking-[3px] uppercase px-4 py-3 font-bold rounded-lg hover:scale-[1.02] transition-transform flex items-center justify-center gap-2"
                     style={{ background: "linear-gradient(135deg, #f2ca50, #D4AF37)", color: "#0a0a0a", boxShadow: "0 0 15px rgba(212,175,55,0.3)" }}>
-                    TOP UP ENERGY →
+                    {lang === 'ar' ? 'شحن الطاقة ←' : 'TOP UP ENERGY →'}
                   </button>
                 </Link>
               </div>
@@ -381,7 +381,7 @@ export default function ProfilePage() {
               className="p-6 rounded-2xl bg-[#131313] border border-white/5 flex flex-col gap-5"
             >
               <h2 className="font-[Orbitron] text-sm font-bold tracking-[3px] uppercase text-white flex items-center gap-2">
-                <Star className="w-4 h-4 text-[#D4AF37]" /> FREQUENT ORBITS
+                <Star className="w-4 h-4 text-[#D4AF37]" /> {lang === 'ar' ? 'الوكلاء الأكثر استخداماً' : 'FREQUENT ORBITS'}
               </h2>
 
               <div className="flex flex-col gap-3">
@@ -418,7 +418,7 @@ export default function ProfilePage() {
               className="p-6 rounded-2xl bg-[#131313] border border-white/5 flex flex-col gap-6 flex-1"
             >
               <h2 className="font-[Orbitron] text-sm font-bold tracking-[3px] uppercase text-white flex items-center gap-2">
-                <History className="w-4 h-4 text-[#D4AF37]" /> ACTIVITY LOG
+                <History className="w-4 h-4 text-[#D4AF37]" /> {lang === 'ar' ? 'سجل النشاط' : 'ACTIVITY LOG'}
               </h2>
 
               {activityLog.length === 0 ? (
