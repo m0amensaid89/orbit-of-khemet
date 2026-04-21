@@ -104,7 +104,7 @@ export default function ProjectsPage() {
           onClick={() => setIsModalOpen(true)}
           className="bg-transparent border border-[rgba(212,175,55,0.3)] text-[#D4AF37] px-4 py-2 font-orbitron tracking-widest text-xs hover:bg-[rgba(212,175,55,0.1)] transition-colors flex items-center gap-2"
         >
-          <Plus size={14} /> NEW PROJECT
+          <Plus size={14} /> {lang === 'ar' ? 'مشروع جديد' : 'NEW PROJECT'}
         </button>
       </header>
 
@@ -116,12 +116,12 @@ export default function ProjectsPage() {
         </div>
       ) : projects.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-center border border-[rgba(212,175,55,0.12)] bg-[rgba(212,175,55,0.03)]">
-          <p className="text-[#d0c5af]/70 mb-6 font-roboto">No projects yet. Create your first empire project.</p>
+          <p className="text-[#d0c5af]/70 mb-6 font-roboto">{lang === 'ar' ? 'لا توجد مشاريع بعد.' : 'No projects yet.'} Create your first empire project.</p>
           <button
             onClick={() => setIsModalOpen(true)}
             className="bg-[rgba(212,175,55,0.1)] border border-[#D4AF37] text-[#D4AF37] px-6 py-3 font-orbitron tracking-widest text-sm hover:bg-[rgba(212,175,55,0.2)] transition-colors"
           >
-            + NEW PROJECT
+            + {lang === 'ar' ? 'مشروع جديد' : 'NEW PROJECT'}
           </button>
         </div>
       ) : (
@@ -164,14 +164,14 @@ export default function ProjectsPage() {
 
             <div className="p-6 border-b border-[rgba(212,175,55,0.2)]">
               <h2 className="font-orbitron tracking-widest text-[#D4AF37] text-lg uppercase">
-                Initialize Project
+                {lang === 'ar' ? 'إنشاء المشروع' : 'Initialize Project'}
               </h2>
             </div>
 
             <form onSubmit={handleCreateProject} className="p-6 space-y-6">
               <div>
                 <label className="block font-orbitron text-xs tracking-wider text-[#d0c5af]/70 mb-2">
-                  PROJECT DESIGNATION
+                  {lang === 'ar' ? 'اسم المشروع' : 'PROJECT DESIGNATION'}
                 </label>
                 <input
                   autoFocus
@@ -186,7 +186,7 @@ export default function ProjectsPage() {
 
               <div>
                 <label className="block font-orbitron text-xs tracking-wider text-[#d0c5af]/70 mb-2">
-                  OBJECTIVE (OPTIONAL)
+                  {lang === 'ar' ? 'الهدف (اختياري)' : 'OBJECTIVE (OPTIONAL)'}
                 </label>
                 <textarea
                   value={newDesc}
@@ -199,7 +199,7 @@ export default function ProjectsPage() {
 
               <div>
                 <label className="block font-orbitron text-xs tracking-wider text-[#d0c5af]/70 mb-2">
-                  PROJECT SIGNATURE (COLOR)
+                  {lang === 'ar' ? 'لون المشروع' : 'PROJECT SIGNATURE (COLOR)'}
                 </label>
                 <div className="flex gap-3">
                   {COLOR_PRESETS.map(color => (
@@ -223,7 +223,7 @@ export default function ProjectsPage() {
                   onClick={() => setIsModalOpen(false)}
                   className="px-4 py-2 font-orbitron text-xs tracking-widest text-[#d0c5af]/70 hover:text-white"
                 >
-                  CANCEL
+                  {lang === 'ar' ? 'إلغاء' : 'CANCEL'}
                 </button>
                 <button
                   type="submit"
