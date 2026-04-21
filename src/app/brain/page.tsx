@@ -1,4 +1,6 @@
 'use client'
+import { useLanguage } from '@/hooks/useLanguage';
+import { useTranslations } from '@/lib/translations';
 import { useState, useEffect, useRef } from 'react'
 
 interface KnowledgeSource {
