@@ -211,10 +211,10 @@ export default function BrainPage() {
       <div style={{ borderBottom: '1px solid rgba(212,175,55,0.2)', paddingBottom: '28px', marginBottom: '32px' }}>
         <div style={{ fontSize: '9px', letterSpacing: '0.2em', color: 'rgba(212,175,55,0.5)', marginBottom: '10px' }}>KHEMET.AI</div>
         <h1 style={{ fontFamily: 'Cinzel Decorative, serif', fontSize: '28px', color: '#D4AF37', letterSpacing: '0.08em', margin: '0 0 8px' }}>
-          KHEMET BRAIN
+          {lang === 'ar' ? 'عقل كيميت' : 'KHEMET BRAIN'}
         </h1>
         <p style={{ fontSize: '13px', color: 'rgba(208,197,175,0.5)', margin: 0 }}>
-          Your global knowledge vault. Every agent reads this before responding.
+          {lang === 'ar' ? 'قاعدة معرفتك الشاملة — كل وكيل يقرأها قبل الإجابة.' : 'Your global knowledge vault. Every agent reads this before responding.'}
         </p>
       </div>
 
@@ -239,7 +239,7 @@ export default function BrainPage() {
               textTransform: 'uppercase',
             }}
           >
-            {tab}
+            {tab === 'knowledge' ? (lang === 'ar' ? 'المعرفة' : 'KNOWLEDGE') : tab === 'memory' ? (lang === 'ar' ? 'الذاكرة' : 'MEMORY') : (lang === 'ar' ? 'الاستيراد' : 'IMPORT')}
           </button>
         ))}
       </div>
@@ -276,7 +276,7 @@ export default function BrainPage() {
           >
             <div style={{ fontSize: '32px', marginBottom: '12px' }}>⬆</div>
             <div style={{ fontFamily: 'monospace', fontSize: '11px', letterSpacing: '0.12em', color: '#D4AF37', marginBottom: '8px' }}>
-              {uploading ? uploadProgress : 'UPLOAD TO BRAIN'}
+              {uploading ? uploadProgress : lang === 'ar' ? 'رفع إلى عقل كيميت' : 'UPLOAD TO BRAIN'}
             </div>
             <div style={{ fontSize: '11px', color: 'rgba(208,197,175,0.4)' }}>
               PDF · DOCX · XLSX · PPT · TXT · Images · Video · Select multiple files at once
@@ -298,12 +298,12 @@ export default function BrainPage() {
           )}
 
           <div style={{ marginBottom: '16px', fontSize: '9px', letterSpacing: '0.14em', color: 'rgba(212,175,55,0.5)' }}>
-            KNOWLEDGE SOURCES ({sources.length})
+            {lang === 'ar' ? 'مصادر المعرفة' : 'KNOWLEDGE SOURCES'} ({sources.length})
           </div>
 
           {sources.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '60px 0', color: 'rgba(208,197,175,0.25)', fontSize: '12px' }}>
-              Brain is empty. Upload your first document to begin.
+              {lang === 'ar' ? 'لا توجد مصادر بعد. ارفع أول ملف للبدء.' : 'Brain is empty. Upload your first document to begin.'}
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -381,7 +381,7 @@ export default function BrainPage() {
 
           {/* Memory List */}
           <div style={{ marginBottom: '16px', fontSize: '9px', letterSpacing: '0.14em', color: 'rgba(212,175,55,0.5)' }}>
-            AGENT MEMORIES ({memories.length})
+            {lang === 'ar' ? 'ذاكرة الوكلاء' : 'AGENT MEMORIES'} ({memories.length})
           </div>
 
           {memories.length === 0 ? (
