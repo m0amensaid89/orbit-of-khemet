@@ -23,6 +23,7 @@ import { ArtifactRenderer } from '@/components/ArtifactRenderer';
 import { ExportToolbar } from '@/components/ExportToolbar';
 import RichOutput from '@/components/chat/RichOutput';
 import { VideoQualitySelector, VideoGenerating, VideoResult } from '@/components/chat/VideoOutput';
+import { getHeroAr } from "@/lib/i18n/heroes.ar"
 
 function VoiceWaveform({ audioLevel, isLocked }: { audioLevel: number; isLocked: boolean }) {
   const [bars, setBars] = useState<number[]>(Array(28).fill(3));
@@ -550,14 +551,19 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
       || userRef.current?.email?.split('@')[0]
       || 'Commander'
 
-    let greeting = 'How can I help you today?';
+    let greeting = lang === 'ar' ? 'إيه اللي محتاج تعمله النهارده؟' : 'How can I help you today?';
     if (agent && agentParam) {
       greeting = agent.description || agent.role_summary || `I am ${agent.name}.`;
     } else if (hero) {
-      greeting = hero.welcomeMessage ? `${hero.welcomeMessage} ${hero.bio}` : `I am ${hero.name}. ${hero.bio}`;
+      const heroAr = getHeroAr(heroParam)
+      if (lang === 'ar' && heroAr) {
+        greeting = heroAr.welcomeMessage
+      } else {
+        greeting = hero.welcomeMessage ? `${hero.welcomeMessage} ${hero.bio}` : `I am ${hero.name}. ${hero.bio}`
+      }
     }
 
-    const openingContent = `Welcome back, ${username}. ${greeting}`;
+    const openingContent = lang === 'ar' ? `أهلاً بعودتك يا ${username}. ${greeting}` : `Welcome back, ${username}. ${greeting}`;
 
     if (agentParam && heroParam) {
       const skillKey = `${heroParam.toLowerCase()}-${agentParam}`
