@@ -219,7 +219,7 @@ export function Sidebar() {
   const unpinnedList = filteredThreads.filter(t => !pinnedThreads.includes(t.id));
 
   return (
-    <aside className="w-[260px] h-screen bg-[#0A0A0A] hidden md:flex flex-col sticky top-0 shrink-0 text-[#d0c5af] font-rajdhani" style={lang === 'ar' ? { right: 0, left: 'auto', borderRight: 'none', borderLeft: '1px solid rgba(212,175,55,0.2)' } : {}}>
+    <aside className="w-[260px] h-screen bg-[#0A0A0A] hidden md:flex flex-col sticky top-0 shrink-0 text-[#d0c5af] font-rajdhani" style={lang === 'ar' ? { right: 0, left: 'auto', borderRight: 'none', borderLeft: '1px solid rgba(212,175,55,0.2)' } : { left: 0, right: 'auto' }}>
       {/* Top Logo Area */}
       <Link href="/hub" className="h-16 border-b border-[#D4AF37]/20 flex items-center px-6 gap-3 shrink-0">
         <img
