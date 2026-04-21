@@ -25,6 +25,8 @@ const COLOR_PRESETS = [
 
 export default function ProjectsPage() {
   const router = useRouter()
+  const [lang] = useLanguage()
+  const t = useTranslations(lang)
   const [projects, setProjects] = useState<Project[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
