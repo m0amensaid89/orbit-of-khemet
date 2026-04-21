@@ -11,6 +11,7 @@ import { CreditMeterSkeleton } from "./CreditMeterSkeleton";
 import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useTranslations } from "@/lib/translations";
 
 
 export function Sidebar() {
@@ -32,6 +33,7 @@ export function Sidebar() {
   const [pinnedThreads, setPinnedThreads] = useState<string[]>([]);
   const [tabSessions, setTabSessions] = useState<Array<{id: string; heroSlug: string; agentName: string; label: string}>>([]);
   const [lang, setLang] = useLanguage();
+  const t = useTranslations(lang);
 
 
   useEffect(() => {
@@ -217,7 +219,7 @@ export function Sidebar() {
   const unpinnedList = filteredThreads.filter(t => !pinnedThreads.includes(t.id));
 
   return (
-    <aside className="w-[260px] h-screen bg-[#0A0A0A] hidden md:flex flex-col sticky top-0 shrink-0 text-[#d0c5af] font-rajdhani">
+    <aside className="w-[260px] h-screen bg-[#0A0A0A] hidden md:flex flex-col sticky top-0 shrink-0 text-[#d0c5af] font-rajdhani" style={lang === 'ar' ? { right: 0, left: 'auto', borderRight: 'none', borderLeft: '1px solid rgba(212,175,55,0.2)' } : {}}>
       {/* Top Logo Area */}
       <Link href="/hub" className="h-16 border-b border-[#D4AF37]/20 flex items-center px-6 gap-3 shrink-0">
         <img
@@ -234,16 +236,16 @@ export function Sidebar() {
         {/* WORKSPACE Section */}
         <div>
           <div className="px-6 mb-2">
-            <span className="font-orbitron text-empire-xs text-[rgba(212,175,55,0.4)] uppercase">WORKSPACE</span>
+            <span className="font-orbitron text-empire-xs text-[rgba(212,175,55,0.4)] uppercase">{t.nav.newMission && "WORKSPACE"}</span>
           </div>
           <div className="px-3 space-y-1">
             <Link href="/hub" className={navItemClass("/hub", true)}>
               <Compass className="w-4 h-4 z-10" />
-              <span className="font-medium text-empire-sm z-10">New Mission</span>
+              <span className="font-medium text-empire-sm z-10">{t.nav.newMission}</span>
             </Link>
             <Link href="/brain" className={navItemClass("/brain")}>
               <Brain className="w-4 h-4 z-10" />
-              <span className="font-medium text-empire-sm z-10">KHEMET BRAIN</span>
+              <span className="font-medium text-empire-sm z-10">{t.nav.brain}</span>
             </Link>
             {/*
             <Link href="/master-orbit" className={navItemClass("/master-orbit")}>
@@ -263,7 +265,7 @@ export function Sidebar() {
             onClick={() => setSuperSkillsOpen(prev => !prev)}
             className="w-full flex items-center justify-between px-6 py-3 transition-all hover:bg-[rgba(212,175,55,0.03)]">
             <span className="font-orbitron text-empire-xs uppercase"
-              style={{ color: 'rgba(212,175,55,0.4)' }}>SUPER SKILLS</span>
+              style={{ color: 'rgba(212,175,55,0.4)' }}>{t.nav.superSkills}</span>
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
               stroke="rgba(212,175,55,0.4)" strokeWidth="2" strokeLinecap="round"
               style={{ transform: superSkillsOpen ? 'rotate(0deg)' : 'rotate(-90deg)', transition: 'transform 0.2s' }}>
@@ -274,11 +276,11 @@ export function Sidebar() {
             <div className="flex flex-col px-3 space-y-1">
               <Link href="/forge" className={navItemClass("/forge")}>
                 <Hammer className="w-4 h-4 z-10" />
-                <span className="font-medium text-empire-sm z-10">Agent Forge</span>
+                <span className="font-medium text-empire-sm z-10">{t.nav.forge}</span>
               </Link>
               <Link href="/autopilot" className={navItemClass("/autopilot")}>
                 <Cpu className="w-4 h-4 z-10" />
-                <span className="font-medium text-empire-sm z-10">Auto-Pilot</span>
+                <span className="font-medium text-empire-sm z-10">{t.nav.autopilot}</span>
               </Link>
               <Link href="/ui-builder" className={navItemClass("/ui-builder")}>
                 <Wand2 className="w-4 h-4 z-10" />
@@ -286,7 +288,7 @@ export function Sidebar() {
               </Link>
               <Link href="/sentinel" className={navItemClass("/sentinel")}>
                 <Shield className="w-4 h-4 z-10" />
-                <span className="font-medium text-empire-sm z-10">Code Sentinel</span>
+                <span className="font-medium text-empire-sm z-10">{t.nav.sentinel}</span>
               </Link>
               <Link href="/browser" className={navItemClass("/browser")}>
                 <Globe className="w-4 h-4 z-10" />
@@ -294,7 +296,7 @@ export function Sidebar() {
               </Link>
               <Link href="/artifacts" className={navItemClass("/artifacts")}>
                 <Gem className="w-4 h-4 z-10" />
-                <span className="font-medium text-empire-sm z-10">Empire Relics</span>
+                <span className="font-medium text-empire-sm z-10">{t.nav.empireRelics}</span>
               </Link>
             </div>
           )}
@@ -314,7 +316,7 @@ export function Sidebar() {
               letterSpacing: '0.14em',
               color: 'rgba(212,175,55,0.5)',
               fontFamily: 'monospace',
-            }}>PROJECTS</span>
+            }}>{t.nav.projects}</span>
             <button
               onClick={() => setShowNewProject(true)}
               style={{
@@ -446,7 +448,7 @@ export function Sidebar() {
                 onClick={() => setMissionLogOpen(prev => !prev)}
                 className="w-full flex items-center justify-between px-6 py-3 transition-all hover:bg-[rgba(212,175,55,0.03)] mb-1"
               >
-                <span className="font-orbitron text-empire-xs uppercase text-[rgba(212,175,55,0.4)]">MISSION LOG</span>
+                <span className="font-orbitron text-empire-xs uppercase text-[rgba(212,175,55,0.4)]">{t.nav.missionLog}</span>
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
                   stroke="rgba(212,175,55,0.4)" strokeWidth="2" strokeLinecap="round"
                   strokeLinejoin="round"
