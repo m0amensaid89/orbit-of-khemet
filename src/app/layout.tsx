@@ -34,7 +34,7 @@ const roboto = Roboto({
 
 export const metadata: Metadata = {
   title: "Orbit of Khemet | AI Empire Engine",
-  description: "The Egyptian AI platform — 85 specialized agents across 7 hero domains. Strategy, creative, engineering, analytics, and more. Powered by the 7 Heroes of Khemet.",
+  description: "The Egyptian AI platform — 120 specialized agents across 7 hero domains. Strategy, creative, engineering, analytics, and more. Powered by the 7 Heroes of Khemet.",
   keywords: ["AI agents", "AI platform", "Egyptian AI", "Khemet", "gamification AI", "business AI", "AI empire"],
   authors: [{ name: "Khemet.AI", url: "https://khemet.ai" }],
   creator: "Khemet.AI",
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     url: "https://orbit-of-khemet.vercel.app",
     siteName: "Orbit of Khemet",
     title: "Orbit of Khemet — AI Empire Engine",
-    description: "85 AI agents. 7 Egyptian heroes. One platform to build, grow, and command your empire.",
+    description: "120 AI agents. 7 Egyptian heroes. One platform to build, grow, and command your empire.",
     images: [
       {
         url: "/publiclogo.png.png",
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Orbit of Khemet — AI Empire Engine",
-    description: "85 AI agents. 7 Egyptian heroes. Build your AI empire.",
+    description: "120 AI agents. 7 Egyptian heroes. Build your AI empire.",
     images: ["/publiclogo.png.png"],
     creator: "@khemetai",
   },
@@ -80,7 +80,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <head>
         <link rel="apple-touch-icon" href="/khemet-logo.png" />
         <link rel="icon" href="/khemet-logo.png" type="image/png" />
@@ -88,6 +88,27 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="format-detection" content="telephone=no" />
+        <script dangerouslySetInnerHTML={{ __html: `
+          (function() {
+            try {
+              var theme = localStorage.getItem('theme');
+              if (theme === 'light') {
+                document.documentElement.classList.remove('dark');
+                document.documentElement.classList.add('light');
+              } else {
+                document.documentElement.classList.add('dark');
+                document.documentElement.classList.remove('light');
+              }
+              var lang = localStorage.getItem('orbit_lang');
+              if (lang === 'ar') {
+                document.documentElement.setAttribute('dir', 'rtl');
+                document.documentElement.setAttribute('lang', 'ar');
+              }
+            } catch(e) {
+              document.documentElement.classList.add('dark');
+            }
+          })();
+        ` }} />
         <script dangerouslySetInnerHTML={{ __html: `
           if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
