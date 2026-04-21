@@ -116,7 +116,7 @@ export default function PricingPage() {
 
         {/* Billing Toggle */}
         <div className="flex items-center justify-center gap-4 mb-16">
-          <span className={`font-[Orbitron] text-xs tracking-widest uppercase transition-colors ${billingCycle === "monthly" ? "text-white" : "text-white/40"}`}>Monthly</span>
+          <span className={`font-[Orbitron] text-xs tracking-widest uppercase transition-colors ${billingCycle === "monthly" ? "text-white" : "text-white/40"}`}>{t.pricing.monthly}</span>
           <button
             onClick={() => {
               setBillingCycle(billingCycle === "monthly" ? "annual" : "monthly");
@@ -133,7 +133,7 @@ export default function PricingPage() {
             />
           </button>
           <div className="flex items-center gap-2">
-            <span className={`font-[Orbitron] text-xs tracking-widest uppercase transition-colors ${billingCycle === "annual" ? "text-white" : "text-white/40"}`}>Annual</span>
+            <span className={`font-[Orbitron] text-xs tracking-widest uppercase transition-colors ${billingCycle === "annual" ? "text-white" : "text-white/40"}`}>{t.pricing.annual}</span>
             <span className="font-[Roboto] text-[10px] font-bold uppercase tracking-widest bg-[#22c55e]/20 text-[#22c55e] px-2 py-0.5 rounded-sm border border-[#22c55e]/30">Save 10%</span>
           </div>
         </div>
@@ -278,7 +278,7 @@ export default function PricingPage() {
 
                     <div className="flex justify-between items-end mb-4">
                       <div>
-                        <span className="font-[Roboto] text-xs text-white/40 block">Monthly</span>
+                        <span className="font-[Roboto] text-xs text-white/40 block">{t.pricing.monthly}</span>
                         <span className="font-[Orbitron] text-xl text-white">${calculatedResult.monthlyPrice}</span>
                       </div>
                       <div className="text-right">
