@@ -1,4 +1,6 @@
 "use client";
+import { useLanguage } from "@/hooks/useLanguage";
+import { useTranslations } from "@/lib/translations";
 
 import { useState, useMemo } from "react";
 import { NEW_PLANS } from "@/lib/new-plans";
@@ -54,6 +56,8 @@ const calculatorTasks = {
 
 
 export default function PricingPage() {
+  const [lang] = useLanguage()
+  const t = useTranslations(lang)
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("monthly");
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
