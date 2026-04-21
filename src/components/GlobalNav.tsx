@@ -4,6 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
+import { useLanguage } from "@/hooks/useLanguage";
+import { useTranslations } from "@/lib/translations";
 import { Sun, Moon, Menu, X, Zap, Building2 } from "lucide-react";
 import { heroOrder } from "@/lib/heroes";
 
@@ -15,6 +17,8 @@ const heroSlugs = heroOrder.map(slug => ({
 export function GlobalNav() {
   const pathname = usePathname();
   const [isDark, setIsDark] = useState(true);
+  const [lang, setLang] = useLanguage();
+  const t = useTranslations(lang);
   const [mobileOpen, setMobileOpen] = useState(false);
   const isLandingPage = pathname === '/';
 
@@ -32,6 +36,13 @@ export function GlobalNav() {
     localStorage.setItem("theme", newDark ? "dark" : "light");
     document.documentElement.classList.toggle("dark", newDark);
     document.documentElement.classList.toggle("light", !newDark);
+  };
+
+  const toggleLang = () => {
+    const newLang = lang === "en" ? "ar" : "en";
+    setLang(newLang);
+    document.documentElement.setAttribute("dir", newLang === "ar" ? "rtl" : "ltr");
+    document.documentElement.setAttribute("lang", newLang);
   };
 
   const isHeroPage = pathname.startsWith("/heroes/");
@@ -54,9 +65,9 @@ export function GlobalNav() {
         <nav className="hidden lg:flex items-center gap-1">
           {isLandingPage ? (
             <>
-              <Link href="#heroes" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">HEROES</Link>
-              <Link href="#how-it-works" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">HOW IT WORKS</Link>
-              <Link href="/pricing" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">PRICING</Link>
+              <Link href="#heroes" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">{t.landing.heroes}</Link>
+              <Link href="#how-it-works" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">{t.landing.howItWorks}</Link>
+              <Link href="/pricing" className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-3 py-2 text-muted-foreground hover:text-primary transition-colors">{t.landing.pricing}</Link>
               <Link href="/hub" className="ml-2">
                 <button className="bg-gradient-to-r from-[#FBBF24] to-[#F59E0B] text-black font-semibold text-xs py-1.5 px-4 rounded-md hover:scale-105 transition-transform duration-300">
                   ENTER THE ORBIT
@@ -119,9 +130,9 @@ export function GlobalNav() {
         <div className="lg:hidden border-t border-border/30 bg-background/95 backdrop-blur-md px-4 py-4 flex flex-col gap-1">
           {isLandingPage ? (
             <>
-              <Link href="#heroes" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">HEROES</Link>
-              <Link href="#how-it-works" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">HOW IT WORKS</Link>
-              <Link href="/pricing" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">PRICING</Link>
+              <Link href="#heroes" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">{t.landing.heroes}</Link>
+              <Link href="#how-it-works" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">{t.landing.howItWorks}</Link>
+              <Link href="/pricing" onClick={() => setMobileOpen(false)} className="font-[Orbitron] text-[10px] tracking-[2px] uppercase px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors">{t.landing.pricing}</Link>
               <Link href="/hub" onClick={() => setMobileOpen(false)} className="mt-2">
                 <button className="w-full bg-gradient-to-r from-[#FBBF24] to-[#F59E0B] text-black font-semibold text-xs py-2.5 px-4 rounded-md transition-transform duration-300">
                   ENTER THE ORBIT
