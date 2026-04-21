@@ -19,6 +19,8 @@ interface Memory {
 }
 
 export default function BrainPage() {
+  const [lang] = useLanguage()
+  const t = useTranslations(lang)
   const [activeTab, setActiveTab] = useState<'knowledge' | 'memory' | 'import'>('knowledge')
   const [sources, setSources] = useState<KnowledgeSource[]>([])
   const [uploading, setUploading] = useState(false)
