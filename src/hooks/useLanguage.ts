@@ -22,6 +22,10 @@ export function useLanguage(): [Lang, (lang: Lang) => void] {
     localStorage.setItem('orbit_lang', l)
     setLangState(l)
     window.dispatchEvent(new CustomEvent<Lang>('orbit_lang_change', { detail: l }))
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('dir', l === 'ar' ? 'rtl' : 'ltr')
+      document.documentElement.setAttribute('lang', l)
+    }
   }
 
   return [lang, setLang]
