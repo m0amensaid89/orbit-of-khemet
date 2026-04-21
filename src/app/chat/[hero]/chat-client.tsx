@@ -1,4 +1,6 @@
-"use client";
+"use client"
+import { useLanguage } from "@/hooks/useLanguage"
+import { useTranslations } from "@/lib/translations";
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -56,6 +58,8 @@ function VoiceWaveform({ audioLevel, isLocked }: { audioLevel: number; isLocked:
 export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const [lang] = useLanguage()
+  const t = useTranslations(lang)
   const [clarificationOptions, setClarificationOptions] = useState<string[] | null>(null)
   const [historyMessages, setHistoryMessages] = useState<Array<{id: string, role: 'user' | 'assistant', content: string}>>([])
 
@@ -1097,7 +1101,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                   className={`w-full pl-5 ${voiceSupported ? 'pr-24' : 'pr-16'} py-4 rounded-xl text-empire-base outline-none transition-all shadow-inner placeholder:text-white/20 font-[Rajdhani]`}
                   style={{ background: "#0A0A0A", border: `1px solid ${cardBorder}`, color: "white" }}
                   value={input}
-                  placeholder={`Message ${agentName}...`}
+                  placeholder={lang === 'ar' ? t.chat.inputPlaceholder : `Message ${agentName}...`}
                   onChange={handleInputChange}
                   disabled={isLoading}
                   onFocus={e => { e.target.style.borderColor = accentColor; e.target.style.boxShadow = `0 0 15px rgba(${hero?.palette?.["accent-rgb"] || "212,175,55"}, 0.15)`; }}
