@@ -1,5 +1,7 @@
 'use client'
 
+import { useLanguage } from '@/hooks/useLanguage';
+import { useTranslations } from '@/lib/translations';
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
