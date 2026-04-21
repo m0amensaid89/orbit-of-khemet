@@ -1,4 +1,6 @@
 "use client";
+import { useLanguage } from "@/hooks/useLanguage";
+import { useTranslations } from "@/lib/translations";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -11,6 +13,8 @@ import { createClient } from "@/lib/supabase/client";
 import { Star, Shield, Zap, History, TrendingUp } from "lucide-react";
 
 export default function ProfilePage() {
+  const [lang] = useLanguage()
+  const t = useTranslations(lang)
   const [stats, setStats] = useState({ totalEnergyUsed: 0, level: 1, currentXp: 0, nextLevelXp: 100 });
   const [userPlan, setUserPlan] = useState("explorer");
   const [customAgents, setCustomAgents] = useState<CustomAgent[]>([]);
@@ -67,8 +71,8 @@ export default function ProfilePage() {
 
         if (threadsByHero) {
           const countMap: Record<string, number> = {};
-          for (const t of threadsByHero) {
-            countMap[t.hero_slug] = (countMap[t.hero_slug] || 0) + 1;
+          for (const th of threadsByHero) {
+            countMap[th.hero_slug] = (countMap[th.hero_slug] || 0) + 1;
           }
           const sorted = Object.entries(countMap)
             .sort((a, b) => b[1] - a[1])
