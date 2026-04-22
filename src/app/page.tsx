@@ -4,6 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import { heroMeta } from "@/lib/agents";
 import { heroOrder } from "@/lib/heroes";
 import { NEW_PLANS } from "@/lib/new-plans";
@@ -39,6 +41,19 @@ const FadeInSection = ({ children, delay = 0, className = "" }: { children: Reac
 };
 
 export default function LandingPage() {
+  const router = useRouter()
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const supabase = createClient()
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        router.replace('/hub')
+      }
+    }
+    checkAuth()
+  }, [router])
+
   const [isHovered, setIsHovered] = useState(false);
   const [pricingView, setPricingView] = useState<"personal" | "business">("personal");
   const containerRef = useRef<HTMLDivElement>(null);
