@@ -141,6 +141,7 @@ export default function ForgePage() {
             placeholder={isFocused ? placeholder : ""}
             maxLength={maxLength}
             className="w-full bg-transparent px-4 pt-6 pb-2 text-white font-[Rajdhani] text-lg outline-none placeholder:text-white/20"
+            style={{ color: "#e0c97f", caretColor: "#D4AF37" }}
           />
         </div>
         {isError && (
