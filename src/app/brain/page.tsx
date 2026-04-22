@@ -250,7 +250,7 @@ export default function BrainPage() {
           {storageLimit > 0 && (
             <div style={{ marginBottom: '32px', padding: '20px 24px', background: 'rgba(212,175,55,0.04)', border: '1px solid rgba(212,175,55,0.12)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <span style={{ fontFamily: 'monospace', fontSize: '10px', letterSpacing: '0.12em', color: 'rgba(212,175,55,0.7)' }}>STORAGE USAGE</span>
+                <span style={{ fontFamily: 'monospace', fontSize: '10px', letterSpacing: '0.12em', color: 'rgba(212,175,55,0.7)' }}>{lang === 'ar' ? 'استخدام التخزين' : 'STORAGE USAGE'}</span>
                 <span style={{ fontFamily: 'Roboto, sans-serif', fontSize: '11px', color: 'rgba(208,197,175,0.6)' }}>
                   {storageUsed < 1024 * 1024 ? `$<span dir="ltr">{(storageUsed / 1024).toFixed(1)} KB</span>` : `$<span dir="ltr">{(storageUsed / (1024 * 1024)).toFixed(1)} MB</span>`} / {storageLimit < 1024 * 1024 * 1024 ? `${(storageLimit / (1024 * 1024)).toFixed(0)} MB` : `${(storageLimit / (1024 * 1024 * 1024)).toFixed(0)} GB`}
                 </span>
