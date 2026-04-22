@@ -403,3 +403,28 @@ button, [role="button"] {
   .text-empire-xl   { font-size: 20px; letter-spacing: 0em;    line-height: 1.4; }
 }
 @keyframes pulse { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1); } }
+
+
+/* ── RTL Text Fix — prevents period/punctuation orphan in RTL containers ── */
+[dir="rtl"] p,
+[dir="rtl"] span,
+[dir="rtl"] li,
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3,
+[dir="rtl"] h4 {
+  unicode-bidi: plaintext;
+}
+
+/* Wrap purely English content inside RTL containers */
+[dir="rtl"] .en-text {
+  direction: ltr;
+  display: inline-block;
+}
+
+/* Price elements always LTR */
+[dir="rtl"] .price-display {
+  direction: ltr;
+  display: inline-flex;
+  align-items: center;
+}
