@@ -95,7 +95,7 @@ export default function ProjectsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-[#d0c5af] p-8 pb-24 md:pb-8 max-w-7xl mx-auto pt-16 md:pt-8">
+    <div className="min-h-screen bg-[#0A0A0A] text-[#d0c5af] p-8 pb-24 md:pb-8 pt-16 md:pt-8">
       <header className="flex justify-between items-center mb-12">
         <h1 className="font-orbitron tracking-widest text-xl text-[#D4AF37] uppercase flex items-center gap-3">
           <span className="text-[#D4AF37]">✦</span> YOUR PROJECTS
