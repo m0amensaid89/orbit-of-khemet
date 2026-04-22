@@ -229,7 +229,7 @@ export default function ProfilePage() {
               <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37]/5 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-[#D4AF37]/10 transition-colors" />
 
               <h2 className="font-[Orbitron] text-sm font-bold tracking-[4px] uppercase text-white flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-[#D4AF37]" /> EVOLUTION PROGRESS
+                <TrendingUp className="w-4 h-4 text-[#D4AF37]" /> {lang === 'ar' ? t.profile.evolutionProgress : 'EVOLUTION PROGRESS'}
               </h2>
 
               <div>
@@ -265,7 +265,7 @@ export default function ProfilePage() {
 
         {/* Energy Stats */}
         <div className="p-8 rounded-sm flex flex-col gap-6" style={{ background: "#131313", outline: "1px solid rgba(212,175,55,0.08)" }}>
-          <h2 className="font-[Orbitron] text-xs tracking-[4px] uppercase" style={{ color: "rgba(212,175,55,0.5)" }}>GRID XP</h2>
+          <h2 className="font-[Orbitron] text-xs tracking-[4px] uppercase" style={{ color: "rgba(212,175,55,0.5)" }}>{lang === 'ar' ? t.profile.gridXp : 'GRID XP'}</h2>
           <div>
             <div className="flex justify-between items-end mb-2">
               <span className="text-4xl font-[Orbitron] font-black">{stats.currentXp}</span>
@@ -284,14 +284,14 @@ export default function ProfilePage() {
           </div>
         </div>
 
-            {/* MY FORGE Section */}
+            {/* {lang === 'ar' ? t.profile.myForge : 'MY FORGE'} Section */}
             <motion.div
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}
               className="p-8 rounded-2xl flex flex-col gap-6 bg-[#131313] border border-white/5"
             >
               <div className="flex items-center justify-between">
                 <h2 className="font-[Orbitron] text-sm font-bold tracking-[4px] uppercase text-white flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-[#D4AF37]" /> MY FORGE
+                  <Zap className="w-4 h-4 text-[#D4AF37]" /> {lang === 'ar' ? t.profile.myForge : 'MY FORGE'}
                 </h2>
                 {customAgents.length < 3 && (
                   <Link href="/forge">
@@ -381,7 +381,7 @@ export default function ProfilePage() {
               className="p-6 rounded-2xl bg-[#131313] border border-white/5 flex flex-col gap-5"
             >
               <h2 className="font-[Orbitron] text-sm font-bold tracking-[3px] uppercase text-white flex items-center gap-2">
-                <Star className="w-4 h-4 text-[#D4AF37]" /> {lang === 'ar' ? 'الوكلاء الأكثر استخداماً' : 'FREQUENT ORBITS'}
+                <Star className="w-4 h-4 text-[#D4AF37]" /> {lang === 'ar' ? 'الوكلاء الأكثر استخداماً' : '{lang === 'ar' ? t.profile.frequentOrbits : 'FREQUENT ORBITS'}'}
               </h2>
 
               <div className="flex flex-col gap-3">
@@ -418,7 +418,7 @@ export default function ProfilePage() {
               className="p-6 rounded-2xl bg-[#131313] border border-white/5 flex flex-col gap-6 flex-1"
             >
               <h2 className="font-[Orbitron] text-sm font-bold tracking-[3px] uppercase text-white flex items-center gap-2">
-                <History className="w-4 h-4 text-[#D4AF37]" /> {lang === 'ar' ? 'سجل النشاط' : 'ACTIVITY LOG'}
+                <History className="w-4 h-4 text-[#D4AF37]" /> {lang === 'ar' ? 'سجل النشاط' : '{lang === 'ar' ? t.profile.activityLog : 'ACTIVITY LOG'}'}
               </h2>
 
               {activityLog.length === 0 ? (
