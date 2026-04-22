@@ -363,14 +363,25 @@ function HubPageContent() {
                             fontFamily: 'Cinzel Decorative, serif', fontSize: '13px',
                             color: '#D4AF37', letterSpacing: '0.08em',
                           }}>
-                            {slug === 'thoren' ? 'THOREN The Law' :
-                             slug === 'ramet' ? 'RAMET The Stabilizer' :
-                             slug === 'nexar' ? 'NEXAR The Destabilizer' :
-                             slug === 'lyra' ? 'LYRA The Signal' :
-                             slug === 'kairo' ? 'KAIRO The Gridwalker' :
-                             slug === 'nefra' ? 'NEFRA The Keeper' :
-                             slug === 'horusen' ? 'HORUSEN The Closer' :
-                             data.name}
+                            {lang === 'ar' ? (
+                              slug === 'thoren' ? 'ثورين — القانون' :
+                              slug === 'ramet' ? 'رامت — المثبِّت' :
+                              slug === 'nexar' ? 'نيكسار — المزعزِع' :
+                              slug === 'lyra' ? 'ليرا — الإشارة' :
+                              slug === 'kairo' ? 'كايرو — سائر الشبكة' :
+                              slug === 'nefra' ? 'نيفرا — الحارس' :
+                              slug === 'horusen' ? 'هوروسن — المُقفِل' :
+                              data.name
+                            ) : (
+                              slug === 'thoren' ? 'THOREN The Law' :
+                              slug === 'ramet' ? 'RAMET The Stabilizer' :
+                              slug === 'nexar' ? 'NEXAR The Destabilizer' :
+                              slug === 'lyra' ? 'LYRA The Signal' :
+                              slug === 'kairo' ? 'KAIRO The Gridwalker' :
+                              slug === 'nefra' ? 'NEFRA The Keeper' :
+                              slug === 'horusen' ? 'HORUSEN The Closer' :
+                              data.name
+                            )}
                           </div>
                           <div style={{
                             fontFamily: 'monospace', fontSize: '9px',
