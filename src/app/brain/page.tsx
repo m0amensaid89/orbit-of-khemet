@@ -258,7 +258,7 @@ export default function BrainPage() {
               <div style={{ height: '4px', background: 'rgba(212,175,55,0.08)', position: 'relative' }}>
                 <div style={{ height: '100%', width: `${Math.min((storageUsed / storageLimit) * 100, 100).toFixed(1)}%`, background: storageUsed / storageLimit > 0.9 ? '#ef4444' : storageUsed / storageLimit > 0.7 ? '#f59e0b' : '#D4AF37', transition: 'width 0.4s ease' }} />
               </div>
-              <div style={{ marginTop: '6px', fontSize: '10px', color: 'rgba(208,197,175,0.35)', fontFamily: 'monospace' }}>{userTier.replace(/_/g, ' ').toUpperCase()} PLAN</div>
+              <div style={{ marginTop: '6px', fontSize: '10px', color: 'rgba(208,197,175,0.35)', fontFamily: 'monospace' }}>{lang === 'ar' ? t.brain.planLabel : userTier.replace(/_/g, ' ').toUpperCase() + ' PLAN'}</div>
             </div>
           )}
 
