@@ -697,7 +697,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
         {/* Breadcrumb */}
         <div className="shrink-0 px-4 py-2 text-[10px] font-mono tracking-widest flex items-center gap-2"
           style={{ color: accentColor, opacity: 0.5, borderBottom: `0.5px solid ${cardBorder}` }}>
-          <span className="cursor-pointer hover:opacity-100 transition-opacity" onClick={() => router.push('/')}>Universe</span>
+          <span className="cursor-pointer hover:opacity-100 transition-opacity" onClick={() => router.push('/')}>{lang === 'ar' ? t.chat.universe : 'Universe'}</span>
           <span>›</span>
           <span className="cursor-pointer hover:opacity-100 transition-opacity" onClick={() => router.push(`/heroes/${heroParam}`)}>{heroName}</span>
           <span>›</span>
