@@ -14,6 +14,39 @@ const FAQ_ITEMS = [
   { question: "What happens if I run out of credits?", answer: "You can purchase top-up credits at any time without upgrading your tier, or choose to upgrade to a higher tier for a better per-credit rate." }
 ];
 
+const FEATURE_NAMES_AR: Record<string, string> = {
+  "Shared Features (All Tiers)": "الميزات المشتركة (جميع الخطط)",
+  "Access to all AI models": "الوصول لجميع نماذج الذكاء الاصطناعي",
+  "Real-time usage tracking": "تتبع الاستخدام في الوقت الفعلي",
+  "Credit rollover (limits apply)": "ترحيل الرصيد (بحدود)",
+  "99.9% uptime SLA": "ضمان توفر 99.9%",
+  "SOC 2 compliance": "امتثال SOC 2",
+  "API access": "وصول API",
+  "Usage analytics": "تحليلات الاستخدام",
+  "API calls/day": "طلبات API يومياً",
+  "Upload limits": "حدود الرفع",
+  "Integrations": "التكاملات",
+  "Team Members": "أعضاء الفريق",
+  "Support Level": "مستوى الدعم",
+  "Team Management": "إدارة الفريق",
+  "White-label options": "خيارات العلامة البيضاء",
+  "Community": "مجتمع",
+  "Email": "بريد إلكتروني",
+  "Priority": "أولوية",
+  "Dedicated": "مخصص",
+  "Unlimited": "غير محدود",
+}
+
+const PLAN_DESCS_AR: Record<string, string> = {
+  "Try the empire. 100 Grid Energy daily.": "جرّب الإمبراطورية. 100 وحدة طاقة يومياً.",
+  "For individuals exploring the empire": "للأفراد المستكشفين",
+  "For power users building daily": "للمستخدمين المتقدمين",
+  "For creators and professionals": "للمبدعين والمحترفين",
+  "For teams and agencies": "للفرق والوكالات",
+  "For scaling businesses": "للأعمال المتنامية",
+  "For enterprises": "للمؤسسات الكبرى",
+}
+
 const FEATURES_TABLE = [
   // Shared Features
   { category: "Shared Features (All Tiers)" },
@@ -172,7 +205,7 @@ export default function PricingPage() {
                   <p className={`font-[Orbitron] text-[11px] tracking-[5px] uppercase mb-2 ${isBusiness ? "text-[#D4AF37]" : "text-[#7aa2f7]"}`}>
                     {plan.name}
                   </p>
-                  <p className="font-[Roboto] text-sm text-[#d0c5af] min-h-[40px] mb-4">{plan.description}</p>
+                  <p className="font-[Roboto] text-sm text-[#d0c5af] min-h-[40px] mb-4">{lang === 'ar' ? (PLAN_DESCS_AR[plan.description] || plan.description) : plan.description}</p>
 
                   <div className="flex items-baseline gap-1" dir="ltr">
                     <span className="font-[Orbitron] text-4xl md:text-5xl font-black text-white leading-none">
@@ -324,7 +357,7 @@ export default function PricingPage() {
                   return (
                     <tr key={`cat-${i}`} className="bg-white/[0.02]">
                       <td colSpan={7} className="p-4 md:p-6 font-[Cinzel Decorative] text-[#D4AF37] text-lg font-bold sticky left-0 bg-[#131313] z-10">
-                        {row.category}
+                        {lang === 'ar' ? (FEATURE_NAMES_AR[row.category] || row.category) : row.category}
                       </td>
                     </tr>
                   );
@@ -342,7 +375,7 @@ export default function PricingPage() {
 
                 return (
                   <tr key={`feat-${i}`} className="hover:bg-white/[0.01] transition-colors">
-                    <td className="p-4 md:p-6 text-white/90 sticky left-0 bg-[#131313] z-10 border-r border-white/5">{row.feature}</td>
+                    <td className="p-4 md:p-6 text-white/90 sticky left-0 bg-[#131313] z-10 border-r border-white/5">{lang === 'ar' ? (FEATURE_NAMES_AR[row.feature] || row.feature) : row.feature}</td>
                     <td className="p-4 text-center">{renderCell(row.personalBasic)}</td>
                     <td className="p-4 text-center">{renderCell(row.personalExplorer)}</td>
                     <td className="p-4 text-center">{renderCell(row.personalStarter)}</td>
