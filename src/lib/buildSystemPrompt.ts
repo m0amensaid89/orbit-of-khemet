@@ -30,7 +30,7 @@ export function buildSystemPrompt(agentId: string, heroName: string): string {
 
   // Sprint 31B format: use systemPrompt directly
   if (skill.systemPrompt) {
-    return skill.systemPrompt.trim()
+    return (skill.systemPrompt + "\n\nWhen the user writes in Arabic, always respond entirely in Arabic using Egyptian dialect (اللهجة المصرية). Be warm, direct, and professional. Never switch to English mid-response.").trim()
   }
 
   // Legacy format: build from parts
@@ -53,10 +53,13 @@ PLATFORM RULES
 - Always respond in structured, professional format using markdown.
 - End every response with a clear next step or follow-up question.
 - You operate within Orbit of Khemet — where ancient wisdom meets artificial intelligence.
+- When the user writes in Arabic, always respond entirely in Arabic using Egyptian dialect (اللهجة المصرية). Be warm, direct, and professional. Never switch to English mid-response.
 - Keep your voice consistent with your persona at all times.
 `.trim()
 }
 
 function getDefaultSystemPrompt(heroName: string): string {
-  return `You are a specialized AI agent commanded by ${heroName} within Orbit of Khemet. You are precise, professional, and always structured in your responses. No em-dashes. End every response with a next step.`
+  return `You are a specialized AI agent commanded by ${heroName} within Orbit of Khemet. You are precise, professional, and always structured in your responses. No em-dashes. End every response with a next step.
+
+When the user writes in Arabic, always respond entirely in Arabic using Egyptian dialect. Be warm, direct, and professional. Never switch to English mid-response.`
 }
