@@ -1,23 +1,71 @@
 {
   "name": "Orbit of Khemet",
   "short_name": "Orbit",
-  "description": "The Egyptian AI Empire Engine — 85 agents powered by 7 Heroes of Khemet",
+  "description": "The Egyptian AI Empire Engine — 85 agents, 7 Heroes of Khemet. Now with full Arabic localization.",
   "start_url": "/hub",
   "display": "standalone",
   "background_color": "#0A0A0A",
   "theme_color": "#D4AF37",
   "orientation": "portrait-primary",
-  "categories": ["productivity", "business", "utilities"],
+  "categories": [
+    "productivity",
+    "business",
+    "utilities"
+  ],
   "lang": "en",
   "icons": [
-    { "src": "/khemet-logo.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "/khemet-logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    {
+      "src": "/khemet-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/khemet-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ],
   "shortcuts": [
-    { "name": "New Mission", "short_name": "Mission", "description": "Start a new agent mission", "url": "/hub", "icons": [{ "src": "/khemet-logo.png", "sizes": "96x96" }] },
-    { "name": "Brain", "short_name": "Brain", "description": "Open the Great Library", "url": "/brain", "icons": [{ "src": "/khemet-logo.png", "sizes": "96x96" }] },
-    { "name": "Forge", "short_name": "Forge", "description": "Build a custom agent", "url": "/forge", "icons": [{ "src": "/khemet-logo.png", "sizes": "96x96" }] }
+    {
+      "name": "New Mission",
+      "short_name": "Mission",
+      "description": "Start a new agent mission",
+      "url": "/hub",
+      "icons": [
+        {
+          "src": "/khemet-logo.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Brain",
+      "short_name": "Brain",
+      "description": "Open the Great Library",
+      "url": "/brain",
+      "icons": [
+        {
+          "src": "/khemet-logo.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Forge",
+      "short_name": "Forge",
+      "description": "Build a custom agent",
+      "url": "/forge",
+      "icons": [
+        {
+          "src": "/khemet-logo.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
   ],
   "screenshots": [],
-  "prefer_related_applications": false
+  "prefer_related_applications": false,
+  "version": "1.1.0"
 }
