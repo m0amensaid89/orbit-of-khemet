@@ -18,7 +18,7 @@ export default function ProfilePage() {
   const [stats, setStats] = useState({ totalEnergyUsed: 0, level: 1, currentXp: 0, nextLevelXp: 100 });
   const [userPlan, setUserPlan] = useState("explorer");
   const [customAgents, setCustomAgents] = useState<CustomAgent[]>([]);
-  const [userData, setUserData] = useState<{ email?: string; name?: string; initials: string; energyBalance: number; messagesSent: number; threadsCount: number }>({ initials: "GO", energyBalance: 50, messagesSent: 0, threadsCount: 0 });
+  const [userData, setUserData] = useState<{ email?: string; name: string; initials: string; energyBalance: number; messagesSent: number; threadsCount: number }>({ initials: "GO", energyBalance: 50, messagesSent: 0, threadsCount: 0 });
   const [frequentOrbits, setFrequentOrbits] = useState<Array<{ slug: string; name: string; role: string; interactions: number }>>([]);
   const [activityLog, setActivityLog] = useState<Array<{ id: string; title: string; hero_slug: string; updated_at: string }>>([]);
 
@@ -37,7 +37,7 @@ export default function ProfilePage() {
         const { count: threadCount } = await supabase.from('chat_threads').select('*', { count: 'exact', head: true }).eq('user_id', session.user.id);
 
         const email = session.user.email;
-        const name = profile?.full_name || profile?.display_name || email?.split('@')[0] || "Grid Operative";
+        const name = profile?.full_name || profile?.display_name || email?.split('@')[0] || email?.split('@')[0] || "Grid Operative";
         const initials = name.substring(0, 2).toUpperCase();
 
         setUserData({
