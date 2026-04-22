@@ -2,15 +2,31 @@
 
 import { getHero } from "@/lib/heroes";
 import { heroAgents, heroMeta } from "@/lib/agents";
+import { getHeroAr } from "@/lib/i18n/heroes.ar";
+import { useLanguage } from "@/hooks/useLanguage";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function HeroSplash({ slug }: { slug: string }) {
+  const [lang] = useLanguage();
   const hero = getHero(slug);
   const meta = heroMeta[slug as keyof typeof heroMeta];
   const agents = heroAgents[slug as keyof typeof heroAgents] || [];
+  const heroAr = getHeroAr(slug);
 
   if (!hero || !meta) return null;
+
+  const isAr = lang === 'ar';
+  const archetype = isAr && heroAr ? heroAr.archetype : meta.archetype;
+  const shortTagline = isAr && heroAr ? heroAr.short_tagline : meta.short_tagline;
+  const roleLine = isAr && heroAr ? heroAr.philosophy : meta.role_line;
+  const bestFor = isAr && heroAr ? heroAr.tagline : meta.best_for;
+  const ctaPrimary = isAr ? `ادخل مدار ${meta.name}` : meta.cta_primary;
+  const ctaSecondary = isAr ? `استعرض فريق ${meta.name}` : meta.cta_secondary;
+  const agentsLabel = isAr ? 'وكيل' : 'Agents';
+  const categoriesLabel = isAr ? 'فئة' : 'Categories';
+  const statusLabel = isAr ? 'الحالة' : 'Status';
+  const activeLabel = isAr ? 'نشط' : 'ACTIVE';
 
   return (
     <section className="relative w-full min-h-[60vh] flex flex-col md:flex-row overflow-hidden border-b"
@@ -40,7 +56,7 @@ export default function HeroSplash({ slug }: { slug: string }) {
             style={{ background: meta.color_signature }} />
           <span className="font-[Orbitron] text-[10px] tracking-[4px] uppercase"
             style={{ color: meta.color_signature }}>
-            {meta.archetype}
+            {archetype}
           </span>
         </div>
 
@@ -55,14 +71,14 @@ export default function HeroSplash({ slug }: { slug: string }) {
             {meta.name}
           </h1>
           <p className="font-[Rajdhani] text-xl mt-2" style={{ color: 'rgba(212,175,55,0.7)' }}>
-            {meta.short_tagline}
+            {shortTagline}
           </p>
         </div>
 
         {/* Role line */}
         <p className="font-[Rajdhani] text-lg leading-relaxed max-w-xl"
           style={{ color: '#d0c5af' }}>
-          {meta.role_line}
+          {roleLine}
         </p>
 
         {/* Specialties */}
@@ -78,7 +94,7 @@ export default function HeroSplash({ slug }: { slug: string }) {
         {/* Best for */}
         <p className="font-[Rajdhani] text-base italic max-w-xl"
           style={{ color: 'rgba(255,255,255,0.4)' }}>
-          {meta.best_for}
+          {bestFor}
         </p>
 
         {/* CTAs */}
@@ -90,7 +106,7 @@ export default function HeroSplash({ slug }: { slug: string }) {
                 color: '#0A0A0A',
                 fontWeight: 700
               }}>
-              {meta.cta_primary}
+              {ctaPrimary}
             </button>
           </Link>
           <button className="font-[Orbitron] text-xs tracking-[3px] uppercase px-8 py-3 transition-all"
@@ -102,7 +118,7 @@ export default function HeroSplash({ slug }: { slug: string }) {
             onClick={() => {
               document.getElementById('agent-grid')?.scrollIntoView({ behavior: 'smooth' });
             }}>
-            {meta.cta_secondary}
+            {ctaSecondary}
           </button>
         </div>
 
@@ -110,19 +126,19 @@ export default function HeroSplash({ slug }: { slug: string }) {
         <div className="flex items-center gap-8 pt-2">
           <div>
             <p className="font-[Orbitron] text-xl font-bold" style={{ color: '#D4AF37' }}>{agents.length}</p>
-            <p className="font-[Orbitron] text-[8px] tracking-[3px] uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>Agents</p>
+            <p className="font-[Orbitron] text-[8px] tracking-[3px] uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>{agentsLabel}</p>
           </div>
           <div style={{ width: '1px', height: '32px', background: 'rgba(255,255,255,0.1)' }} />
           <div>
             <p className="font-[Orbitron] text-xl font-bold" style={{ color: '#D4AF37' }}>
               {Array.from(new Set(agents.map(a => a.category))).length}
             </p>
-            <p className="font-[Orbitron] text-[8px] tracking-[3px] uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>Categories</p>
+            <p className="font-[Orbitron] text-[8px] tracking-[3px] uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>{categoriesLabel}</p>
           </div>
           <div style={{ width: '1px', height: '32px', background: 'rgba(255,255,255,0.1)' }} />
           <div>
-            <p className="font-[Orbitron] text-xl font-bold" style={{ color: '#D4AF37' }}>ACTIVE</p>
-            <p className="font-[Orbitron] text-[8px] tracking-[3px] uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>Status</p>
+            <p className="font-[Orbitron] text-xl font-bold" style={{ color: '#D4AF37' }}>{activeLabel}</p>
+            <p className="font-[Orbitron] text-[8px] tracking-[3px] uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>{statusLabel}</p>
           </div>
         </div>
       </div>
