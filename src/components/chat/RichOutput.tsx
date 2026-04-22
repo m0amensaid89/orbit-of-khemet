@@ -131,13 +131,13 @@ function TextOutput({ content, accentColor }: { content: string, accentColor: st
   const formatted = content
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    .replace(/^## (.+)$/gm, () => {
+    .replace(/^## (.+)$/gm, (_match, capturedText) => {
       const h = headings[hi++]
-      return `<h2 id="${h?.id || ''}" style="color:${accentColor};font-family:monospace;font-size:14px;letter-spacing:0.08em;margin:16px 0 6px;scroll-margin-top:12px">$1</h2>`
+      return `<h2 id="${h?.id || ''}" style="color:${accentColor};font-family:monospace;font-size:14px;letter-spacing:0.08em;margin:16px 0 6px;scroll-margin-top:12px">${capturedText}</h2>`
     })
-    .replace(/^### (.+)$/gm, () => {
+    .replace(/^### (.+)$/gm, (_match, capturedText) => {
       const h = headings[hi++]
-      return `<h3 id="${h?.id || ''}" style="color:${accentColor};font-family:monospace;font-size:12px;letter-spacing:0.06em;margin:12px 0 4px;scroll-margin-top:12px">$1</h3>`
+      return `<h3 id="${h?.id || ''}" style="color:${accentColor};font-family:monospace;font-size:12px;letter-spacing:0.06em;margin:12px 0 4px;scroll-margin-top:12px">${capturedText}</h3>`
     })
     .replace(/^- (.+)$/gm, '<li style="margin:2px 0;padding-left:4px">$1</li>')
     .replace(/\n/g, '<br/>')
