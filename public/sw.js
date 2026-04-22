@@ -1,4 +1,4 @@
-const CACHE_NAME = 'orbit-khemet-v3';
+const CACHE_NAME = 'orbit-khemet-v4-1776837954';
 const OFFLINE_URL = '/offline';
 const STATIC_ASSETS = [
   '/',
