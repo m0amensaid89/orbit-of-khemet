@@ -284,7 +284,7 @@ export function Sidebar() {
               </Link>
               <Link href="/ui-builder" className={navItemClass("/ui-builder")}>
                 <Wand2 className="w-4 h-4 z-10" />
-                <span className="font-medium text-empire-sm z-10">UI Builder</span>
+                <span className="font-medium text-empire-sm z-10">{lang === 'ar' ? t.nav.uiBuilder : 'UI Builder'}</span>
               </Link>
               <Link href="/sentinel" className={navItemClass("/sentinel")}>
                 <Shield className="w-4 h-4 z-10" />
@@ -292,7 +292,7 @@ export function Sidebar() {
               </Link>
               <Link href="/browser" className={navItemClass("/browser")}>
                 <Globe className="w-4 h-4 z-10" />
-                <span className="font-medium text-empire-sm z-10">Browser Control</span>
+                <span className="font-medium text-empire-sm z-10">{lang === 'ar' ? t.nav.browserControl : 'Browser Control'}</span>
               </Link>
               <Link href="/artifacts" className={navItemClass("/artifacts")}>
                 <Gem className="w-4 h-4 z-10" />
@@ -776,7 +776,7 @@ export function Sidebar() {
       {/* ACCOUNT Section */}
       <div className="p-4 border-t border-[rgba(212,175,55,0.08)] bg-[#0A0A0A] flex flex-col gap-4 shrink-0">
         <div className="px-2 mb-[-8px]">
-          <span className="font-orbitron text-empire-xs text-[rgba(212,175,55,0.4)] uppercase">ACCOUNT</span>
+          <span className="font-orbitron text-empire-xs text-[rgba(212,175,55,0.4)] uppercase">{lang === 'ar' ? t.nav.account : 'ACCOUNT'}</span>
         </div>
 
         <Link
@@ -794,7 +794,7 @@ export function Sidebar() {
             marginBottom: '8px',
           }}
         >
-          UPGRADE TIER
+          {lang === 'ar' ? t.nav.upgradeTier : 'UPGRADE TIER'}
         </Link>
 
         {energy !== null ? (
