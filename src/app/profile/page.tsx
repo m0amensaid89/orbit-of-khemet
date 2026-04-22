@@ -44,7 +44,7 @@ export default function ProfilePage() {
           email,
           name,
           initials,
-          energyBalance: profile?.energy_balance ?? getEnergyRemaining(),
+          energyBalance: getEnergyRemaining(), // Use localStorage daily balance (same as sidebar)
           messagesSent: messageCount || 0,
           threadsCount: threadCount || 0
         });
