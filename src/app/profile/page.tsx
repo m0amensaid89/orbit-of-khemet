@@ -381,7 +381,7 @@ export default function ProfilePage() {
               className="p-6 rounded-2xl bg-[#131313] border border-white/5 flex flex-col gap-5"
             >
               <h2 className="font-[Orbitron] text-sm font-bold tracking-[3px] uppercase text-white flex items-center gap-2">
-                <Star className="w-4 h-4 text-[#D4AF37]" /> {lang === 'ar' ? 'الوكلاء الأكثر استخداماً' : '{lang === 'ar' ? t.profile.frequentOrbits : 'FREQUENT ORBITS'}'}
+                <Star className="w-4 h-4 text-[#D4AF37]" /> {lang === 'ar' ? 'الوكلاء الأكثر استخداماً' : 'FREQUENT ORBITS'}
               </h2>
 
               <div className="flex flex-col gap-3">
@@ -418,7 +418,7 @@ export default function ProfilePage() {
               className="p-6 rounded-2xl bg-[#131313] border border-white/5 flex flex-col gap-6 flex-1"
             >
               <h2 className="font-[Orbitron] text-sm font-bold tracking-[3px] uppercase text-white flex items-center gap-2">
-                <History className="w-4 h-4 text-[#D4AF37]" /> {lang === 'ar' ? 'سجل النشاط' : '{lang === 'ar' ? t.profile.activityLog : 'ACTIVITY LOG'}'}
+                <History className="w-4 h-4 text-[#D4AF37]" /> {lang === 'ar' ? 'سجل النشاط' : 'ACTIVITY LOG'}
               </h2>
 
               {activityLog.length === 0 ? (
