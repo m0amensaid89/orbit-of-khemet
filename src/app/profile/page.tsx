@@ -19,7 +19,7 @@ export default function ProfilePage() {
   const [userPlan, setUserPlan] = useState("explorer");
   const [customAgents, setCustomAgents] = useState<CustomAgent[]>([]);
   const [userData, setUserData] = useState<{ email?: string; name: string; initials: string; energyBalance: number; messagesSent: number; threadsCount: number }>({ initials: "GO", energyBalance: 50, messagesSent: 0, threadsCount: 0 });
-  const [frequentOrbits, setFrequentOrbits] = useState<Array<{ slug: string; name: string; role: string; interactions: number }>>([]);
+  const [frequentOrbits, setFrequentOrbits] = useState<Array<{ slug: string; name: string; roleAr?: string; role: string; interactions: number }>>([]);
   const [activityLog, setActivityLog] = useState<Array<{ id: string; title: string; hero_slug: string; updated_at: string }>>([]);
 
   useEffect(() => {
@@ -79,13 +79,13 @@ export default function ProfilePage() {
             .slice(0, 3);
 
           const HERO_META: Record<string, { name: string; role: string }> = {
-            thoren:  { name: "THOREN",  role: "Governance & Finance" },
-            ramet:   { name: "RAMET",   role: "Operations & Execution" },
-            nexar:   { name: "NEXAR",   role: "Transformation Architect" },
-            lyra:    { name: "LYRA",    role: "Growth Content & Virality" },
-            kairo:   { name: "KAIRO",   role: "Social & Creator Systems" },
-            nefra:   { name: "NEFRA",   role: "Experience & Relationships" },
-            horusen: { name: "HORUSEN", role: "Revenue, Offers & Deals" },
+            thoren:  { name: "THOREN",  role: "Governance & Finance",    roleAr: "حوكمة ومالية" },
+            ramet:   { name: "RAMET",   role: "Operations & Execution",  roleAr: "عمليات وتنفيذ" },
+            nexar:   { name: "NEXAR",   role: "Transformation Architect", roleAr: "هندسة التحول" },
+            lyra:    { name: "LYRA",    role: "Growth Content & Virality",roleAr: "نمو ومحتوى" },
+            kairo:   { name: "KAIRO",   role: "Social & Creator Systems", roleAr: "أنظمة المحتوى" },
+            nefra:   { name: "NEFRA",   role: "Experience & Relationships",roleAr: "تجربة وعلاقات" },
+            horusen: { name: "HORUSEN", role: "Revenue, Offers & Deals",  roleAr: "إيرادات وصفقات" },
           };
 
           setFrequentOrbits(sorted.map(([slug, count]) => ({
@@ -399,7 +399,7 @@ export default function ProfilePage() {
                         </div>
                         <div className="flex-1">
                           <h3 className="font-[Orbitron] text-sm font-bold text-white group-hover:text-[#D4AF37] transition-colors">{hero.name}</h3>
-                          <p className="font-[Rajdhani] text-xs text-white/50">{hero.role}</p>
+                          <p className="font-[Rajdhani] text-xs text-white/50">{lang === 'ar' ? (hero.roleAr || hero.role) : hero.role}</p>
                         </div>
                         <div className="text-right">
                           <span className="font-[Orbitron] text-lg font-bold text-white/80">{hero.interactions}</span>
