@@ -1,4 +1,3 @@
-'use client'
 
 // Egyptian Arabic opening messages — all 120 agents
 // Dialect: Egyptian colloquial — warm, direct, professional
