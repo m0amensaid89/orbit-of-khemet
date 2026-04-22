@@ -11,6 +11,11 @@ import "@fontsource/exo-2/400-italic.css";
 import "./globals.css";
 import PageTransition from "@/components/PageTransition";
 import { LayoutShell } from "@/components/LayoutShell";
+import dynamic from 'next/dynamic'
+const PWAInstallBanner = dynamic(
+  () => import('@/components/PWAInstallBanner').then(m => m.PWAInstallBanner),
+  { ssr: false }
+)
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
