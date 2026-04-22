@@ -162,7 +162,11 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
         setMessages(prev => [...prev, {
           id: "energy-" + Date.now(),
           role: "assistant",
-          content: `⚡ GRID ENERGY DEPLETED: You've used all your daily energy. It resets at midnight UTC.
+          content: lang === 'ar'
+            ? `⚡ طاقة الشبكة نفدت: استنفدت كل طاقتك اليومية. تتجدد عند منتصف الليل بالتوقيت العالمي.
+
+رقّي للمستكشف للحصول على 200 وحدة/يوم.`
+            : `⚡ GRID ENERGY DEPLETED: You've used all your daily energy. It resets at midnight UTC.
 
 Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
         }]);
