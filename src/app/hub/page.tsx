@@ -91,11 +91,11 @@ function HubPageContent() {
       <div className="w-full px-6 md:px-12 pt-12 pb-6 text-center">
         <p className="font-[Orbitron] text-empire-xs tracking-[5px] uppercase mb-3"
           style={{ color: 'rgba(212,175,55,0.5)' }}>
-          EMPIRE ENGINE
+          {lang === 'ar' ? 'محرك الإمبراطورية' : 'EMPIRE ENGINE'}
         </p>
         <h1 className="font-[Orbitron] text-empire-xl font-black tracking-tighter mb-4"
           style={{ color: '#ffffff', textShadow: '0 0 30px rgba(212,175,55,0.2)' }}>
-          HERO HUB
+          {lang === 'ar' ? 'مركز الأبطال' : 'HERO HUB'}
         </h1>
         <p className="font-[Rajdhani] text-empire-sm mb-2" style={{ color: '#d0c5af' }}>
           Pick an AI specialist by goal: strategy, writing, analysis, growth, operations, sales, or learning.
