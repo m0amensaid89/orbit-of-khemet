@@ -139,10 +139,10 @@ export default function ProjectsPage() {
               <div className="pl-6 p-5 flex-1 flex flex-col">
                 <h3 className="font-cinzel text-xl text-white mb-2">{project.name}</h3>
                 <p className="text-sm text-[#d0c5af]/80 font-roboto line-clamp-2 flex-1">
-                  {project.description || 'No description provided.'}
+                  {project.description || (lang === 'ar' ? 'لا يوجد وصف' : 'No description provided.')}
                 </p>
                 <div className="mt-4 flex items-center justify-between text-xs text-[#d0c5af]/50 font-roboto border-t border-[rgba(212,175,55,0.1)] pt-3">
-                  <span>{getThreadCount(project)} Missions</span>
+                  <span dir="ltr">{getThreadCount(project)}</span> {lang === "ar" ? "مهام" : "Missions"}
                   <span>{new Date(project.created_at).toLocaleDateString()}</span>
                 </div>
               </div>
