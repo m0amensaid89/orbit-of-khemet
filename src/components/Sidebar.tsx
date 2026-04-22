@@ -351,7 +351,12 @@ export function Sidebar() {
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
+                background: selectedProject === p.id ? 'rgba(212,175,55,0.08)' : 'transparent',
+                borderRadius: '4px',
+                transition: 'all 0.15s ease',
               }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = '#fff'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = selectedProject === p.id ? 'rgba(212,175,55,0.08)' : 'transparent'; e.currentTarget.style.color = selectedProject === p.id ? '#fff' : 'rgba(255,255,255,0.5)'; }}
             >
               ✦ {p.name}
             </Link>
