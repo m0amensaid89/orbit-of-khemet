@@ -125,6 +125,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             </main>
           </PageTransition>
         </LayoutShell>
+      <PWAInstallBanner />
       </body>
     </html>
   );
