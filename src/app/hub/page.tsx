@@ -387,14 +387,25 @@ function HubPageContent() {
                             fontFamily: 'monospace', fontSize: '9px',
                             color: 'rgba(208,197,175,0.5)', letterSpacing: '0.12em', marginTop: '4px',
                           }}>
-                            {slug === 'thoren' ? 'Governance & Finance Strategist' :
-                             slug === 'ramet' ? 'Operations & Execution Lead' :
-                             slug === 'nexar' ? 'Transformation Architect' :
-                             slug === 'lyra' ? 'Growth Content & Virality Engine' :
-                             slug === 'kairo' ? 'Social & Creator Systems Director' :
-                             slug === 'nefra' ? 'Experience & Relationship Guardian' :
-                             slug === 'horusen' ? 'Revenue, Offers & Deals Strategist' :
-                             meta?.archetype || data.role}
+                            {lang === 'ar' ? (
+                              slug === 'thoren' ? 'خبير الحوكمة والمالية' :
+                              slug === 'ramet' ? 'قائد العمليات والتنفيذ' :
+                              slug === 'nexar' ? 'مهندس التحول الرقمي' :
+                              slug === 'lyra' ? 'محرك المحتوى والانتشار' :
+                              slug === 'kairo' ? 'مدير أنظمة المحتوى الرقمي' :
+                              slug === 'nefra' ? 'حارس تجربة العملاء' :
+                              slug === 'horusen' ? 'خبير الإيرادات والصفقات' :
+                              meta?.archetype || data.role
+                            ) : (
+                              slug === 'thoren' ? 'Governance & Finance Strategist' :
+                              slug === 'ramet' ? 'Operations & Execution Lead' :
+                              slug === 'nexar' ? 'Transformation Architect' :
+                              slug === 'lyra' ? 'Growth Content & Virality Engine' :
+                              slug === 'kairo' ? 'Social & Creator Systems Director' :
+                              slug === 'nefra' ? 'Experience & Relationship Guardian' :
+                              slug === 'horusen' ? 'Revenue, Offers & Deals Strategist' :
+                              meta?.archetype || data.role
+                            )}
                           </div>
                         </div>
                       </div>
