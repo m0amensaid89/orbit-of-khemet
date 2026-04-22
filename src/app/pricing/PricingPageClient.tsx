@@ -174,7 +174,7 @@ export default function PricingPage() {
                   </p>
                   <p className="font-[Roboto] text-sm text-[#d0c5af] min-h-[40px] mb-4">{plan.description}</p>
 
-                  <div className="flex items-baseline gap-1">
+                  <div className="flex items-baseline gap-1" dir="ltr">
                     <span className="font-[Orbitron] text-4xl md:text-5xl font-black text-white leading-none">
                       ${displayPrice}
                     </span>
@@ -195,7 +195,7 @@ export default function PricingPage() {
                      <span className={`font-[Orbitron] text-2xl font-bold ${isBusiness ? "text-[#D4AF37]" : "text-[#7aa2f7]"}`}>
                        {plan.credits.toLocaleString()}
                      </span>
-                     <span className="font-[Roboto] text-xs text-white/60 uppercase tracking-wider">Credits / Month</span>
+                     <span className="font-[Roboto] text-xs text-white/60 uppercase tracking-wider" dir="ltr">Credits / Month</span>
                    </div>
                 </div>
 
