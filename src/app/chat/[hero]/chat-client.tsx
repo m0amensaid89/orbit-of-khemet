@@ -998,7 +998,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                   background: '#D4AF37',
                   animation: 'pulse 1s infinite 0.4s',
                 }} />
-                <span style={{ marginLeft: '8px' }}>EMPIRE ENGINE PROCESSING...</span>
+                <span style={{ marginLeft: '8px' }}>{lang === 'ar' ? 'محرك الإمبراطورية يعالج...' : 'EMPIRE ENGINE PROCESSING...'}</span>
               </div>
             )}
 
