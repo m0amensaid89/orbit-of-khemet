@@ -185,7 +185,7 @@ export default function ProfilePage() {
               <div className="w-full max-w-md bg-[#1A1A1A] rounded-xl p-4 border border-white/5">
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-[Orbitron] text-[9px] tracking-[3px] uppercase text-[#D4AF37]/80 flex items-center gap-1">
-                    <Zap className="w-3 h-3 text-[#D4AF37]" /> GRID ENERGY
+                    <Zap className="w-3 h-3 text-[#D4AF37]" />{lang === 'ar' ? 'طاقة الشبكة' : 'GRID ENERGY'}
                   </span>
                   <span className="font-[Orbitron] font-bold text-xs text-[#D4AF37]">
                     {userData.energyBalance.toLocaleString()} <span className="text-white/30">/ {getMaxEnergy().toLocaleString()}</span>
@@ -307,9 +307,9 @@ export default function ProfilePage() {
                   <div className="w-16 h-16 mx-auto bg-white/5 rounded-full flex items-center justify-center mb-4">
                     <Zap className="w-6 h-6 text-white/20" />
                   </div>
-                  <p className="font-[Orbitron] text-sm tracking-widest text-white/60 mb-2">NO CUSTOM AGENTS YET</p>
+                  <p className="font-[Orbitron] text-sm tracking-widest text-white/60 mb-2">{lang === 'ar' ? 'لا يوجد وكلاء مخصصوн بعد' : 'NO CUSTOM AGENTS YET'}</p>
                   <p className="font-[Rajdhani] text-base text-white/40 mb-6 max-w-sm mx-auto">
-                    Forge your first custom agent. Define its intelligence. Assign it to any hero orbit.
+                    {lang === 'ar' ? 'أنشئ وкيلك المخصص الأول.' : 'Forge your first custom agent. Define its intelligence. Assign it to any hero orbit.'}
                   </p>
                   <Link href="/forge">
                     <button className="font-[Orbitron] text-[10px] tracking-[3px] uppercase px-8 py-3 font-bold rounded-md hover:scale-105 transition-transform"
@@ -387,8 +387,8 @@ export default function ProfilePage() {
               <div className="flex flex-col gap-3">
                 {frequentOrbits.length === 0 ? (
                   <div className="text-center py-8">
-                    <p className="font-[Orbitron] text-xs tracking-widest" style={{ color: "rgba(212,175,55,0.4)" }}>NO ORBITS YET</p>
-                    <p className="font-[Rajdhani] text-sm mt-1" style={{ color: "rgba(208,197,175,0.4)" }}>Start chatting with any hero.</p>
+                    <p className="font-[Orbitron] text-xs tracking-widest" style={{ color: "rgba(212,175,55,0.4)" }}>{lang === 'ar' ? 'لا توجد مسارات بعد' : 'NO ORBITS YET'}</p>
+                    <p className="font-[Rajdhani] text-sm mt-1" style={{ color: "rgba(208,197,175,0.4)" }}>{lang === 'ar' ? 'ابدأ المحادثة مع أي بطل.' : 'Start chatting with any hero.'}</p>
                   </div>
                 ) : (
                   frequentOrbits.map((hero) => (
