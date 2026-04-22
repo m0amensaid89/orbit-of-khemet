@@ -98,7 +98,7 @@ export default function BrowserPage() {
       <div className="flex flex-1 overflow-hidden" style={{ height: 'calc(100vh - 200px)' }}>
 
         {/* LEFT — Results */}
-        <div className="w-1/2 overflow-y-auto p-6 border-r" style={{ borderColor: 'rgba(212,175,55,0.08)' }}>
+        <div className="w-2/5 overflow-y-auto p-6 border-r" style={{ borderColor: 'rgba(212,175,55,0.08)' }}>
           {loading && (
             <div className="flex items-center gap-3 mb-6">
               <Loader2 className="w-4 h-4 animate-spin" style={{ color: '#D4AF37' }} />
