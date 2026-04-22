@@ -296,7 +296,7 @@ export default function ProfilePage() {
                 {customAgents.length < 3 && (
                   <Link href="/forge">
                     <button className="font-[Orbitron] text-[9px] tracking-widest uppercase px-4 py-2 border border-[#D4AF37]/50 text-[#D4AF37] hover:bg-[#D4AF37] hover:text-black transition-all rounded-md">
-                      FORGE NEW
+                      {lang === 'ar' ? 'إنشاء وكيل' : 'FORGE NEW'}
                     </button>
                   </Link>
                 )}
