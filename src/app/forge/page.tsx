@@ -35,7 +35,6 @@ export default function ForgePage() {
   const [generating, setGenerating] = useState(false);
   const [nlPrompt, setNlPrompt] = useState('');
   const [showNlInput, setShowNlInput] = useState(false);
-  const [lang] = useLanguage()
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const update = (field: string, value: string) => {
@@ -435,7 +434,7 @@ export default function ForgePage() {
 
                 <div className="flex items-center gap-2 mb-2">
                   <span className="font-[Orbitron] text-[8px] tracking-[3px] uppercase px-2 py-0.5 rounded bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/20">
-                    {lang === 'ar' ? '✦ مخصص' : '✦ CUSTOM'}
+                    ✦ CUSTOM
                   </span>
                   {form.category !== "Custom" && (
                     <span className="font-[Orbitron] text-[8px] tracking-[3px] uppercase px-2 py-0.5 rounded bg-white/5 text-white/60 border border-white/10">
