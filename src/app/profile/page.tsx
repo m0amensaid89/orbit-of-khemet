@@ -38,7 +38,9 @@ export default function ProfilePage() {
 
         const email = session.user.email;
         const name = profile?.full_name || profile?.display_name || email?.split('@')[0] || email?.split('@')[0] || "Grid Operative";
-        const initials = name.substring(0, 2).toUpperCase();
+        const emailPrefix = email?.split('@')[0] || ''
+        const cleanName = name.startsWith('Google') || name.startsWith('google') ? emailPrefix : name
+        const initials = cleanName.substring(0, 2).toUpperCase() || emailPrefix.substring(0, 2).toUpperCase() || 'MO'
 
         setUserData({
           email,
