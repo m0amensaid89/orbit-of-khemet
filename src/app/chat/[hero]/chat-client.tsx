@@ -705,7 +705,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
           <span>›</span>
           <span className="cursor-pointer hover:opacity-100 transition-opacity" onClick={() => router.push(`/heroes/${heroParam}`)}>{heroName}</span>
           <span>›</span>
-          <span style={{ opacity: 1, color: primaryColor }}>{agentName}</span>
+          <span style={{ opacity: 1, color: primaryColor }}>{agentName && agentName.toUpperCase() !== (heroParam || '').toUpperCase() ? agentName : null}</span>
         </div>
 
           {/* Messages — flex-1, scrolls internally */}
@@ -1094,7 +1094,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                   {/* Status label */}
                   <span className="font-[Orbitron] text-[7px] tracking-[2px] uppercase shrink-0"
                     style={{ color: isLocked ? 'rgba(255,68,68,0.8)' : 'rgba(212,175,55,0.7)' }}>
-                    {isLocked ? 'LOCKED' : 'LISTENING'}
+                    {isLocked ? (lang === 'ar' ? 'مقفل' : 'LOCKED') : (lang === 'ar' ? 'يستمع' : 'LISTENING')}
                   </span>
 
                   {/* Stop button */}
