@@ -98,7 +98,7 @@ function HubPageContent() {
           {lang === 'ar' ? 'مركز الأبطال' : 'HERO HUB'}
         </h1>
         <p className="font-[Rajdhani] text-empire-sm mb-2" style={{ color: '#d0c5af' }}>
-          Pick an AI specialist by goal: strategy, writing, analysis, growth, operations, sales, or learning.
+          {lang === 'ar' ? 'اختر متخصص ذكاء اصطناعي حسب هدفك: الاستراتيجية، الكتابة، التحليل، النمو، العمليات، المبيعات، أو التعلم.' : 'Pick an AI specialist by goal: strategy, writing, analysis, growth, operations, sales, or learning.'}
         </p>
       </div>
 
@@ -155,7 +155,7 @@ function HubPageContent() {
                 cursor: 'pointer',
                 transition: 'all 0.15s',
               }}>
-              {hero}
+              {lang === 'ar' ? ({ ALL: 'الكل', THOREN: 'ثورين', RAMET: 'رامت', NEXAR: 'نيكسار', LYRA: 'ليرا', KAIRO: 'كايرو', NEFRA: 'نيفرا', HORUSEN: 'هوروسن' }[hero] || hero) : hero}
             </button>
           ))}
         </div>
