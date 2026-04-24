@@ -106,7 +106,7 @@ function AuthForm() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 relative">
+    <div className="min-h-screen bg-[#0A0A0A] flex flex-col items-center justify-center p-6 relative">
       <div className="w-full max-w-md bg-[#131313] border border-white/10 rounded-2xl p-8 shadow-[0_0_40px_rgba(0,0,0,0.5)] relative z-10">
 
         <div className="flex flex-col items-center mb-8">
@@ -297,7 +297,7 @@ function AuthForm() {
 
 export default function AuthPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[#0A0A0A]"><Loader2 className="w-8 h-8 text-[#D4AF37] animate-spin" /></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center bg-[#0A0A0A]"><Loader2 className="w-8 h-8 text-[#D4AF37] animate-spin" /></div>}>
       <AuthForm />
     </Suspense>
   );
