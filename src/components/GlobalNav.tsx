@@ -21,6 +21,8 @@ export function GlobalNav() {
   const t = useTranslations(lang);
   const [mobileOpen, setMobileOpen] = useState(false);
   const isLandingPage = pathname === '/';
+  const isAuthPage = pathname.startsWith('/auth');
+  if (isAuthPage) return null;
 
   useEffect(() => {
     const stored = localStorage.getItem("theme");
