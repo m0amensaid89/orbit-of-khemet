@@ -559,13 +559,13 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
 
     let greeting = lang === 'ar' ? 'إيه اللي محتاج تعمله النهارده؟' : 'How can I help you today?';
     if (agent && agentParam) {
-      greeting = agent.description || agent.role_summary || `I am ${agent.name}.`;
+      greeting = (agent.description && agent.description.length > 20 ? agent.description : '') || agent.role_summary || `I am ${agent.name}. I am here to help you with ${agent.category || 'your mission'}.`;
     } else if (hero) {
       const heroAr = getHeroAr(heroParam)
       if (lang === 'ar' && heroAr) {
         greeting = heroAr.welcomeMessage
       } else {
-        const bioSnippet = hero.bio ? hero.bio.substring(0, 200) : ''
+        const bioSnippet = hero.bio ? hero.bio.substring(0, 500) : ''
         greeting = hero.welcomeMessage ? `${hero.welcomeMessage} ${bioSnippet}` : `I am ${hero.name}. ${bioSnippet}`
       }
     }
