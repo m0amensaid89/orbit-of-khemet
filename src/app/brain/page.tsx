@@ -30,7 +30,7 @@ export default function BrainPage() {
   const [error, setError] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [storageUsed, setStorageUsed] = useState(0)
-  const [storageLimit, setStorageLimit] = useState(0)
+  const [storageLimit, setStorageLimit] = useState(52428800) // default 50MB for free tier
   const [userTier, setUserTier] = useState('')
   const [memories, setMemories] = useState<Memory[]>([])
   const [newMemoryText, setNewMemoryText] = useState('')
@@ -52,7 +52,7 @@ export default function BrainPage() {
     if (res.ok) {
       const data = await res.json()
       setStorageUsed(data.used_bytes || 0)
-      setStorageLimit(data.limit_bytes || 0)
+      setStorageLimit(data.limit_bytes || 52428800) // fallback 50MB
       setUserTier(data.tier || 'free')
     }
   }
