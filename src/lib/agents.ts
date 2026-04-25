@@ -7,7 +7,7 @@ export type Agent = {
   prompt?: string;
   model?: string;
   preferredModel?: string;
-  linked_tool?: "autopilot" | "ui-builder" | "sentinel" | "brain" | null;
+  linked_tool?: "autopilot" | "code-studio" | "brain" | null;
 };
 
 export function getAgentModel(agent: Agent): string {
@@ -55,7 +55,7 @@ export function getAgentLinkedTool(agent: Agent): string | null {
     role.includes("systems") ||
     cat.includes("product & engineering")
   ) {
-    return "sentinel";
+    return "code-studio";
   }
   if (
     role.includes("course") ||
@@ -69,7 +69,7 @@ export function getAgentLinkedTool(agent: Agent): string | null {
     role.includes("ui") ||
     role.includes("design")
   ) {
-    return "ui-builder";
+    return "code-studio";
   }
   return null;
 }
