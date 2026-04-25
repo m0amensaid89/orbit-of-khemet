@@ -29,6 +29,7 @@ export const ar = {
     codeStudio: "استوديو الكود",
     creativeStudio: "الاستوديو الإبداعي",
     cinemaEngine: "محرك السينما",
+    cinemaEngine: "محرك السينما",
     deepThink: "التفكير العميق",
   },
   auth: {
@@ -318,6 +319,7 @@ export const ar = {
     autoPilot: "الطيار الآلي",
     codeStudio: "استوديو الكود",
     creativeStudio: "الاستوديو الإبداعي",
+    cinemaEngine: "محرك السينما",
     cinemaEngine: "محرك السينما",
     empireRelics: "إرث الإمبراطورية",
     terms: "الشروط",
