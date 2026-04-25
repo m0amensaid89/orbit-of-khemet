@@ -270,7 +270,7 @@ export default function ProfilePage() {
 
         {/* Energy Stats */}
         <div className="p-8 rounded-sm flex flex-col gap-6" style={{ background: "#131313", outline: "1px solid rgba(212,175,55,0.08)" }}>
-          <h2 className="font-[Orbitron] text-xs tracking-[4px] uppercase" style={{ color: "rgba(212,175,55,0.5)" }}>{lang === 'ar' ? (t.profile?.gridXp || 'نقاط الشبكة') : 'GRID XP'}</h2>
+          <h2 className="font-[Orbitron] text-xs tracking-[4px] uppercase" style={{ color: "rgba(212,175,55,0.5)" }}>{lang === 'ar' ? (t.profile?.gridXp || 'نقاط الشبكة') : lang === 'ar' ? 'نقاط الشبكة' : 'GRID XP'}</h2>
           <div>
             <div className="flex justify-between items-end mb-2">
               <span className="text-4xl font-[Orbitron] font-black">{stats.currentXp}</span>
