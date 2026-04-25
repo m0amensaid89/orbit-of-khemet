@@ -82,18 +82,18 @@ html {
   --card-foreground: #d0c5af;
   --popover: #0A0A0A;
   --popover-foreground: #d0c5af;
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --primary: #D4AF77;
+  --primary-foreground: #0A0A0A;
+  --secondary: #1A1A1A; /* dark default — fixes cream bg on profile/forge/artifacts/sentinel */
+  --secondary-foreground: #d0c5af;
+  --muted: #1A1A1A; /* dark default */
+  --muted-foreground: rgba(208,197,175,0.5);
+  --accent: #1A1A1A; /* dark default */
+  --accent-foreground: #d0c5af;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: rgba(212,175,55,0.2);
+  --input: rgba(212,175,55,0.15);
+  --ring: #D4AF37;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
