@@ -90,7 +90,7 @@ export default function BrowserPage() {
           style={{ background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.3)', color: '#D4AF37' }}
         >
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Globe className="w-4 h-4" />}
-          {loading ? 'RUNNING' : 'EXECUTE'}
+          {loading ? (isAr ? 'جارٍ التنفيذ' : 'RUNNING') : (isAr ? 'تنفيذ' : 'EXECUTE')}
         </button>
       </div>
 
@@ -204,7 +204,7 @@ export default function BrowserPage() {
               <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#27C93F' }} />
             </div>
             <div className="flex-1 px-3 py-1 rounded font-mono text-[11px] truncate" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.4)' }}>
-              {activeUrl || 'No page loaded'}
+              {activeUrl || (isAr ? 'لم يتم تحميل أي صفحة' : 'No page loaded')}
             </div>
             {activeUrl && (
               <a href={activeUrl} target="_blank" rel="noopener noreferrer">
@@ -222,6 +222,7 @@ export default function BrowserPage() {
                 className="w-full h-full border-0"
                 title="Browser View"
                 sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
+                onError={() => {}}
                 style={{ background: '#0A0A0A', colorScheme: 'dark' }}
               />
             ) : loading ? (
