@@ -165,7 +165,7 @@ export default function ForgePage() {
               </span>
             </div>
             <h1 className="font-[Orbitron] text-4xl md:text-5xl font-black tracking-tighter text-white mb-4 leading-none drop-shadow-[0_0_20px_rgba(212,175,55,0.2)]">
-              AGENT FORGE
+              {lang === 'ar' ? 'إنشاء وكيل' : 'GENERATE AGENT'}
             </h1>
             <p className="font-[Rajdhani] text-lg text-white/60">
               Create a custom agent. Define its intelligence. Assign it to a hero orbit.
@@ -216,7 +216,7 @@ export default function ForgePage() {
                     color: 'rgba(212,175,55,0.6)',
                     background: 'transparent',
                   }}>
-                  {agentPhoto ? 'CHANGE PHOTO' : 'UPLOAD PHOTO'}
+                  {agentPhoto ? (lang === 'ar' ? 'تغيير الصورة' : 'CHANGE PHOTO') : (lang === 'ar' ? 'رفع صورة' : 'UPLOAD PHOTO')}
                   <input
                     type="file"
                     accept="image/jpeg,image/png,image/webp"
@@ -279,7 +279,7 @@ export default function ForgePage() {
               <button
                 onClick={() => setShowNlInput(prev => !prev)}
                 style={{ fontFamily: 'Orbitron, monospace', fontSize: '9px', letterSpacing: '0.1em', color: '#D4AF37', background: 'rgba(212,175,55,0.08)', border: '1px solid rgba(212,175,55,0.2)', padding: '4px 10px', cursor: 'pointer', borderRadius: '3px' }}>
-                {showNlInput ? 'WRITE MANUALLY' : '⚡ AI GENERATE'}
+                {showNlInput ? (lang === 'ar' ? 'كتابة يدوية' : 'WRITE MANUALLY') : (lang === 'ar' ? '⚡ توليد بالذكاء' : '⚡ AI GENERATE')}
               </button>
             </div>
             {showNlInput && (
@@ -399,7 +399,7 @@ export default function ForgePage() {
         <div className="w-full lg:w-2/5 mt-10 lg:mt-0">
           <div className="sticky top-24">
             <h3 className="font-[Orbitron] text-xs tracking-[4px] uppercase text-white/40 mb-4 pl-2 flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" /> LIVE PREVIEW
+              <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" /> {lang === 'ar' ? 'معاينة مباشرة' : 'LIVE PREVIEW'}
             </h3>
 
             <motion.div
