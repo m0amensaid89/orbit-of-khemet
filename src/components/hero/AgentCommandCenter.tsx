@@ -1,4 +1,5 @@
 "use client";
+import { useLanguage } from "@/hooks/useLanguage";
 
 import { useState, useMemo, useEffect } from "react";
 import { heroAgents, heroMeta, getAgentLinkedTool } from "@/lib/agents";
@@ -35,7 +36,22 @@ export function AgentCommandCenter({ slug, accentColor }: Props) {
   }, [customAgents, slug]);
 
   const categories = useMemo(() => {
-    const cats = Array.from(new Set(allAgents.map(a => a.category)));
+    const [lang] = useLanguage();
+  const isAr = lang === 'ar';
+  const cats = Array.from(new Set(allAgents.map(a => a.category)));
+  const catAr: Record<string, string> = {
+    'ALL': 'الكل',
+    'Strategy': 'استراتيجية', 'Finance': 'مالية', 'Finance & Capital': 'مالية ورأس المال',
+    'Legal': 'قانوني', 'Compliance': 'امتثال', 'Analytics': 'تحليلات',
+    'Writing': 'كتابة', 'Content': 'محتوى', 'Marketing': 'تسويق',
+    'Growth': 'نمو', 'Social Media': 'وسائل التواصل', 'SEO': 'تحسين محركات البحث',
+    'Operations': 'عمليات', 'Project Management': 'إدارة مشاريع', 'HR': 'موارد بشرية',
+    'Sales': 'مبيعات', 'CRM': 'علاقات العملاء', 'Outreach': 'تواصل',
+    'AI': 'ذكاء اصطناعي', 'Tech': 'تقنية', 'Automation': 'أتمتة',
+    'Design': 'تصميم', 'UX': 'تجربة المستخدم', 'Creative': 'إبداع',
+    'Research': 'بحث', 'Intelligence': 'استخبارات', 'Learning': 'تعلم',
+    'Gamification': 'تلعيب', 'Training': 'تدريب', 'eLearning': 'تعلم إلكتروني',
+  };
     return ["All", ...cats];
   }, [allAgents]);
 
@@ -51,9 +67,9 @@ export function AgentCommandCenter({ slug, accentColor }: Props) {
       <div className="flex items-center justify-between mb-8">
         <div>
           <p className="font-[Orbitron] text-[9px] tracking-[5px] uppercase mb-1"
-            style={{ color: 'rgba(212,175,55,0.5)' }}>SQUAD ROSTER</p>
+            style={{ color: 'rgba(212,175,55,0.5)' }}>{isAr ? 'قائمة الوكلاء' : 'SQUAD ROSTER'}</p>
           <h2 className="font-[Orbitron] text-2xl font-bold" style={{ color: '#D4AF37' }}>
-            {meta?.name || slug.toUpperCase()} AGENTS
+            {isAr ? `وكلاء ${meta?.name || slug.toUpperCase()}` : `${meta?.name || slug.toUpperCase()} AGENTS`}
           </h2>
         </div>
         {isCommander && (
@@ -72,7 +88,7 @@ export function AgentCommandCenter({ slug, accentColor }: Props) {
                 <line x1="2" y1="12" x2="9" y2="12"/>
                 <line x1="15" y1="12" x2="22" y2="12"/>
               </svg>
-              FORGE AGENT
+              {isAr ? 'إنشاء وكيل' : 'FORGE AGENT'}
             </button>
           </Link>
         )}
@@ -82,7 +98,7 @@ export function AgentCommandCenter({ slug, accentColor }: Props) {
       <div className="flex gap-2 flex-wrap mb-8">
         {categories.map(cat => (
           <button
-            key={cat}
+            key={isAr ? (catAr[cat] || cat) : cat}
             onClick={() => setSelectedCategory(cat)}
               className="font-[Orbitron] text-empire-xs uppercase px-3 py-1.5 transition-all"
             style={{
@@ -91,7 +107,7 @@ export function AgentCommandCenter({ slug, accentColor }: Props) {
               border: `1px solid ${heroColor}40`,
               fontWeight: selectedCategory === cat ? 700 : 400,
             }}>
-            {cat}
+            {isAr ? (catAr[cat] || cat) : cat}
           </button>
         ))}
       </div>
@@ -132,7 +148,7 @@ export function AgentCommandCenter({ slug, accentColor }: Props) {
                     color: heroColor,
                     border: `1px solid ${heroColor}30`
                   }}>
-                  {agent.category}
+                  {isAr ? (catAr[agent.category] || agent.category) : agent.category}
                 </span>
               </div>
 
