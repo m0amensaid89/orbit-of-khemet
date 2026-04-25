@@ -222,7 +222,7 @@ export default function BrowserPage() {
                 className="w-full h-full border-0"
                 title="Browser View"
                 sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
-                style={{ background: '#fff' }}
+                style={{ background: '#0A0A0A', colorScheme: 'dark' }}
               />
             ) : loading ? (
               <div className="w-full h-full flex items-center justify-center" style={{ background: '#0d0d0d' }}>
