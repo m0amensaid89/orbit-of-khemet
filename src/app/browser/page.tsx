@@ -1,4 +1,4 @@
-'use client';
+"use client"; // v2 — AR support active
 
 import { useState } from 'react';
 import { useLanguage } from '@/hooks/useLanguage';
