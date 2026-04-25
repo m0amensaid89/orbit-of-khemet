@@ -86,7 +86,7 @@ export function ArtifactRenderer({ artifact, title }: ArtifactRendererProps) {
           </span>
         </div>
         <div className="flex items-center gap-1">
-          {artifact.type === 'html' && (
+          {(artifact.type === 'html' || artifact.type === 'markdown') && (
             <>
               <button onClick={() => setView('preview')} className="flex items-center gap-1 px-2 py-1 transition-all" style={{ color: view === 'preview' ? '#D4AF37' : 'rgba(255,255,255,0.3)', background: view === 'preview' ? 'rgba(212,175,55,0.1)' : 'transparent', fontFamily: 'Orbitron', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1px' }}>
                 <Eye className="w-3 h-3" /> Preview
@@ -114,6 +114,20 @@ export function ArtifactRenderer({ artifact, title }: ArtifactRendererProps) {
           <pre className="p-4 text-xs overflow-auto max-h-64 font-mono" style={{ color: '#d0c5af' }}>
             {(() => { try { return JSON.stringify(JSON.parse(artifact.content), null, 2); } catch { return artifact.content; } })()}
           </pre>
+        ) : artifact.type === 'markdown' ? (
+          <div className="p-4 overflow-auto max-h-64" style={{ color: '#d0c5af', fontFamily: 'Rajdhani, sans-serif', fontSize: '14px', lineHeight: '1.6' }}
+            dangerouslySetInnerHTML={{ __html: artifact.content
+              .replace(/\*\*(.+?)\*\*/g, '<strong style="color:#D4AF37">$1</strong>')
+              .replace(/^### (.+)$/gm, '<h3 style="color:#D4AF37;font-family:Orbitron,monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin:12px 0 6px">$1</h3>')
+              .replace(/^## (.+)$/gm, '<h2 style="color:#D4AF37;font-family:Orbitron,monospace;font-size:13px;letter-spacing:2px;text-transform:uppercase;margin:16px 0 8px">$1</h2>')
+              .replace(/^# (.+)$/gm, '<h1 style="color:#D4AF37;font-family:Orbitron,monospace;font-size:15px;letter-spacing:2px;text-transform:uppercase;margin:16px 0 8px">$1</h1>')
+              .replace(/^- (.+)$/gm, '<div style="padding-left:12px;margin:3px 0">✦ $1</div>')
+              .replace(/^\d+\. (.+)$/gm, '<div style="padding-left:12px;margin:3px 0">$1</div>')
+              .replace(/`(.+?)`/g, '<code style="background:rgba(212,175,55,0.1);color:#D4AF37;padding:1px 4px;border-radius:2px;font-family:monospace">$1</code>')
+              .replace(/\n\n/g, '<br/><br/>')
+              .replace(/\n/g, '<br/>')
+            }}
+          />
         ) : (
           <pre className="p-4 text-xs overflow-auto max-h-64 font-mono" style={{ color: '#d0c5af' }}>{artifact.content}</pre>
         )}
