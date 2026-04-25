@@ -80,7 +80,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" suppressHydrationWarning className="dark">
       <head>
         <link rel="apple-touch-icon" href="/khemet-logo.png" />
         <link rel="icon" href="/khemet-logo.png" type="image/png" />
