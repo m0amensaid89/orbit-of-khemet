@@ -304,7 +304,7 @@ export default function PricingPage() {
                 </div>
 
                 <div className="border-t border-white/10 pt-8">
-                  <h4 className="font-[Roboto] text-white/80 font-medium mb-4">Recommended Plan:</h4>
+                  <h4 className="font-[Roboto] text-white/80 font-medium mb-4">{lang === 'ar' ? 'الخطة الموصى بها:' : 'Recommended Plan:'}</h4>
                   <div className="bg-[#131313] border border-[#D4AF37] rounded-lg p-5">
                     <h5 className="font-[Orbitron] text-[#D4AF37] mb-1">{calculatedResult.recommendedTier.name}</h5>
                     <p className="font-[Roboto] text-sm text-white/60 mb-4">{calculatedResult.recommendedTier.credits.toLocaleString()} credits included</p>
