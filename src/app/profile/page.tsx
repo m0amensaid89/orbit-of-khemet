@@ -263,7 +263,7 @@ export default function ProfilePage() {
                 </div>
                 <div className="flex justify-between items-center mt-3">
                   <p className="font-[Rajdhani] text-xs text-white/40">{Math.round(xpPercentage)}% complete</p>
-                  <p className="font-[Rajdhani] text-xs text-[#D4AF37]">Total Threads: {userData.threadsCount} | Total Messages: {userData.messagesSent} | {stats.nextLevelXp - stats.currentXp} XP to go</p>
+                  <p className="font-[Rajdhani] text-xs text-[#D4AF37]">{lang === 'ar' ? 'المحادثات: ' : 'Total Threads: '}{userData.threadsCount} | {lang === 'ar' ? 'الرسائل: ' : 'Total Messages: {userData.messagesSent} | {stats.nextLevelXp - stats.currentXp} XP to go</p>
                 </div>
               </div>
             </motion.div>
