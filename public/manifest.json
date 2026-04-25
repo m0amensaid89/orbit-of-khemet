@@ -1,7 +1,7 @@
 {
   "name": "Orbit of Khemet",
   "short_name": "Orbit",
-  "description": "The Egyptian AI Empire Engine — 85 agents, 7 Heroes of Khemet. Now with full Arabic localization.",
+  "description": "The Egyptian AI Empire Engine — 120 agents, 7 Heroes of Khemet. Full Arabic + EN.",
   "start_url": "/hub",
   "display": "standalone",
   "background_color": "#0A0A0A",
@@ -68,5 +68,5 @@
   "screenshots": [],
   "prefer_related_applications": false,
   "version": "1.2.0",
-  "build_ts": 1777085263
+  "build_ts": 1777085926
 }
