@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useLanguage } from '@/hooks/useLanguage';
 import { Globe, Loader2, CheckCircle, ExternalLink } from 'lucide-react';
 
 interface BrowserResult {
@@ -15,6 +16,9 @@ interface BrowserResult {
 }
 
 export default function BrowserPage() {
+  const [lang] = useLanguage();
+  const isAr = lang === 'ar';
+
   const [task, setTask] = useState('');
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);
