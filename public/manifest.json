@@ -67,8 +67,8 @@
   ],
   "screenshots": [],
   "prefer_related_applications": false,
-  "version": "1.4.1",
-  "build_ts": 1777126056,
+  "version": "1.5.0",
+  "build_ts": 1777130255,
   "cache_bust": "browser_isAr_fix_v2",
-  "sprint": "S47-code-studio"
+  "sprint": "S48-smart-routing"
 }
