@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { classifyRequest } from '@/lib/classifier';
 import { CREDIT_COSTS, PLATFORM_LABELS, PLATFORM_MODEL_MAP, getSmartModel } from '@/lib/credits';
+import { queryRouter } from '@/lib/routing/queryRouter';
 import { buildSystemPrompt } from '@/lib/buildSystemPrompt';
 import { agentSkills } from '@/lib/agent-skills';
 import { getBrainContext } from '@/lib/brain/context';
@@ -112,7 +113,15 @@ export async function POST(req: NextRequest) {
     const agentKey     = `${heroSlug}-${agent}`;
     const agentSkill   = agentSkills[agentKey];
     const messageText  = typeof lastMessage === 'string' ? lastMessage : JSON.stringify(lastMessage);
-    const modelToUse   = agentDef?.preferredModel || (agentSkill as { routingOverride?: string } | undefined)?.routingOverride || getSmartModel(requestType, messageText, null);
+    const modelToUse = queryRouter({
+      message:        messageText,
+      requestType:    requestType,
+      heroSlug:       heroSlug,
+      agentCategory:  agentDef?.category ?? null,
+      preferredModel: agentDef?.preferredModel ?? (agentSkill as { routingOverride?: string } | undefined)?.routingOverride ?? null,
+      userTier:       profile?.tier ?? null,
+      lang:           body.lang ?? null,
+    });
 
     const supabaseServer = await createClient();
     const { data: { user } } = await supabaseServer.auth.getUser();
