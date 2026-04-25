@@ -76,38 +76,38 @@ html {
 }
 
 :root {
-  --background: #0A0A0A; /* Default dark — Orbit of Khemet is dark-first */
+  --background: #0A0A0A;
   --foreground: #d0c5af;
-  --card: #0A0A0A;
+  --card: #111111;
   --card-foreground: #d0c5af;
-  --popover: #0A0A0A;
+  --popover: #111111;
   --popover-foreground: #d0c5af;
-  --primary: #D4AF77;
+  --primary: #D4AF37;
   --primary-foreground: #0A0A0A;
-  --secondary: #1A1A1A; /* dark default — fixes cream bg on profile/forge/artifacts/sentinel */
+  --secondary: #1A1A1A;
   --secondary-foreground: #d0c5af;
-  --muted: #1A1A1A; /* dark default */
+  --muted: #1A1A1A;
   --muted-foreground: rgba(208,197,175,0.5);
-  --accent: #1A1A1A; /* dark default */
+  --accent: #1A1A1A;
   --accent-foreground: #d0c5af;
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: rgba(212,175,55,0.2);
-  --input: rgba(212,175,55,0.15);
+  --destructive: #ef4444;
+  --border: rgba(212,175,55,0.15);
+  --input: rgba(212,175,55,0.1);
   --ring: #D4AF37;
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --radius: 0px;
+  --chart-1: #D4AF37;
+  --chart-2: rgba(212,175,55,0.7);
+  --chart-3: rgba(212,175,55,0.5);
+  --chart-4: rgba(212,175,55,0.3);
+  --chart-5: rgba(212,175,55,0.15);
+  --sidebar: #0A0A0A;
+  --sidebar-foreground: #d0c5af;
+  --sidebar-primary: #D4AF37;
+  --sidebar-primary-foreground: #0A0A0A;
+  --sidebar-accent: #1A1A1A;
+  --sidebar-accent-foreground: #d0c5af;
+  --sidebar-border: rgba(212,175,55,0.15);
+  --sidebar-ring: #D4AF37;
 }
 
 .dark {
