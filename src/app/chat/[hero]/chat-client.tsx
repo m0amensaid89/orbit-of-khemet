@@ -155,6 +155,8 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
     },
     onFinish: () => {
       trackMessage();
+        // Dispatch event so sidebar GE counter refreshes immediately
+        window.dispatchEvent(new CustomEvent('credits-updated'));
       window.dispatchEvent(new CustomEvent('credits-updated'));
     },
     onError: (err) => {
