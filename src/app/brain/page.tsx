@@ -260,7 +260,7 @@ export default function BrainPage() {
               </div>
               <div style={{ marginTop: '6px', fontSize: '10px', color: 'rgba(208,197,175,0.35)', fontFamily: 'monospace' }}>{lang === 'ar' ? t.brain.planLabel : userTier.replace(/_/g, ' ').toUpperCase() + ' PLAN'}</div>
             </div>
-          }
+          )}
 
           <div
             onClick={() => !uploading && fileInputRef.current?.click()}
