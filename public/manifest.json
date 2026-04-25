@@ -68,5 +68,6 @@
   "screenshots": [],
   "prefer_related_applications": false,
   "version": "1.3.2",
-  "build_ts": 1777122075
+  "build_ts": 1777123237,
+  "cache_bust": "browser_isAr_fix_v2"
 }
