@@ -297,6 +297,7 @@ export const ar = {
     steps: "الخطوات",
   },
   sidebar: {
+    codeStudio: "استوديو الكود",
     uiBuilder: "منشئ الواجهات",
     browserControl: "التحكم بالمتصفح",
     account: "الحساب",
