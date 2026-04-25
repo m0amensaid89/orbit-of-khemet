@@ -218,10 +218,10 @@ export default function BrowserPage() {
             {activeUrl ? (
               <iframe
                 key={activeUrl}
-                src={`https://r.jina.ai/${activeUrl}`}
+                src={activeUrl}
                 className="w-full h-full border-0"
                 title="Browser View"
-                sandbox="allow-same-origin"
+                sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
                 style={{ background: '#fff' }}
               />
             ) : loading ? (
