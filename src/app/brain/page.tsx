@@ -279,7 +279,7 @@ export default function BrainPage() {
               {uploading ? uploadProgress : lang === 'ar' ? 'رفع إلى عقل كيميت' : 'UPLOAD TO BRAIN'}
             </div>
             <div style={{ fontSize: '11px', color: 'rgba(208,197,175,0.4)' }}>
-              PDF · DOCX · XLSX · PPT · TXT · Images · Video · Select multiple files at once
+              {lang === 'ar' ? 'PDF · DOCX · XLSX · PPT · TXT · صور · فيديو · اختر ملفات متعددة' : 'PDF · DOCX · XLSX · PPT · TXT · Images · Video · Select multiple files at once'}
             </div>
             <input
               ref={fileInputRef}
