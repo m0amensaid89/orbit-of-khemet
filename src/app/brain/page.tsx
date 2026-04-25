@@ -247,7 +247,8 @@ export default function BrainPage() {
       {/* KNOWLEDGE TAB */}
       {activeTab === 'knowledge' && (
         <>
-          {storageLimit > 0 && (
+          {( // always show storage bar — limit defaults to 100MB
+          true && (
             <div style={{ marginBottom: '32px', padding: '20px 24px', background: 'rgba(212,175,55,0.04)', border: '1px solid rgba(212,175,55,0.12)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                 <span style={{ fontFamily: 'monospace', fontSize: '10px', letterSpacing: '0.12em', color: 'rgba(212,175,55,0.7)' }}>{lang === 'ar' ? 'استخدام التخزين' : 'STORAGE USAGE'}</span>
