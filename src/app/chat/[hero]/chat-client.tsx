@@ -563,7 +563,8 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
       if (lang === 'ar' && heroAr) {
         greeting = heroAr.welcomeMessage
       } else {
-        greeting = hero.welcomeMessage ? `${hero.welcomeMessage} ${hero.bio}` : `I am ${hero.name}. ${hero.bio}`
+        const bioSnippet = hero.bio ? hero.bio.substring(0, 200) : ''
+        greeting = hero.welcomeMessage ? `${hero.welcomeMessage} ${bioSnippet}` : `I am ${hero.name}. ${bioSnippet}`
       }
     }
 
