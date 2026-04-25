@@ -282,7 +282,7 @@ function AuthForm() {
             {loading ? (
               <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
-              isLogin ? "SIGN IN" : "CREATE ACCOUNT"
+              isLogin ? "ENTER THE EMPIRE" : "CREATE ACCOUNT"
             )}
           </button>
         </form>
