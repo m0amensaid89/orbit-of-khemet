@@ -275,9 +275,9 @@ export default function ProfilePage() {
             <div className="flex justify-between items-end mb-2">
               <span className="text-4xl font-[Orbitron] font-black">{stats.currentXp}</span>
               <div className="text-right">
-                <span className="font-[Orbitron] text-[10px] tracking-widest uppercase text-muted-foreground block mb-1">Next Rank</span>
+                <span className="font-[Orbitron] text-[10px] tracking-widest uppercase text-muted-foreground block mb-1">{lang === 'ar' ? 'الرتبة التالية' : 'Next Rank'}</span>
                 <span className="font-[Rajdhani] text-primary">{lang === 'ar' ? 'كشّاف' : 'Scout'}</span>
-                <p className="font-mono text-[9px] text-muted-foreground mt-1">{stats.nextLevelXp - stats.currentXp} XP away</p>
+                <p className="font-mono text-[9px] text-muted-foreground mt-1">{stats.nextLevelXp - stats.currentXp} {lang === 'ar' ? 'نقطة للرتبة التالية' : 'XP away'}</p>
               </div>
             </div>
             <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
