@@ -3,15 +3,15 @@
 import Link from "next/link";
 
 
-import { usePathname } from "next/navigation";
-import { Shield, Cpu, LogIn, LogOut, User, Wand2, Compass, Hammer, Gem, Globe, Brain } from "lucide-react";
-import { useEffect, useState } from "react";
-import { CreditMeter } from "./CreditMeter";
-import { CreditMeterSkeleton } from "./CreditMeterSkeleton";
-import { motion } from "framer-motion";
-import { createClient } from "@/lib/supabase/client";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useTranslations } from "@/lib/translations";
+import { Code, usePathname } from "next/navigation";
+import { Code, Shield, Cpu, LogIn, LogOut, User, Wand2, Compass, Hammer, Gem, Globe, Brain } from "lucide-react";
+import { Code, useEffect, useState } from "react";
+import { Code, CreditMeter } from "./CreditMeter";
+import { Code, CreditMeterSkeleton } from "./CreditMeterSkeleton";
+import { Code, motion } from "framer-motion";
+import { Code, createClient } from "@/lib/supabase/client";
+import { Code, useLanguage } from "@/hooks/useLanguage";
+import { Code, useTranslations } from "@/lib/translations";
 
 
 export function Sidebar() {
@@ -282,13 +282,9 @@ export function Sidebar() {
                 <Cpu className="w-4 h-4 z-10" />
                 <span className="font-medium text-empire-sm z-10">{t.nav.autopilot}</span>
               </Link>
-              <Link href="/ui-builder" className={navItemClass("/ui-builder")}>
-                <Wand2 className="w-4 h-4 z-10" />
-                <span className="font-medium text-empire-sm z-10">{lang === 'ar' ? t.sidebar.uiBuilder : 'UI Builder'}</span>
-              </Link>
-              <Link href="/sentinel" className={navItemClass("/sentinel")}>
-                <Shield className="w-4 h-4 z-10" />
-                <span className="font-medium text-empire-sm z-10">{t.nav.sentinel}</span>
+              <Link href="/code-studio" className={navItemClass("/code-studio")}>
+                <Code className="w-4 h-4 z-10" />
+                <span className="font-medium text-empire-sm z-10">{lang === 'ar' ? t.sidebar.codeStudio : 'Code Studio'}</span>
               </Link>
               <Link href="/browser" className={navItemClass("/browser")}>
                 <Globe className="w-4 h-4 z-10" />
