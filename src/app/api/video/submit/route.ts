@@ -13,6 +13,11 @@ const VIDEO_MODELS: Record<string, string> = {
   video_edit:      'fal-ai/minimax-video/text-to-video',
 }
 
+const VIDEO_MODELS_IMAGE: Record<string, string> = {
+  video_quick:    'fal-ai/kling-video/v1/standard/image-to-video',
+  video_standard: 'fal-ai/kling-video/v1.6/pro/image-to-video',
+}
+
 const VIDEO_LABELS: Record<string, string> = {
   video_quick:     'Kling 1.0',
   video_standard:  'Kling 1.6 Pro',
@@ -22,7 +27,28 @@ const VIDEO_LABELS: Record<string, string> = {
 
 export async function POST(req: NextRequest) {
   try {
-    const { prompt, videoType = 'video_standard' } = await req.json()
+    const contentType = req.headers.get('content-type') || ''
+    let prompt = '', videoType = 'video_standard', mode = 'text', aspectRatio = '16:9'
+    let imageUrl: string | undefined
+    if (contentType.includes('multipart/form-data')) {
+      const form = await req.formData()
+      prompt = form.get('prompt') as string || ''
+      videoType = form.get('videoType') as string || 'video_standard'
+      mode = form.get('mode') as string || 'text'
+      aspectRatio = form.get('aspectRatio') as string || '16:9'
+      const imageFile = form.get('image') as File | null
+      if (imageFile) {
+        // Upload image to fal.ai storage
+        try {
+          const uploaded = await fal.storage.upload(imageFile)
+          imageUrl = uploaded
+        } catch { imageUrl = undefined }
+      }
+    } else {
+      const body = await req.json()
+      prompt = body.prompt; videoType = body.videoType || 'video_standard'
+      mode = body.mode || 'text'; aspectRatio = body.aspectRatio || '16:9'
+    }
 
     const supabaseServer = await createClient()
     const { data: { user } } = await supabaseServer.auth.getUser()
@@ -56,14 +82,18 @@ export async function POST(req: NextRequest) {
         .eq('id', user.id)
     }
 
-    const modelId = VIDEO_MODELS[videoType] || VIDEO_MODELS.video_standard
+    const isImageMode = mode === 'image' && imageUrl
+    const modelId = isImageMode
+      ? (VIDEO_MODELS_IMAGE[videoType] || VIDEO_MODELS_IMAGE.video_quick)
+      : (VIDEO_MODELS[videoType] || VIDEO_MODELS.video_standard)
 
     // Submit to fal.ai queue — returns immediately with request_id
     const { request_id } = await fal.queue.submit(modelId, {
       input: {
         prompt,
-        duration: 5,
-        aspect_ratio: '16:9',
+        duration: videoType === 'video_standard' ? 10 : 5,
+        aspect_ratio: aspectRatio || '16:9',
+        ...(isImageMode && imageUrl ? { image_url: imageUrl } : {}),
       },
     })
 
