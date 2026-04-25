@@ -300,7 +300,7 @@ export default function PricingPage() {
                   <div className="font-[Orbitron] text-5xl font-black text-[#D4AF37]">
                     {calculatedResult.totalCredits.toLocaleString()}
                   </div>
-                  <span className="font-[Roboto] text-sm text-white/60">credits / month</span>
+                  <span className="font-[Roboto] text-sm text-white/60">{lang === 'ar' ? 'رصيد / شهر' : 'credits / month'}</span>
                 </div>
 
                 <div className="border-t border-white/10 pt-8">
