@@ -1,6 +1,6 @@
 // src/app/pricing/page.tsx
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
 interface Tier {
@@ -128,7 +128,14 @@ const TIERS: Tier[] = [
 
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null)
+  const [lang, setLang] = useState<'en'|'ar'>('en')
   const router = useRouter()
+  const isAr = lang === 'ar'
+
+  useEffect(() => {
+    const stored = localStorage.getItem('orbit_lang')
+    if (stored === 'ar') setLang('ar')
+  }, [])
 
   const handleSubscribe = async (tierId: string) => {
     setLoading(tierId)
@@ -168,10 +175,10 @@ export default function PricingPage() {
           letterSpacing: '0.12em',
           marginBottom: '12px',
         }}>
-          CHOOSE YOUR EMPIRE TIER
+{isAr ? 'اختر مستوى إمبراطوريتك' : 'CHOOSE YOUR EMPIRE TIER'}
         </h1>
         <p style={{ color: '#d0c5af', fontSize: '14px', letterSpacing: '0.06em' }}>
-          Every AI. One Platform. One Price.
+{isAr ? 'كل ذكاء اصطناعي. منصة واحدة. سعر واحد.' : 'Every AI. One Platform. One Price.'}
         </p>
       </div>
 
@@ -191,7 +198,7 @@ export default function PricingPage() {
           marginBottom: '16px',
           letterSpacing: '0.1em',
         }}>
-          WHAT IS GRID ENERGY?
+{isAr ? 'ما هي طاقة الشبكة؟' : 'WHAT IS GRID ENERGY?'}
         </h2>
         <p style={{
           color: '#d0c5af',
