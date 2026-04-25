@@ -4,7 +4,7 @@ import Link from "next/link";
 
 
 import { usePathname } from "next/navigation";
-import { Code, Shield, Cpu, LogIn, LogOut, User, Wand2, Compass, Hammer, Gem, Globe, Brain , Sparkles, Film } from "lucide-react";
+import { Code, Shield, Cpu, LogIn, LogOut, User, Wand2, Compass, Hammer, Gem, Globe, Brain , Sparkles, Film, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CreditMeter } from "./CreditMeter";
 import { CreditMeterSkeleton } from "./CreditMeterSkeleton";
@@ -293,6 +293,10 @@ export function Sidebar() {
               <Link href="/cinema" className={navItemClass("/cinema")}>
                 <Film className="w-4 h-4 z-10" />
                 <span className="font-medium text-empire-sm z-10">{lang === 'ar' ? t.sidebar.cinemaEngine : 'Cinema Engine'}</span>
+              </Link>
+              <Link href="/deep-think" className={navItemClass("/deep-think")}>
+                <Zap className="w-4 h-4 z-10" />
+                <span className="font-medium text-empire-sm z-10">{lang === 'ar' ? t.sidebar.deepThink : 'Deep Think'}</span>
               </Link>
               <Link href="/browser" className={navItemClass("/browser")}>
                 <Globe className="w-4 h-4 z-10" />
