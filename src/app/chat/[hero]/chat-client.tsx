@@ -923,7 +923,10 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                         return <ArtifactRenderer artifact={artifact} title={title} />;
                       })()}
 
-                      {m.role === 'assistant' && cleanContent.length > 100 && !isLoading && (
+                      {m.role === 'assistant' && cleanContent.length > 100 && !isLoading && 
+                        !cleanContent.includes('![') && 
+                        !cleanContent.includes('data:image') && 
+                        !(cleanContent.match(/https?:\/\/[^\s]+\.(png|jpg|jpeg|webp|gif)/i)) && (
                         <ExportToolbar
                           content={cleanContent}
                           title={(() => {
