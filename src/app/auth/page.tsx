@@ -22,7 +22,7 @@ function AuthForm() {
   const searchParams = useSearchParams();
   const supabase = createClient();
 
-  const handleOAuth = async (provider: 'google' | 'github') => {
+  const handleOAuth = async (provider: 'google' | 'github' | 'azure') => {
     setLoading(true);
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
@@ -202,6 +202,19 @@ function AuthForm() {
             </svg>
             <span className="font-[Rajdhani] text-base">GitHub</span>
           </button>
+
+          {/* Microsoft */}
+          <button onClick={() => handleOAuth('azure')} type="button"
+            className="w-full flex items-center justify-center gap-3 py-3 transition-all"
+            style={{ background: '#111111', border: '1px solid rgba(212,175,55,0.15)', color: '#d0c5af' }}>
+            <svg width="18" height="18" viewBox="0 0 23 23" fill="none">
+              <rect x="1" y="1" width="10" height="10" fill="#f25022"/>
+              <rect x="12" y="1" width="10" height="10" fill="#7fba00"/>
+              <rect x="1" y="12" width="10" height="10" fill="#00a4ef"/>
+              <rect x="12" y="12" width="10" height="10" fill="#ffb900"/>
+            </svg>
+            <span className="font-[Rajdhani] text-base">Microsoft</span>
+          </button>
         </div>
 
         {/* Divider */}
@@ -269,7 +282,7 @@ function AuthForm() {
             {loading ? (
               <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
-              isLogin ? "Deploy" : "Initialize Node"
+              isLogin ? "SIGN IN" : "CREATE ACCOUNT"
             )}
           </button>
         </form>
