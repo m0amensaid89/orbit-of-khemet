@@ -241,7 +241,7 @@ export default function ProfilePage() {
                 <div className="flex justify-between items-end mb-3">
                   <div className="flex flex-col">
                     <span className="text-5xl font-[Orbitron] font-black text-[#D4AF37] drop-shadow-[0_0_10px_rgba(212,175,55,0.3)]">{stats.currentXp}</span>
-                    <span className="font-[Rajdhani] text-sm text-white/50 uppercase tracking-widest mt-1">{lang === 'ar' ? 'إجمالي نقاط الخبرة' : 'Total XP</span>
+                    <span className="font-[Rajdhani] text-sm text-white/50 uppercase tracking-widest mt-1">{lang === 'ar' ? 'إجمالي نقاط الخبرة' : 'Total XP'}</span>
                   </div>
                   <div className="text-right flex flex-col items-end">
                     <span className="font-[Orbitron] text-[10px] tracking-[3px] uppercase text-white/40 mb-1">Next Rank: <span className="text-white">{stats.level === 1 ? "Scout" : stats.level === 2 ? "Agent" : stats.level === 3 ? "Operative" : stats.level === 4 ? "Commander" : stats.level === 5 ? "Architect" : "Grid Master"}</span></span>
@@ -312,9 +312,9 @@ export default function ProfilePage() {
                   <div className="w-16 h-16 mx-auto bg-white/5 rounded-full flex items-center justify-center mb-4">
                     <Zap className="w-6 h-6 text-white/20" />
                   </div>
-                  <p className="font-[Orbitron] text-sm tracking-widest text-white/60 mb-2">{lang === 'ar' ? 'لا يوجد وكلاء مخصصوн بعد' : 'NO CUSTOM AGENTS YET'}</p>
+                  <p className="font-[Orbitron] text-sm tracking-widest text-white/60 mb-2">{lang === 'ar' ? 'لا يوجد وكلاء مخصصون بعد' : 'NO CUSTOM AGENTS YET'}</p>
                   <p className="font-[Rajdhani] text-base text-white/40 mb-6 max-w-sm mx-auto">
-                    {lang === 'ar' ? 'أنشئ وкيلك المخصص الأول.' : 'Forge your first custom agent. Define its intelligence. Assign it to any hero orbit.'}
+                    {lang === 'ar' ? 'أنشئ وكيلك المخصص الأول.' : 'Forge your first custom agent. Define its intelligence. Assign it to any hero orbit.'}
                   </p>
                   <Link href="/forge">
                     <button className="font-[Orbitron] text-[10px] tracking-[3px] uppercase px-8 py-3 font-bold rounded-md hover:scale-105 transition-transform"
