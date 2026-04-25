@@ -707,8 +707,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
           <span className="cursor-pointer hover:opacity-100 transition-opacity" onClick={() => router.push('/')}>{lang === 'ar' ? t.chat.universe : 'Universe'}</span>
           <span>›</span>
           <span className="cursor-pointer hover:opacity-100 transition-opacity" onClick={() => router.push(`/heroes/${heroParam}`)}>{heroName}</span>
-          <span>›</span>
-          <span style={{ opacity: 1, color: primaryColor }}>{agentName && agentName.toUpperCase() !== (heroParam || '').toUpperCase() ? agentName : null}</span>
+          {agentName && agentName.toUpperCase() !== (heroParam || '').toUpperCase() && (<><span>›</span><span style={{ opacity: 1, color: primaryColor }}>{agentName}</span></>)}
         </div>
 
           {/* Messages — flex-1, scrolls internally */}
