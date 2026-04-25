@@ -241,7 +241,7 @@ export default function ProfilePage() {
                 <div className="flex justify-between items-end mb-3">
                   <div className="flex flex-col">
                     <span className="text-5xl font-[Orbitron] font-black text-[#D4AF37] drop-shadow-[0_0_10px_rgba(212,175,55,0.3)]">{stats.currentXp}</span>
-                    <span className="font-[Rajdhani] text-sm text-white/50 uppercase tracking-widest mt-1">Total XP</span>
+                    <span className="font-[Rajdhani] text-sm text-white/50 uppercase tracking-widest mt-1">{lang === 'ar' ? 'إجمالي نقاط الخبرة' : 'Total XP</span>
                   </div>
                   <div className="text-right flex flex-col items-end">
                     <span className="font-[Orbitron] text-[10px] tracking-[3px] uppercase text-white/40 mb-1">Next Rank: <span className="text-white">{stats.level === 1 ? "Scout" : stats.level === 2 ? "Agent" : stats.level === 3 ? "Operative" : stats.level === 4 ? "Commander" : stats.level === 5 ? "Architect" : "Grid Master"}</span></span>
@@ -262,7 +262,7 @@ export default function ProfilePage() {
                   ))}
                 </div>
                 <div className="flex justify-between items-center mt-3">
-                  <p className="font-[Rajdhani] text-xs text-white/40">{Math.round(xpPercentage)}% complete</p>
+                  <p className="font-[Rajdhani] text-xs text-white/40">{Math.round(xpPercentage)}{lang === 'ar' ? '% مكتمل' : '% complete'}</p>
                   <p className="font-[Rajdhani] text-xs text-[#D4AF37]">{lang === 'ar' ? 'المحادثات: ' : 'Total Threads: '}{userData.threadsCount} | {lang === 'ar' ? 'الرسائل: ' : 'Total Messages: {userData.messagesSent} | {stats.nextLevelXp - stats.currentXp} XP to go</p>
                 </div>
               </div>
@@ -270,13 +270,13 @@ export default function ProfilePage() {
 
         {/* Energy Stats */}
         <div className="p-8 rounded-sm flex flex-col gap-6" style={{ background: "#131313", outline: "1px solid rgba(212,175,55,0.08)" }}>
-          <h2 className="font-[Orbitron] text-xs tracking-[4px] uppercase" style={{ color: "rgba(212,175,55,0.5)" }}>{lang === 'ar' ? t.profile.gridXp : 'GRID XP'}</h2>
+          <h2 className="font-[Orbitron] text-xs tracking-[4px] uppercase" style={{ color: "rgba(212,175,55,0.5)" }}>{lang === 'ar' ? (t.profile?.gridXp || 'نقاط الشبكة') : 'GRID XP'}</h2>
           <div>
             <div className="flex justify-between items-end mb-2">
               <span className="text-4xl font-[Orbitron] font-black">{stats.currentXp}</span>
               <div className="text-right">
                 <span className="font-[Orbitron] text-[10px] tracking-widest uppercase text-muted-foreground block mb-1">Next Rank</span>
-                <span className="font-[Rajdhani] text-primary">Scout</span>
+                <span className="font-[Rajdhani] text-primary">{lang === 'ar' ? 'كشّاف' : 'Scout'}</span>
                 <p className="font-mono text-[9px] text-muted-foreground mt-1">{stats.nextLevelXp - stats.currentXp} XP away</p>
               </div>
             </div>
