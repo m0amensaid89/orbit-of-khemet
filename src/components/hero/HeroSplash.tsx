@@ -21,8 +21,9 @@ export default function HeroSplash({ slug }: { slug: string }) {
   const shortTagline = isAr && heroAr ? heroAr.short_tagline : meta.short_tagline;
   const roleLine = isAr && heroAr ? heroAr.philosophy : meta.role_line;
   const bestFor = isAr && heroAr ? heroAr.tagline : meta.best_for;
-  const ctaPrimary = isAr ? `ادخل مدار ${meta.name}` : meta.cta_primary;
-  const ctaSecondary = isAr ? `استعرض فريق ${meta.name}` : meta.cta_secondary;
+  const heroArName = isAr && heroAr ? (heroAr.name || meta.name) : meta.name;
+  const ctaPrimary = isAr ? `ادخل مدار ${heroArName}` : meta.cta_primary;
+  const ctaSecondary = isAr ? `استعرض فريق ${heroArName}` : meta.cta_secondary;
   const agentsLabel = isAr ? 'وكيل' : 'Agents';
   const categoriesLabel = isAr ? 'فئة' : 'Categories';
   const statusLabel = isAr ? 'الحالة' : 'Status';
@@ -83,7 +84,7 @@ export default function HeroSplash({ slug }: { slug: string }) {
 
         {/* Specialties */}
         <div className="flex flex-col gap-2">
-          {meta.specialties.map((s, i) => (
+          {(isAr && heroAr?.specialties ? heroAr.specialties : meta.specialties).map((s: string, i: number) => (
             <div key={i} className="flex items-center gap-2">
               <span style={{ color: meta.color_signature }}>✦</span>
               <span className="font-[Rajdhani] text-base" style={{ color: '#d0c5af' }}>{s}</span>
