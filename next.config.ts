@@ -1,13 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
+  eslint: { ignoreDuringBuilds: true },
+  typescript: { ignoreBuildErrors: true },
+  async redirects() {
+    return [
+      { source: "/ui-builder", destination: "/code-studio?tab=ui", permanent: false },
+      { source: "/sentinel", destination: "/code-studio?tab=review", permanent: false },
+    ];
   },
 };
 
-// deployed: 1776837593
 export default nextConfig;
