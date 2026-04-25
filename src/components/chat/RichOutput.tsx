@@ -129,8 +129,14 @@ function TextOutput({ content, accentColor }: { content: string, accentColor: st
   // Convert markdown to HTML, injecting IDs on headings
   let hi = 0
   const formatted = content
+    .replace(/```[\s\S]*?```/g, (block) => {
+      const code = block.replace(/^```\w*\n?/, '').replace(/\n?```$/, '')
+      return `<pre style="background:rgba(212,175,55,0.05);border:1px solid rgba(212,175,55,0.15);padding:12px;border-radius:4px;overflow-x:auto;font-size:12px;font-family:monospace;color:rgba(208,197,175,0.9)">${code}</pre>`
+    })
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/`([^`]+)`/g, '<code style="background:rgba(212,175,55,0.08);padding:1px 4px;border-radius:3px;font-family:monospace;font-size:12px">$1</code>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color:#D4AF37;text-decoration:underline">$1</a>')
     .replace(/^## (.+)$/gm, (_match, capturedText) => {
       const h = headings[hi++]
       return `<h2 id="${h?.id || ''}" style="color:${accentColor};font-family:monospace;font-size:14px;letter-spacing:0.08em;margin:16px 0 6px;scroll-margin-top:12px">${capturedText}</h2>`
