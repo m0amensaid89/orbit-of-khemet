@@ -104,7 +104,7 @@ export function Sidebar() {
 
       // Initial credits fetch
       try {
-        const res = await fetch('/api/credits');
+        const res = await fetch('/api/user/credits');
         const data = await res.json();
         if (data && typeof data.credits === 'number') {
           setEnergy(data.credits);
@@ -126,7 +126,7 @@ export function Sidebar() {
 
     const handleCreditsUpdate = async () => {
       try {
-        const res = await fetch('/api/credits');
+        const res = await fetch('/api/user/credits');
         const data = await res.json();
         if (data && typeof data.credits === 'number') {
           setEnergy(data.credits);
@@ -165,7 +165,7 @@ export function Sidebar() {
           setRecentThreads([]);
         }
         try {
-          const res = await fetch('/api/credits');
+          const res = await fetch('/api/user/credits');
           const data = await res.json();
           if (data && typeof data.credits === 'number') {
             setEnergy(data.credits);
@@ -236,7 +236,7 @@ export function Sidebar() {
         {/* WORKSPACE Section */}
         <div>
           <div className="px-6 mb-2">
-            <span className="font-orbitron text-empire-xs text-[rgba(212,175,55,0.4)] uppercase">{t.nav.newMission && "WORKSPACE"}</span>
+            <span className="font-orbitron text-empire-xs text-[rgba(212,175,55,0.4)] uppercase">{t.sidebar?.workspace || 'WORKSPACE'}</span>
           </div>
           <div className="px-3 space-y-1">
             <Link href="/hub" className={navItemClass("/hub", true)}>
