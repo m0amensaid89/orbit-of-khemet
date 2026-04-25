@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/hooks/useLanguage";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -20,6 +21,7 @@ const heroDisplayNames: Record<string, string> = {
 };
 
 export default function ForgePage() {
+  const [lang] = useLanguage();
   const router = useRouter();
   const [form, setForm] = useState({
     name: "",
