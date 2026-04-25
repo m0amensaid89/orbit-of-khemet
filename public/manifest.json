@@ -67,8 +67,8 @@
   ],
   "screenshots": [],
   "prefer_related_applications": false,
-  "version": "1.9.0",
-  "build_ts": 1777137387,
+  "version": "2.0.0",
+  "build_ts": 1777137753,
   "cache_bust": "browser_isAr_fix_v2",
-  "sprint": "S52-live-model-registry"
+  "sprint": "S53-deep-think-complete"
 }
