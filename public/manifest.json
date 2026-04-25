@@ -67,7 +67,8 @@
   ],
   "screenshots": [],
   "prefer_related_applications": false,
-  "version": "1.3.3",
-  "build_ts": 1777123334,
-  "cache_bust": "browser_isAr_fix_v2"
+  "version": "1.4.0",
+  "build_ts": 1777125321,
+  "cache_bust": "browser_isAr_fix_v2",
+  "sprint": "S47-code-studio"
 }
