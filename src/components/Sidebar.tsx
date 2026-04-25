@@ -3,15 +3,15 @@
 import Link from "next/link";
 
 
-import { Code, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Code, Shield, Cpu, LogIn, LogOut, User, Wand2, Compass, Hammer, Gem, Globe, Brain } from "lucide-react";
-import { Code, useEffect, useState } from "react";
-import { Code, CreditMeter } from "./CreditMeter";
-import { Code, CreditMeterSkeleton } from "./CreditMeterSkeleton";
-import { Code, motion } from "framer-motion";
-import { Code, createClient } from "@/lib/supabase/client";
-import { Code, useLanguage } from "@/hooks/useLanguage";
-import { Code, useTranslations } from "@/lib/translations";
+import { useEffect, useState } from "react";
+import { CreditMeter } from "./CreditMeter";
+import { CreditMeterSkeleton } from "./CreditMeterSkeleton";
+import { motion } from "framer-motion";
+import { createClient } from "@/lib/supabase/client";
+import { useLanguage } from "@/hooks/useLanguage";
+import { useTranslations } from "@/lib/translations";
 
 
 export function Sidebar() {
