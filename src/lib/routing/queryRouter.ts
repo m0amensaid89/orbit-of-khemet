@@ -14,6 +14,27 @@ import type { RequestType } from '@/lib/credits';
 import { getSmartModel, getMessageComplexity } from '@/lib/credits';
 import { DOMAIN_MODEL_MAP, CATEGORY_DOMAIN_MAP } from '@/lib/routing/modelProfiles';
 
+// ── Registry validation — ensures model IDs are still valid ──────────────
+// Called at startup to hydrate from DB; falls back to static map silently
+let _registryIds: Set<string> | null = null;
+
+export async function hydrateModelRegistry(): Promise<void> {
+  try {
+    const res = await fetch('/api/models');
+    const data = await res.json();
+    if (data.models?.length) {
+      _registryIds = new Set(data.models.map((m: { id: string }) => m.id));
+    }
+  } catch { /* stay on static map */ }
+}
+
+// Validate a model ID against the live registry (if loaded)
+// Returns the model ID if valid or registry not yet loaded; falls back to sonnet
+export function validateModelId(modelId: string, fallback = 'anthropic/claude-sonnet-4-5'): string {
+  if (!_registryIds) return modelId; // registry not loaded — pass through
+  return _registryIds.has(modelId) ? modelId : fallback;
+}
+
 export interface QueryRouterContext {
   message: string;
   requestType: RequestType;
@@ -127,7 +148,7 @@ export function queryRouter(ctx: QueryRouterContext): string {
 
   if (complexity === 'complex') return 'anthropic/claude-sonnet-4-5';
   if (complexity === 'simple')  return 'anthropic/claude-haiku-4-5';
-  return 'anthropic/claude-sonnet-4-5'; // standard
+  return validateModelId('anthropic/claude-sonnet-4-5'); // standard
 }
 
 // ── Debug helper: explain why a model was chosen ─────────────────────────────
