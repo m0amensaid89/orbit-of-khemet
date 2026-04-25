@@ -106,6 +106,29 @@ export function ImageOutput({ urls = [], isLoading = false, onRegenerate, onRefi
                 ))}
               </div>
           )}
+
+          {/* Permanent download bar — always visible */}
+          {displayUrls.length > 0 && !isLoading && (
+            <div className="flex items-center gap-3 px-4 py-3 border-t" style={{ borderColor: 'rgba(212,175,55,0.2)' }}>
+              {displayUrls.map((url, i) => (
+                <button
+                  key={i}
+                  onClick={() => handleDownload(url)}
+                  className="flex items-center gap-2 font-[Orbitron] text-[9px] tracking-[2px] uppercase px-4 py-2 transition-all hover:opacity-80"
+                  style={{ background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.4)', color: '#D4AF37', borderRadius: '2px' }}>
+                  <Download className="w-3 h-3" />
+                  {displayUrls.length > 1 ? 'DOWNLOAD ' + (i + 1) : 'DOWNLOAD IMAGE'}
+                </button>
+              ))}
+              <button
+                onClick={() => displayUrls[0] && setFullscreenImage(displayUrls[0])}
+                className="flex items-center gap-2 font-[Orbitron] text-[9px] tracking-[2px] uppercase px-4 py-2 transition-all hover:opacity-80"
+                style={{ background: 'transparent', border: '1px solid rgba(212,175,55,0.2)', color: 'rgba(212,175,55,0.6)', borderRadius: '2px' }}>
+                <Maximize2 className="w-3 h-3" />
+                FULLSCREEN
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
