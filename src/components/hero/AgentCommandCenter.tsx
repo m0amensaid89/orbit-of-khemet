@@ -11,7 +11,24 @@ type Props = {
   accentColor: string;
 };
 
+const CAT_AR: Record<string, string> = {
+  'All': 'الكل', 'ALL': 'الكل',
+  'Strategy': 'استراتيجية', 'Finance': 'مالية', 'Finance & Capital': 'مالية ورأس المال',
+  'Legal': 'قانوني', 'Compliance': 'امتثال', 'Analytics': 'تحليلات',
+  'Writing': 'كتابة', 'Content': 'محتوى', 'Marketing': 'تسويق',
+  'Growth': 'نمو', 'Social Media': 'وسائل التواصل', 'SEO': 'تحسين محركات البحث',
+  'Operations': 'عمليات', 'Project Management': 'إدارة مشاريع', 'HR': 'موارد بشرية',
+  'Sales': 'مبيعات', 'CRM': 'علاقات العملاء', 'Outreach': 'تواصل',
+  'AI': 'ذكاء اصطناعي', 'Tech': 'تقنية', 'Automation': 'أتمتة',
+  'Design': 'تصميم', 'UX': 'تجربة المستخدم', 'Creative': 'إبداع',
+  'Research': 'بحث', 'Intelligence': 'استخبارات', 'Learning': 'تعلم',
+  'Gamification': 'تلعيب', 'Training': 'تدريب', 'eLearning': 'تعلم إلكتروني',
+};
+
 export function AgentCommandCenter({ slug, accentColor }: Props) {
+  const [lang] = useLanguage();
+  const isAr = lang === 'ar';
+
   const [customAgents, setCustomAgents] = useState<CustomAgent[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [isCommander, setIsCommander] = useState(false);
@@ -36,22 +53,7 @@ export function AgentCommandCenter({ slug, accentColor }: Props) {
   }, [customAgents, slug]);
 
   const categories = useMemo(() => {
-    const [lang] = useLanguage();
-  const isAr = lang === 'ar';
-  const cats = Array.from(new Set(allAgents.map(a => a.category)));
-  const catAr: Record<string, string> = {
-    'ALL': 'الكل',
-    'Strategy': 'استراتيجية', 'Finance': 'مالية', 'Finance & Capital': 'مالية ورأس المال',
-    'Legal': 'قانوني', 'Compliance': 'امتثال', 'Analytics': 'تحليلات',
-    'Writing': 'كتابة', 'Content': 'محتوى', 'Marketing': 'تسويق',
-    'Growth': 'نمو', 'Social Media': 'وسائل التواصل', 'SEO': 'تحسين محركات البحث',
-    'Operations': 'عمليات', 'Project Management': 'إدارة مشاريع', 'HR': 'موارد بشرية',
-    'Sales': 'مبيعات', 'CRM': 'علاقات العملاء', 'Outreach': 'تواصل',
-    'AI': 'ذكاء اصطناعي', 'Tech': 'تقنية', 'Automation': 'أتمتة',
-    'Design': 'تصميم', 'UX': 'تجربة المستخدم', 'Creative': 'إبداع',
-    'Research': 'بحث', 'Intelligence': 'استخبارات', 'Learning': 'تعلم',
-    'Gamification': 'تلعيب', 'Training': 'تدريب', 'eLearning': 'تعلم إلكتروني',
-  };
+    const cats = Array.from(new Set(allAgents.map(a => a.category)));
     return ["All", ...cats];
   }, [allAgents]);
 
@@ -67,7 +69,9 @@ export function AgentCommandCenter({ slug, accentColor }: Props) {
       <div className="flex items-center justify-between mb-8">
         <div>
           <p className="font-[Orbitron] text-[9px] tracking-[5px] uppercase mb-1"
-            style={{ color: 'rgba(212,175,55,0.5)' }}>{isAr ? 'قائمة الوكلاء' : 'SQUAD ROSTER'}</p>
+            style={{ color: 'rgba(212,175,55,0.5)' }}>
+            {isAr ? 'قائمة الوكلاء' : 'SQUAD ROSTER'}
+          </p>
           <h2 className="font-[Orbitron] text-2xl font-bold" style={{ color: '#D4AF37' }}>
             {isAr ? `وكلاء ${meta?.name || slug.toUpperCase()}` : `${meta?.name || slug.toUpperCase()} AGENTS`}
           </h2>
@@ -81,7 +85,6 @@ export function AgentCommandCenter({ slug, accentColor }: Props) {
                 background: `${heroColor}08`
               }}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                {/* Scarab / plus with circle center */}
                 <circle cx="12" cy="12" r="3"/>
                 <line x1="12" y1="2" x2="12" y2="9"/>
                 <line x1="12" y1="15" x2="12" y2="22"/>
@@ -98,16 +101,16 @@ export function AgentCommandCenter({ slug, accentColor }: Props) {
       <div className="flex gap-2 flex-wrap mb-8">
         {categories.map(cat => (
           <button
-            key={isAr ? (catAr[cat] || cat) : cat}
+            key={cat}
             onClick={() => setSelectedCategory(cat)}
-              className="font-[Orbitron] text-empire-xs uppercase px-3 py-1.5 transition-all"
+            className="font-[Orbitron] text-empire-xs uppercase px-3 py-1.5 transition-all"
             style={{
               background: selectedCategory === cat ? heroColor : 'transparent',
               color: selectedCategory === cat ? '#0A0A0A' : heroColor,
               border: `1px solid ${heroColor}40`,
               fontWeight: selectedCategory === cat ? 700 : 400,
             }}>
-            {isAr ? (catAr[cat] || cat) : cat}
+            {isAr ? (CAT_AR[cat] || cat) : cat}
           </button>
         ))}
       </div>
@@ -120,10 +123,7 @@ export function AgentCommandCenter({ slug, accentColor }: Props) {
             ? `/${linkedTool}?from=${slug}&agent=${agent.id}`
             : `/chat/${slug}?agent=${agent.id}`;
           return (
-          <Link
-            key={agent.id}
-            href={agentHref}
-            className="group block">
+          <Link key={agent.id} href={agentHref} className="group block">
             <div
               className="h-full p-5 transition-all duration-200 cursor-pointer"
               style={{
@@ -148,7 +148,7 @@ export function AgentCommandCenter({ slug, accentColor }: Props) {
                     color: heroColor,
                     border: `1px solid ${heroColor}30`
                   }}>
-                  {isAr ? (catAr[agent.category] || agent.category) : agent.category}
+                  {isAr ? (CAT_AR[agent.category] || agent.category) : agent.category}
                 </span>
               </div>
 
@@ -173,14 +173,13 @@ export function AgentCommandCenter({ slug, accentColor }: Props) {
               <div className="flex items-center gap-2 mt-auto pt-2"
                 style={{ borderTop: `1px solid ${heroColor}15` }}>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ color: heroColor }}>
-                  {/* Ankh symbol */}
                   <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2"/>
                   <line x1="12" y1="11" x2="12" y2="22" stroke="currentColor" strokeWidth="2"/>
                   <line x1="7" y1="15" x2="17" y2="15" stroke="currentColor" strokeWidth="2"/>
                 </svg>
                 <span className="font-[Orbitron] text-[8px] tracking-[2px] uppercase"
                   style={{ color: heroColor }}>
-                  ACTIVATE AGENT
+                  {isAr ? 'تفعيل الوكيل' : 'ACTIVATE AGENT'}
                 </span>
               </div>
 
@@ -217,7 +216,7 @@ export function AgentCommandCenter({ slug, accentColor }: Props) {
         <div className="text-center py-20">
           <p className="font-[Orbitron] text-xs tracking-widest uppercase"
             style={{ color: 'rgba(212,175,55,0.3)' }}>
-            NO AGENTS IN THIS CATEGORY
+            {isAr ? 'لا يوجد وكلاء في هذه الفئة' : 'NO AGENTS IN THIS CATEGORY'}
           </p>
         </div>
       )}
