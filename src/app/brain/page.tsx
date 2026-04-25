@@ -247,8 +247,7 @@ export default function BrainPage() {
       {/* KNOWLEDGE TAB */}
       {activeTab === 'knowledge' && (
         <>
-          {( // always show storage bar — limit defaults to 100MB
-          true && (
+          {(
             <div style={{ marginBottom: '32px', padding: '20px 24px', background: 'rgba(212,175,55,0.04)', border: '1px solid rgba(212,175,55,0.12)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                 <span style={{ fontFamily: 'monospace', fontSize: '10px', letterSpacing: '0.12em', color: 'rgba(212,175,55,0.7)' }}>{lang === 'ar' ? 'استخدام التخزين' : 'STORAGE USAGE'}</span>
@@ -261,7 +260,7 @@ export default function BrainPage() {
               </div>
               <div style={{ marginTop: '6px', fontSize: '10px', color: 'rgba(208,197,175,0.35)', fontFamily: 'monospace' }}>{lang === 'ar' ? t.brain.planLabel : userTier.replace(/_/g, ' ').toUpperCase() + ' PLAN'}</div>
             </div>
-          )}
+          }
 
           <div
             onClick={() => !uploading && fileInputRef.current?.click()}
