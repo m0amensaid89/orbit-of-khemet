@@ -132,16 +132,45 @@ export default function BrowserPage() {
   const execute = async () => {
     if (!task.trim()) return;
     setLoading(true); setResult(null); setActiveUrl("");
+
+    // S47Q-02: Add explicit client-side timeout matching server maxDuration.
+    // Previously the request could hang indefinitely with no user feedback.
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 90_000);
+
     try {
       const res = await fetch("/api/browser", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ task, url: startUrl.trim() || undefined }),
+        signal: controller.signal,
       });
+      clearTimeout(timeoutId);
+
+      if (!res.ok) {
+        const errText = await res.text().catch(() => "");
+        setResult({
+          success: false,
+          task,
+          error: isAr
+            ? `فشل الطلب (${res.status}). ${errText.slice(0, 200)}`
+            : `Request failed (${res.status}). ${errText.slice(0, 200)}`,
+        });
+        return;
+      }
+
       const data: BrowserResult = await res.json();
       setResult(data);
       if (data.visitedUrls?.[0]) setActiveUrl(data.visitedUrls[0].url);
-    } catch {
-      setResult({ success: false, task, error: isAr ? "فشل الطلب" : "Request failed" });
+    } catch (err) {
+      clearTimeout(timeoutId);
+      const isTimeout = err instanceof Error && err.name === "AbortError";
+      setResult({
+        success: false,
+        task,
+        error: isTimeout
+          ? (isAr ? "انتهت المهلة بعد 90 ثانية. الموقع المستهدف بطيء أو محظور. حاول برابط مختلف." : "Timed out after 90 seconds. The target site is slow or blocked. Try a different URL.")
+          : (isAr ? "فشل الاتصال. تحقق من الرابط وحاول مرة أخرى." : "Connection failed. Check the URL and try again."),
+      });
     } finally { setLoading(false); }
   };
 
