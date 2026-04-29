@@ -173,7 +173,7 @@ export default function ChatPage({ heroSlug }: { heroSlug?: string }) {
 Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
         }]);
       } else {
-        setMessages(prev => [...prev, { id: "err-"+Date.now(), role: "assistant", content: "Connection interrupted. Please try again." }]);
+        setMessages(prev => [...prev, { id: "err-"+Date.now(), role: "assistant", content: lang === 'ar' ? "انقطع الاتصال. يرجى المحاولة مرة أخرى." : "Connection interrupted. Please try again." }]);
       }
     }
   });
@@ -236,7 +236,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
         setMessages(prev => [...prev, {
           id: 'video-err-' + Date.now(),
           role: 'assistant',
-          content: err.message || 'Video submission failed. Please try again.',
+          content: err.message || (lang === 'ar' ? 'فشل إرسال الفيديو. يرجى المحاولة مرة أخرى.' : 'Video submission failed. Please try again.'),
           createdAt: new Date(),
         }])
         setVideoState(null)
@@ -268,7 +268,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
           setMessages(prev => [...prev, {
             id: 'video-err-' + Date.now(),
             role: 'assistant',
-            content: 'Video generation failed. Credits were consumed. Please try again with a different prompt.',
+            content: lang === 'ar' ? 'فشل توليد الفيديو. تم استهلاك الطاقة. يرجى المحاولة بطلب مختلف.' : 'Video generation failed. Credits were consumed. Please try again with a different prompt.',
             createdAt: new Date(),
           }])
           setVideoState(null)
@@ -282,7 +282,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
         setMessages(prev => [...prev, {
           id: 'video-err-' + Date.now(),
           role: 'assistant',
-          content: 'Video generation timed out. Credits were consumed. Please try again.',
+          content: lang === 'ar' ? 'انتهت مهلة توليد الفيديو. تم استهلاك الطاقة. يرجى المحاولة مرة أخرى.' : 'Video generation timed out. Credits were consumed. Please try again.',
           createdAt: new Date(),
         }])
         setVideoState(null)
@@ -312,7 +312,7 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
       setMessages(prev => [...prev, {
         id: 'video-err-' + Date.now(),
         role: 'assistant',
-        content: 'Connection error during video generation. Credits were consumed. Please try again with a different prompt.',
+        content: lang === 'ar' ? 'خطأ في الاتصال أثناء توليد الفيديو. تم استهلاك الطاقة. يرجى المحاولة بطلب مختلف.' : 'Connection error during video generation. Credits were consumed. Please try again with a different prompt.',
         createdAt: new Date(),
       }])
       setVideoState(null)
@@ -799,7 +799,9 @@ Upgrade to Explorer for 200 energy/day, or Commander for unlimited.`,
                     )}
 
                     {/* Bubble */}
-                    <div className={`px-5 py-3.5 text-empire-base leading-relaxed shadow-md font-[Rajdhani] max-w-3xl ${m.role === "user" ? "rounded-2xl rounded-br-sm" : "rounded-2xl rounded-tl-sm"}`}
+                    <div
+                      dir={lang === 'ar' ? 'rtl' : 'ltr'}
+                      className={`px-5 py-3.5 text-empire-base leading-relaxed shadow-md font-[Rajdhani] max-w-3xl ${m.role === "user" ? "rounded-2xl rounded-br-sm" : "rounded-2xl rounded-tl-sm"}`}
                       style={m.role === "user"
                         ? { background: "linear-gradient(135deg, #1A1A1A, #0A0A0A)", border: "1px solid #D4AF37", color: "#F5D38C" }
                         : { background: bgMid, border: `1px solid ${cardBorder}`, color: "rgba(255,255,255,0.9)", borderLeftColor: accentColor, borderLeftWidth: "3px" }}>
