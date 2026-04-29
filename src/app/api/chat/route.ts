@@ -113,15 +113,6 @@ export async function POST(req: NextRequest) {
     const agentKey     = `${heroSlug}-${agent}`;
     const agentSkill   = agentSkills[agentKey];
     const messageText  = typeof lastMessage === 'string' ? lastMessage : JSON.stringify(lastMessage);
-    const modelToUse = queryRouter({
-      message:        messageText,
-      requestType:    requestType,
-      heroSlug:       heroSlug,
-      agentCategory:  agentDef?.category ?? null,
-      preferredModel: agentDef?.preferredModel ?? (agentSkill as { routingOverride?: string } | undefined)?.routingOverride ?? null,
-      userTier:       profile?.tier ?? null,
-      lang:           body.lang ?? null,
-    });
 
     const supabaseServer = await createClient();
     const { data: { user } } = await supabaseServer.auth.getUser();
@@ -131,6 +122,9 @@ export async function POST(req: NextRequest) {
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
+    // S47Q-01: Hoist userTier so queryRouter can use it AFTER profile fetch.
+    // Previous bug: queryRouter referenced `profile` before declaration → ReferenceError → "Connection interrupted" on client.
+    let userTier: string | null = null;
     let profileCredits = 0;
     if (user) {
       try {
@@ -150,6 +144,7 @@ export async function POST(req: NextRequest) {
             });
           } catch { /* proceed anyway */ }
           profileCredits = 7000;
+          userTier = 'personal_basic';
         } else if (profile.credits < creditCost) {
           return NextResponse.json({
             error:            'insufficient_credits',
@@ -159,12 +154,24 @@ export async function POST(req: NextRequest) {
           }, { status: 402 });
         } else {
           profileCredits = profile.credits;
+          userTier = profile.tier ?? null;
         }
       } catch (creditsError) {
         console.error('Credits check failed, proceeding with default:', creditsError);
         profileCredits = 7000;
       }
     }
+
+    // S47Q-01: queryRouter MOVED here — runs AFTER profile fetch so userTier is defined.
+    const modelToUse = queryRouter({
+      message:        messageText,
+      requestType:    requestType,
+      heroSlug:       heroSlug,
+      agentCategory:  agentDef?.category ?? null,
+      preferredModel: agentDef?.preferredModel ?? (agentSkill as { routingOverride?: string } | undefined)?.routingOverride ?? null,
+      userTier:       userTier,
+      lang:           body.lang ?? null,
+    });
 
     // Route video requests BEFORE building system prompt
     if (['video_quick', 'video_standard', 'video_cinematic', 'video_edit'].includes(requestType)) {
