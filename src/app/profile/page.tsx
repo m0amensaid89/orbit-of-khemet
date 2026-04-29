@@ -45,11 +45,26 @@ export default function ProfilePage() {
         // Initials: prefer first 2 chars of email username (most reliable)
         const initials = emailPrefix.substring(0, 2).toUpperCase() || cleanName.substring(0, 2).toUpperCase() || 'MO'
 
+        // S47Q-03: Fetch GE from /api/user/credits (same source as sidebar)
+        // Previously used localStorage which gave a different number than sidebar.
+        let serverCredits = (profile?.energy_balance as number | undefined) ?? 350;
+        try {
+          const creditsRes = await fetch('/api/user/credits');
+          if (creditsRes.ok) {
+            const creditsData = await creditsRes.json();
+            if (typeof creditsData?.credits === 'number') {
+              serverCredits = creditsData.credits;
+            }
+          }
+        } catch {
+          // fall back to whatever we already have
+        }
+
         setUserData({
           email,
           name,
           initials,
-          energyBalance: getEnergyRemaining(), // Use localStorage daily balance (same as sidebar)
+          energyBalance: serverCredits,
           messagesSent: messageCount || 0,
           threadsCount: threadCount || 0
         });
@@ -115,6 +130,7 @@ export default function ProfilePage() {
         }
 
       } else {
+        // No session — fall back to localStorage daily energy
         setUserData(prev => ({ ...prev, energyBalance: getEnergyRemaining(), messagesSent: liveStats.messages, threadsCount: 0 }));
         setStats({
           totalEnergyUsed: liveStats.messages * 2,
