@@ -3,6 +3,12 @@ import { createClient } from '@/lib/supabase/server';
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { generateText } from 'ai';
 
+// S47Q-02: Extend Vercel function timeout to 90s (default 60s on Pro).
+// Browser Read Mode does AI plan + up to 2 page fetches + AI synthesis,
+// which can total 30-70 seconds on slower targets.
+export const maxDuration = 90;
+export const runtime = 'nodejs';
+
 const openrouter = createOpenRouter({
   apiKey: process.env.OPENROUTER_API_KEY,
   headers: {
@@ -43,7 +49,7 @@ export async function POST(req: NextRequest) {
       model: openrouter('google/gemini-2.5-flash'),
       prompt: `You are a web navigation agent. The user wants: "${task}"${url ? ` Starting URL: ${url}` : ''}.
 
-List up to 3 URLs to visit to complete this task. Return ONLY a JSON array of URL strings.
+List up to 2 URLs to visit to complete this task. Return ONLY a JSON array of URL strings.
 Example: ["https://example.com", "https://example.com/about"]
 Return only valid, publicly accessible URLs.`,
       maxTokens: 500,
@@ -58,9 +64,9 @@ Return only valid, publicly accessible URLs.`,
       urlsToVisit = url ? [url] : [];
     }
 
-    // Step 2: Visit each URL and collect content
+    // Step 2: Visit each URL and collect content (capped at 2 to stay within 90s timeout)
     const pageResults: { url: string; title: string; content: string }[] = [];
-    for (const visitUrl of urlsToVisit.slice(0, 3)) {
+    for (const visitUrl of urlsToVisit.slice(0, 2)) {
       try {
         steps.push(`Reading: ${visitUrl}`);
         const page = await fetchPageContent(visitUrl);
