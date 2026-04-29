@@ -1,7 +1,13 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { generateText } from 'ai';
+
+// S47Q-03: GE billing was completely missing from Code Studio.
+// UI Builder uses claude-sonnet-4-5 which costs us real money.
+// 9 GE matches the 'code' tier in chat CREDIT_COSTS.
+const UI_BUILDER_GE_COST = 9;
 
 const openrouter = createOpenRouter({
   apiKey: process.env.OPENROUTER_API_KEY,
@@ -30,6 +36,27 @@ export async function POST(req: NextRequest) {
     const supabaseServer = await createClient();
     const { data: { user } } = await supabaseServer.auth.getUser();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+
+    // S47Q-03: Check + reserve credits BEFORE running expensive LLM call
+    const supabaseAdmin = createSupabaseClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+    const { data: profile } = await supabaseAdmin
+      .from('profiles')
+      .select('credits')
+      .eq('id', user.id)
+      .single();
+
+    const currentCredits = profile?.credits ?? 0;
+    if (currentCredits < UI_BUILDER_GE_COST) {
+      return NextResponse.json({
+        error: 'insufficient_credits',
+        message: 'Your Grid Energy is depleted, Architect. Recharge to continue building.',
+        creditsRequired: UI_BUILDER_GE_COST,
+        creditsAvailable: currentCredits,
+      }, { status: 402 });
+    }
 
     const { description, style, complexity, components } = await req.json();
     if (!description) return Response.json({ error: 'Missing description' }, { status: 400 });
@@ -73,7 +100,18 @@ Output ONLY the complete HTML file starting with <!DOCTYPE html>. No explanation
       .replace(/\n?```$/, '')
       .trim();
 
-    return Response.json({ html, description });
+    // S47Q-03: Deduct credits after successful generation
+    await supabaseAdmin
+      .from('profiles')
+      .update({ credits: currentCredits - UI_BUILDER_GE_COST })
+      .eq('id', user.id);
+
+    return Response.json({
+      html,
+      description,
+      creditsUsed: UI_BUILDER_GE_COST,
+      creditsRemaining: currentCredits - UI_BUILDER_GE_COST,
+    });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Internal server error';
     return Response.json({ error: message }, { status: 500 });
