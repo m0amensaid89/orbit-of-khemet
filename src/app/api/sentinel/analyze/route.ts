@@ -1,8 +1,14 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { generateText } from 'ai';
 import { parseGitHubUrl, getRepoInfo, getRepoTree, getKeyFiles } from '@/lib/github';
+
+// S47Q-03: GE billing was missing from Code Studio. Both App Builder + Code Review
+// run claude-sonnet-4-5 on real money. App Builder uses 12k tokens, Code Review 6k.
+const APP_BUILDER_GE_COST = 12; // higher because 12k maxTokens
+const CODE_REVIEW_GE_COST = 9;  // 6k maxTokens, matches 'code' tier
 
 const openrouter = createOpenRouter({
   apiKey: process.env.OPENROUTER_API_KEY,
@@ -18,7 +24,32 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabaseServer.auth.getUser();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
+    const supabaseAdmin = createSupabaseClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
     const { repoUrl, task, appIdea, platform } = await req.json();
+
+    // S47Q-03: Determine cost based on which mode is being invoked
+    const geCost = (appIdea && !repoUrl) ? APP_BUILDER_GE_COST : CODE_REVIEW_GE_COST;
+
+    // Check + reserve credits BEFORE running expensive LLM call
+    const { data: profile } = await supabaseAdmin
+      .from('profiles')
+      .select('credits')
+      .eq('id', user.id)
+      .single();
+
+    const currentCredits = profile?.credits ?? 0;
+    if (currentCredits < geCost) {
+      return NextResponse.json({
+        error: 'insufficient_credits',
+        message: 'Your Grid Energy is depleted, Architect. Recharge to continue building.',
+        creditsRequired: geCost,
+        creditsAvailable: currentCredits,
+      }, { status: 402 });
+    }
 
     // ─── APP BUILDER MODE ──────────────────────────────────────────────────
     if (appIdea && !repoUrl) {
@@ -51,11 +82,19 @@ Include: user flow, screen descriptions, key features, tech stack recommendation
         ? text.replace(/^```html\n?/, '').replace(/\n?```$/, '').trim()
         : text;
 
+      // S47Q-03: Deduct after success
+      await supabaseAdmin
+        .from('profiles')
+        .update({ credits: currentCredits - APP_BUILDER_GE_COST })
+        .eq('id', user.id);
+
       return Response.json({
         mode: 'app_builder',
         platform: platform || 'website',
         result,
         appIdea,
+        creditsUsed: APP_BUILDER_GE_COST,
+        creditsRemaining: currentCredits - APP_BUILDER_GE_COST,
       });
     }
 
@@ -101,11 +140,19 @@ ${fileContext}`;
       maxTokens: 6000,
     });
 
+    // S47Q-03: Deduct after Code Review success
+    await supabaseAdmin
+      .from('profiles')
+      .update({ credits: currentCredits - CODE_REVIEW_GE_COST })
+      .eq('id', user.id);
+
     return Response.json({
       analysis: text,
       repoInfo,
       fileCount: filePaths.length,
       filesAnalyzed: keyFiles.length,
+      creditsUsed: CODE_REVIEW_GE_COST,
+      creditsRemaining: currentCredits - CODE_REVIEW_GE_COST,
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Internal server error';
