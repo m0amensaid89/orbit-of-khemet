@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useLanguage } from "@/hooks/useLanguage";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -24,11 +24,22 @@ function CodeStudioContent() {
   const [lang] = useLanguage();
   const isAr = lang === "ar";
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const initialTab = (searchParams.get("tab") as Tab) || "ui";
   const [activeTab, setActiveTab] = useState<Tab>(
     TABS.includes(initialTab) ? initialTab : "ui"
   );
+
+  // S47Q-06: Persist tab to URL so the switch is visible (URL bar + refresh-proof).
+  // Comet QA reported tab "had no effect" — likely because all 3 placeholder
+  // panels look similar. Updating URL makes the change observable.
+  const handleTabChange = (tab: Tab) => {
+    setActiveTab(tab);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", tab);
+    router.push(`/code-studio?${params.toString()}`, { scroll: false });
+  };
 
   // ── UI BUILDER state ──
   const [description, setDescription] = useState("");
@@ -194,7 +205,7 @@ function CodeStudioContent() {
           {TABS.map(tab => (
             <button
               key={tab}
-              onClick={() => setActiveTab(tab)}
+              onClick={() => handleTabChange(tab)}
               className="font-[Orbitron] text-[9px] tracking-[2px] uppercase px-5 py-2.5 transition-all"
               style={{
                 background: activeTab === tab ? gold : "transparent",
