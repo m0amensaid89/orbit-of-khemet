@@ -106,6 +106,18 @@ Output ONLY the complete HTML file starting with <!DOCTYPE html>. No explanation
       .update({ credits: currentCredits - UI_BUILDER_GE_COST })
       .eq('id', user.id);
 
+    // S48Q-02: write usage event for audit trail
+    try {
+      await supabaseAdmin.from('usage_events').insert({
+        user_id: user.id,
+        event_type: 'ui_builder',
+        energy_cost: UI_BUILDER_GE_COST,
+        metadata: { description: description?.slice(0, 200), style, complexity },
+      });
+    } catch (trackErr) {
+      console.error('[ui-builder] usage_events write failed:', trackErr);
+    }
+
     return Response.json({
       html,
       description,
