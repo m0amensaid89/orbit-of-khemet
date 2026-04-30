@@ -88,6 +88,18 @@ Include: user flow, screen descriptions, key features, tech stack recommendation
         .update({ credits: currentCredits - APP_BUILDER_GE_COST })
         .eq('id', user.id);
 
+      // S48Q-02: write usage event for audit trail
+      try {
+        await supabaseAdmin.from('usage_events').insert({
+          user_id: user.id,
+          event_type: 'app_builder',
+          energy_cost: APP_BUILDER_GE_COST,
+          metadata: { platform: platform || 'website', appIdea: appIdea?.slice(0, 200) },
+        });
+      } catch (trackErr) {
+        console.error('[sentinel] app_builder usage_events write failed:', trackErr);
+      }
+
       return Response.json({
         mode: 'app_builder',
         platform: platform || 'website',
@@ -145,6 +157,18 @@ ${fileContext}`;
       .from('profiles')
       .update({ credits: currentCredits - CODE_REVIEW_GE_COST })
       .eq('id', user.id);
+
+    // S48Q-02: write usage event for audit trail
+    try {
+      await supabaseAdmin.from('usage_events').insert({
+        user_id: user.id,
+        event_type: 'code_review',
+        energy_cost: CODE_REVIEW_GE_COST,
+        metadata: { repoUrl, fileCount: filePaths.length, filesAnalyzed: keyFiles.length },
+      });
+    } catch (trackErr) {
+      console.error('[sentinel] code_review usage_events write failed:', trackErr);
+    }
 
     return Response.json({
       analysis: text,
