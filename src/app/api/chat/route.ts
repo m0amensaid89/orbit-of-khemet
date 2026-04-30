@@ -403,11 +403,15 @@ export async function POST(req: NextRequest) {
         if (activeThreadId) {
           await supabaseAdmin.from('chat_messages').insert({
             thread_id: activeThreadId,
+            user_id: user.id,
             role: 'user',
             content: lastMessage,
           });
         }
-      } catch { /* skip */ }
+      } catch (persistError) {
+        // S48Q-01: log instead of silent swallow so we never lose visibility again
+        console.error('[chat] Thread/message persistence failed:', persistError);
+      }
     }
 
     // Build provider options
@@ -440,17 +444,32 @@ export async function POST(req: NextRequest) {
         if (user) {
           try {
             await supabaseAdmin.from('profiles').update({ credits: profileCredits - creditCost }).eq('id', user.id);
-          } catch {}
+            // S48Q-02: also write usage event for audit trail (was previously invisible)
+            await supabaseAdmin.from('usage_events').insert({
+              user_id: user.id,
+              event_type: requestType,
+              hero_slug: heroSlug,
+              agent_id: agentKey,
+              energy_cost: creditCost,
+              metadata: { model, threadId: activeThreadId },
+            });
+          } catch (deductError) {
+            console.error('[chat] Credit deduction or usage tracking failed:', deductError);
+          }
         }
         if (user && activeThreadId) {
           try {
             await supabaseAdmin.from('chat_messages').insert({
               thread_id: activeThreadId,
+              user_id: user.id,
               role: 'assistant',
               content: text,
               model_used: model,
             });
-          } catch { /* skip */ }
+          } catch (asstPersistError) {
+            // S48Q-01: log instead of silent swallow
+            console.error('[chat] Assistant message persistence failed:', asstPersistError);
+          }
         }
       },
     });
