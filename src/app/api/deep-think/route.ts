@@ -74,6 +74,18 @@ ${query}`,
       .update({ credits: (profile.credits || 0) - CREDIT_COST })
       .eq("id", user.id);
 
+    // S48Q-04: write usage event for audit trail
+    try {
+      await supabaseAdmin.from('usage_events').insert({
+        user_id: user.id,
+        event_type: 'deep_think',
+        energy_cost: CREDIT_COST,
+        metadata: { depth, thinkingTokens: usage?.totalTokens },
+      });
+    } catch (trackErr) {
+      console.error('[deep-think] usage_events write failed:', trackErr);
+    }
+
     return NextResponse.json({
       answer: text,
       model: "Claude Opus 4.5",
@@ -81,6 +93,7 @@ ${query}`,
       thinkingTokens: usage?.totalTokens,
       duration: Math.round((Date.now() - startTime) / 1000),
       creditsUsed: CREDIT_COST,
+      creditsRemaining: (profile.credits || 0) - CREDIT_COST,
     });
   } catch (err) {
     console.error("Deep Think error:", err);
