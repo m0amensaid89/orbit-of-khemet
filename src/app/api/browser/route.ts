@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { generateText } from 'ai';
 
@@ -8,6 +9,9 @@ import { generateText } from 'ai';
 // which can total 30-70 seconds on slower targets.
 export const maxDuration = 90;
 export const runtime = 'nodejs';
+
+// S48Q-03: Browser Read Mode is a billable skill (browser_control = 25 GE)
+const BROWSER_GE_COST = 25;
 
 const openrouter = createOpenRouter({
   apiKey: process.env.OPENROUTER_API_KEY,
@@ -37,6 +41,23 @@ export async function POST(req: NextRequest) {
     const supabaseServer = await createClient();
     const { data: { user } } = await supabaseServer.auth.getUser();
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    // S48Q-03: Credit gate before doing expensive work
+    const supabaseAdmin = createSupabaseClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+    const { data: profile } = await supabaseAdmin
+      .from('profiles').select('credits, tier').eq('id', user.id).single();
+
+    const currentCredits = profile?.credits ?? 0;
+    if (currentCredits < BROWSER_GE_COST) {
+      return NextResponse.json({
+        error: 'Insufficient credits',
+        creditsRequired: BROWSER_GE_COST,
+        creditsAvailable: currentCredits,
+      }, { status: 402 });
+    }
 
     const { task, url } = await req.json();
     if (!task) return NextResponse.json({ error: 'task is required' }, { status: 400 });
@@ -89,6 +110,24 @@ Return only valid, publicly accessible URLs.`,
       maxTokens: 3000,
     });
 
+    // S48Q-03: Deduct credits after successful synthesis
+    await supabaseAdmin
+      .from('profiles')
+      .update({ credits: currentCredits - BROWSER_GE_COST })
+      .eq('id', user.id);
+
+    // S48Q-03: write usage event for audit trail
+    try {
+      await supabaseAdmin.from('usage_events').insert({
+        user_id: user.id,
+        event_type: 'browser_read',
+        energy_cost: BROWSER_GE_COST,
+        metadata: { task: task?.slice(0, 200), urlsVisited: pageResults.length },
+      });
+    } catch (trackErr) {
+      console.error('[browser] usage_events write failed:', trackErr);
+    }
+
     return NextResponse.json({
       success: true,
       task,
@@ -97,6 +136,8 @@ Return only valid, publicly accessible URLs.`,
       answer: finalAnswer,
       finalUrl: urlsToVisit[0] || url || '',
       finalTitle: pageResults[0]?.title || '',
+      creditsUsed: BROWSER_GE_COST,
+      creditsRemaining: currentCredits - BROWSER_GE_COST,
     });
 
   } catch (error: unknown) {
